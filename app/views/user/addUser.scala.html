@@ -1,0 +1,26 @@
+@(userForm: Form[(String,Int,String)])
+
+@import helper._
+
+@form(action = routes.UserController.addUser(), args = 'id -> "addUser") {
+
+    @inputText(
+        field = userForm("name"),
+        args = '_label -> "What's your name?", 'placeholder -> "please type it"
+    )
+
+    @inputText(
+        field = userForm("age"),
+        args = '_label -> "Age", 'size -> 3, 'placeholder -> 10
+    )
+
+    @inputText(
+        field = userForm("description"),
+        args = '_label -> "Description", 'placeholder -> "Short description about yourself"
+    )
+
+    <p class="buttons">
+        <input type="submit" id="submit">
+    <p>
+
+}
