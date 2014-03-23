@@ -11,7 +11,7 @@ object Global extends GlobalSettings {
 
     try {
       if (!init) {
-        GraphDB.createKeyIndex("className", classOf[Nothing])
+        //GraphDB.createKeyIndex("className", classOf[Nothing])
         init = true
       }
     }
