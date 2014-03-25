@@ -12,4 +12,8 @@ GET        /user/add            controllers.UserController.addUser
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file        controllers.Assets.at(path="/public", file)
 
+
+GET /personer controllers.Personer.list
+GET /personer/skapa controllers.Personer.ny
+POST /personer/skapa controllers.Personer.save
     

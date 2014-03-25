@@ -1,0 +1,10 @@
+@(personLista: List[Person])(implicit lang: Lang)
+
+
+<h1>@Messages("person.lista")</h1>
+
+    <dl class="personer">
+    @for(person <- personLista) {
+        <dt>@person.fornamn @person.efternamn</dt>
+    }
+    </dl>

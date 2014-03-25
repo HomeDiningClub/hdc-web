@@ -1,0 +1,15 @@
+@(personForm: Form[Person])(implicit flash: Flash, lang: Lang)
+@import helper._
+@import helper.twitterBootstrap._
+
+    <h1>@Messages("person.formular")</h1>
+
+
+@helper.form(action = routes.Personer.save()) {
+    <fieldset>
+        @helper.inputText(personForm("id"))
+        @helper.inputText(personForm("fornamn"))
+        @helper.inputText(personForm("efternamn"))
+    </fieldset>
+    <input type="submit" value="Spara">
+}
