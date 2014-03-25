@@ -21,7 +21,9 @@ object Personer extends Controller {
        },
       success = {
         nyPersonForm =>
-          Redirect(routes.Personer.ny())
+          Person.add(nyPersonForm)
+          Redirect(routes.Personer.list())
+         // Redirect(routes.Personer.ny())
       }
       )
 
