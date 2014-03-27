@@ -7,9 +7,9 @@
 
 @helper.form(action = routes.Personer.save()) {
     <fieldset>
-        @helper.inputText(personForm("id"))
-        @helper.inputText(personForm("fornamn"))
-        @helper.inputText(personForm("efternamn"))
+        @helper.inputText(personForm("id"), '_label -> "Identitet:")
+        @helper.inputText(personForm("fornamn" ), '_label -> "Förnamn:")
+        @helper.inputText(personForm("efternamn"), '_label -> "Efternamn:")
     </fieldset>
     <input type="submit" value="Spara">
 }
