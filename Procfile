@@ -1,1 +1,1 @@
-web: target/start -Dhttp.port=${PORT} ${JAVA_OPTS} -DapplyEvolutions.default=true
+web: target/universal/stage/bin/hdc-web -Dhttp.port=${PORT} -DapplyEvolutions.default=true
