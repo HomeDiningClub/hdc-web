@@ -1,3 +1,3 @@
-Home dining club
+Home Dining Club
 ===
 
