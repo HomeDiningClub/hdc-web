@@ -2,8 +2,11 @@ person.formular=Personliga installningar (svenska)
 person.lista=Lista personer (svenska)
 
 
-campaign.title=V&auml;lkommen till HDC
-campaign.text=Br&ouml;dtext
-campaign.newsletterform.title=V&auml;lkommen till Home Dining Club
-campaign.newsletterform.text=Skriv upp dig till v&aring;rt nyhetsbrev
+campaign.title=Välkommen till HDC
+campaign.header=Skriv upp dig på vårt nyhetsbrev!
+campaign.preamble=Vi att kontakta dig med mer information så fort vi har något nytt att visa.
+campaign.newsletterform.emaillabel=E-post
+campaign.newsletterform.firstnamelabel=Namn
+campaign.newsletterform.surnamelabel=Efternamn
+campaign.newsletterform.emailplaceholder=epost address
 campaign.newsletterform.button.send=Skicka
