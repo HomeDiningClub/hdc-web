@@ -2,5 +2,8 @@ person.formular=Personliga installningar (svenska)
 person.lista=Lista personer (svenska)
 
 
-campaign.title=Välkommen till HDC (svenska)
-campaign.text=Brödtext (svenska)
+campaign.title=V&auml;lkommen till HDC
+campaign.text=Br&ouml;dtext
+campaign.newsletterform.title=V&auml;lkommen till Home Dining Club
+campaign.newsletterform.text=Skriv upp dig till v&aring;rt nyhetsbrev
+campaign.newsletterform.button.send=Skicka
