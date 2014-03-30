@@ -13,7 +13,9 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   javaCore,
-  "com.wingnest.play2" %% "play21-frames-neo4j-plugin" % "1.2"
+  "com.wingnest.play2" %% "play21-frames-neo4j-plugin" % "1.2",
+  "com.typesafe" %% "play-plugins-util" % "2.2.0",
+  "com.typesafe" %% "play-plugins-mailer" % "2.2.0"
 )
 
 playScalaSettings
