@@ -4,11 +4,11 @@ main.language=sv
 person.formular=Personliga installningar (svenska)
 person.lista=Lista personer (svenska)
 
-campaign.title=V‰lkommen till HDC
-campaign.header=Skriv upp dig pÂ vÂrt nyhetsbrev!
-campaign.preamble=Vi att kontakta dig med mer information sÂ fort vi har nÂgot nytt att visa.
+campaign.title=V√§lkommen till HDC
+campaign.header=Skriv upp dig p√• v√•rt nyhetsbrev!
+campaign.preamble=Vi att kontakta dig med mer information s√• fort vi har n√•got nytt att visa.
+campaign.newsletterform.firstnamelabel=Ditt f√∂rnamn
+campaign.newsletterform.surnamelabel=Ditt efternamn
 campaign.newsletterform.emaillabel=E-post
-campaign.newsletterform.firstnamelabel=Namn
-campaign.newsletterform.surnamelabel=Efternamn
 campaign.newsletterform.emailplaceholder=epost address
 campaign.newsletterform.button.send=Skicka
