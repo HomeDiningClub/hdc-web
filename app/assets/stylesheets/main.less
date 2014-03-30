@@ -1,17 +1,18 @@
 // Variables
-@text_color: #444;
-@header_color: #000;
+@text-color: #666;
+@header-color: #666;
 @link-color: #428bca;
 @link-color-hover: darken(@link-color, 10%);
+@label-color: #666;
 
 // Defaults
 html{
   font-family:tahoma,arial,geneva,helvetica,sans-serif;
-  color: @text_color;
+  color: @text-color;
 }
 
 h1,h2,h3,h4,h5,h6{
-  color: @header_color;
+  color: @header-color;
   font-weight:bold;
 }
 
@@ -26,6 +27,7 @@ a:hover{
 }
 
 label{
+  color: @label-color;
   clear:both;
   display: block;
 }

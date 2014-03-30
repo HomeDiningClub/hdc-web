@@ -1,7 +1,7 @@
 main.title=Home Dining Club
 main.language=sv
 
-person.formular=Personliga installningar (svenska)
+person.formular=Personliga inställningar (svenska)
 person.lista=Lista personer (svenska)
 
 campaign.title=Välkommen till HDC
@@ -10,5 +10,5 @@ campaign.preamble=Vi att kontakta dig med mer information så fort vi har något
 campaign.newsletterform.firstnamelabel=Ditt förnamn
 campaign.newsletterform.surnamelabel=Ditt efternamn
 campaign.newsletterform.emaillabel=E-post
-campaign.newsletterform.emailplaceholder=epost address
+campaign.newsletterform.emailplaceholder=e-post address
 campaign.newsletterform.button.send=Skicka
