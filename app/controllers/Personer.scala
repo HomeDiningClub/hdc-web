@@ -55,9 +55,4 @@ object Personer extends Controller {
       "efternamn" -> nonEmptyText
       ) (Person.apply)(Person.unapply)
   )
-
-
-
-
-
 }

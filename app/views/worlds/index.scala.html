@@ -1,0 +1,18 @@
+@(worlds: List[models.World], path: List[models.World])
+
+@main("Worlds page") {
+
+    <ul>
+    @for(world <- worlds) {
+        <li>@world.id | @world.name | @world.moons</li>
+        <li>
+            @for(otherWorld <- world.reachableByRocket) { @otherWorld.name }
+        </li>
+    }
+    </ul>
+    <ul>
+        @for(pathWorld <- path) {
+            <li><a href="#">@pathWorld.name</a> <span class="divider"> </span></li>
+        }
+    </ul>
+}
