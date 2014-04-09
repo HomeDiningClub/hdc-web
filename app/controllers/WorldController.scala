@@ -5,27 +5,28 @@ import play.api._
 import play.api.mvc._
 import services.GalaxyService
 import models.World
+import org.springframework.stereotype.{Controller => SpringController}
 
-/*
-@org.springframework.stereotype.Controller
-@Autowired
-*/
-class WorldController (galaxyService: GalaxyService) extends Controller {
-/*
-  def this() {
-    println("constructing object")
-  }
-*/
+
+@SpringController
+class WorldController extends Controller {
+
+  @Autowired
+  var galaxyService: GalaxyService = _
+
   def index = Action {
     if (galaxyService.getNumberOfWorlds() == 0) {
       galaxyService.makeSomeWorldsAndRelations()
     }
 
-    def allWorlds: List[World] = galaxyService.getAllWorlds()
-    def first: World = allWorlds(0)
-    def last: World = allWorlds.last
-    def pathFromFirstToLast: List[World] = galaxyService.getWorldPath(first, last)
+    val allWorlds: List[World] = galaxyService.getAllWorlds()
+    var pathFromFirstToLast: List[World] = Nil
 
+    if (!allWorlds.isEmpty) {
+      val first: World = allWorlds.head
+      val last: World = allWorlds.last
+      pathFromFirstToLast = galaxyService.getWorldPath(first, last)
+    }
     Ok(views.html.worlds.index.render(allWorlds, pathFromFirstToLast))
   }
 }

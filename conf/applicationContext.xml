@@ -18,7 +18,11 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
     <!--
 Neo4j Local data store configuration:
 -->
-    <neo4j:config storeDirectory="db"/>
+    <neo4j:config storeDirectory="db" base-package="models" />
+
+    <!--
+    <neo4j:config storeDir="graph.db" base-package="com.example.domain"/>
+    -->
 
     <!--
 Neo4j Rest API:
@@ -53,4 +57,5 @@ heroku config:set NEO4J_PASSWORD=<PASSWORD>
     <tx:annotation-driven mode="proxy"/>
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
 </beans>

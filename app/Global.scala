@@ -34,6 +34,7 @@ class Global extends GlobalSettings {
     val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate]);
     neoTemplate.getGraphDatabaseService.shutdown();
     ctx.stop()
+    //ctx.close() - May or may not be needed
   }
 
   /**
