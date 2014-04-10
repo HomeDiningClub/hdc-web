@@ -4,15 +4,20 @@
 
     <ul>
     @for(world <- worlds) {
-        <li>@world.id | @world.name | @world.moons</li>
-        <li>
-            @for(otherWorld <- world.reachableByRocket) { @otherWorld.name }
+        <li>WorldID: @world.id<br>
+            World name: @world.name<br>
+            Spoken languages: @world.spokenLanguage<br>
+            Nr of moons: @world.moons<br>
+            @for(otherWorld <- world.reachableByRocket) {
+                Reachable by rocket: @otherWorld.name<br>
+                }
+            <br>
         </li>
     }
     </ul>
     <ul>
         @for(pathWorld <- path) {
-            <li><a href="#">@pathWorld.name</a> <span class="divider"> </span></li>
+            <li><a href="#">@pathWorld.name</a></li>
         }
     </ul>
 }
