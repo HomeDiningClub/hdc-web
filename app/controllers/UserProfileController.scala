@@ -25,7 +25,11 @@ class UserProfileController  extends Controller{
   val userProfileForm : play.api.data.Form[UserProfile]  = play.api.data.Form(
     mapping(
       "userName" -> nonEmptyText,
-      "emailAddress" -> email
+      "emailAddress" -> email,
+      "firstName" -> text,
+      "lastName" -> text,
+      "aboutme" -> text,
+      "idno" -> longNumber
     )(UserProfile.apply)(UserProfile.unapply)
   )
 
@@ -34,6 +38,44 @@ class UserProfileController  extends Controller{
   def index = Action {
     val userProfilesList = userProfileService.getAllUserProfiles()
     Ok(views.html.profile.listofProfiles(userProfilesList))
+  }
+
+
+  /*
+  def form2Data(userProfile: UserProfile) : UserProfileData {
+
+
+    userProfileData
+  }
+*/
+
+
+  def saveUserProfile = Action {
+    implicit request =>
+      userProfileForm.bindFromRequest.fold(
+        errors => {
+          // Felaktigt ifyllt formulär
+          Ok(views.html.profile.createUserProfile(errors))
+        },
+        userProfile => {
+
+          // Spara UserProfile
+          // var userProfileData = form2Data(userProfile)
+          var userProfileData : UserProfileData = new UserProfileData("","")
+          userProfileData.id = userProfile.idNo
+          userProfileData.userName = userProfile.userName
+          userProfileData.emailAddress = userProfile.emailAddress
+          userProfileData.firstName = userProfile.firstName
+          userProfileData.lastName = userProfile.lastName
+          userProfileData.aboutMe = userProfile.aboutMe
+
+          userProfileService.saveUserProfile(userProfileData)
+
+          // Hämta värden
+          val savedForm =  userProfileForm.fill(userProfile)
+          Ok(views.html.profile.updateUserProfile(savedForm))
+        }
+      )
   }
 
 
@@ -61,9 +103,24 @@ class UserProfileController  extends Controller{
 
   def hamtaProfil(userName : String) = Action {
     println("userName : " + userName)
+
     var up = userProfileService.getUserProfile(userName)
-    val enProfileForm =  userProfileForm.fill(models.formdata.UserProfile(up.userName, up.emailAddress))
-    Ok(views.html.profile.createUserProfile(enProfileForm))
+    val enProfileForm
+      =  userProfileForm.fill(
+        models.formdata.UserProfile(
+          up.userName,
+          up.emailAddress,
+          up.firstName,
+          up.lastName,
+          up.aboutMe,
+          up.id)
+    )
+
+    println("ID  : " + up.id)
+    println("firstname  : " + up.firstName)
+
+   //Ok(views.html.profile.createUserProfile(enProfileForm))
+   Ok(views.html.profile.updateUserProfile(enProfileForm))
   }
 
 
@@ -86,7 +143,8 @@ class UserProfileController  extends Controller{
 //    var antal = userProfilesList.size
 //    println("Antal: " + antal)
 
-     val dufulatValueForm =  userProfileForm.fill(models.formdata.UserProfile("", ""))
+     var userProfile = models.formdata.UserProfile("","","","","",0)
+     val dufulatValueForm =  userProfileForm.fill(userProfile)
     Ok(views.html.profile.createUserProfile(dufulatValueForm))
   }
 

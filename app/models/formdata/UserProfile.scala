@@ -9,7 +9,11 @@ import play.data.validation.Constraints.Required
 case class UserProfile
 (
   userName     : String,
-  emailAddress : String
+  emailAddress : String,
+  firstName    : String,
+  lastName     : String,
+  aboutMe      : String,
+  idNo         : Long
 ) {
   var id:Int = UserProfile.nextId
 }

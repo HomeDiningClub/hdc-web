@@ -28,6 +28,17 @@ class UserProfileService {
   @Autowired
   private var userProfileRepository: UserProfileRepository = _
 
+  @Transactional(readOnly = false)
+  def saveUserProfile(userProfile: UserProfileData): UserProfileData = {
+
+    println("ID: " + userProfile.id)
+    var modUserProfile = userProfileRepository.save(userProfile)
+
+    modUserProfile
+  }
+
+
+
 
   @Transactional(readOnly = false)
    def saveUserProfile(userName: String, emailAddress: String = ""): UserProfileData = {
@@ -42,6 +53,9 @@ class UserProfileService {
     val listOfUserProfiles: List[UserProfileData] = IteratorUtil.asCollection(userProfileRepository.findAll()).asScala.toList
     listOfUserProfiles
   }
+
+
+
 
 
   @Transactional(readOnly = true)

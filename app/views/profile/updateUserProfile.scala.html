@@ -1,0 +1,39 @@
+@(UserProfileForm: Form[models.formdata.UserProfile])
+
+@helper.form(action = routes.UserProfileController.saveUserProfile()) {
+
+    @if(UserProfileForm.hasGlobalErrors) {
+        <ul>
+        @UserProfileForm.globalErrors.foreach { error =>
+            <li>error.message</li>
+        }
+        </ul>
+    }
+
+    @helper.inputText(UserProfileForm("userName"),
+        'id -> "userName",
+        '_showErrors -> true,
+        '_label -> "Användarnamn",
+        '_help -> "Användarnamn får inte vara tomt"
+    )
+
+    @helper.inputText(UserProfileForm("idno"),
+        'id -> "idno",
+        '_showErrors -> true,
+        '_label -> "idno",
+        '_help -> "idno"
+    )
+
+
+
+    @helper.inputText(UserProfileForm("emailAddress"),
+        'id -> "emailAddress",
+        '_label -> "E-postadress",
+        '_showErrors -> true,
+        '_help -> "Skriv in din e-postadress"
+    )
+
+
+    <input type="submit" value="Spara">
+
+}
