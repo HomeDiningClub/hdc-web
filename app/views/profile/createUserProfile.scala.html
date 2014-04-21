@@ -10,14 +10,43 @@
         </ul>
     }
 
-
-
     @helper.inputText(UserProfileForm("userName"),
-    'id -> "userName",
-    '_showErrors -> true,
-    '_label -> "Användarnamn",
-    '_help -> "Användarnamn får inte vara tomt"
+        'id -> "userName",
+        '_showErrors -> true,
+        '_label -> "Användarnamn",
+        '_help -> "Användarnamn får inte vara tomt"
     )
+
+    @helper.inputText(UserProfileForm("firstName"),
+        'id -> "firstname",
+        '_showErrors -> true,
+        '_label -> "Förnamn",
+        '_help -> "Förnamn"
+    )
+
+    @helper.inputText(UserProfileForm("lastName"),
+        'id -> "lastname",
+        '_showErrors -> true,
+        '_label -> "Efternammn",
+        '_help -> "Efternamn"
+    )
+
+
+
+    @helper.inputText(UserProfileForm("idno"),
+        'id -> "idno",
+        '_showErrors -> true,
+        '_label -> "idno",
+        '_help -> "Hidden value, visas endast under utveckling"
+    )
+
+    @helper.inputText(UserProfileForm("aboutme"),
+        'id -> "aboutme",
+        '_showErrors -> true,
+        '_label -> "Beskrivning",
+        '_help -> "Beskrivning"
+    )
+
 
     @helper.inputText(UserProfileForm("emailAddress"),
         'id -> "emailAddress",
@@ -25,7 +54,6 @@
         '_showErrors -> true,
         '_help -> "Skriv in din e-postadress"
     )
-
 
     <input type="submit" value="Spara">
 

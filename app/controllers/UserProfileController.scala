@@ -54,8 +54,17 @@ class UserProfileController  extends Controller{
     implicit request =>
       userProfileForm.bindFromRequest.fold(
         errors => {
+
+          if(errors.hasErrors) {
+            println("Fel data!")
+
+            println("Fel lista: "  + errors.toString)
+
+
+          }
+
           // Felaktigt ifyllt formulär
-          Ok(views.html.profile.createUserProfile(errors))
+          Ok(views.html.profile.updateUserProfile(errors))
         },
         userProfile => {
 
@@ -118,8 +127,8 @@ class UserProfileController  extends Controller{
 
     println("ID  : " + up.id)
     println("firstname  : " + up.firstName)
+    println("epostadress  : " + up.emailAddress)
 
-   //Ok(views.html.profile.createUserProfile(enProfileForm))
    Ok(views.html.profile.updateUserProfile(enProfileForm))
   }
 
@@ -127,7 +136,7 @@ class UserProfileController  extends Controller{
 
 
   def skapaNyProfil = Action {
-
+ /*
       var daniel = userProfileService.getUserProfile("Daniel")
       println("e-post till Daniel: " + daniel.emailAddress)
 
@@ -136,12 +145,7 @@ class UserProfileController  extends Controller{
 
     var fredrik = userProfileService.getUserProfile("Fredrik")
     println("e-post till Fredrik: " + fredrik.emailAddress)
-
-
-
-    //    val userProfilesList = userProfileService.getAllUserProfile()
-//    var antal = userProfilesList.size
-//    println("Antal: " + antal)
+*/
 
      var userProfile = models.formdata.UserProfile("","","","","",0)
      val dufulatValueForm =  userProfileForm.fill(userProfile)

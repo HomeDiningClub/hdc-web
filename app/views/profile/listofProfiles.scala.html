@@ -3,8 +3,23 @@
 
 <h1>Visa alla Användarprofiler</h1>
 
+<a href="http://localhost:9000/profile/ny">Skapa ny profil</a>
+
+
 <dl class="userProfileElement">
+    <table>
+        <thead>
+            <td>Användarnamn</td>
+            <td>e-postadress</td>
+            <td>Ändra</td>
+        </thead>
+
     @for(userProfile <- userProfileList) {
-        <dt>@userProfile.userName @userProfile.emailAddress</dt>
+        <tr>
+        <td>@userProfile.userName</td>
+        <td>@userProfile.emailAddress</td>
+        <td><a href="http://localhost:9000/profile/find/@userProfile.userName">Ändra</a></td>
+        </tr>
     }
+        </table>
 </dl>
