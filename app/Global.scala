@@ -16,6 +16,7 @@ class Global extends GlobalSettings {
   /**
    * Declare the application context to be used.
    */
+
   val ctx = new ClassPathXmlApplicationContext("applicationContext.xml")
 
   /**
@@ -45,4 +46,6 @@ class Global extends GlobalSettings {
    * @return
    */
   override def getControllerInstance[A](controllerClass: Class[A]): A = ctx.getBean(controllerClass)
+
+
 }

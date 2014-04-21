@@ -1,9 +1,9 @@
 package models
 
 case class Person (
-  id: Long,
-  fornamn: String,
-  efternamn: String)
+id: Long,
+fornamn: String,
+efternamn: String)
 
 object Person {
 
@@ -16,6 +16,10 @@ object Person {
   )
 
   def findAll = personLista.toList.sortBy(_.fornamn)
+
+  def findAllSortOnFirstName = findAll
+
+  def findAllSortOnLastName = personLista.toList.sortBy(_.efternamn)
 
   def add(person: Person){
     personLista = personLista + person

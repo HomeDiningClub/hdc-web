@@ -1,0 +1,54 @@
+@(userProfileForm: Form[models.formdata.UserProfile])
+@import helper._
+@import models.formdata.UserProfile
+
+<!--
+http://www.playframework.com/documentation/2.2.x/ScalaForms
+
+
+ -->
+
+
+@if(userProfileForm.hasGlobalErrors) {
+    <ul>
+    @userProfileForm.globalErrors.foreach { error =>
+        <li>error.message</li>
+    }
+    </ul>
+}
+
+
+
+
+
+    <h1>Show Profile</h1>
+    <fieldset>
+
+        <br>
+        @userProfileForm("userName").name
+        @userProfileForm("userName").value
+        <br>
+        @userProfileForm("emailAddress").name
+        @userProfileForm("emailAddress").value
+
+        @helper.inputText(userProfileForm("userName"),
+            'id -> "userName", 'size -> 10,
+            '_showErrors -> true,
+            'value -> "test",
+            '_help -> "Skriv in ditt användarnman",
+            '_label -> "Användarnamn")
+
+        @helper.inputText(userProfileForm("emailAddress"),
+            'id -> "emailAddress",
+            'size -> 30,
+            '_showErrors -> true,
+            '_help -> "Skriv in din e-postadress",
+            '_label -> "E-postadress")
+
+
+
+        <input type="submit" value="Spara">
+    </fieldset>
+
+
+

@@ -1,0 +1,10 @@
+@(userProfileList: List[models.UserProfileData])
+
+
+<h1>Visa alla Användarprofiler</h1>
+
+<dl class="userProfileElement">
+    @for(userProfile <- userProfileList) {
+        <dt>@userProfile.userName @userProfile.emailAddress</dt>
+    }
+</dl>

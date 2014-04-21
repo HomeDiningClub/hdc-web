@@ -12,3 +12,6 @@ campaign.newsletterform.surnamelabel=Ditt efternamn
 campaign.newsletterform.emaillabel=E-post
 campaign.newsletterform.emailplaceholder=e-post address
 campaign.newsletterform.button.send=Skicka
+
+
+validation.required.se = Ett värde för %s måste anges
