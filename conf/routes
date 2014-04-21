@@ -16,16 +16,7 @@ GET         /personer                      controllers.Personer.list
 GET         /personer/skapa                controllers.Personer.ny
 POST        /personer/skapa                controllers.Personer.save
 
-#GET         /profile/show                  controllers.ProfileController.showProfile
-#GET         /profile/edit                   controllers.ProfileController.editProfile
-#GET         /profile/create                 controllers.ProfileController.createProfile
-#POST        /profile/save                  controllers.ProfileController.saveProfile
-#GET         /profile/save2                 controllers.ProfileController.doThing(Form[models.formdata.UserProfile])
-#GET         /profiles/list                  controllers.ProfileController.list
-#GET         /profile                        controllers.ProfileController.index
-
-
-
+# UserProfile
 GET         /profile                       @controllers.UserProfileController.index
 POST        /profile/skapa                 @controllers.UserProfileController.save
 POST        /profile/spara                 @controllers.UserProfileController.saveUserProfile
