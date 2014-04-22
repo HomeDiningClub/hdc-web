@@ -1,5 +1,3 @@
-import sbt._
-import Keys._
 import play.Project._
 
 name := "hdc-web"
@@ -29,14 +27,6 @@ libraryDependencies ++= Seq(
   "com.typesafe" %% "play-plugins-util" % "2.2.0",
   "com.typesafe" %% "play-plugins-mailer" % "2.2.0",
   "ws.securesocial" %% "securesocial" % "2.1.3"
-  //"com.wingnest.play2" %% "play21-frames-neo4j-plugin" % "1.2",
 )
 
 playScalaSettings
-
-
-//play.Keys.lessEntryPoints <<= baseDirectory { base =>
-//  (base / "app" / "assets" / "stylesheets" / "bootstrap" * "bootstrap.less") +++
-//    (base / "app" / "assets" / "stylesheets" / "bootstrap" * "responsive.less") +++
-//    (base / "app" / "assets" / "stylesheets" * "*.less")
-//}
