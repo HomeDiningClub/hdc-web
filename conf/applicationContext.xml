@@ -15,14 +15,10 @@ http://www.springframework.org/schema/data/neo4j/spring-neo4j.xsd
 http://www.springframework.org/schema/tx
 http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <!--
-Neo4j Local data store configuration:
--->
-    <neo4j:config storeDirectory="db" base-package="models" />
+    <!-- Neo4j Local data store configuration: -->
+    <!-- <neo4j:config storeDirectory="db" base-package="models" /> -->
 
-    <!--
-    <neo4j:config storeDir="graph.db" base-package="com.example.domain"/>
-    -->
+    <!--<neo4j:config storeDir="graph.db" base-package="com.example.domain"/>-->
 
     <!--
     Neo4j Rest API:
@@ -37,16 +33,18 @@ Neo4j Local data store configuration:
     heroku config:set NEO4J_REST_URL=http://<NEO4J_REST_URL>/db/data/
     heroku config:set NEO4J_LOGIN=<LOGIN>
     heroku config:set NEO4J_PASSWORD=<PASSWORD>
+
+    This can be used to test a complete url:
+    <constructor-arg value="http://localhost:7474/db/data"/>
     -->
-    <!--
-    <neo4j:config graphDatabaseService="graphDatabaseService"/>
+
+    <neo4j:config graphDatabaseService="graphDatabaseService" base-package="models" />
 
     <bean id="graphDatabaseService" class="org.springframework.data.neo4j.rest.SpringRestGraphDatabase">
-    <constructor-arg index="0" value="${NEO4J_REST_URL}" />
-    <constructor-arg index="1" value="${NEO4J_LOGIN}" />
-    <constructor-arg index="2" value="${NEO4J_PASSWORD}" />
+        <constructor-arg index="0" value="${NEO4J_REST_URL}" />
+        <constructor-arg index="1" value="${NEO4J_LOGIN}" />
+        <constructor-arg index="2" value="${NEO4J_PASSWORD}" />
     </bean>
-    -->
 
     <context:annotation-config/>
 

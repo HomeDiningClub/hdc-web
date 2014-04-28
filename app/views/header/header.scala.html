@@ -1,3 +1,15 @@
 <header>
-    <a href="@routes.Campaign.index()">@shared.img("images/logo.jpg", 170, 255, "Home dining club logo")</a>
+    <div class="container header-container">
+        <div class="row">
+            <div class="col-md-3">
+                <a href="@routes.StartPageController.index()">@shared.img("/images/general/logo.jpg", Some(170), Some(255), Messages("header.logo.alt"))</a>
+            </div>
+            <div class="col-md-7 pull-right">
+                <ul>
+                    <li><a href="@routes.CampaignController.index()">@Messages("header.link.campaign")</a></li>
+                    <li><a href="@routes.AboutUsController.index()">@Messages("header.link.aboutus")</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </header>

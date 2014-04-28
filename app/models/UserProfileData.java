@@ -36,7 +36,6 @@ public class UserProfileData {
     @Indexed(indexType = IndexType.FULLTEXT, indexName = "aboutme")
     public String aboutMe;
 
-
     // Constructors
     public UserProfileData(String userName, String emailAddress) {
         this.emailAddress = emailAddress;

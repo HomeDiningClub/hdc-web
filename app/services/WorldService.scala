@@ -1,6 +1,6 @@
 package services
 
-import org.neo4j.graphalgo.{GraphAlgoFactory}
+import org.neo4j.graphalgo.GraphAlgoFactory
 import org.neo4j.graphdb._
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,7 +14,6 @@ import scala.List
 import scala.language.implicitConversions
 import models.relationships.RelationshipTypes
 import org.springframework.transaction.annotation.Transactional
-
 
 @Service
 class WorldService {
@@ -36,6 +35,7 @@ class WorldService {
     val listOfWorlds: List[World] = IteratorUtil.asCollection(worldRepository.findAll()).asScala.toList
     listOfWorlds
   }
+
 
   @Transactional(readOnly = false)
   def makeSomeWorldsAndRelations(): List[World] = {
@@ -72,7 +72,7 @@ class WorldService {
 
   @Transactional(readOnly = false)
   def deleteAllWorlds() {
-    worldRepository.deleteAll()
+    worldRepository.deleteAll
   }
 
   @Transactional(readOnly = false)

@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, headerVisible: Boolean = true, footerVisible: Boolean = true)(content: Html)
 
 <!DOCTYPE html>
 
@@ -14,9 +14,9 @@
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")">
     </head>
     <body>
-        @header.header()
-        <div class="container">@content</div>
-        @footer.footer()
+        @if(headerVisible){ @header.header() }
+        @content
+        @if(footerVisible){ @footer.footer() }
 
         @*TODO - Create controllers with local backups *@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>

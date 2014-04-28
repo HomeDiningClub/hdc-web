@@ -46,6 +46,4 @@ class Global extends GlobalSettings {
    * @return
    */
   override def getControllerInstance[A](controllerClass: Class[A]): A = ctx.getBean(controllerClass)
-
-
 }

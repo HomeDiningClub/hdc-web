@@ -1,7 +1,6 @@
 package controllers
 
 import org.springframework.beans.factory.annotation.Autowired
-import play.api._
 import play.api.mvc._
 import services.WorldService
 import models.World
@@ -15,13 +14,13 @@ class WorldController extends Controller {
   var worldService: WorldService = _
 
   def index = Action {
-    if (worldService.getNumberOfWorlds() > 0) {
-      worldService.deleteAllWorlds()
+    if (worldService.getNumberOfWorlds > 0) {
+      worldService.deleteAllWorlds
     }
 
     worldService.makeSomeWorldsAndRelations()
 
-    val allWorlds: List[World] = worldService.getAllWorlds()
+    val allWorlds: List[World] = worldService.getAllWorlds
     var pathFromFirstToLast: List[World] = Nil
 
     if (!allWorlds.isEmpty) {

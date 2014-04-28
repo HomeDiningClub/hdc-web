@@ -3,10 +3,11 @@
 # ~~~~
 
 # Home page
-GET         /index                         controllers.Application.index
+GET         /                              @controllers.StartPageController.index
+GET         /about-us                      @controllers.AboutUsController.index
 
 # Campaign
-GET         /                              controllers.Campaign.index
+GET         /newsletter                     controllers.CampaignController.index
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                  controllers.Assets.at(path="/public", file)
@@ -28,6 +29,12 @@ GET         /profile/find/:userName        @controllers.UserProfileController.ha
 GET         /worlds                        @controllers.WorldController.index
 #POST        /worlds/add                    controllers.WorldController.add
 #POST        /worlds/delete                 controllers.WorldController.delete
+
+# Files
+GET         /file                          @controllers.FileController.index
+GET         /file/list                     @controllers.FileController.listAllFiles
+POST        /file/add                      @controllers.FileController.add
+#POST        /file/delete                 controllers.WorldController.delete
 
 
 # Login page

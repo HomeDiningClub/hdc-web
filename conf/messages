@@ -1,8 +1,17 @@
 main.title=Home Dining Club
 main.language=sv
 
+header.link.campaign=Nyhetsbrev
+header.link.aboutus=Om oss
+header.logo.alt=Home dining club logotyp
+
 person.formular=Personliga inställningar (svenska)
 person.lista=Lista personer (svenska)
+
+startpage.title=Sveriges första riktiga klubb för alla riktigt matintresserade!
+
+aboutus.title=Om oss
+aboutus.header=Om oss
 
 campaign.title=Välkommen till HDC
 campaign.header=Skriv upp dig på vårt nyhetsbrev!

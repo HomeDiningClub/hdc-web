@@ -1,14 +1,29 @@
 // Variables
 @text-color: #666;
 @header-color: #666;
+@header-background-color: #fff;
+@maincontent-background-color: #fff;
+@footer-background-color: #fff;
 @link-color: #428bca;
 @link-color-hover: darken(@link-color, 10%);
 @label-color: #666;
 
 // Defaults
 html{
+  overflow:-moz-scrollbars-vertical;
+  overflow-y:scroll;
+  overflow-x:auto;
   font-family:tahoma,arial,geneva,helvetica,sans-serif;
   color: @text-color;
+}
+
+body{
+  background: url("/assets/images/general/hdc_kitchen_grey.png");
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 h1,h2,h3,h4,h5,h6{
@@ -30,4 +45,29 @@ label{
   color: @label-color;
   clear:both;
   display: block;
+}
+
+div{
+  border:1px solid gray !important;
+  transition: all 0.3s ease-in-out 0s;
+}
+
+
+
+// Header
+.header-container
+{
+  background-color: @header-background-color;
+}
+
+// Footer
+.footer-container
+{
+  background-color: @footer-background-color;
+}
+
+// Main content
+.maincontent-container
+{
+  background-color: @maincontent-background-color;
 }
