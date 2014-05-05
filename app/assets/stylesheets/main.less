@@ -7,6 +7,10 @@
 @link-color: #428bca;
 @link-color-hover: darken(@link-color, 10%);
 @label-color: #666;
+@input-border-color: #eee;
+@input-button-bg-color: #6fc2b5;
+@input-button-border-color: #264540;
+@input-button-text-color: #fff;
 
 // Defaults
 html{
@@ -49,6 +53,26 @@ div{
 img
 {
   display:inline-block;
+}
+
+// Forms
+input[type="text"],
+input[type="file"]
+{
+  border:1px solid @input-border-color;
+}
+input[type="submit"],
+button,
+input[type="reset"]
+{
+  color: @input-button-text-color;
+  background-color: @input-button-bg-color;
+  text-align:center;
+  padding:10px;
+  border:1px solid @input-button-border-color;
+  border-radius:4px;
+  white-space:nowrap;
+  margin:10px;
 }
 
 

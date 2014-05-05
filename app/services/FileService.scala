@@ -25,31 +25,39 @@ class FileService {
   private lazy val bucketStore: String = Play.application.configuration.getString("aws.s3bucket")
   lazy val S3Bucket = S3(bucketStore)
 
-  def listAllFiles(): List[String] = {
-    val result = Await result (S3Bucket.list, 10 seconds)
+  def listAllFilesRawFromS3(): List[String] = {
+    val result = Await.result(S3Bucket.list, 10 seconds)
     val returnRes: List[String] = result.map(item => item.name).toList
     returnRes
   }
 
+  // Accepts ImageFile, ContentFile
+  //def getFilesOfType[T](): List[T] = {
+    //val dbRes = fileRepository.findAllBySchemaPropertyValue.as(ImageFile)
+    //val result = Await.result(S3Bucket.list, 10 seconds)
+    //val returnRes: List[String] = result.map(item => item.name).toList
+    //returnRes
+  //}
+
+
   def uploadFile(file: MultipartFormData.FilePart[TemporaryFile]): ContentFile = {
-    val filename = play.utils.UriEncoding.encodePathSegment(file.filename, "UTF-8").toLowerCase.replace("+", "-") // TODO - Improve file names
     val contentType = file.contentType.toString
+    val filename = play.utils.UriEncoding.encodePathSegment(file.filename, "UTF-8").toLowerCase.replace("+", "-") // TODO - Improve file names
     var newFile: ContentFile = new ImageFile(filename)
 
-    //val result: Future[Unit] = Future {
     val uploadedFile: BucketFile = BucketFile(newFile.bucketDir + newFile.key, contentType, FileUtils.readAllBytes(file.ref.file))
     val result = S3Bucket.add(uploadedFile)
-    //}
-    val timeoutFuture = Promise.timeout("Uploaded failed - timeout occurred", 2.minutes)
 
-    //Future.firstCompletedOf(Seq(result, timeoutFuture)).map {
-      //unit => Logger.info("Uploaded and saved file: " + newFile.bucketDir + newFile.key)
+    result.map {
+      unit =>
+        Logger.info("Uploaded and saved file: " + newFile.bucketDir + newFile.key)
         saveToDB(newFile)
-        return newFile
-    //}
-    //.recover {
-      //case S3Exception(status, code, message, originalXml) => Logger.info("Error: " + message)
-    //}
+        newFile
+    }
+    .recover {
+      case S3Exception(status, code, message, originalXml) => Logger.error("Error: " + message)
+      case _ => Logger.error("Error: Cannot upload image.")
+    }
 
     newFile = null
     newFile

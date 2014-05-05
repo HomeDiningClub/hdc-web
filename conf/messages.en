@@ -12,3 +12,5 @@ campaign.newsletterform.firstnamelabel=Namn
 campaign.newsletterform.surnamelabel=Efternamn
 campaign.newsletterform.emailplaceholder=epost address
 campaign.newsletterform.button.send=Skicka
+
+file.button.upload=Upload
