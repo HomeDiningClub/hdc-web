@@ -24,7 +24,7 @@ class WorldService {
   @Autowired
   private var worldRepository: WorldRepository = _
 
-  def getNumberOfWorlds(): Long = worldRepository.count()
+  def getNumberOfWorlds: Long = worldRepository.count()
 
   def findByWorldByName(worldName: String): World = {
     worldRepository.findBySchemaPropertyValue("name", worldName)
@@ -59,7 +59,7 @@ class WorldService {
     myWorlds.zipWithIndex.foreach{
       case(w, i) =>
         if((worlds.length-2) > i)
-          addRocketRouteTo(w,myWorlds(i+1));
+          addRocketRouteTo(w,myWorlds(i+1))
         worldRepository.save(w)
     }
     myWorlds
@@ -72,7 +72,7 @@ class WorldService {
 
   @Transactional(readOnly = false)
   def deleteAllWorlds() {
-    worldRepository.deleteAll
+    worldRepository.deleteAll()
   }
 
   @Transactional(readOnly = false)

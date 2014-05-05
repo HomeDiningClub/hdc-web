@@ -18,12 +18,7 @@ html{
 }
 
 body{
-  background: url("/assets/images/general/hdc_kitchen_grey.png");
-  background-repeat: no-repeat;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+
 }
 
 h1,h2,h3,h4,h5,h6{
@@ -48,16 +43,31 @@ label{
 }
 
 div{
-  border:1px solid gray !important;
   transition: all 0.3s ease-in-out 0s;
 }
 
+img
+{
+  display:inline-block;
+}
 
 
 // Header
 .header-container
 {
+  position:fixed;
+  overflow:visible;
+  display:block;
+  width:100%;
+  height:111px;
+  background-image: url("/assets/images/general/bg-header.png");
+  background-repeat: repeat-x;
+  box-shadow: 0 0 10px 0px #aaa;
   background-color: @header-background-color;
+}
+.header-spacer
+{
+  height:131px;
 }
 
 // Footer

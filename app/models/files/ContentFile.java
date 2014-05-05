@@ -4,9 +4,7 @@ import models.base.AbstractEntity;
 import java.util.UUID;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
-import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
-import play.Play;
 
 @NodeEntity
 @TypeAlias("ContentFile")

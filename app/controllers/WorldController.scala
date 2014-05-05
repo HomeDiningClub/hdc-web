@@ -15,12 +15,12 @@ class WorldController extends Controller {
 
   def index = Action {
     if (worldService.getNumberOfWorlds > 0) {
-      worldService.deleteAllWorlds
+      worldService.deleteAllWorlds()
     }
 
     worldService.makeSomeWorldsAndRelations()
 
-    val allWorlds: List[World] = worldService.getAllWorlds
+    val allWorlds: List[World] = worldService.getAllWorlds()
     var pathFromFirstToLast: List[World] = Nil
 
     if (!allWorlds.isEmpty) {
