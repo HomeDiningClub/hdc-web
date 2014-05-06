@@ -1,5 +1,4 @@
 @(title: String, headerVisible: Boolean = true, footerVisible: Boolean = true)(content: Html)
-
 <!DOCTYPE html>
 
 <html lang="@Messages("main.language")">
@@ -14,7 +13,7 @@
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")">
     </head>
     <body>
-        @if(headerVisible){ @header.header() }
+        @if(headerVisible){ @HeaderController.index }
         @content
         @if(footerVisible){ @footer.footer() }
 
