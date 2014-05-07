@@ -56,4 +56,14 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
+    <!-- TODO
+    <bean id="InMemoryUserService" class="services.InMemoryUserService">
+        <constructor-arg index="0" ref="PlayApplication" />
+    </bean>
+
+    <bean id="PlayApplication" class="play.api.DefaultApplication">
+        <constructor-arg index="0" value="applicationContext.xml" />
+        <constructor-arg index="1" value="" />
+    </bean>
+    -->
 </beans>
