@@ -10,6 +10,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.support.index.IndexType;
 import models.relationships.RelationshipTypes;
+import securesocial.core.Identity;
 
 
 @NodeEntity
@@ -24,8 +25,9 @@ public class UserProfileData {
     @Indexed(indexType = IndexType.FULLTEXT, indexName = "email")
     public String emailAddress;
 
-
     public String passWord;
+
+    public Identity identity;
 
     @Indexed(indexType = IndexType.FULLTEXT, indexName = "firstname")
     public String firstName;
