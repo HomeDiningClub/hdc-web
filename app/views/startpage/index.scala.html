@@ -2,16 +2,14 @@
 
 @main(Messages("startpage.title")) {
 
-    <div class="container-fluid maincontent-container">
-        <div class="row">
-            <div class="col-xs-12">
-                @shared.img("images/startpage/startpage-main-image.jpg", None, None, "")
-            </div>
+    <div class="jumbotron">
+        <div class="container">
+            @shared.img("images/startpage/startpage-main-image.jpg", None, None, "")
         </div>
     </div>
 
-    <div class="container maincontent-container">
-        <div class="row">
+    <div class="container-fluid maincontent-container">
+        <div class="row-fluid">
             <div class="col-xs-12">Here be content</div>
         </div>
     </div>

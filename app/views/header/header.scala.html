@@ -1,36 +1,17 @@
 @(menuItems: Seq[(String, String, Call, String)])
 <header>
-    <div class="container-fluid header-container">
-        <div class="row header-logo">
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="col-xs-2 col-lg-offset-1">
-                        <a href="@routes.StartPageController.index()">@shared.img("/images/general/logo-horisontal.png", Some(239), Some(93), Messages("header.logo.alt"))</a>
-                    </div>
-                </div>
+    <div class="navbar-fixed-top">
+        <div class="row-fluid no-gutter header-container">
+            <div class="col-xs-12">
+                <a href="@routes.StartPageController.index()">@shared.img("/images/general/logo-horisontal.png", Some(239), Some(93), Messages("header.logo.alt"))</a>
             </div>
         </div>
-        <div class="row header-navigation">
-            <div class="col-md-12">
-                <nav>
-                    <ul class="nav nav-pills">
-@*
-                        @menuItems.map {
-                            case (key, title, url) if key == section => {
-                                <li class="active">@title</li>
-                            }
-                            case (key, title, url) => {
-                                <li><a href="@url">@title</a></li>
-                            }
-                        }
-*@
-                        @for(nav <- menuItems) {
-                            <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
-                        }
-                    </ul>
-                </nav>
-            </div>
-        </div>
+        <nav>
+            <ul class="nav nav-pills header-navigation">
+                @for(nav <- menuItems) {
+                    <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
+                }
+            </ul>
+        </nav>
     </div>
-    <div class="header-spacer"><!-- --></div>
 </header>
