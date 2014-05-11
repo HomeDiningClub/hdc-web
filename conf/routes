@@ -7,7 +7,7 @@ GET         /                              @controllers.StartPageController.inde
 GET         /about-us                      @controllers.AboutUsController.index
 
 # Campaign
-GET         /newsletter                     controllers.CampaignController.index
+GET         /newsletter                    controllers.CampaignController.index
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                  controllers.Assets.at(path="/public", file)
@@ -23,6 +23,7 @@ POST        /profile/skapa                 @controllers.UserProfileController.sa
 POST        /profile/spara                 @controllers.UserProfileController.saveUserProfile
 GET         /profile/ny                    @controllers.UserProfileController.skapaNyProfil
 GET         /profile/find/:userName        @controllers.UserProfileController.hamtaProfil(userName)
+
 
 
 # Worlds example
@@ -57,3 +58,10 @@ POST        /password                      securesocial.controllers.PasswordChan
 GET         /authenticate/:provider        securesocial.controllers.ProviderController.authenticate(provider)
 POST        /authenticate/:provider        securesocial.controllers.ProviderController.authenticateByPost(provider)
 GET         /not-authorized                securesocial.controllers.ProviderController.notAuthorized
+
+# TEST
+GET         /profile/loggain               @controllers.UserProfileController.login
+
+
+GET         /profilen/spara                @controllers.UserCredentialController.spara
+GET         /profilen/visa                 @controllers.UserCredentialController.visa

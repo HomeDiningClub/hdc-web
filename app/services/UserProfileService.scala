@@ -18,15 +18,29 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.data.neo4j.conversion.EndResult
 import org.springframework.data.neo4j.repository.GraphRepository
 import org.neo4j.graphdb.index.Index
+import org.springframework.data.neo4j.config.{Neo4jConfiguration, EnableNeo4jRepositories}
+import org.neo4j.kernel.impl.nioneo.store.TokenStore.Configuration
+import org.neo4j.kernel.EmbeddedGraphDatabase
+import org.springframework.context.annotation.Bean
+
+
 
 @Service
 class UserProfileService {
+
+
+  // http://books.google.se/books?id=DeTO4xbC-eoC&pg=PT158&lpg=PT158&dq=:+Neo4jTemplate+%3D+_&source=bl&ots=kTYWRxqdkm&sig=nNZ8mMMFgx4CmCFw13zWeQdnzFA&hl=en&sa=X&ei=RK9eU7v-KI7jO5m9gegO&ved=0CCwQ6AEwATgK#v=onepage&q=%3A%20Neo4jTemplate%20%3D%20_&f=false
+
 
   @Autowired
   private var template: Neo4jTemplate = _
 
   @Autowired
   private var userProfileRepository: UserProfileRepository = _
+
+
+
+
 
   @Transactional(readOnly = false)
   def saveUserProfile(userProfile: UserProfileData): UserProfileData = {
@@ -48,6 +62,8 @@ class UserProfileService {
     userProfile
   }
 
+
+
   @Transactional(readOnly = true)
   def getAllUserProfiles(): List[UserProfileData] = {
     val listOfUserProfiles: List[UserProfileData] = IteratorUtil.asCollection(userProfileRepository.findAll()).asScala.toList
@@ -57,20 +73,43 @@ class UserProfileService {
 
 
 
-
   @Transactional(readOnly = true)
-  def getUserProfile(userName : String): UserProfileData = {
+  def getUserProfile(userName : String) = {
+
+
+  print("getUserProfile : " + userName)
+
+  if(template == null){
+    println("template is null ********************************")
+  } else {
+    println("template is not null*****************************")
+  }
+
+
     var userProfileDataIndex: Index[Node] = template.getIndex(classOf[UserProfileData], "userName")
     //val node: Node = userProfileDataIndex.query("userName", userName).getSingle()
+
+  if(userProfileDataIndex == null){
+    println("userProfileDataIndex is null ********************************")
+  } else {
+    println("userProfileDataIndex is not null*****************************")
+  }
+
+
 
     var hits = userProfileDataIndex.query("userName", userName)
     var nods = hits.iterator()
     var id : Long = 0
 
+    println("...........................................")
+
+
     if(nods.hasNext) {
       id = nods.next().getId
       println("Id: " + id)
     }
+
+  println("...........................................")
 
     var currNode: UserProfileData = new UserProfileData("","")
 

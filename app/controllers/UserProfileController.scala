@@ -34,6 +34,15 @@ class UserProfileController  extends Controller{
   )
 
 
+  def login = Action {
+    //Redirect(routes.Application.hello("Bob"))
+    // Redirect(routes.securesocial.controllers.LoginPage.login)
+    Redirect("/login",301)
+    //routes.securesocial.controllers.LoginPage.login
+    // securesocial.controllers.LoginPage.login
+    //Ok("OK")
+  }
+
 
   def index = Action {
     val userProfilesList = userProfileService.getAllUserProfiles()

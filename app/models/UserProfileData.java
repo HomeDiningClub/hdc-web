@@ -52,7 +52,16 @@ public class UserProfileData {
 
 
 
-    private UserProfileData() {
+    public UserProfileData() {
+        this.firstName  = "";
+        this.lastName   = "";
+        this.aboutMe    = "";
+        this.emailAddress = "";
+        this.passWord = "";
+        this.userName = "";
+        //this.id = 0L;
+
+
     }
 
 

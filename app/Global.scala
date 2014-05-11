@@ -1,3 +1,4 @@
+import models.UserProfileData
 import play.Application
 import play.GlobalSettings
 import play.Logger
@@ -25,6 +26,10 @@ class Global extends GlobalSettings {
    */
   override def onStart(app: Application) {
     ctx.start()
+
+    var foo : models.UserProfileData =  new models.UserProfileData()
+    ctx.getAutowireCapableBeanFactory().autowireBean(foo)
+    //ctx.getAutowireCapableBeanFactory.autowireBeanProperties()
   }
 
   /**
