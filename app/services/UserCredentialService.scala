@@ -113,6 +113,40 @@ class UserCredentialService {
 
 
 
+
+  /**
+   * Checks if Identity exist meaning UserId and ProviderId
+   * @param userId
+   * @param providerId
+   * @return id in Neo4j database and if the user exits true else false
+   */
+  @Transactional(readOnly = true)
+  def exists(userId: String, providerId: String) :  (Long, Boolean) = {
+
+    var user = getUserById(userId, providerId)
+    var finns : Boolean = false
+    var idNo  : Long    = -1L
+
+    if(userId == null || providerId == null) {
+      finns = false
+      idNo = -1L
+    } else if(user.userId == null || user.providerId == null) {
+      finns = false
+      idNo = -1L
+    } else if(user.id != null && userId.equals(user.userId) && providerId.equals(user.providerId)) {
+      finns = true
+      idNo = user.id
+    } else {
+      finns = false
+      idNo = -1L
+    }
+
+    val t = (idNo, finns)
+    t
+  }
+
+
+
   @Transactional(readOnly = true)
   def getUserById(userId: String, providerId: String) :  UserCredential = {
 
@@ -198,6 +232,31 @@ class UserCredentialService {
 
     list.toList
   }
+
+
+  /**
+   * Creates a new user or updates an existing user with
+   * the same UserId and ProviderId, taking the key from the allready
+   * existing user
+   * @param userCredential
+   * @return
+   */
+  @Transactional(readOnly = false)
+  def createOrUpdateUser(userCredential: UserCredential): UserCredential = {
+    val exitsUser = exists(userCredential.userId, userCredential.providerId)
+    var modUserCredential: UserCredential = new UserCredential()
+
+    if(exitsUser._2 == true) {
+      userCredential.id = exitsUser._1
+      modUserCredential = saveUser(userCredential)
+    } else {
+      modUserCredential = saveUser(userCredential)
+    }
+
+    modUserCredential
+  }
+
+
 
 
 

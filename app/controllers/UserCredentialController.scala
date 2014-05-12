@@ -86,8 +86,60 @@ class UserCredentialController extends Controller {
     println("test [YN] : " + element4.firstName)
 
 
+
+    println("Name: Fabian")
+
     val element5 = userCredentialService.getUserById("fabianfacebook","facebook")
-    println("test 5 [YN] : " + element5.firstName)
+    println("Userid : " + element5.userId)
+    println("providerId : " + element5.providerId)
+    println("Id : " + element5.id)
+    println("FirstName : " + element5.firstName)
+    println("LastName : " + element5.lastName)
+    var l = element5.lastName
+    if(l.equals("")) {
+      l = "Svensson"
+    }
+    element5.lastName = element5.firstName
+    element5.firstName = l
+
+    val upd5 = userCredentialService.createOrUpdateUser(element5)
+    println("Userid : " + upd5.userId)
+    println("providerId : " + upd5.providerId)
+    println("Id : " + upd5.id)
+    println("FirstName : " + upd5.firstName)
+    println("LastName : " + upd5.lastName)
+
+    var el6 : UserCredential = new UserCredential()
+    el6.userId = "test"
+    el6.providerId = "test"
+    el6.firstName = "Elmaco"
+    el6.lastName = "MacDonalds"
+    el6.emailAddress = "el@mac.com"
+    val upd6 = userCredentialService.createOrUpdateUser(el6)
+
+
+    val finns1 = userCredentialService.exists("fabianfacebook","facebook")
+    println("Finns : " + finns1._2)
+    println("Id : " + finns1._1)
+
+
+
+
+
+
+    val element6 = userCredentialService.getUserById("no","facebook")
+    println("no : " + element6.userId)
+    println("key: " + element6.id)
+
+
+
+
+
+
+    val fins2 = userCredentialService.exists("no","facebook")
+    println("Finns2 : " + fins2._2)
+    println("Id2: " + fins2._1)
+
 
     Ok("Visa")
   }
