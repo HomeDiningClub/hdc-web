@@ -8,6 +8,7 @@ object HeaderController extends Controller{
     ("Start page", "Start page title", routes.StartPageController.index, ""),
     ("Files", "Files title", routes.FileController.index, ""),
     ("Worlds", "Worlds title", routes.WorldController.index, ""),
+    ("Login", "Login", securesocial.controllers.routes.LoginPage.login, ""),
     ("Campaign page", "Campaign title", routes.CampaignController.index, "")
   )
 
