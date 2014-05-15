@@ -16,22 +16,26 @@
  */
 package services
 
-import play.api.{Logger, Application}
+import play.api.Logger
 import securesocial.core._
 import securesocial.core.providers.Token
 import securesocial.core.IdentityId
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import repositories.UserProfileRepository
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.{Component, Service}
+import play.api.Play.current
+import play.api.Application
+import org.springframework.context.annotation.Lazy
 
-class InMemoryUserService(application: Application) extends UserServicePlugin(application) {
+class InMemoryUserService(application: Application) extends UserServicePlugin (application) {
 
   @Autowired
   private var template: Neo4jTemplate = _
 
   @Autowired
   private var userRepository: UserProfileRepository = _
+
 
   val logger = Logger("application.controllers.InMemoryUserService")
 

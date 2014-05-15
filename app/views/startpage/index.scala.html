@@ -2,15 +2,77 @@
 
 @main(Messages("startpage.title")) {
 
-    <div class="jumbotron">
-        <div class="container">
-            @shared.img("images/startpage/startpage-main-image.jpg", None, None, "")
+        <div id="carousel-startpage" class="carousel slide" data-ride="carousel" data-interval="4000">
+
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                <li data-target="#carousel-startpage" data-slide-to="0" class="active"></li>
+                <li data-target="#carousel-startpage" data-slide-to="1"></li>
+                <li data-target="#carousel-startpage" data-slide-to="2"></li>
+                <li data-target="#carousel-startpage" data-slide-to="3"></li>
+            </ol>
+
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+                <div class="item active">
+                    @shared.img("images/startpage/startpage-main-image-1.jpg", None, None, "")
+                    <div class="carousel-caption pull-right">
+                        <h2>Home Dining Club</h2>
+                        <p>Vad är det?</p>
+                        <p><a class="btn btn-lg btn-primary" href="@routes.UserProfileController.index()" role="button">Bli medlem!</a></p>
+                    </div>
+                </div>
+                <div class="item">
+                    @shared.img("images/startpage/startpage-main-image-2.jpg", None, None, "")
+                    <div class="carousel-caption">
+                        <h2>Slipp Disken</h2>
+                        <p>Ät hemma hos någon!</p>
+                    </div>
+                </div>
+                <div class="item">
+                    @shared.img("images/startpage/startpage-main-image-3.jpg", None, None, "")
+                </div>
+                <div class="item">
+                    @shared.img("images/startpage/startpage-main-image-4.jpg", None, None, "")
+                    <div class="carousel-caption">
+                        <h2>Men kom ut någon gång!</h2>
+                        <p>Sitt inte bara där!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <a class="left carousel-control" href="#carousel-startpage" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            <a class="right carousel-control" href="#carousel-startpage" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
         </div>
-    </div>
 
     <div class="container-fluid maincontent-container">
         <div class="row-fluid">
-            <div class="col-xs-12">Here be content</div>
+
+            <!-- Main intro -->
+            <div class="col-xs-12 col-md-8 col-md-offset-2 col-xs-offset-0">
+                <h1>Hej och välkommen till Home Dining Club!</h1>
+                <p>Bjud hem nya vänner på middag och få betyg och omdömen på din kokkonst. Håll arrangemang för små och stora grupper. Ta betalt eller bjud! Det är upp till dig. Du kanske har den bästa Paellan i hela Stockholm. Varför inte låta folk få komma hem till dig och prova den?</p>
+                <p>Eller så är du bara intresserad av att läsa recept, eller äta hos andra. Upptäcka nya kulinariska höjder och lära känna andra lika matintresserade. Det här är tjänsten för dig!</p>
+            </div>
+
+            <!-- Puffs & Right column -->
+            <div class="row-fluid">
+                <div class="col-xs-12 col-md-8 col-md-offset-2 col-xs-offset-0">
+                    <div class="row">
+                        <div class="col-md-8 col-xs-12">
+                            <h2>Hetaste diners!</h2>
+                        </div>
+                        <div class="col-md-4 col-xs-12">
+                            <h2>Funktioner</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

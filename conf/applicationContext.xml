@@ -55,15 +55,10 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
     <tx:annotation-driven mode="proxy"/>
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
-
-    <!-- TODO
+<!--
     <bean id="InMemoryUserService" class="services.InMemoryUserService">
-        <constructor-arg index="0" ref="PlayApplication" />
+        <constructor-arg name="application" ref="application" />
     </bean>
-
-    <bean id="PlayApplication" class="play.api.DefaultApplication">
-        <constructor-arg index="0" value="applicationContext.xml" />
-        <constructor-arg index="1" value="" />
-    </bean>
-    -->
+    <bean id="application" class="play.api.DefaultApplication" />
+-->
 </beans>

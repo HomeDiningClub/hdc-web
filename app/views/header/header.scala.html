@@ -1,17 +1,29 @@
 @(menuItems: Seq[(String, String, Call, String)])
 <header>
     <div class="navbar-fixed-top">
-        <div class="row-fluid no-gutter header-container">
-            <div class="col-xs-12">
-                <a href="@routes.StartPageController.index()">@shared.img("/images/general/logo-horisontal.png", Some(239), Some(93), Messages("header.logo.alt"))</a>
+        <div class="container-fluid">
+            <div class="row-fluid no-gutter header-container">
+                <div class="col-xs-5 col-md-offset-2 col-xs-offset-0 logo">
+                    <a href="@routes.StartPageController.index()">@shared.img("/images/general/logo-horisontal.png", Some(239), Some(93), Messages("header.logo.alt"))</a>
+                </div>
+                <div class="col-xs-3 pull-right visible-xs">
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+                        <span class="visible-xs">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
             </div>
+            <nav>
+                <ul class="nav nav-pills collapse navbar-collapse bs-navbar-collapse header-navigation">
+                    @for(nav <- menuItems) {
+                        <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
+                    }
+                </ul>
+            </nav>
         </div>
-        <nav>
-            <ul class="nav nav-pills header-navigation">
-                @for(nav <- menuItems) {
-                    <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
-                }
-            </ul>
-        </nav>
     </div>
+    <div class="header-spacing"><!-- no content --></div>
 </header>

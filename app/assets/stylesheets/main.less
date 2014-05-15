@@ -1,18 +1,21 @@
 // Variables
+@hdc-green: #6fc2b5;
+
 @text-color: #666;
-@header-color: #666;
+@header-color: @hdc-green;
 @header-background-color: #fff;
 @maincontent-background-color: #fff;
 @footer-background-color: #fff;
+@footer-border-color: @hdc-green;
 @link-color: #428bca;
 @link-color-hover: darken(@link-color, 10%);
 @label-color: #666;
 @input-border-color: #eee;
-@input-button-bg-color: #6fc2b5;
+@input-button-bg-color: @hdc-green;
 @input-button-border-color: #264540;
 @input-button-text-color: #fff;
 
-// Defaults
+// General tags
 html{
   overflow:-moz-scrollbars-vertical;
   overflow-y:scroll;
@@ -21,15 +24,20 @@ html{
   color: @text-color;
 }
 
+
+//div{  border:1px solid gray !important;}
+
 body{
 
 }
 
+// General headers
 h1,h2,h3,h4,h5,h6{
   color: @header-color;
   font-weight:bold;
 }
 
+// General links
 a{
   text-decoration:none;
   color: @link-color;
@@ -55,6 +63,22 @@ img
   display:inline-block;
 }
 
+// General bootstrap overrides
+.container-fluid {
+  padding: 0px;
+}
+
+// General margins
+.margin-top
+{
+  margin-top:2em;
+}
+.margin-bottom
+{
+  margin-bottom:2em;
+}
+
+
 // Forms
 input[type="text"],
 input[type="file"]
@@ -65,26 +89,55 @@ input[type="submit"],
 button,
 input[type="reset"]
 {
-  color: @input-button-text-color;
-  background-color: @input-button-bg-color;
+}
+
+
+
+// Buttons
+.btn-primary,
+input[type="submit"],
+button,
+input[type="reset"]
+{
+  margin-top:10px;
+  margin-bottom:10px;
+  padding:5px 10px 5px 10px;
   text-align:center;
-  padding:10px;
-  border:1px solid @input-button-border-color;
   border-radius:4px;
   white-space:nowrap;
-  margin:10px;
+  border:1px solid;
+  background-image: linear-gradient(to bottom, @hdc-green 0px, darken(@hdc-green, 20%) 100%);
+  color: @input-button-text-color;
+  background-color: @hdc-green;
+  border-color: darken(@hdc-green, 20%);
+}
+.btn-primary:hover,
+input[type="submit"]:hover,
+button:hover,
+input[type="reset"]:hover
+{
+  background-image: linear-gradient(to bottom, lighten(@hdc-green, 5%) 0px, darken(@hdc-green, 15%) 100%);
+  background-color: lighten(@hdc-green, 10%);
+  border-color:1px solid  darken(@hdc-green, 20%);
 }
 
 
 // Header
 .header-container
 {
+  padding-top: 8px;
   background-image: url("/assets/images/general/bg-header.png");
   background-repeat: repeat-x;
   box-shadow: 0 0 10px 0px #aaa;
   background-color: @header-background-color;
   height:111px;
 }
+.header-spacing
+{
+  height:147px;
+}
+
+
 
 // Main navigation
 .header-navigation
@@ -96,16 +149,106 @@ input[type="reset"]
 .nav-pills
 {
   height:37px;
+  line-height:18px;
+}
+.nav-pills > li
+{
+  padding:6px;
+}
+.nav-pills > li > a
+{
+  font-weight: normal;
+  text-shadow:0px 1px 2px rgba(0, 0, 0, 0.6);
+  color:#fff;
+  padding:3px 5px 3px 5px;
+}
+.nav-pills > li > a:hover,
+.nav > li > a:focus
+{
+  text-decoration: none;
+  background-image:linear-gradient(to bottom, #ff0000 0px, #aa0000 100%);
+
+}
+.icon-bar
+{
+  background-color: @hdc-green;
 }
 
 // Footer
 .footer-container
 {
+  margin-top:2em;
   background-color: @footer-background-color;
+  border-top:1px solid @footer-border-color;
 }
 
 // Main content
 .maincontent-container
 {
   background-color: @maincontent-background-color;
+}
+
+
+
+// Start page
+.carousel
+{
+  margin-top:-36px;
+}
+.carousel-inner .item
+{
+  min-height: 200px;
+  max-height: 350px;
+}
+.carousel-inner .item img
+{
+  min-width: 960px;
+  min-height: 283px;
+  width:100%;
+}
+.carousel-control.right,
+{
+  background-image: linear-gradient(to right, transparent 0px, rgba(0, 0, 0, 0.2) 100%);
+}
+.carousel-control.right:hover,
+{
+  background-image: linear-gradient(to right, transparent 0px, rgba(0, 0, 0, 0.3) 100%);
+}
+.carousel-control.left
+{
+  background-image: linear-gradient(to left, transparent 0px, rgba(0, 0, 0, 0.2) 100%);
+}
+.carousel-control.left:hover
+{
+  background-image: linear-gradient(to left, transparent 0px, rgba(0, 0, 0, 0.3) 100%);
+}
+.carousel-indicators
+{
+  bottom: 0px;
+}
+.carousel-caption h3,
+.carousel-caption h2
+{
+  color:#fff;
+}
+
+// Responsive
+@media screen and (max-width: 768px) {
+
+  // Defaults
+  body {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  // Header
+  .logo img
+  {
+    width:150px;
+  }
+  // Start page
+  .carousel-inner .item img
+  {
+  }
+
 }
