@@ -1,10 +1,13 @@
 import models.UserProfileData
+import play.api.mvc.Handler
 import play.Application
 import play.GlobalSettings
 import play.Logger
 import org.springframework.context.support.ClassPathXmlApplicationContext
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import play.api._
+import play.api.mvc._
+import play.mvc.Http
 
 // Java2Scala
 // http://javatoscala.com/
@@ -42,6 +45,10 @@ class Global extends GlobalSettings {
     ctx.stop()
     //ctx.close() - May or may not be needed
   }
+
+//  override def onRouteRequest(request: play.mvc.Http.RequestHeader): Option[Handler] = {
+//    Some(super.onRouteRequest(NormalizedRequest(request)))
+//  }
 
   /**
    * Controllers must be resolved through the application context. There is a special method of GlobalSettings
