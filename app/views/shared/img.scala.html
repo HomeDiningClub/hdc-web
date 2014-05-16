@@ -1,4 +1,5 @@
 @(path: String, width: Option[Int], height: Option[Int], alt: String = "", title: String = "", cssClass: String = "")
 @import play.api.Play.resource
 @import play.api.Play.current
-<img src="@routes.Assets.at(path)" class="@cssClass" border="0" @{if(width.isDefined){ "width=\"@width\"" }} @{if(height.isDefined){ "height=\"@height\"" }} alt="@alt" title="@title">
+
+@if(resource("public/" + path).isDefined) {<img src="@routes.Assets.at(path)" class="@cssClass" border="0" @{if(width.isDefined){ "width=\"@width\"" }} @{if(height.isDefined){ "height=\"@height\"" }} alt="@alt" title="@title">}
