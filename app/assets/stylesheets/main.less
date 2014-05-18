@@ -67,6 +67,12 @@ img
   padding: 0px;
 }
 
+.row .no-gutter,
+{
+  padding-left:0px;
+  padding-right:0px;
+}
+
 // General margins
 .margin-top
 {
@@ -117,7 +123,7 @@ input[type="reset"]:hover
 {
   background-image: linear-gradient(to bottom, lighten(@hdc-green, 5%) 0px, darken(@hdc-green, 15%) 100%);
   background-color: lighten(@hdc-green, 10%);
-  border-color:1px solid  darken(@hdc-green, 20%);
+  border-color:darken(@hdc-green, 20%);
 }
 
 
@@ -230,6 +236,80 @@ input[type="reset"]:hover
 {
   color:#fff;
 }
+
+// Startpage Boxes
+.panel-startpage
+{
+  display: inline-block;
+  overflow: visible;
+  min-width:275px;
+  border:1px solid #eee;
+  border-radius: 10px;
+  background-color: #efefef;
+  //margin:15px 15px 0px 0px;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  padding-top: 160px;
+}
+.panel-startpage.col-md-6
+{
+//  margin:15px 15px 0px 0px;
+//  width:31.6%; /* non-css3 fallback */
+//  width: calc( 33.33333333% - 15px ); /* css3 calculation */
+}
+.panel-startpage .host-image
+{
+  position: absolute;
+  display: block;
+  z-index:100;
+  right:-10px;
+  top:-10px;
+  border:2px solid #ddd;
+}
+.panel-startpage .body
+{
+  background-color: #efefef;
+  padding:15px;
+  margin:-15px;
+}
+.panel-startpage h2
+{
+  margin:0px;
+  font-size:1em;
+}
+.panel-startpage hr
+{
+  margin-top:5px;
+  margin-bottom:5px;
+  display: block;
+  height: 1px;
+  border: none;
+  color: #999; //old IE
+  background-color: #999; //Modern Browsers
+}
+.panel-startpage .location
+{
+  font-size:0.9em;
+  display: block;
+  clear: both;
+}
+.panel-startpage .btn-primary
+{
+  display: block;
+  margin-bottom:15px;
+  clear: both;
+}
+.panel-startpage .btn-primary:hover
+{
+  text-decoration: none;
+}
+
+
+
+
+
+
+
 
 // Responsive
 @media screen and (max-width: 768px) {
