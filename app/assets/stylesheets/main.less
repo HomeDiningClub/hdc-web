@@ -1,5 +1,11 @@
+// Import statements
+@import "animate.less";
+
 // Variables
 @hdc-green: #6fc2b5;
+@hdc-green-r: 111;
+@hdc-green-g: 194;
+@hdc-green-b: 181;
 
 @text-color: #666;
 @header-color: @hdc-green;
@@ -14,6 +20,8 @@
 @input-button-bg-color: @hdc-green;
 @input-button-border-color: #264540;
 @input-button-text-color: #fff;
+
+
 
 // General tags
 html{
@@ -37,6 +45,14 @@ h1,h2,h3,h4,h5,h6{
   font-weight:bold;
 }
 
+h1{
+  font-size:26px;
+}
+h2{
+  font-size:20px;
+}
+
+
 // General links
 a{
   text-decoration:none;
@@ -46,11 +62,6 @@ a{
 a:hover{
   text-decoration:underline;
   color: @link-color-hover;
-}
-
-label{
-  color: @label-color;
-  clear:both;
 }
 
 div{
@@ -86,16 +97,24 @@ img
 
 // Forms
 input[type="text"],
-input[type="file"]
+input[type="file"],
+input[type="email"]
 {
+  padding:5px 10px 5px 10px;
+  margin-bottom:1em;
   border:1px solid @input-border-color;
 }
-input[type="submit"],
-button,
-input[type="reset"]
-{
-}
+//input[type="submit"],
+//button,
+//input[type="reset"]
+//{
+//}
 
+label{
+  color: @label-color;
+  clear:both;
+  display: block;
+}
 
 
 // Buttons
@@ -148,6 +167,7 @@ input[type="reset"]:hover
 .header-navigation
 {
   max-height: 37px;
+  height: 37px;
   background-image: url("/assets/images/general/bg-menu-gray-transparent.png");
   background-repeat: repeat-x;
 }
@@ -211,6 +231,7 @@ input[type="reset"]:hover
   min-height: 283px;
   width:100%;
 }
+
 .carousel-control.right,
 {
   background-image: linear-gradient(to right, transparent 0px, rgba(0, 0, 0, 0.2) 100%);
@@ -231,6 +252,35 @@ input[type="reset"]:hover
 {
   bottom: 0px;
 }
+.carousel-caption.green-bg
+{
+  background-color: rgba(@hdc-green-r,@hdc-green-g,@hdc-green-b,0.5);
+  border: 1px solid white;
+}
+.carousel-caption {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  bottom:35px;
+}
+.carousel-caption.right-align
+{
+  right:15%;
+  top:25%;
+  left:auto;
+  bottom:auto;
+  padding: 15px;
+  text-align: right;
+}
+.carousel-caption.left-align
+{
+  left:15%;
+  top:25%;
+  right:auto;
+  bottom:auto;
+  padding: 15px;
+  text-align: left;
+}
+
 .carousel-caption h3,
 .carousel-caption h2
 {
@@ -246,7 +296,7 @@ input[type="reset"]:hover
   border:1px solid #eee;
   border-radius: 10px;
   background-color: #efefef;
-  //margin:15px 15px 0px 0px;
+  margin-top:15px;
   background-repeat: no-repeat;
   background-size: 100%;
   padding-top: 160px;
@@ -270,7 +320,6 @@ input[type="reset"]:hover
 {
   background-color: #efefef;
   padding:15px;
-  margin:-15px;
 }
 .panel-startpage h2
 {
@@ -306,9 +355,25 @@ input[type="reset"]:hover
 
 
 
-
-
-
+// Campaign
+.newsletter #mc_embed_signup
+{
+  //padding:15px 0px 15px 0px;
+  min-width:100%;
+}
+.newsletter #mc_embed_signup input
+{
+  width:100%;
+}
+.newsletter .facebook
+{
+  width:50px;
+}
+.newsletter .header-img
+{
+  margin-top: 15px;
+  width:100%;
+}
 
 
 // Responsive

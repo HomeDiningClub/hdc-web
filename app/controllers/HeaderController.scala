@@ -7,7 +7,7 @@ object HeaderController extends Controller{
   val menuItemsList = Seq[(String,String,Call,String)](
     ("Start page", "Start page title", routes.StartPageController.index, ""),
     ("Files", "Files title", routes.FileController.index, ""),
-    ("Worlds", "Worlds title", routes.WorldController.index, ""),
+    ("About us", "About us", routes.AboutUsController.index, ""),
     ("Login", "Login", securesocial.controllers.routes.LoginPage.login, ""),
     ("Campaign page", "Campaign title", routes.CampaignController.index, "")
   )

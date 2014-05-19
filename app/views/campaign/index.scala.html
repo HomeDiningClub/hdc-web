@@ -1,12 +1,25 @@
 
 @main(Messages("campaign.title"), headerVisible = false, footerVisible = false) {
 
-    <div class="container-fluid">
+    <div class="container-fluid newsletter">
         <div class="row-fluid">
-            <div class="col-md-offset-3 col-md-6 col-xs-offset-1 col-xs-10">
-                <h1>@Messages("campaign.header")</h1>
-                <div>@Messages("campaign.preamble")</div>
-                @campaign.newsletterform()
+            <div class="col-xs-12 col-md-10 col-md-offset-2 col-xs-offset-0">
+                @shared.img("images/campaign/campaign_header.jpg", None, None, cssClass = "header-img")
+                <div class="row">
+                <div class="col-md-6 col-xm-12">
+                    <h1>@Messages("campaign.header")</h1>
+                    <p>@Messages("campaign.preamble")</p>
+                    <a class="widget-image-link" href="https://www.facebook.com/homediningclub" target="_parent">
+                        @shared.img("images/campaign/facebook.jpg", None, None, cssClass = "facebook")
+                    </a>
+                </div>
+                <div class="col-md-4 col-xm-12">
+                    <h2>@Messages("campaign.form.header")</h2>
+                    <hr>
+                    @campaign.newsletterform()
+                    <hr>
+                </div>
+                </div>
             </div>
         </div>
     </div>

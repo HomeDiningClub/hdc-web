@@ -26,13 +26,17 @@
                     </div>
                 </div>
             </div>
-            <nav>
-                <ul class="nav nav-pills collapse navbar-collapse bs-navbar-collapse header-navigation">
-                    @for(nav <- menuItems) {
-                        <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
-                    }
-                </ul>
-            </nav>
+            <div class="row-fluid header-navigation hidden-xs bs-navbar-collapse">
+                <nav>
+                    <div class="col-xs-12 col-md-8 col-md-offset-2 col-xs-offset-0">
+                        <ul class="nav nav-pills collapse navbar-collapse  ">
+                            @for(nav <- menuItems) {
+                                <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
+                            }
+                        </ul>
+                    </div>
+                </nav>
+            </div>
         </div>
     </div>
     <div class="header-spacing"><!-- no content --></div>
