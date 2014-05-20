@@ -16,13 +16,13 @@ object HeaderController extends Controller{
     views.html.header.header(menuItemsList)
   }
 
-/*
-  private def selectedOrNot(reqUri: String, menuUri: String): String = {
-    if(reqUri == menuUri)
-      "active"
-    else
-      ""
-  }
-*/
+  /*
+    private def selectedOrNot(reqUri: String, menuUri: String): String = {
+      if(reqUri == menuUri)
+        "active"
+      else
+        ""
+    }
+  */
 
 }
