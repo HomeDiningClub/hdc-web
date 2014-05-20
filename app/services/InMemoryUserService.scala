@@ -16,19 +16,22 @@
  */
 package services
 
-import play.api.Logger
+import play.api.{Logger, Application}
 import securesocial.core._
 import securesocial.core.providers.Token
 import securesocial.core.IdentityId
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import repositories.UserProfileRepository
-import org.springframework.stereotype.{Component, Service}
-import play.api.Play.current
-import play.api.Application
-import org.springframework.context.annotation.Lazy
 
-class InMemoryUserService(application: Application) extends UserServicePlugin (application) {
+
+/**
+ * A Sample In Memory user service in Scala
+ *
+ * IMPORTANT: This is just a sample and not suitable for a production environment since
+ * it stores everything in memory.
+ */
+class InMemoryUserService(application: Application) extends UserServicePlugin(application) {
 
   @Autowired
   private var template: Neo4jTemplate = _
@@ -36,12 +39,12 @@ class InMemoryUserService(application: Application) extends UserServicePlugin (a
   @Autowired
   private var userRepository: UserProfileRepository = _
 
-
   val logger = Logger("application.controllers.InMemoryUserService")
 
   // a simple User class that can have multiple identities
   case class User(id: String, identities: List[Identity])
 
+  //
   var users = Map[String, User]()
   //private var identities = Map[String, Identity]()
   private var tokens = Map[String, Token]()

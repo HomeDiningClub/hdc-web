@@ -1,11 +1,5 @@
-// Import statements
-@import "animate.less";
-
 // Variables
 @hdc-green: #6fc2b5;
-@hdc-green-r: 111;
-@hdc-green-g: 194;
-@hdc-green-b: 181;
 
 @text-color: #666;
 @header-color: @hdc-green;
@@ -20,8 +14,6 @@
 @input-button-bg-color: @hdc-green;
 @input-button-border-color: #264540;
 @input-button-text-color: #fff;
-
-
 
 // General tags
 html{
@@ -45,14 +37,6 @@ h1,h2,h3,h4,h5,h6{
   font-weight:bold;
 }
 
-h1{
-  font-size:26px;
-}
-h2{
-  font-size:20px;
-}
-
-
 // General links
 a{
   text-decoration:none;
@@ -62,6 +46,11 @@ a{
 a:hover{
   text-decoration:underline;
   color: @link-color-hover;
+}
+
+label{
+  color: @label-color;
+  clear:both;
 }
 
 div{
@@ -78,12 +67,6 @@ img
   padding: 0px;
 }
 
-.row .no-gutter,
-{
-  padding-left:0px;
-  padding-right:0px;
-}
-
 // General margins
 .margin-top
 {
@@ -97,24 +80,16 @@ img
 
 // Forms
 input[type="text"],
-input[type="file"],
-input[type="email"]
+input[type="file"]
 {
-  padding:5px 10px 5px 10px;
-  margin-bottom:1em;
   border:1px solid @input-border-color;
 }
-//input[type="submit"],
-//button,
-//input[type="reset"]
-//{
-//}
-
-label{
-  color: @label-color;
-  clear:both;
-  display: block;
+input[type="submit"],
+button,
+input[type="reset"]
+{
 }
+
 
 
 // Buttons
@@ -142,7 +117,7 @@ input[type="reset"]:hover
 {
   background-image: linear-gradient(to bottom, lighten(@hdc-green, 5%) 0px, darken(@hdc-green, 15%) 100%);
   background-color: lighten(@hdc-green, 10%);
-  border-color:darken(@hdc-green, 20%);
+  border-color:1px solid  darken(@hdc-green, 20%);
 }
 
 
@@ -168,8 +143,9 @@ input[type="reset"]:hover
 {
   max-height: 37px;
   height: 37px;
-  background-image: url("/assets/images/general/bg-menu-gray-transparent.png");
-  background-repeat: repeat-x;
+  background-color: rgba(0,0,0,0.2);
+  /*background-image: url("/assets/images/general/bg-menu-gray-transparent.png");*/
+  /*background-repeat: repeat-x;*/
 }
 .nav-pills
 {
@@ -231,7 +207,6 @@ input[type="reset"]:hover
   min-height: 283px;
   width:100%;
 }
-
 .carousel-control.right,
 {
   background-image: linear-gradient(to right, transparent 0px, rgba(0, 0, 0, 0.2) 100%);
@@ -252,129 +227,11 @@ input[type="reset"]:hover
 {
   bottom: 0px;
 }
-.carousel-caption.green-bg
-{
-  background-color: rgba(@hdc-green-r,@hdc-green-g,@hdc-green-b,0.5);
-  border: 1px solid white;
-}
-.carousel-caption {
-  padding-top: 15px;
-  padding-bottom: 15px;
-  bottom:35px;
-}
-.carousel-caption.right-align
-{
-  right:15%;
-  top:25%;
-  left:auto;
-  bottom:auto;
-  padding: 15px;
-  text-align: right;
-}
-.carousel-caption.left-align
-{
-  left:15%;
-  top:25%;
-  right:auto;
-  bottom:auto;
-  padding: 15px;
-  text-align: left;
-}
-
 .carousel-caption h3,
 .carousel-caption h2
 {
   color:#fff;
 }
-
-// Startpage Boxes
-.panel-startpage
-{
-  display: inline-block;
-  overflow: visible;
-  min-width:275px;
-  border:1px solid #eee;
-  border-radius: 10px;
-  background-color: #efefef;
-  margin-top:15px;
-  background-repeat: no-repeat;
-  background-size: 100%;
-  padding-top: 160px;
-}
-.panel-startpage.col-md-6
-{
-//  margin:15px 15px 0px 0px;
-//  width:31.6%; /* non-css3 fallback */
-//  width: calc( 33.33333333% - 15px ); /* css3 calculation */
-}
-.panel-startpage .host-image
-{
-  position: absolute;
-  display: block;
-  z-index:100;
-  right:-10px;
-  top:-10px;
-  border:2px solid #ddd;
-}
-.panel-startpage .body
-{
-  background-color: #efefef;
-  padding:15px;
-}
-.panel-startpage h2
-{
-  margin:0px;
-  font-size:1em;
-}
-.panel-startpage hr
-{
-  margin-top:5px;
-  margin-bottom:5px;
-  display: block;
-  height: 1px;
-  border: none;
-  color: #999; //old IE
-  background-color: #999; //Modern Browsers
-}
-.panel-startpage .location
-{
-  font-size:0.9em;
-  display: block;
-  clear: both;
-}
-.panel-startpage .btn-primary
-{
-  display: block;
-  margin-bottom:15px;
-  clear: both;
-}
-.panel-startpage .btn-primary:hover
-{
-  text-decoration: none;
-}
-
-
-
-// Campaign
-.newsletter #mc_embed_signup
-{
-  //padding:15px 0px 15px 0px;
-  min-width:100%;
-}
-.newsletter #mc_embed_signup input
-{
-  width:100%;
-}
-.newsletter .facebook
-{
-  width:50px;
-}
-.newsletter .header-img
-{
-  margin-top: 15px;
-  width:100%;
-}
-
 
 // Responsive
 @media screen and (max-width: 768px) {
