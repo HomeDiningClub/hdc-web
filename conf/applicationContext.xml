@@ -62,10 +62,11 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
                 <bean id="PlayApplication" class="play.api.Application"/>
             </constructor-arg>
         </bean>
-    
-        <bean id="InMemoryUserService" class="services.InMemoryUserService">
-            <constructor-arg name="application" ref="application" />
+    -->
+    <!--
+        <bean id="InMemoryUserService" class="services.InMemoryUserService" lazy-init="true">
+            <constructor-arg name="application" ref="PlayApplicationImpl" />
         </bean>
-        <bean id="application" class="play.api.Application" />
+        <bean id="PlayApplicationImpl" class="beans.PlayApplicationImpl" lazy-init="true" />
     -->
 </beans>

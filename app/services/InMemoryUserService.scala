@@ -23,21 +23,20 @@ import securesocial.core.IdentityId
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import repositories.UserProfileRepository
+import org.springframework.stereotype.Service
 
-
-/**
- * A Sample In Memory user service in Scala
- *
- * IMPORTANT: This is just a sample and not suitable for a production environment since
- * it stores everything in memory.
- */
-class InMemoryUserService(application: Application) extends UserServicePlugin(application) {
+@Service
+object InMemoryUserService {
 
   @Autowired
   private var template: Neo4jTemplate = _
 
   @Autowired
   private var userRepository: UserProfileRepository = _
+
+}
+
+class InMemoryUserService(application: Application) extends UserServicePlugin(application) {
 
   val logger = Logger("application.controllers.InMemoryUserService")
 
@@ -54,8 +53,9 @@ class InMemoryUserService(application: Application) extends UserServicePlugin(ap
       logger.debug("users = %s".format(users))
     }
 
+
     // Get from DB
-    val userFromDB = userRepository.getUserProfilesByIdentityId(id)
+    val userFromDB = InMemoryUserService.userRepository.getUserProfilesByIdentityId(id)
 
 //    val result = for (
 //      user <- users.values ;
