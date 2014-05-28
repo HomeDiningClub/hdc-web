@@ -11,7 +11,7 @@
 @header-color: @hdc-green;
 @header-background-color: #fff;
 @maincontent-background-color: #fff;
-@footer-background-color: #fff;
+@footer-background-color: @hdc-green;
 @footer-border-color: @hdc-green;
 @link-color: #428bca;
 @link-color-hover: darken(@link-color, 10%);
@@ -212,8 +212,18 @@ input[type="reset"]:hover
 .footer-container
 {
   margin-top:2em;
+  padding-bottom:2em;
   background-color: @footer-background-color;
   border-top:1px solid @footer-border-color;
+}
+.footer-container a,
+.footer-container a:visited
+{
+  color:#fff;
+}
+.footer-container a:active
+{
+  color:#ddd;
 }
 
 // Main content
@@ -301,7 +311,7 @@ input[type="reset"]:hover
 {
   display: inline-block;
   overflow: visible;
-  min-width:275px;
+  min-width:200px;
   border:1px solid #eee;
   border-radius: 10px;
   background-color: #efefef;
@@ -309,6 +319,7 @@ input[type="reset"]:hover
   background-repeat: no-repeat;
   background-size: 100%;
   padding-top: 160px;
+  margin-right:15px;
 }
 .panel-startpage.col-md-6
 {
