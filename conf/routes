@@ -24,6 +24,8 @@ POST        /profile/spara                 @controllers.UserProfileController.sa
 GET         /profile/ny                    @controllers.UserProfileController.skapaNyProfil
 GET         /profile/find/:userName        @controllers.UserProfileController.hamtaProfil(userName)
 
+# Host
+GET         /host                          @controllers.HostController.index
 
 
 # Worlds example

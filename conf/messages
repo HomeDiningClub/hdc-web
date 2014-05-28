@@ -24,9 +24,19 @@ campaign.newsletterform.emailplaceholder=e-post address
 campaign.newsletterform.button.send=Skicka
 
 
+rating.1=Undermåligt
+rating.2=Skäligt
+rating.3=Bra
+rating.4=Utmärkt
+rating.5=Superbt
+
+
 validation.required.se = Ett värde för %s måste anges
 
 file.title=Ladda upp filer
 file.upload.header=Ladda upp dina bilder
 file.filelist.header=Dina filer
 file.button.upload=Ladda upp
+
+host.title=Profil
+host.rating-text=stjärnor

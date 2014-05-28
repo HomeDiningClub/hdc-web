@@ -1,0 +1,47 @@
+@(menuItems: Seq[(String, String, Call, String)])
+
+@main(Messages("host.title")) {
+
+    <div class="container-fluid host-container">
+        <div class="row-fluid">
+            <div class="col-xs-12 col-md-10 col-md-offset-1 col-xs-offset-0">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <header>
+                        <h1>ALEXANDRA</h1>
+                        @shared.img("images/startpage/host-head-default.jpg", None, None, cssClass="img-circle host-image")
+                        </header>
+                    </div>
+                    <div class="col-xs-12 col-md-6">
+                        <section>
+                            <article>
+                                <h2>Alexandra</h2>
+                                <h3>Art Director och entreprenör</h3>
+                                <div class="grade"><input id="input-id" type="number" class="rating" min="0" max="5" step="1" data-readonly="false" data-default-caption="{rating} @Messages("host.rating-text")" data-starcaptions="{1:'@Messages("rating.1")',2:'@Messages("rating.2")',3:'@Messages("rating.3")',4:'@Messages("rating.4")',5:'@Messages("rating.5")'}" data-size="xs"></div>
+                                <div class="memberid"><p>MedlemsID: HDC02</p></div>
+                                <div class="breadtext">
+                                    Lagat mat sedan 5-årsåldern, sida vid sida med min duktiga (och tålmodiga) hobby-kock-mamma - vilket gjorde att jag som tonåring kunde laga många klassiska husmansrätter (kåldolmar, kroppkakor, porterstek) och gärna experimenterade med egna skapelser.
+                                    Tankar fanns på en kockkarriär, men det blev annat kreativt yrke istället - men står gärna i köket med/för nära och kära.
+                                </div>
+                            </article>
+                        </section>
+                    </div>
+                    <div class="col-xs-12 col-md-6">
+                        @shared.img("images/host/image1.jpg", None, None)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-md-11">
+                        <nav>
+                            <ul class="nav nav-tabs">
+                            @for(nav <- menuItems) {
+                                <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
+                            }
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
