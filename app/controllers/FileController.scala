@@ -35,8 +35,8 @@ class FileController extends Controller {
     //Ok(views.html.file.index(futList))
   //}
 
-  def listAllFiles = Action{
-    val futList: Option[List[String]] = Some(fileService.listAllFilesRawFromS3())
+  def listAllFiles(prefix: String = "") = Action{
+    val futList: Option[List[String]] = Some(fileService.listFilesRawFromS3(prefix))
     Ok(views.html.file.index(futList))
   }
 

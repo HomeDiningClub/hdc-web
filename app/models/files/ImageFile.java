@@ -5,7 +5,6 @@ import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 @NodeEntity
-@TypeAlias("ImageFile")
 public class ImageFile extends ContentFile{
 
     @Transient

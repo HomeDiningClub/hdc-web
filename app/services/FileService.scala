@@ -15,6 +15,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.util.{Success, Failure}
+import java.util.UUID
 
 @Service
 class FileService {
@@ -25,11 +26,18 @@ class FileService {
   private lazy val bucketStore: String = Play.application.configuration.getString("aws.s3bucket")
   lazy val S3Bucket = S3(bucketStore)
 
-  def listAllFilesRawFromS3(): List[String] = {
-    val result = Await.result(S3Bucket.list, 10 seconds)
+  def listFilesRawFromS3(prefix: String = ""): List[String] = {
+    val result = Await.result(S3Bucket.list(prefix), 10 seconds)
     val returnRes: List[String] = result.map(item => item.name).toList
     returnRes
   }
+
+  // Accepts Unique ID, returns url of db node
+  def getFileUrlByKey(key: UUID): String = {
+    val dbRes = fileRepository.findAllBySchemaPropertyValue("key",key).single()
+    dbRes.url
+  }
+
 
   // Accepts ImageFile, ContentFile
   //def getFilesOfType[T](): List[T] = {
@@ -39,28 +47,32 @@ class FileService {
     //returnRes
   //}
 
-
-  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile]): ContentFile = {
+  // Uploads a file
+  // Return URL of file if successful
+  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile]): String = {
     val contentType = file.contentType.toString
     val filename = play.utils.UriEncoding.encodePathSegment(file.filename, "UTF-8").toLowerCase.replace("+", "-") // TODO - Improve file names
     var newFile: ContentFile = new ImageFile(filename)
+    val fileUrl = newFile.bucketDir + newFile.key
+    newFile.url = fileUrl
+    //newFile.OwnedBy = TODO: Add user connecting using SecureSocial
+    val newFileResults = newFile
 
-    val uploadedFile: BucketFile = BucketFile(newFile.bucketDir + newFile.key, contentType, FileUtils.readAllBytes(file.ref.file))
+    val uploadedFile: BucketFile = BucketFile(fileUrl, contentType, FileUtils.readAllBytes(file.ref.file))
     val result = S3Bucket.add(uploadedFile)
 
     result.map {
-      unit =>
-        Logger.info("Uploaded and saved file: " + newFile.bucketDir + newFile.key)
-        saveToDB(newFile)
-        newFile
+      unitResponse =>
+        Logger.info("Uploaded and saved file: " + fileUrl)
+        saveToDB(newFileResults)
+        newFile.url
     }
     .recover {
       case S3Exception(status, code, message, originalXml) => Logger.error("Error: " + message)
       case _ => Logger.error("Error: Cannot upload image.")
     }
 
-    newFile = null
-    newFile
+    ""
   }
 
   def deleteFile(fileToDelete: ContentFile) {
