@@ -30,12 +30,15 @@ class FileController extends Controller {
       Ok(views.html.file.index())
   }
 
-  //def listAllImages = Action{
-    //val futList: Option[List[String]] = Some(fileService.getFilesOfType[ImageFile]())
-    //Ok(views.html.file.index(futList))
-  //}
+  def listAllImages = Action{
+    val imagesList = fileService.getFilesOfType[ImageFile]()
+    val stringList = imagesList.foldLeft(List[String]()){ (o, i) =>
+      o :+ i.name
+    }
+    Ok(views.html.file.index(Some(stringList)))
+  }
 
-  def listAllFiles(prefix: String = "") = Action{
+  def listS3Files(prefix: String = "") = Action{
     val futList: Option[List[String]] = Some(fileService.listFilesRawFromS3(prefix))
     Ok(views.html.file.index(futList))
   }

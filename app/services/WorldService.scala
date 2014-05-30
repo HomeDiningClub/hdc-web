@@ -11,7 +11,6 @@ import repositories.WorldRepository
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConverters._
 import scala.List
-import scala.language.implicitConversions
 import models.relationships.RelationshipTypes
 import org.springframework.transaction.annotation.Transactional
 

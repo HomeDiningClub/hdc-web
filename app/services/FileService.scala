@@ -16,6 +16,9 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.util.{Success, Failure}
 import java.util.UUID
+import org.neo4j.helpers.collection.IteratorUtil
+import scala.collection.JavaConverters._
+import play.api.libs.MimeTypes
 
 @Service
 class FileService {
@@ -40,39 +43,63 @@ class FileService {
 
 
   // Accepts ImageFile, ContentFile
-  //def getFilesOfType[T](): List[T] = {
-    //val dbRes = fileRepository.findAllBySchemaPropertyValue.as(ImageFile)
+  def getFilesOfType[T](): List[T] = {
+    val dbRes = IteratorUtil.asCollection(fileRepository.findAllBySchemaPropertyValue("ImageFile", "")).asScala.toList.asInstanceOf[List[T]]
     //val result = Await.result(S3Bucket.list, 10 seconds)
     //val returnRes: List[String] = result.map(item => item.name).toList
-    //returnRes
-  //}
+    dbRes
+  }
 
   // Uploads a file
   // Return URL of file if successful
   def uploadFile(file: MultipartFormData.FilePart[TemporaryFile]): String = {
-    val contentType = file.contentType.toString
-    val filename = play.utils.UriEncoding.encodePathSegment(file.filename, "UTF-8").toLowerCase.replace("+", "-") // TODO - Improve file names
-    var newFile: ContentFile = new ImageFile(filename)
-    val fileUrl = newFile.bucketDir + newFile.key
-    newFile.url = fileUrl
-    //newFile.OwnedBy = TODO: Add user connecting using SecureSocial
-    val newFileResults = newFile
+    val fileName = play.utils.UriEncoding.encodePathSegment(file.filename, "UTF-8").toLowerCase.replace("+", "-") // TODO - Improve file names
 
-    val uploadedFile: BucketFile = BucketFile(fileUrl, contentType, FileUtils.readAllBytes(file.ref.file))
-    val result = S3Bucket.add(uploadedFile)
-
-    result.map {
-      unitResponse =>
-        Logger.info("Uploaded and saved file: " + fileUrl)
-        saveToDB(newFileResults)
-        newFile.url
-    }
-    .recover {
-      case S3Exception(status, code, message, originalXml) => Logger.error("Error: " + message)
-      case _ => Logger.error("Error: Cannot upload image.")
+    // Check Mime-types
+    // From actual file
+    val contentType = file.contentType match {
+      case Some(contentType) => contentType
+      case None => ""
     }
 
-    ""
+    // As given by the filename
+    val fileExtensionMimeType = MimeTypes.forFileName(fileName)
+
+    // If they match set the file ending, else abort upload
+    if (!file.contentType.equals(fileExtensionMimeType)) {
+
+      Logger.error("Error: File has invalid mime-type compared to file ending, aborting.")
+      return ""
+
+    } else {
+
+      val fileExtension = fileName.split('.').drop(1).lastOption match {
+        case Some(fileExt) => fileExt
+        case None => ""
+      }
+      val newFile: ImageFile = new ImageFile(fileName,fileExtension,contentType)
+      val fileUrl = newFile.bucketDir + newFile.key
+
+      //newFile.OwnedBy = TODO: Add user connecting using SecureSocial
+      //newFile.url = fileUrl
+      //val newFileResults = newFile
+
+      val uploadedFile: BucketFile = BucketFile(fileUrl, contentType, FileUtils.readAllBytes(file.ref.file))
+      val result = S3Bucket.add(uploadedFile)
+
+      result.map {
+        unitResponse =>
+          Logger.info("Uploaded and saved file: " + fileUrl)
+          saveToDB(newFile)
+          newFile.url
+      }
+        .recover {
+        case S3Exception(status, code, message, originalXml) => Logger.error("Error: " + message)
+        case _ => Logger.error("Error: Cannot upload image.")
+      }
+
+      ""
+    }
   }
 
   def deleteFile(fileToDelete: ContentFile) {

@@ -1,23 +1,22 @@
 package models.files;
 
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 @NodeEntity
-public class ImageFile extends ContentFile{
+public class VideoFile extends ContentFile{
 
     @Transient
-    private String bucketStoreDir = "images/";
+    private String bucketStoreDir = "videos/";
 
-    public ImageFile(String name, String extension, String contentType){
+    public VideoFile(String name, String extension, String contentType){
         this.name = name;
         this.bucketDir = bucketStoreDir;
         this.contentType = contentType;
         this.extension = extension;
     }
 
-    public ImageFile(){
+    public VideoFile(){
         this.bucketDir = bucketStoreDir;
     }
 }

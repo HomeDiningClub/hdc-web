@@ -14,23 +14,22 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 @NodeEntity
-public class ContentFile extends AbstractEntity {
+public abstract class ContentFile extends AbstractEntity {
 
     @Transient
     private String bucketStoreDir = "generic/";
-
-    //@Indexed(unique = false)
     public String name;
-
-    //@Indexed(unique = true)
+    public String extension;
     public UUID key;
+    public String bucketDir;
+    public String contentType;
 
     @Fetch
     @RelatedTo(type = "OWNED_BY", direction = Direction.OUTGOING) // TODO - Improve enum
     public Set<UserProfileData> OwnedBy;
 
-    public String url;
-    public String bucketDir;
+    @Transient
+    public String url = bucketDir + key;
 
     protected ContentFile() {
         this.key = UUID.randomUUID();

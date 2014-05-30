@@ -35,8 +35,9 @@ GET         /worlds                        @controllers.WorldController.index
 
 # Files
 GET         /file                          @controllers.FileController.index
-GET         /file/list                     @controllers.FileController.listAllFiles(prefix = "")
-GET         /file/list/:prefix             @controllers.FileController.listAllFiles(prefix)
+GET         /file/listS3                   @controllers.FileController.listS3Files(prefix = "")
+GET         /file/listS3/:prefix           @controllers.FileController.listS3Files(prefix)
+GET         /file/list/images              @controllers.FileController.listAllImages
 POST        /file/add                      @controllers.FileController.add
 #POST        /file/delete                 controllers.WorldController.delete
 
