@@ -20,26 +20,28 @@ import play.api.{Logger, Application}
 import securesocial.core._
 import securesocial.core.providers.Token
 import securesocial.core.IdentityId
-import org.springframework.data.neo4j.support.Neo4jTemplate
-import org.springframework.beans.factory.annotation.Autowired
-import repositories.UserProfileRepository
 import org.springframework.stereotype.Service
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.neo4j.support.Neo4jTemplate
+import repositories.UserProfileRepository
+
+
+/**
+ * A Sample In Memory user service in Scala
+ *
+ * IMPORTANT: This is just a sample and not suitable for a production environment since
+ * it stores everything in memory.
+ */
+
 
 @Service
-object InMemoryUserService {
-
-  @Autowired
-  private var template: Neo4jTemplate = _
-
-  @Autowired
-  private var userRepository: UserProfileRepository = _
+object MemoryUserService {
 
 }
 
-class InMemoryUserService(application: Application) extends UserServicePlugin(application) {
 
-  val logger = Logger("application.controllers.InMemoryUserService")
-
+class MemoryUserService(application: Application) extends UserServicePlugin(application) {
+  val logger = Logger("application.controllers.MemoryUserService")
   // a simple User class that can have multiple identities
   case class User(id: String, identities: List[Identity])
 
@@ -52,37 +54,13 @@ class InMemoryUserService(application: Application) extends UserServicePlugin(ap
     if ( logger.isDebugEnabled ) {
       logger.debug("users = %s".format(users))
     }
-
-
-    println("providerid: " + id.providerId)
-    println("user: " + id.userId)
-
-    // Get from DB
-    val userFromDB = InMemoryUserService.userRepository.getUserProfilesByIdentityId(id)
-
-//    val result = for (
-//      user <- users.values ;
-//      identity <- user.identities.find(_.identityId == id)
-//    ) yield {
-//      identity
-//    }
-    //result.headOption
-
-    // Convert to correct type
-    val secUser: Option[Identity] = Some(new Identity {
-      override def firstName: String = userFromDB.firstName
-      override def lastName: String = userFromDB.firstName
-      override def fullName: String = userFromDB.identity.fullName
-      override def oAuth1Info: Option[OAuth1Info] = None
-      override def oAuth2Info: Option[OAuth2Info] = None
-      override def avatarUrl: Option[String] = None
-      override def passwordInfo: Option[PasswordInfo] = None
-      override def authMethod: AuthenticationMethod = userFromDB.identity.authMethod
-      override def email: Option[String] = Some(userFromDB.emailAddress)
-      override def identityId: IdentityId = userFromDB.identity.identityId
-    })
-
-    secUser
+    val result = for (
+      user <- users.values ;
+      identity <- user.identities.find(_.identityId == id)
+    ) yield {
+      identity
+    }
+    result.headOption
   }
 
   def findByEmailAndProvider(email: String, providerId: String): Option[Identity] = {

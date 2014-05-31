@@ -13,6 +13,11 @@ import play.data.Form
 import play.api.data._
 import play.api.data.Forms._
 import models.UserCredential
+import securesocial.core.providers.utils.BCryptPasswordHasher
+import play.core.SourceMapper
+import play.api.Mode.Mode
+import java.io.File
+import securesocial.core.PasswordInfo
 
 /*
 *
@@ -36,10 +41,10 @@ import models.UserCredential
 
 @SpringController
 class UserCredentialController extends Controller {
-
+/*
   @Autowired
   var userCredentialService: UserCredentialService = _
-
+*/
 
   def spara = Action {
     var userCredential: UserCredential = new UserCredential()
@@ -52,16 +57,17 @@ class UserCredentialController extends Controller {
     userCredential.firstName = "Fabian"
     //userCredential.fullName = "test test"
     //userCredential.hasher = "test"
-    //userCredential.lastName = "lastname"
+    userCredential.lastName = "lastname"
     //userCredential.oAuth1InfoSecret = "dfdsf"
     userCredential.providerId = "facebook"
 
 
-    userCredentialService.saveUser(userCredential)
+   // userCredentialService.saveUser(userCredential)
     Ok("OK")
   }
 
   def visa = Action {
+    /*
     val list = userCredentialService.getUser("fabian@gmail.com")
 
     for( v <- list) {
@@ -70,6 +76,7 @@ class UserCredentialController extends Controller {
       println("LASTNAME : " + v.lastName)
       println("USERID : " + v.userId)
       println("PROVIDER : " + v.providerId)
+
     }
 
 
@@ -140,7 +147,25 @@ class UserCredentialController extends Controller {
     println("Finns2 : " + fins2._2)
     println("Id2: " + fins2._1)
 
+  */
 
-    Ok("Visa")
+    var app : Application = new Application {override def path: File = ???
+
+      override def plugins: Seq[Plugin] = ???
+
+      override def configuration: Configuration = ???
+
+      override def mode: Mode = ???
+
+      override def classloader: ClassLoader = ???
+
+      override def global: GlobalSettings = ???
+
+      override def sources: Option[SourceMapper] = sources
+    }
+    var b : BCryptPasswordHasher = new BCryptPasswordHasher(app)
+    var p: PasswordInfo  = b.hash("sommar14")
+
+    Ok(p.password)
   }
 }

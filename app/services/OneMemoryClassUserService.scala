@@ -1,45 +1,25 @@
-/**
- * Copyright 2012 Jorge Aliss (jaliss at gmail dot com) - twitter: @jaliss
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
 package services
 
 import play.api.{Logger, Application}
 import securesocial.core._
 import securesocial.core.providers.Token
 import securesocial.core.IdentityId
-import org.springframework.data.neo4j.support.Neo4jTemplate
-import org.springframework.beans.factory.annotation.Autowired
-import repositories.UserProfileRepository
 import org.springframework.stereotype.Service
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.neo4j.support.Neo4jTemplate
+import repositories.UserProfileRepository
+
 
 @Service
-object InMemoryUserService {
-
-  @Autowired
-  private var template: Neo4jTemplate = _
-
-  @Autowired
-  private var userRepository: UserProfileRepository = _
+object OneMemoryClassUserService {
 
 }
 
-class InMemoryUserService(application: Application) extends UserServicePlugin(application) {
 
-  val logger = Logger("application.controllers.InMemoryUserService")
+class OneMemoryClassUserService(application: Application) extends UserServicePlugin(application) {
 
+
+  val logger = Logger("application.controllers.OneMemoryClassUserService")
   // a simple User class that can have multiple identities
   case class User(id: String, identities: List[Identity])
 
@@ -48,55 +28,109 @@ class InMemoryUserService(application: Application) extends UserServicePlugin(ap
   //private var identities = Map[String, Identity]()
   private var tokens = Map[String, Token]()
 
+  var user_identityId_providerId  = ""
+  var user_identityId_userId      = ""
+  var user_firstName              = ""
+  var user_lastName               = ""
+  var user_fullName               = ""
+  var user_authMethod             = ""
+  var user_oAuth1Info_token       = ""
+  var user_oAuth1Info_secret      = ""
+  var oauth2_accessToken          = ""
+  var oauth2_expiresIn            = ""
+  var oauth2_refreshToken         = ""
+  var oauth2_tokenType            = ""
+  var user_avatarUrl              = ""
+  var user_email                  = ""
+  var pinfo_hasher                = ""
+  var pinfo_password              = ""
+  var pinfo_salt                  = ""
+
+
+
   def find(id: IdentityId): Option[Identity] = {
     if ( logger.isDebugEnabled ) {
       logger.debug("users = %s".format(users))
     }
 
 
-    println("providerid: " + id.providerId)
-    println("user: " + id.userId)
+    val result = for (
+      user <- users.values ;
+      identity <- user.identities.find(_.identityId == id)
+    ) yield {
+      identity
+    }
 
-    // Get from DB
-    val userFromDB = InMemoryUserService.userRepository.getUserProfilesByIdentityId(id)
+    if(result.size > 0) {
+      var it = result.head
+      visa(it, "find")
+    }
 
-//    val result = for (
-//      user <- users.values ;
-//      identity <- user.identities.find(_.identityId == id)
-//    ) yield {
-//      identity
-//    }
-    //result.headOption
 
-    // Convert to correct type
-    val secUser: Option[Identity] = Some(new Identity {
-      override def firstName: String = userFromDB.firstName
-      override def lastName: String = userFromDB.firstName
-      override def fullName: String = userFromDB.identity.fullName
-      override def oAuth1Info: Option[OAuth1Info] = None
-      override def oAuth2Info: Option[OAuth2Info] = None
-      override def avatarUrl: Option[String] = None
-      override def passwordInfo: Option[PasswordInfo] = None
-      override def authMethod: AuthenticationMethod = userFromDB.identity.authMethod
-      override def email: Option[String] = Some(userFromDB.emailAddress)
-      override def identityId: IdentityId = userFromDB.identity.identityId
-    })
 
-    secUser
+
+    result.headOption
   }
+
+
+
 
   def findByEmailAndProvider(email: String, providerId: String): Option[Identity] = {
     if ( logger.isDebugEnabled ) {
-      logger.debug("users = %s".format(users))
+      logger.debug("findByEmailAndProvider( : " + email + ", " + providerId + ") ")
+ //     logger.debug("users = %s".format(users))
     }
+
+
     val result = for (
       user <- users.values ;
       identity <- user.identities.find(i => i.identityId.providerId == providerId && i.email.exists(_ == email))
     ) yield {
       identity
     }
+
+    if(result.size > 0) {
+      var it = result.head
+      visa(it, "findByEmailAndProvider")
+    }
+
+
     result.headOption
   }
+
+
+
+
+  def visa(user: Identity, caller: String) {
+
+    println("-------------------------------------------------------------------------------")
+    println("METOD : " + caller)
+    println("-------------------------------------------------------------------------------")
+    printf("\nuserId      : %s", user.identityId.userId)
+    printf("\nproviderId  : %s", user.identityId.providerId)
+    printf("\nfirstName   : %s", user.firstName)
+    printf("\nlastName    : %s", user.lastName)
+    printf("\nfulName     : %s", user.fullName)
+    printf("\nauthMethode : %s", user.authMethod.method)
+    printf("\nauthMethode : %s", user.passwordInfo.get.password)
+    printf("\nhasher      : %s", user.passwordInfo.get.hasher)
+    printf("\nsalt        : %s", user.passwordInfo.get.salt)
+    printf("\nemail       : %s", user.email)
+
+    printf("\noauth2_accessToken        : %s", user.oAuth2Info.getOrElse(""))
+    printf("\noauth2_expiresIn          : %s", user.oAuth2Info.getOrElse(""))
+    printf("\noauth2_refreshToken       : %s", user.oAuth2Info.getOrElse(""))
+    printf("\noauth2_tokenType          : %s", user.oAuth2Info.getOrElse(""))
+
+    printf("\nuser_oAuth1Info_token       : %s", user.oAuth1Info.getOrElse(""))
+    printf("\nuser_oAuth1Info_secret      : %s", user.oAuth1Info.getOrElse(""))
+
+    printf("\nuser_avatarUrl       : %s", user.avatarUrl)
+    println("-------------------------------------------------------------------------------")
+  }
+
+
+
 
   def save(user: Identity): Identity = {
     // first see if there is a user with this Identity already.
@@ -104,6 +138,11 @@ class InMemoryUserService(application: Application) extends UserServicePlugin(ap
       case (key, value) if value.identities.exists(_.identityId == user.identityId ) => true
       case _ => false
     }
+
+
+    visa(user, "save")
+
+
 
     maybeUser match {
       case Some(existingUser) =>
@@ -119,6 +158,10 @@ class InMemoryUserService(application: Application) extends UserServicePlugin(ap
     // actions and event callbacks. The same goes for the find(id: IdentityId) method.
     user
   }
+
+
+
+
 
   def link(current: Identity, to: Identity) {
     val currentId = current.identityId.userId + "-" + current.identityId.providerId
