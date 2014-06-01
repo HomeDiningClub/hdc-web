@@ -18,5 +18,6 @@ public class VideoFile extends ContentFile{
 
     public VideoFile(){
         this.bucketDir = bucketStoreDir;
+        //this.url = this.bucketDir + this.key;
     }
 }

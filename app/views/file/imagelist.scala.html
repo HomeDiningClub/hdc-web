@@ -1,0 +1,9 @@
+@(images: List[models.files.ImageFile] = Nil)
+
+@if(!images.isEmpty){
+    <ul>
+    @for(image <- images) {
+        <li><img src="@image.url">@image.name<a href="@routes.FileController.deleteImage(image.key)">@Messages("file.list.delete") (Not working)</a></li>
+    }
+    </ul>
+}
