@@ -19,5 +19,6 @@ public class ImageFile extends ContentFile{
 
     public ImageFile(){
         this.bucketDir = bucketStoreDir;
+        //this.url = this.bucketDir + this.key;
     }
 }

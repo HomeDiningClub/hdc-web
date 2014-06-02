@@ -3,6 +3,8 @@ package models.files;
 import models.UserProfileData;
 import models.base.AbstractEntity;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,10 +31,15 @@ public abstract class ContentFile extends AbstractEntity {
     public Set<UserProfileData> OwnedBy;
 
     @Transient
-    public String url = bucketDir + key;
+    public String url;
+
+    public String getUrl() throws MalformedURLException {
+        return new URL("https://s3.amazonaws.com/" + this.bucketDir + this.key).toString();
+    }
 
     protected ContentFile() {
         this.key = UUID.randomUUID();
         this.bucketDir = bucketStoreDir;
+        //this.url = this.bucketDir + this.key;
     }
 }

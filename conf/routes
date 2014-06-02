@@ -35,11 +35,11 @@ GET         /worlds                        @controllers.WorldController.index
 
 # Files
 GET         /file                          @controllers.FileController.index
-GET         /file/listS3                   @controllers.FileController.listS3Files(prefix = "")
-GET         /file/listS3/:prefix           @controllers.FileController.listS3Files(prefix)
-GET         /file/list/images              @controllers.FileController.listAllImages
+#GET         /file/listS3                   @controllers.FileController.listS3Files(prefix = "")
+#GET         /file/listS3/:prefix           @controllers.FileController.listS3Files(prefix)
+#GET         /file/list/images              @controllers.FileListController.listAllImages
 POST        /file/add                      @controllers.FileController.add
-#POST        /file/delete                 controllers.WorldController.delete
+GET         /file/delete/:key              @controllers.FileController.deleteImage(key: java.util.UUID)
 
 
 # Login page

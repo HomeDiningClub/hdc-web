@@ -32,4 +32,11 @@ libraryDependencies ++= Seq(
   "nl.rhinofly" %% "play-s3" % "3.3.4"
 )
 
+// Import more bindings for routes
+routesImport ++= Seq(
+  "util.Binders._"
+)
+
+// Set default settings for scala
 playScalaSettings
+

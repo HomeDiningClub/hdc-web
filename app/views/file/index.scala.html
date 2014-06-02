@@ -1,4 +1,4 @@
-@(fileList: Option[List[String]] = None, nameOfConfig: String = null)
+@(nameOfConfig: String = null)
 
 @main(Messages("file.title")) {
     <div class="container-fluid">
@@ -9,7 +9,7 @@
             </div>
         </div>
 
-        <div class="row-fluid">
+@*        <div class="row-fluid">
             <div class="col-md-offset-3 col-md-6">
                 <h2>@Messages("file.filelist.header")</h2>
 
@@ -24,21 +24,11 @@
                     </ul>
                 }
             </div>
-        </div>
+        </div>*@
         <div class="row-fluid">
             <div class="col-md-offset-3 col-md-6">
                 <h2>@Messages("file.filelist.header")</h2>
-
-                <a href="@routes.FileController.listAllImages">List all images</a><br>
-                @if(!fileList.isEmpty){
-                    <ul>
-                    @for(fileItem <- fileList) {
-                        @for(item <- fileItem) {
-                            <li><a href="@routes.FileController.listS3Files(item)">@item</a></li>
-                        }
-                    }
-                    </ul>
-                }
+                @FileListController.listAllImages
             </div>
         </div>
     </div>

@@ -37,6 +37,9 @@ file.title=Ladda upp filer
 file.upload.header=Ladda upp dina bilder
 file.filelist.header=Dina filer
 file.button.upload=Ladda upp
+file.list.delete=Ta bort
+
+
 
 host.title=Profil
 host.rating-text=stjärnor

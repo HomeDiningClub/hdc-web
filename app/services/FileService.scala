@@ -1,7 +1,7 @@
 package services
 
 import org.springframework.beans.factory.annotation.Autowired
-import repositories.FileRepository
+import repositories.{VideoRepository, ImageRepository}
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import models.files._
@@ -19,16 +19,22 @@ import java.util.UUID
 import org.neo4j.helpers.collection.IteratorUtil
 import scala.collection.JavaConverters._
 import play.api.libs.MimeTypes
+import scala.collection.mutable.ListBuffer
 
 @Service
 class FileService {
 
   @Autowired
-  private var fileRepository: FileRepository = _
+  private var imageRepository: ImageRepository = _
+  @Autowired
+  private var videoRepository: VideoRepository = _
 
   private lazy val bucketStore: String = Play.application.configuration.getString("aws.s3bucket")
   lazy val S3Bucket = S3(bucketStore)
 
+  private val keyConstant = "key"
+
+  // Just for testing
   def listFilesRawFromS3(prefix: String = ""): List[String] = {
     val result = Await.result(S3Bucket.list(prefix), 10 seconds)
     val returnRes: List[String] = result.map(item => item.name).toList
@@ -36,46 +42,90 @@ class FileService {
   }
 
   // Accepts Unique ID, returns url of db node
-  def getFileUrlByKey(key: UUID): String = {
-    val dbRes = fileRepository.findAllBySchemaPropertyValue("key",key).single()
-    dbRes.url
+  def getImageByKey(key: UUID): Option[ImageFile] = {
+    val dbRes = imageRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
+      case unit => Some(unit)
+    }
+    None
   }
 
+  // Accepts Unique ID, returns url of db node
+  def getVideoByKey(key: UUID): Option[VideoFile] = {
+    val dbRes = videoRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
+      case unit => Some(unit)
+    }
+    None
+  }
 
-  // Accepts ImageFile, ContentFile
-  def getFilesOfType[T](): List[T] = {
-    val dbRes = IteratorUtil.asCollection(fileRepository.findAllBySchemaPropertyValue("ImageFile", "")).asScala.toList.asInstanceOf[List[T]]
-    //val result = Await.result(S3Bucket.list, 10 seconds)
-    //val returnRes: List[String] = result.map(item => item.name).toList
-    dbRes
+  // Get all Images
+  // TODO: Add user constraint
+  def getImages(): List[ImageFile] = {
+    val dbRes = IteratorUtil.asCollection(imageRepository.findAll()).asScala
+
+    var parsedList: ListBuffer[ImageFile] = ListBuffer()
+
+    for(image <- dbRes) {
+      image.url = S3Bucket.url(image.bucketDir + image.key.toString)
+      parsedList += image
+    }
+
+    parsedList.result()
   }
 
   // Uploads a file
   // Return URL of file if successful
   def uploadFile(file: MultipartFormData.FilePart[TemporaryFile]): String = {
-    val fileName = play.utils.UriEncoding.encodePathSegment(file.filename, "UTF-8").toLowerCase.replace("+", "-") // TODO - Improve file names
 
-    // Check Mime-types
-    // From actual file
+    // Check the Mime-type from the actual file
     val contentType = file.contentType match {
+      case Some("js") => ""
+      case Some("java") => ""
+      case Some("cmd") => ""
+      case Some("bat") => ""
+      case Some("jar") => ""
+      case Some("exe") => ""
       case Some(contentType) => contentType
       case None => ""
     }
 
-    // As given by the filename
+    // Fetch the uploaded filename
+    val uncleanedFullFileName: String = play.utils.UriEncoding.encodePathSegment(file.filename, "UTF-8")
+
+    // Find the last dot for extension, or if no extension use full length filename
+    val lastIndexOfDot = uncleanedFullFileName.lastIndexOf('.') match {
+      case -1 => uncleanedFullFileName.length
+      case integer => integer
+    }
+
+    // Grab extensions
+    val uncleanedFileExt: String = uncleanedFullFileName.split('.').takeRight(1).headOption match {
+      case None => ""  // TODO - Improve file extensions if none found
+      case Some(extension) => extension
+    }
+
+    // Grab just the filename by removing the extension
+    val uncleanedFileName: String = uncleanedFullFileName.substring(0, lastIndexOfDot) match {
+        case "" => "nofilename"
+        case filename => filename
+      }
+
+    // Clean filename + extension build a new name
+    val fileName: String = uncleanedFileName.toLowerCase.replaceAll("\\W+", "-") + "." + uncleanedFileExt.toLowerCase.replaceAll("\\W+", "")
+
+    // Get Mime-type as given by the filename
     val fileExtensionMimeType = MimeTypes.forFileName(fileName)
 
     // If they match set the file ending, else abort upload
     if (!file.contentType.equals(fileExtensionMimeType)) {
 
-      Logger.error("Error: File has invalid mime-type compared to file ending, aborting.")
+      Logger.error("Error: File has an invalid mime-type, aborting.")
       return ""
 
     } else {
 
       val fileExtension = fileName.split('.').drop(1).lastOption match {
-        case Some(fileExt) => fileExt
         case None => ""
+        case Some(fileExt) => fileExt
       }
       val newFile: ImageFile = new ImageFile(fileName,fileExtension,contentType)
       val fileUrl = newFile.bucketDir + newFile.key
@@ -91,7 +141,7 @@ class FileService {
         unitResponse =>
           Logger.info("Uploaded and saved file: " + fileUrl)
           saveToDB(newFile)
-          newFile.url
+          newFile.getUrl
       }
         .recover {
         case S3Exception(status, code, message, originalXml) => Logger.error("Error: " + message)
@@ -102,14 +152,18 @@ class FileService {
     }
   }
 
-  def deleteFile(fileToDelete: ContentFile) {
+
+  // Deletes any file, can be any that inherits from ContentFile
+  def deleteFile(key: UUID) {
+    val fileToDelete: ContentFile = getImageByKey(key).head // TODO: Add extra check if file doesn't exists
+
     val result: Future[Unit] = Future {
-      S3Bucket.remove(fileToDelete.key.toString)
+      S3Bucket.remove(key.toString)
     }
     val timeoutFuture = Promise.timeout("Delete failed, timeout occurred", 20.seconds)
 
     Future.firstCompletedOf(Seq(result, timeoutFuture)).map {
-      unit => Logger.info("Deleted file: " + fileToDelete.key)
+      unit => Logger.info("Deleted file: " + key.toString)
         deleteFromDB(fileToDelete)
     }
     .recover {
@@ -120,12 +174,21 @@ class FileService {
 
   @Transactional(readOnly = false)
   private def saveToDB(file: ContentFile) {
-    fileRepository.save(file)
+
+    if(file.isInstanceOf[ImageFile])
+      imageRepository.save(file.asInstanceOf[ImageFile])
+    else if(file.isInstanceOf[VideoFile])
+      videoRepository.save(file.asInstanceOf[VideoFile])
+
   }
 
   @Transactional(readOnly = false)
   private def deleteFromDB(file: ContentFile) {
-    fileRepository.delete(file)
+
+    if(file.isInstanceOf[ImageFile])
+      imageRepository.delete(file.asInstanceOf[ImageFile])
+    else if(file.isInstanceOf[VideoFile])
+      videoRepository.delete(file.asInstanceOf[VideoFile])
   }
 
 }
