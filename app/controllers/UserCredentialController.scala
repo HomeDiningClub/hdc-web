@@ -149,23 +149,7 @@ class UserCredentialController extends Controller {
 
   */
 
-    var app : Application = new Application {override def path: File = ???
 
-      override def plugins: Seq[Plugin] = ???
-
-      override def configuration: Configuration = ???
-
-      override def mode: Mode = ???
-
-      override def classloader: ClassLoader = ???
-
-      override def global: GlobalSettings = ???
-
-      override def sources: Option[SourceMapper] = sources
-    }
-    var b : BCryptPasswordHasher = new BCryptPasswordHasher(app)
-    var p: PasswordInfo  = b.hash("sommar14")
-
-    Ok(p.password)
+    Ok("test")
   }
 }
