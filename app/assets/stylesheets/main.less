@@ -1,5 +1,6 @@
 // Import statements
 @import "animate.less";
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic);
 
 // Variables
 @hdc-green: #6fc2b5;
@@ -28,7 +29,6 @@ html{
   overflow:-moz-scrollbars-vertical;
   overflow-y:scroll;
   overflow-x:auto;
-  font-family:tahoma,arial,geneva,helvetica,sans-serif;
   color: @text-color;
 }
 
@@ -36,7 +36,7 @@ html{
 //div{  border:1px solid gray !important;}
 
 body{
-
+  font-family: 'Open Sans',tahoma,arial,geneva,verdana,helvetica,sans-serif !important;
 }
 
 // General headers
@@ -96,11 +96,15 @@ img
 // General margins
 .margin-top
 {
-  margin-top:2em;
+  margin-top:20px;
+}
+.big-margin-top
+{
+  margin-top:40px;
 }
 .margin-bottom
 {
-  margin-bottom:2em;
+  margin-bottom:20px;
 }
 
 
@@ -156,7 +160,7 @@ input[type="reset"]:hover
 // Header
 .header-container
 {
-  padding-top: 8px;
+  padding-top: 4px;
   background-image: url("/assets/images/general/bg-header.png");
   background-repeat: repeat-x;
   box-shadow: 0 0 10px 0px #aaa;
@@ -168,9 +172,27 @@ input[type="reset"]:hover
   height:147px;
 }
 
+.logo img
+{
+  background-color: #fff;
+  padding: 5px 10px 5px 10px;
+  border-radius: 10px;
+}
+
+// Header - Quicklinks
+.quicklinks
+{
+  border:1px solid #999;
+  background-color: #fff;
+  border-radius: 5px;
+}
+.quicklinks .nav > li > a {
+  padding:8px 10px;
+  font-size:13px;
+}
 
 
-// Main navigation
+// Header - Main navigation
 .header-navigation
 {
   max-height: 37px;
@@ -178,29 +200,31 @@ input[type="reset"]:hover
   background-image: url("/assets/images/general/bg-menu-gray-transparent.png");
   background-repeat: repeat-x;
 }
-.nav-pills
+.nav-main-menu
 {
   height:37px;
   line-height:18px;
 }
-.nav-pills > li
+.nav-main-menu > li
 {
   padding:6px;
 }
-.nav-pills > li > a
+.nav-main-menu > li > a
 {
   font-weight: normal;
   text-shadow:0px 1px 2px rgba(0, 0, 0, 0.6);
   color:#fff;
   padding:3px 5px 3px 5px;
 }
-.nav-pills > li > a:hover,
-.nav > li > a:focus
+.nav-main-menu > li > a:hover,
+.nav-main-menu > li > a:focus
 {
   text-decoration: none;
-  background-image:linear-gradient(to bottom, #ff0000 0px, #aa0000 100%);
-
+  color:#000;
+  text-shadow: none;
+  //background-image:linear-gradient(to bottom, #ff0000 0px, #aa0000 100%);
 }
+
 .icon-bar
 {
   background-color: @hdc-green;
