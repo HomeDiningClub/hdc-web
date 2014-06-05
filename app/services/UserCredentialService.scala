@@ -105,7 +105,8 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
       println(".........................................................................")
       println(userCredential2socialUser(uc))
       println(".........................................................................")
-      userCredential2socialUser(uc)
+      val returnUser = userCredential2socialUser(uc)
+      return Some(returnUser)
     }
 
     None
