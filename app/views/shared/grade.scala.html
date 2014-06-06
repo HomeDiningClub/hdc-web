@@ -7,6 +7,6 @@ http://plugins.krajee.com/star-rating/demo
 *@
 
 <div class="grade hdc-grade">
-    <input id="@inputId" type="number" class="rating @cssClass" value="@initialValue" min="0" max="10" step="0.5" data-disabled="@disabled" data-show-caption="@showCaption" data-show-clear="@showClear" data-readonly="@readOnly" data-star-captions="{}" data-default-caption="{rating} @Messages("grade.rating-text")" data-size="@size">
+    <input id="@inputId" type="number" class="rating @cssClass" value="@initialValue" min="0" max="5" step="1" data-disabled="@disabled" data-show-caption="@showCaption" data-show-clear="@showClear" data-readonly="@readOnly" data-star-captions="{}" data-default-caption="{rating} @Messages("grade.rating-text")" data-size="@size">
     @if(disabled != true && readOnly != true){<button class="btn btn-primary float-left">@Messages("grade.submit")</button>}
 </div>

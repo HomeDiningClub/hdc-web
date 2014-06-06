@@ -38,14 +38,10 @@ grade.rating.5=Superbt
 grade.submit=Betygsätt
 grade.rating-text=stjärna(or)
 
-level.guest01.header=Gäst
-level.guest02.header=Gäst
-level.guest03.header=Gäst
-level.guest04.header=Gäst
-level.host01.header=Värd
-level.host02.header=Värd
-level.host03.header=Värd
-level.host04.header=Värd
+level.guest.header=Gäst
+level.guest.description=Gäst, att vara en gäst innebär...
+level.host.header=Värd
+level.host.description=Värd, kan bjuda...
 
 
 validation.required.se = Ett värde för %s måste anges

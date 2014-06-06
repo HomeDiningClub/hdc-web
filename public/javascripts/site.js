@@ -14,3 +14,11 @@
 //            5: "Very Good"}
 //        });
 //})
+
+
+$(document).ready(function () {
+
+    // Activate tooltips
+   $(".host-level-icon").tooltip();
+
+});

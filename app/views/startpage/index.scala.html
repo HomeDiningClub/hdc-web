@@ -15,7 +15,7 @@
         <!-- Wrapper for slides -->
         <div class="carousel-inner">
             <div class="item active">
-                @shared.img("images/startpage/startpage-main-image-1.jpg", None, None, "")
+                @shared.img("images/startpage/startpage-carousel-image-03.jpg", None, None, "")
                 <div class="carousel-caption green-bg right-align animated fadeInRightBig">
                     <h2>Home Dining Club</h2>
                     <p>Vad är det?</p>
@@ -23,20 +23,28 @@
                 </div>
             </div>
             <div class="item">
-                @shared.img("images/startpage/startpage-main-image-2.jpg", None, None, "")
-                <div class="carousel-caption green-bg animated fadeInRightBig">
+                @shared.img("images/startpage/startpage-carousel-image-04.jpg", None, None, "")
+                <div class="carousel-caption green-bg right-align animated fadeInRightBig">
                     <h2>Slipp Disken</h2>
                     <p>Ät hemma hos någon!</p>
+                    <p><a class="btn btn-lg btn-primary" href="@routes.AboutUsController.index()" role="button">Hur fungerar det?</a></p>
                 </div>
             </div>
             <div class="item">
-                @shared.img("images/startpage/startpage-main-image-3.jpg", None, None, "")
+                @shared.img("images/startpage/startpage-carousel-image-02.jpg", None, None, "")
             </div>
             <div class="item">
-                @shared.img("images/startpage/startpage-main-image-4.jpg", None, None, "")
-                <div class="carousel-caption green-bg left-align animated rotateInDownLeft">
+                @shared.img("images/startpage/startpage-carousel-image-05.jpg", None, None, "")
+                <div class="carousel-caption green-bg left-align animated fadeInLeftBig">
                     <h2>Men kom ut någon gång!</h2>
                     <p>Sitt inte bara där!</p>
+                </div>
+            </div>
+            <div class="item">
+                @shared.img("images/startpage/startpage-carousel-image-06.jpg", None, None, "")
+                <div class="carousel-caption animated fadeInLeftBig">
+                    <h2>Introduktions video</h2>
+                    <iframe src="//player.vimeo.com/video/97540915?title=1&amp;byline=1&amp;portrait=1&amp;color=fafafa&amp;autoplay=0" width="293" height="165" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                 </div>
             </div>
         </div>
@@ -89,7 +97,7 @@
                                         <p class="location">Location</p>
                                         @shared.grade(inputId = "host-grade", initialValue = 1, disabled = true, size = "xxs")
                                     </a>
-                                    <div class="host-level-icon level-guest01"><span>@Messages("level.guest01.header")</span></div>
+                                    <div class="host-level-icon level-guest01" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
                                 </div>
                             </div>
                             <div class="col-md-4  col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box2.png")')">
@@ -101,7 +109,7 @@
                                         <p class="location">Location</p>
                                         @shared.grade(inputId = "host-grade", initialValue = 5, disabled = true, size = "xxs")
                                      </a>
-                                    <div class="host-level-icon level-guest02"><span>@Messages("level.guest02.header")</span></div>
+                                    <div class="host-level-icon level-guest02" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box3.png")')">
@@ -113,7 +121,7 @@
                                         <p class="location">Location</p>
                                         @shared.grade(inputId = "host-grade", initialValue = 6, disabled = true, size = "xxs")
                                     </a>
-                                    <div class="host-level-icon level-guest03"><span>@Messages("level.guest03.header")</span></div>
+                                    <div class="host-level-icon level-guest03" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
@@ -125,7 +133,7 @@
                                         <p class="location">Location</p>
                                         @shared.grade(inputId = "host-grade", initialValue = 10, disabled = true, size = "xxs")
                                     </a>
-                                    <div class="host-level-icon level-host01"><span>@Messages("level.host01.header")</span></div>
+                                    <div class="host-level-icon level-host01" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description")"><span>@Messages("level.host.header")</span></div>
                                 </div>
                             </div>
                         </div>
