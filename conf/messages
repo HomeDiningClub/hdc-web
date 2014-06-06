@@ -2,7 +2,8 @@ main.title=Home Dining Club
 main.language=sv
 
 header.link.campaign=Nyhetsbrev
-header.link.aboutus=Om oss
+header.link.host-profile=Din profil
+header.link.inbox=Inkorg
 header.logo.alt=Home dining club logotyp
 
 footer.text=© Home Dining Club AB
@@ -29,11 +30,22 @@ campaign.newsletterform.emailplaceholder=e-post address
 campaign.newsletterform.button.send=Skicka
 
 
-rating.1=Undermåligt
-rating.2=Skäligt
-rating.3=Bra
-rating.4=Utmärkt
-rating.5=Superbt
+grade.rating.1=Undermåligt
+grade.rating.2=Skäligt
+grade.rating.3=Bra
+grade.rating.4=Utmärkt
+grade.rating.5=Superbt
+grade.submit=Betygsätt
+grade.rating-text=stjärna(or)
+
+level.guest01.header=Gäst
+level.guest02.header=Gäst
+level.guest03.header=Gäst
+level.guest04.header=Gäst
+level.host01.header=Värd
+level.host02.header=Värd
+level.host03.header=Värd
+level.host04.header=Värd
 
 
 validation.required.se = Ett värde för %s måste anges
@@ -47,4 +59,3 @@ file.list.delete=Ta bort
 
 
 host.title=Profil
-host.rating-text=stjärnor

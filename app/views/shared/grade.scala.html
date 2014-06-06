@@ -1,0 +1,12 @@
+@(inputId: String, initialValue: Int = 0, readOnly: Boolean = false, disabled: Boolean = false, size: String = "xs", showClear: Boolean = false, showCaption: Boolean = false, cssClass: String = "")
+@*
+Values for size:
+"xxs", "xs", "sm", "md", "lg", "xl"
+http://plugins.krajee.com/star-rating/demo
+@Messages("rating.1");@Messages("rating.2");@Messages("rating.3");@Messages("rating.4");@Messages("rating.5")
+*@
+
+<div class="grade hdc-grade">
+    <input id="@inputId" type="number" class="rating @cssClass" value="@initialValue" min="0" max="10" step="0.5" data-disabled="@disabled" data-show-caption="@showCaption" data-show-clear="@showClear" data-readonly="@readOnly" data-star-captions="{}" data-default-caption="{rating} @Messages("grade.rating-text")" data-size="@size">
+    @if(disabled != true && readOnly != true){<button class="btn btn-primary float-left">@Messages("grade.submit")</button>}
+</div>

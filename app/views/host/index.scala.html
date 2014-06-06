@@ -17,7 +17,7 @@
                             <article>
                                 <h2>Alexandra</h2>
                                 <h3>Art Director och entreprenör</h3>
-                                <div class="grade"><input id="input-id" type="number" class="rating" min="0" max="5" step="1" data-readonly="false" data-default-caption="{rating} @Messages("host.rating-text")" data-starcaptions="{1:'@Messages("rating.1")',2:'@Messages("rating.2")',3:'@Messages("rating.3")',4:'@Messages("rating.4")',5:'@Messages("rating.5")'}" data-size="xs"></div>
+                                @shared.grade(inputId = "host-grade", initialValue = 1, size = "xs", showCaption = true)
                                 <div class="memberid"><p>MedlemsID: HDC02</p></div>
                                 <div class="breadtext">
                                     Lagat mat sedan 5-årsåldern, sida vid sida med min duktiga (och tålmodiga) hobby-kock-mamma - vilket gjorde att jag som tonåring kunde laga många klassiska husmansrätter (kåldolmar, kroppkakor, porterstek) och gärna experimenterade med egna skapelser.
