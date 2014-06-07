@@ -30,6 +30,7 @@ libraryDependencies ++= Seq(
   "com.typesafe" %% "play-plugins-mailer" % "2.2.0",
   "ws.securesocial" %% "securesocial" % "2.1.3",
   "nl.rhinofly" %% "play-s3" % "3.3.4"
+  //"org.julienrf" %% "play-jsmessages" % "1.6.2"
 )
 
 // Import more bindings for routes

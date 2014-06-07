@@ -15,13 +15,23 @@
                         </div>
                     </div>
 
-                    <div class="pull-right">
-                        <div class="btn-group">
-                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">Sign In <strong class="caret"></strong></a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                    <!-- Login form here -->
-                                    here be login
-                            </div>
+                    <div class="pull-right quicklinks">
+                        <ul class="nav nav-pills">
+                            <li><a href="@routes.HostController.index()">@Messages("header.link.host-profile")</a></li>
+                            <li><a href="#">@Messages("header.link.inbox") <span class="badge">42</span></a></li>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    Sign In <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li>
+                                        <!-- Login form here -->
+                                        here be login
+
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
                         </div>
                     </div>
 
@@ -30,7 +40,7 @@
             <div class="row-fluid header-navigation hidden-xs bs-navbar-collapse">
                 <nav>
                     <div class="col-xs-12 col-md-10 col-md-offset-1 col-xs-offset-0">
-                        <ul class="nav nav-pills collapse navbar-collapse  ">
+                        <ul class="nav nav-pills nav-main-menu collapse navbar-collapse  ">
                             @for(nav <- menuItems) {
                                 <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
                             }
