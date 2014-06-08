@@ -55,56 +55,17 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
  {
 
   private var tokens = Map[String, Token]()
-
   var users = Map[String, Identity]()
-
-
 
   // Kontrollerar om id finns
   // dvs. userid och provider id genom att söka i databasen.
 
   def find(id: IdentityId): Option[Identity] = {
-    println("find ")
-    println("----------------------------------------------------------------------")
-    println("Arguments:")
-    println("----------------------------------------------------------------------")
-    println("ProviderId : " + id.providerId)
-    println("userId     : " + id.userId)
-    println("----------------------------------------------------------------------")
 
     val exitsUser = exists(id.userId, id.providerId)
     var uc  : UserCredential =  getuser(id.userId, id.providerId)
 
-
-    println("############################################################")
-    var b : BCryptPasswordHasher = new BCryptPasswordHasher(application)
-    var p: PasswordInfo  = b.hash("sommar14")
-    println("Password: " + p.password)
-    println("hasheter: " + p.hasher)
-
-    println("password check : " + b.matches(p, "sommar14"))
-
-    println("############################################################")
-    var p2 : PasswordInfo = new PasswordInfo("bcrypt","$2a$10$3GWlC1dXKYHh.v9swFHcQuoNBtILkrqxZ2Pm7SmYUQikzABKkHsnW", Some("test"))
-    println("password check2 : " + b.matches(p2, "sommar14"))
-    println("############################################################")
-
-
-
-
-    println("ID   : " + exitsUser._1)
-    println("FINNS: " + exitsUser._2)
-
-
     if(exitsUser._2 == true){
-
-      println("FirstName : " + uc.firstName )
-      println("LastName : " + uc.lastName )
-      println(".........................................................................")
-      println("find:....................................................................")
-      println(".........................................................................")
-      println(userCredential2socialUser(uc))
-      println(".........................................................................")
       val returnUser = userCredential2socialUser(uc)
       return Some(returnUser)
     }
@@ -117,30 +78,12 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
   // find by email and provider
   def findByEmailAndProvider(email: String, providerId: String): Option[Identity] = {
 
-    println("Method: findByEmailAndProvider  ...................")
-    println("UserId: " + email)
-    println("UserProvider: " + providerId)
-
     var uc  : UserCredential =  getuser(email, providerId)
-
     val exitsUser = exists(email, providerId)
 
-    println("fetched userid : " + uc.userId)
-    println("fetched userid : " + uc.firstName)
-    println("fetched userid : " + uc.lastName)
-
-
-    //uc.emailAddress = email
-
-
     if(exitsUser._2 == true){
-
-      println(".........................................................................")
-      println("findByEmailAndProvider:..................................................")
-      println(".........................................................................")
-      println(userCredential2socialUser(uc))
-      println(".........................................................................")
-      userCredential2socialUser(uc)
+      val returnUser = userCredential2socialUser(uc)
+      return Some(returnUser)
 
     }
     None
