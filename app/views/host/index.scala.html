@@ -4,21 +4,23 @@
 
     <div class="container-fluid host-container">
         <div class="row-fluid">
-            <div class="col-xs-12 col-md-10 col-md-offset-1 col-xs-offset-0">
+            <div class="col-xs-12 col-md-8 col-md-offset-1 col-xs-offset-0">
                 <div class="row">
-                    <div class="col-xs-12 col-md-12">
+                    <div class="col-xs-12 col-md-11 big-margin-top host-header">
                         <header>
-                        <h1>ALEXANDRA</h1>
-                        @shared.img("images/startpage/host-head-default.jpg", None, None, cssClass="img-circle host-image")
+                            <h2>/denunderbaramaten-hdc2/</h2>
+                            <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
                         </header>
                     </div>
+                </div>
+                <div class="row big-margin-top">
                     <div class="col-xs-12 col-md-6">
                         <section>
                             <article>
-                                <h2>Alexandra</h2>
+                                <h1>Alexandra</h1>
                                 <h3>Art Director och entreprenör</h3>
                                 @shared.grade(inputId = "host-grade", initialValue = 1, size = "xs", showCaption = true)
-                                <div class="memberid"><p>MedlemsID: HDC02</p></div>
+                                <div class="memberid"><p>MedlemsID: HDC2</p></div>
                                 <div class="breadtext">
                                     Lagat mat sedan 5-årsåldern, sida vid sida med min duktiga (och tålmodiga) hobby-kock-mamma - vilket gjorde att jag som tonåring kunde laga många klassiska husmansrätter (kåldolmar, kroppkakor, porterstek) och gärna experimenterade med egna skapelser.
                                     Tankar fanns på en kockkarriär, men det blev annat kreativt yrke istället - men står gärna i köket med/för nära och kära.
@@ -26,7 +28,7 @@
                             </article>
                         </section>
                     </div>
-                    <div class="col-xs-12 col-md-6">
+                    <div class="col-xs-12 col-md-5 pull-right">
                         @shared.img("images/host/image1.jpg", None, None)
                     </div>
                 </div>
@@ -57,6 +59,11 @@
 
                     </div>
                 </div>
+            </div>
+
+            <!-- Banner -->
+            <div class="col-xs-12 col-md-2 col-banner">
+                @shared.banner("images/banners/banner-0001.png","http://www.bannertarget.se","Senaste nyheterna","Senaste nyheterna")
             </div>
         </div>
     </div>

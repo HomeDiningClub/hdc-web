@@ -1,6 +1,7 @@
 // Import statements
 @import "animate.less";
 @import "gray.less";
+@import "star-rating.min.less";
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic);
 
 // Variables
@@ -43,21 +44,19 @@ html{
   overflow-x:auto;
   color: @text-color;
 }
-
-
-//div{  border:1px solid gray !important;}
-
 body{
   font-smooth: always;
   font-family: 'Open Sans',tahoma,arial,geneva,verdana,helvetica,sans-serif !important;
 }
+
+
+
 
 // General headers
 h1,h2,h3,h4,h5,h6{
   color: @header-color;
   font-weight:bold;
 }
-
 h1{
   font-size:26px;
 }
@@ -75,25 +74,26 @@ h5,h6{
 }
 
 
+
+
 // General links
 a{
   text-decoration:none;
   color: @link-color;
 }
-
 a:hover{
   text-decoration:underline;
   color: @link-color-hover;
 }
-
 div{
   transition: all 0.3s ease-in-out 0s;
 }
-
 img
 {
   display:inline-block;
 }
+
+
 
 // General bootstrap overrides
 .container-fluid {
@@ -105,6 +105,9 @@ img
   padding-left:0px;
   padding-right:0px;
 }
+
+
+
 
 // General margins
 .margin-top
@@ -120,6 +123,9 @@ img
   margin-bottom:20px;
 }
 
+
+
+
 // Forms
 input[type="text"],
 input[type="file"],
@@ -130,19 +136,14 @@ input[type="password"]
   margin-bottom:1em;
   border:1px solid @input-border-color;
 }
-//input[type="submit"],
-//button,
-//input[type="reset"]
-//{
-//}
-
 label{
   color: @label-color;
 }
-
 .help-block{
   display: inline-block;
 }
+
+
 
 // Buttons
 .btn-primary,
@@ -172,7 +173,26 @@ input[type="reset"]:hover
   border-color:darken(@hdc-green, 20%);
 }
 
-
+// Banners
+.col-banner
+{
+  padding-left:0px;
+  padding-right: 0px;
+}
+.banner img
+{
+  width:100%;
+  min-width:249px;
+}
+.banner .banner-header
+{
+  padding-top:1em;
+  display: block;
+  clear:both;
+  color:@hdc-gray;
+  font-size:10px;
+  font-family:arial,'Open Sans',tahoma,geneva,verdana,helvetica,sans-serif;
+}
 
 
 // Host levels / grade / rating
@@ -466,18 +486,9 @@ input[type="reset"]:hover
 .panel-startpage .host-image
 {
   position: absolute;
-  display: block;
-  z-index:100;
   right:-12px;
   top:70px;
-  width: 100px;
-  height:100px;
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  border:3px solid #fff;
-  box-shadow: 2px 2px 4px #999;
 }
-
 .panel-startpage .body
 {
   background-color: @hdc-light-gray;
@@ -555,15 +566,39 @@ input[type="reset"]:hover
 
 
 // Host
+.host-image
+{
+  display: block;
+  z-index:100;
+  width: 100px;
+  height:100px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  border:3px solid #fff;
+  box-shadow: 1px 1px 4px #444;
+}
+
 .host-container .host-image
 {
   position: absolute;
-  right:-10px;
-  top:-10px;
+  right:10px;
+  top:-32px;
 }
-
-
-
+.host-container .host-header
+{
+  background-color: @hdc-green;
+}
+.host-container .host-header h2
+{
+  color: #fff;
+  margin-bottom:0px;
+  margin-top:0px;
+  line-height:2em;
+}
+.host-container .host-header h1
+{
+  margin-top:0px;
+}
 
 // Responsive
 @media screen and (max-width: 768px) {
@@ -579,6 +614,14 @@ input[type="reset"]:hover
   {
     width:150px;
   }
+
+  // Banner
+  .col-banner
+  {
+    padding-left:15px;
+    padding-right:15px;
+  }
+
   // Start page
   .carousel-inner .item img
   {

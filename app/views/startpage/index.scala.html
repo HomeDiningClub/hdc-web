@@ -59,38 +59,33 @@
     </div>
 
     <div class="container-fluid maincontent-container">
-        <div class="row-fluid margin-top">
-
-            <!-- Main intro -->
-            <div class="col-xs-12 col-md-6 col-md-offset-1 col-xs-offset-0">
-                <h1>Hej och välkommen till Home Dining Club!</h1>
-                <p>Bjud hem nya vänner på middag och få betyg och omdömen på din kokkonst. Håll arrangemang för små och stora grupper. Ta betalt eller bjud! Det är upp till dig. Du kanske har den bästa Paellan i hela Stockholm. Varför inte låta folk få komma hem till dig och prova den?</p>
-                <p>Eller så är du bara intresserad av att läsa recept, eller äta hos andra. Upptäcka nya kulinariska höjder och lära känna andra lika matintresserade. Det här är tjänsten för dig!</p>
-            </div>
-
-            <!-- News -->
-            <div class="col-xs-12 col-md-5 col-xs-offset-0">
-                <aside>
-                <h2>Nyhetslista</h2>
-                <ul>
-                    <li>Nyhet nr 1 kanske</li>
-                    <li>Nyhet nr 2 kanske</li>
-                    <li>Nyhet nr 3 kanske</li>
-                </ul>
-                </aside>
-            </div>
-        </div>
-
-
-        <!-- Puffs & Right column -->
         <div class="row-fluid">
-            <div class="col-xs-12 col-md-10 col-md-offset-1 col-xs-offset-0">
+            <div class="col-xs-12 col-md-8 col-md-offset-1 col-xs-offset-0">
+
+
+                <div class="row margin-top">
+                    <!-- Main intro -->
+                    <div class="col-xs-12 col-md-9">
+                        <h1>@Messages("startpage.main-content.header")</h1>
+                        @Html(Messages("startpage.main-content.body"))
+                    </div>
+
+                    <!-- News -->
+                    <div class="col-xs-12 col-md-3">
+                        <aside>
+                            <h2>@Messages("startpage.main-aside.header")</h2>
+                            @Html(Messages("startpage.main-aside.body"))
+                            <iframe src="//player.vimeo.com/video/97540915?title=1&amp;byline=1&amp;portrait=1&amp;color=fafafa&amp;autoplay=0" width="100%" height="auto" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                        </aside>
+                    </div>
+                </div>
+
                 <div class="row big-margin-top">
-                    <div class="col-xs-12 col-md-8">
+                    <div class="col-xs-12 col-md-9">
                         <div class="row center-block">
                             <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
                                 <div class="body">
-                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/startpage/host-head-medium.jpg")')"></div>
+                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
                                     <a href="#">
                                         <h2>Host name</h2>
                                         <hr>
@@ -100,9 +95,9 @@
                                     <div class="host-level-icon level-guest01" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
                                 </div>
                             </div>
-                            <div class="col-md-4  col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box2.png")')">
+                            <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box2.png")')">
                                 <div class="body">
-                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/startpage/host-head-medium.jpg")')"></div>
+                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
                                     <a href="#">
                                         <h2>Host name</h2>
                                         <hr>
@@ -114,7 +109,7 @@
                             </div>
                             <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box3.png")')">
                                 <div class="body">
-                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/startpage/host-head-medium.jpg")')"></div>
+                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
                                     <a href="#">
                                         <h2>Host name</h2>
                                         <hr>
@@ -126,7 +121,7 @@
                             </div>
                             <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
                                 <div class="body">
-                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/startpage/host-head-medium.jpg")')"></div>
+                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
                                     <a href="#">
                                         <h2>Host name</h2>
                                         <hr>
@@ -138,10 +133,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-md-2">
-                        <h2>Funktioner</h2>
+
+                    <!-- Functions -->
+                    <div class="col-xs-12 col-md-3">
+                        <aside>
+                            <h2>Funktioner</h2>
+
+                        </aside>
                     </div>
+
                 </div>
+            </div>
+
+            <!-- Banner -->
+            <div class="col-xs-12 col-md-2 col-banner">
+                @shared.banner("images/banners/banner-0001.png","http://www.bannertarget.se","Senaste nyheterna","Senaste nyheterna")
             </div>
         </div>
     </div>

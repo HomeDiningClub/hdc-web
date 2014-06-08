@@ -11,10 +11,18 @@ footer.link.mail.href=mailto:info@homediningclub.se?Subject=Hej%20Home%20dining%
 footer.link.mail.title=Maila till info@homediningclub.se
 footer.link.mail.text=info@homediningclub.se
 
+banner.header=Annons:
+
 person.formular=Personliga inställningar (svenska)
 person.lista=Lista personer (svenska)
 
 startpage.title=Sveriges första riktiga klubb för alla riktigt matintresserade!
+startpage.main-aside.header=Introduktionsvideo
+startpage.main-aside.body=
+startpage.main-content.header=Hej och välkommen till Home Dining Club!
+startpage.main-content.body=<p>Bjud hem nya vänner på middag och få betyg och omdömen på din kokkonst. Håll arrangemang för små och stora grupper. Ta betalt eller bjud! Det är upp till dig. Du kanske har den bästa Paellan i hela Stockholm. Varför inte låta folk få komma hem till dig och prova den?</p><p>Eller så är du bara intresserad av att läsa recept, eller äta hos andra. Upptäcka nya kulinariska höjder och lära känna andra lika matintresserade. Det här är tjänsten för dig!</p>
+
+
 
 aboutus.title=Om oss
 aboutus.header=Om oss
