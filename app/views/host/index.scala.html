@@ -6,15 +6,17 @@
         <div class="row-fluid">
             <div class="col-xs-12 col-md-8 col-md-offset-1 col-xs-offset-0">
                 <div class="row">
-                    <div class="col-xs-12 col-md-11 big-margin-top host-header">
-                        <header>
+                    <div class="col-xs-12 col-md-12 big-margin-top">
+                        <div class="host-header">
+                            <header>
                             <h2>/denunderbaramaten-hdc2/</h2>
                             <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
                         </header>
+                        </div>
                     </div>
                 </div>
-                <div class="row big-margin-top">
-                    <div class="col-xs-12 col-md-6">
+                <div class="row">
+                    <div class="col-xs-12 col-md-6 big-margin-top">
                         <section>
                             <article>
                                 <h1>Alexandra</h1>
@@ -28,12 +30,33 @@
                             </article>
                         </section>
                     </div>
-                    <div class="col-xs-12 col-md-5 pull-right">
-                        @shared.img("images/host/image1.jpg", None, None)
+                    <div class="col-xs-12 col-md-6 big-margin-top host-image-gallery">
+
+                        <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide">
+                            <!-- Slider carousel items -->
+                            <div class="carousel-inner">
+                                <div class="active item" data-slide-number="0">@shared.img("images/host/image1.jpg", None, None, cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="1">@shared.img("images/host/image2.jpg", None, None, cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="2">@shared.img("images/host/image3.jpg", None, None, cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="3">@shared.img("images/host/image4.jpg", None, None, cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="4">@shared.img("images/host/image5.jpg", None, None, cssClass = "img-responsive")</div>
+                            </div>
+                            <!-- Carousel nav controls -->
+                            <a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                            <a class="carousel-control right hidden-md hidden-lg" href="#host-main-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                        </div>
+                        <!-- Thumbnails, don't show responsive -->
+                        <ul class="host-main-carousel-thumbs list-inline hidden-xs hidden-sm">
+                            <li class="col-md-4"><a id="carousel-selector-0" class="selected">@shared.img("images/host/image1.jpg", None, None, cssClass = "img-responsive")</a></li>
+                            <li class="col-md-4"><a id="carousel-selector-1">@shared.img("images/host/image2.jpg", None, None, cssClass = "img-responsive")</a></li>
+                            <li class="col-md-4"><a id="carousel-selector-2">@shared.img("images/host/image3.jpg", None, None, cssClass = "img-responsive")</a></li>
+                            <li class="col-md-4"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", None, None, cssClass = "img-responsive")</a></li>
+                            <li class="col-md-4"><a id="carousel-selector-4">@shared.img("images/host/image5.jpg", None, None, cssClass = "img-responsive")</a></li>
+                        </ul>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12 col-md-11 big-margin-top">
+                    <div class="col-xs-12 col-md-12 big-margin-top">
                         <nav>
                             <ul class="nav nav-tabs">
                             @for(nav <- menuItems) {
