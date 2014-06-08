@@ -4,7 +4,12 @@ main.language=sv
 header.link.campaign=Nyhetsbrev
 header.link.host-profile=Din profil
 header.link.inbox=Inkorg
+header.link.login=Logga in
+header.login-form.email=E-post
+header.login-form.password=Lösenord
+header.login-form.submit=Logga in
 header.logo.alt=Home dining club logotyp
+header.mobile-menu.title=Visa meny
 
 footer.text=© Home Dining Club AB
 footer.link.mail.href=mailto:info@homediningclub.se?Subject=Hej%20Home%20dining%20club

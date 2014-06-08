@@ -1,5 +1,5 @@
-@(path: String, width: Option[Int], height: Option[Int], alt: String = "", title: String = "", cssClass: String = "")
+@(path: String, width: Option[Int] = None, height: Option[Int] = None, alt: String = "", title: String = "", cssClass: String = "")
 @import play.api.Play.resource
 @import play.api.Play.current
 
-@if(resource("public/" + path.stripPrefix("/")).isDefined) {<img src="@routes.Assets.at(path.stripPrefix("/"))" class="@cssClass" border="0" @{if(width.isDefined){ "width=\"@width\"" }} @{if(height.isDefined){ "height=\"@height\"" }} alt="@alt" title="@title">}
+@if(resource("public/" + path.stripPrefix("/")).isDefined) {<img src="@routes.Assets.at(path.stripPrefix("/"))" @if(!cssClass.isEmpty){ class="@cssClass" } border="0" @if(!title.isEmpty){ title="@title" } @if(!alt.isEmpty){ alt="@alt" }>}
