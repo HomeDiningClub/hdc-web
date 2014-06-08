@@ -1,2 +1,6 @@
 @(imgPath: String, linkPath: String, alt: String, title: String)
-<a href="@linkPath">@shared.img(imgPath.stripPrefix("/"), None, None, cssClass = "banner")</a>
+
+<div class="banner">
+    <div class="banner-header">@Messages("banner.header")</div>
+    <a href="@linkPath" target="_blank">@shared.img(imgPath.stripPrefix("/"), None, None, cssClass = "banner")</a>
+</div>
