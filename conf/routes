@@ -3,69 +3,81 @@
 # ~~~~
 
 # Home page
-GET         /                              @controllers.StartPageController.index
-GET         /about-us                      @controllers.AboutUsController.index
+GET         /                                          @controllers.StartPageController.index
+GET         /how-does-it-work                          @controllers.ContentController.howDoesItWork
+GET         /become-a-member                           @controllers.ContentController.becomeAMember
+GET         /become-a-member/the-perfect-guest         @controllers.ContentController.thePerfectGuest
+GET         /become-a-host                             @controllers.ContentController.becomeAHost
+GET         /become-a-host/practical-info              @controllers.ContentController.practicalInfo
+GET         /become-a-host/example-host-text           @controllers.ContentController.exampleHostText
+GET         /references                                @controllers.ContentController.references
+GET         /about-us                                  @controllers.ContentController.aboutUs
+GET         /about-us/press                            @controllers.ContentController.press
+GET         /about-us/user-terms-and-conditions        @controllers.ContentController.userTermsAndConditions
+GET         /faq                                       @controllers.ContentController.faq
+GET         /contact                                   @controllers.ContentController.contact
+
 
 # Campaign
-GET         /newsletter                    controllers.CampaignController.index
+GET         /newsletter                                controllers.CampaignController.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                  controllers.Assets.at(path="/public", file)
+GET         /assets/*file                              controllers.Assets.at(path="/public", file)
 
 # Personer
-GET         /personer                      controllers.Personer.list
-GET         /personer/skapa                controllers.Personer.ny
-POST        /personer/skapa                controllers.Personer.save
+GET         /personer                                  controllers.Personer.list
+GET         /personer/skapa                            controllers.Personer.ny
+POST        /personer/skapa                            controllers.Personer.save
 
 # UserProfile
-GET         /profile                       @controllers.UserProfileController.index
-POST        /profile/skapa                 @controllers.UserProfileController.save
-POST        /profile/spara                 @controllers.UserProfileController.saveUserProfile
-GET         /profile/ny                    @controllers.UserProfileController.skapaNyProfil
-GET         /profile/find/:userName        @controllers.UserProfileController.hamtaProfil(userName)
+GET         /profile                                   @controllers.UserProfileController.index
+POST        /profile/skapa                             @controllers.UserProfileController.save
+POST        /profile/spara                             @controllers.UserProfileController.saveUserProfile
+GET         /profile/ny                                @controllers.UserProfileController.skapaNyProfil
+GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
 
 # Host
-GET         /host                          @controllers.HostController.index
+GET         /host                                      @controllers.HostController.index
 
 
 # Worlds example
-GET         /worlds                        @controllers.WorldController.index
+GET         /worlds                                    @controllers.WorldController.index
 #POST        /worlds/add                    controllers.WorldController.add
 #POST        /worlds/delete                 controllers.WorldController.delete
 
 # Files
-GET         /file                          @controllers.FileController.index
+GET         /file                                      @controllers.FileController.index
 #GET         /file/listS3                   @controllers.FileController.listS3Files(prefix = "")
 #GET         /file/listS3/:prefix           @controllers.FileController.listS3Files(prefix)
 #GET         /file/list/images              @controllers.FileListController.listAllImages
-POST        /file/add                      @controllers.FileController.add
-GET         /file/delete/:key              @controllers.FileController.deleteImage(key: java.util.UUID)
+POST        /file/add                                  @controllers.FileController.add
+GET         /file/delete/:key                          @controllers.FileController.deleteImage(key: java.util.UUID)
 
 
 # Login page
-GET         /login                         securesocial.controllers.LoginPage.login
-GET         /logout                        securesocial.controllers.LoginPage.logout
+GET         /login                                     securesocial.controllers.LoginPage.login
+GET         /logout                                    securesocial.controllers.LoginPage.logout
 
 # User Registration and password handling
-GET         /signup                        securesocial.controllers.Registration.startSignUp
-POST        /signup                        securesocial.controllers.Registration.handleStartSignUp
-GET         /signup/:token                 securesocial.controllers.Registration.signUp(token)
-POST        /signup/:token                 securesocial.controllers.Registration.handleSignUp(token)
-GET         /reset                         securesocial.controllers.Registration.startResetPassword
-POST        /reset                         securesocial.controllers.Registration.handleStartResetPassword
-GET         /reset/:token                  securesocial.controllers.Registration.resetPassword(token)
-POST        /reset/:token                  securesocial.controllers.Registration.handleResetPassword(token)
-GET         /password                      securesocial.controllers.PasswordChange.page
-POST        /password                      securesocial.controllers.PasswordChange.handlePasswordChange
+GET         /signup                                    securesocial.controllers.Registration.startSignUp
+POST        /signup                                    securesocial.controllers.Registration.handleStartSignUp
+GET         /signup/:token                             securesocial.controllers.Registration.signUp(token)
+POST        /signup/:token                             securesocial.controllers.Registration.handleSignUp(token)
+GET         /reset                                     securesocial.controllers.Registration.startResetPassword
+POST        /reset                                     securesocial.controllers.Registration.handleStartResetPassword
+GET         /reset/:token                              securesocial.controllers.Registration.resetPassword(token)
+POST        /reset/:token                              securesocial.controllers.Registration.handleResetPassword(token)
+GET         /password                                  securesocial.controllers.PasswordChange.page
+POST        /password                                  securesocial.controllers.PasswordChange.handlePasswordChange
 
 # Providers entry points
-GET         /authenticate/:provider        securesocial.controllers.ProviderController.authenticate(provider)
-POST        /authenticate/:provider        securesocial.controllers.ProviderController.authenticateByPost(provider)
-GET         /not-authorized                securesocial.controllers.ProviderController.notAuthorized
+GET         /authenticate/:provider                    securesocial.controllers.ProviderController.authenticate(provider)
+POST        /authenticate/:provider                    securesocial.controllers.ProviderController.authenticateByPost(provider)
+GET         /not-authorized                            securesocial.controllers.ProviderController.notAuthorized
 
 # TEST
-GET         /profile/loggain               @controllers.UserProfileController.login
+GET         /profile/loggain                           @controllers.UserProfileController.login
 
 
-GET         /profilen/spara                @controllers.UserCredentialController.spara
-GET         /profilen/visa                 @controllers.UserCredentialController.visa
+GET         /profilen/spara                            @controllers.UserCredentialController.spara
+GET         /profilen/visa                             @controllers.UserCredentialController.visa

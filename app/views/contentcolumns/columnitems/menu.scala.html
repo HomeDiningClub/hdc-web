@@ -1,0 +1,19 @@
+@(asideHeader: String = "", asideMenu: List[models.content.MenuItem] = Nil)
+
+@if(!asideMenu.isEmpty) {
+    <div class="col-xs-12 col-md-3 pull-left content-side-menu">
+        <aside>
+            @if(!asideHeader.isEmpty) {
+                <h3 class="aside-header">@asideHeader</h3>
+            }
+            <ul>
+            @for(mItem <- asideMenu){
+
+                <li @if(!mItem.cssClass.isEmpty){ class="@mItem.cssClass" }>
+                    <a href="@mItem.url" @if(!mItem.alt.isEmpty){ alt="@mItem.alt" } @if(!mItem.title.isEmpty){ title="@mItem.title" }>@mItem.name</a>
+                </li>
+            }
+            </ul>
+        </aside>
+    </div>
+}

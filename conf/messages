@@ -7,6 +7,7 @@ header.link.inbox=Inkorg
 header.link.login=Logga in
 header.login-form.email=E-post
 header.login-form.password=Lösenord
+header.login-form.forgot-password=Har du glömt ditt lösenord?
 header.login-form.submit=Logga in
 header.logo.alt=Home dining club logotyp
 header.mobile-menu.title=Visa meny
@@ -31,6 +32,53 @@ startpage.main-content.body=<p>Bjud hem nya vänner på middag och få betyg och
 
 aboutus.title=Om oss
 aboutus.header=Om oss
+aboutus.body=body
+
+press.title=Press
+press.header=Press
+press.body=body
+
+usertermsandconditions.title=Användarvillkor & riktlinjer
+usertermsandconditions.header=Användarvillkor & riktlinjer
+usertermsandconditions.body=body
+
+faq.title=Vanliga frågor
+faq.header=Vanliga frågor
+faq.body=body
+
+references.title=Referenser
+references.header=Referenser
+references.body=body
+
+practicalinfo.title=Praktiskt information
+practicalinfo.header=Praktiskt information
+practicalinfo.body=body
+
+examplehosttext.title=Exempel på en profiltext
+examplehosttext.header=Exempel på en profiltext
+examplehosttext.body=body
+
+
+becomeahost.title=Bli en medlem
+becomeahost.header=Bli en medlem
+becomeahost.body=body
+
+theperfectguest.title=Den perfekta gästen
+theperfectguest.header=Den perfekta gästen
+theperfectguest.title=body
+
+howdoesitwork.title=Hur fungerar det?
+howdoesitwork.header=Hur fungerar det?
+howdoesitwork.body=body
+
+contact.title=Kontakta oss
+contact.header1=Kontaktinfo
+contact.body1=body
+contact.header2=Kontakta oss
+contact.body2=body
+
+
+
 
 campaign.title=Anmäl dig till vår maillista
 campaign.header=Välkommen till Home Dining Club!
