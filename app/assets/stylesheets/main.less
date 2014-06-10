@@ -2,7 +2,7 @@
 @import "animate.less";
 @import "gray.less";
 @import "star-rating.min.less";
-//@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic);
 
 // Variables
 @hdc-green: #6fc2b5;
@@ -22,6 +22,7 @@
 
 @text-color: #666;
 @header-color: @hdc-green;
+@header-color-extra: #222;
 @header-background-color: #fff;
 @maincontent-background-color: #fff;
 @footer-background-color: @hdc-green;
@@ -48,11 +49,14 @@ html{
   overflow-x:auto;
   color: @text-color;
 }
-body{
+body
+{
   font-smooth: always;
   font-family: @font-family-base !important;
 }
-
+#wrap{
+  //height:100%;
+}
 
 
 
@@ -68,6 +72,8 @@ h2{
   font-size:20px;
 }
 h3{
+  line-height:1.4em;
+  color: @header-color-extra;
   font-size:16px;
 }
 h4{
@@ -89,7 +95,7 @@ a:hover{
   text-decoration:underline;
   color: @link-color-hover;
 }
-div{
+div.container-fluid{
   transition: all 0.3s ease-in-out 0s;
 }
 img
@@ -679,6 +685,18 @@ input[type="reset"]:hover
 }
 
 
+
+// Login
+.login-form
+{
+  border-left:5px solid @hdc-green;
+  padding:15px 15px 15px 30px;
+  background-color: @hdc-light-gray;
+}
+.provider-icons a:hover
+{
+  opacity: 0.5;
+}
 
 
 // Responsive

@@ -44,12 +44,10 @@
                         <div class="form-actions">
                             <button type="submit" class="btn btn-primary">@Messages("securesocial.login.title")</button>
                         </div>
-                        <div class="clearfix">
-                            <a href="@securesocial.core.providers.utils.RoutesHelper.startResetPassword()"><p>@Messages("securesocial.login.forgotPassword") </a></p>
+                        <div class="clearfix margin-top">
+                            <p><a href="@securesocial.core.providers.utils.RoutesHelper.startResetPassword()">@Messages("securesocial.login.forgotPassword")</a><br>
+                            @Messages("securesocial.login.signUp") <a href="@securesocial.core.providers.utils.RoutesHelper.startSignUp()">@Messages("securesocial.login.here")</a></p>
                         </div>
-                            <div class="clearfix">
-                                <p>@Messages("securesocial.login.signUp") <a href="@securesocial.core.providers.utils.RoutesHelper.startSignUp()">@Messages("securesocial.login.here")</a></p>
-                            </div>
                     </fieldset>
                 </form>
             }

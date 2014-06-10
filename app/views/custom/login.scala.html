@@ -5,7 +5,7 @@
 @import securesocial.core.AuthenticationMethod._
 @import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
 
-@main(Messages("securesocial.login.title")) {
+@main(Messages("securesocial.login.title")){
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="col-xs-12 col-md-10 col-md-offset-1 col-xs-offset-0">
@@ -13,8 +13,6 @@
                 <div class="page-header">
                     <h1>@Messages("securesocial.login.title")</h1>
                 </div>
-
-
 
                 @errorMsg.map { msg =>
                     <div class="alert alert-error">
@@ -37,26 +35,26 @@
 
                 @defining( Registry.providers.all.values.filter( _.id != UsernamePassword) ) { externalProviders =>
 
-                        @if( externalProviders.size > 0 ) {
-                            <div class="clearfix">
-                                <h3>@Messages("securesocial.login.instructions")</h3>
-                                <p>
-                                    @for(p <- externalProviders) {
-                                        @provider(p.id)(request)
-                                    }
-                                </p>
-                            </div>
-                        }
-
                         @Registry.providers.get(UsernamePassword).map { up =>
-                            <div class="clearfix">
+                            <div class="col-xs-12 col-md-4 col-md-offset-1 login-form">
                                 @if( externalProviders.size > 0 ) {
                                     <h3>@Messages("securesocial.login.useEmailAndPassword")</h3>
                                 } else {
                                     <h3>@Messages("securesocial.login.useEmailAndPasswordOnly")</h3>
                                 }
 
-                               @provider("userpass", Some(loginForm))(request)
+                               @custom.provider("userpass", Some(loginForm))(request)
+                            </div>
+                        }
+
+                        @if( externalProviders.size > 0 ) {
+                            <div class="col-xs-12 col-md-4 col-md-offset-1 login-form">
+                                <h3>@Messages("securesocial.login.instructions")</h3>
+                                <p class="provider-icons margin-top">
+                                @for(p <- externalProviders) {
+                                    @custom.provider(p.id)(request)
+                                }
+                                </p>
                             </div>
                         }
                     }
