@@ -110,7 +110,7 @@ img
   padding: 0px;
 }
 
-.row .no-gutter,
+.row .no-gutter
 {
   padding-left:0px;
   padding-right:0px;
@@ -132,7 +132,10 @@ img
 {
   margin-bottom:20px;
 }
-
+.big-margin-bottom
+{
+  margin-top:40px;
+}
 
 
 
@@ -187,15 +190,16 @@ input[type="reset"]:hover
 // Banners
 .col-banner
 {
-
+  text-align: center;
 }
 .banner img
 {
-  width:100%;
+  max-width:240px;
   min-width:240px;
 }
 .banner .banner-header
 {
+  text-align: left;
   padding-top:1em;
   display: block;
   clear:both;
@@ -278,20 +282,26 @@ input[type="reset"]:hover
 // Header
 .header-container
 {
-  padding-top: 4px;
+  z-index:300;
   background-image: url("/assets/images/general/bg-header.png");
   background-repeat: repeat-x;
   box-shadow: 0 0 10px 0px #aaa;
   background-color: @header-background-color;
+  padding-top: 4px;
   height:111px;
 }
 .header-spacing
 {
+  padding-bottom: 220px;
+}
+.food-image-nav {
+  z-index:100;
+  margin-top:-37px;
+  position: relative;
   background-image: url("/assets/images/general/bg-menu-backdrop-90x1024.jpg");
   background-repeat: repeat-x;
-  padding-bottom: 50px;
-  height:197px;
-  //height:111px;
+  background-size: cover;
+  height:84px;
 }
 .logo-img
 {
@@ -326,6 +336,8 @@ input[type="reset"]:hover
 // Header - Main navigation
 .header-navigation
 {
+  position: relative;
+  z-index:300;
   max-height: 37px;
   height: 37px;
   background-image: url("/assets/images/general/bg-menu-gray-transparent.png");
@@ -765,8 +777,13 @@ input[type="reset"]:hover
   }
   .header-spacing
   {
-    height:50px;
-    background: none;
+    padding-bottom:0px;
+    //background: none;
+  }
+  .food-image-nav
+  {
+    z-index:-1;
+
   }
   .nav-main-menu
   {
