@@ -74,17 +74,9 @@ class ContentService {
 
 
   @Transactional(readOnly = false)
-  private def createContentPage(name: String, route: String = ""): ContentPage = {
-    var newContent: ContentPage = null
-
-    if (!route.isEmpty) {
-      newContent = new ContentPage(name, route)
-    } else {
-      newContent = new ContentPage(name)
-    }
-
-    newContent = contentRepository.save(newContent)
-    newContent
+  def addContentPage(newContent: ContentPage): ContentPage = {
+    val newContentResult = contentRepository.save(newContent)
+    newContentResult
   }
 
 

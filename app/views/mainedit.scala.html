@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit flash: Flash =  Flash(Map(("",""))))
 <!DOCTYPE html>
 
 <html lang="@Messages("main.language")">
@@ -26,6 +26,16 @@
                 </div>
             </div>
             <div class="container">
+                @if(flash.get(Messages("edit.success")).isDefined) {
+                    <div class="alert alert-success animated fadeIn">
+                        @flash.get(Messages("edit.success"))
+                    </div>
+                }
+                @if(flash.get(Messages("edit.error")).isDefined){
+                    <div class="alert alert-error animated fadeIn">
+                        @flash.get(Messages("edit.error"))
+                    </div>
+                }
                 @content
             </div>
         </div>

@@ -2,7 +2,8 @@
 
 @main(Messages("startpage.title")) {
 
-    <div id="carousel-startpage" class="carousel slide hidden" data-ride="carousel" data-interval="4000">
+    @* Functional carousel, now disabled
+    <div id="carousel-startpage" class="carousel slide" data-ride="carousel" data-interval="4000">
 
         <!-- Indicators -->
         <ol class="carousel-indicators">
@@ -58,6 +59,7 @@
             <span class="glyphicon glyphicon-chevron-right"></span>
         </a>
     </div>
+    *@
 
     <div class="container-fluid maincontent-container">
         <div class="row-fluid">
@@ -67,7 +69,7 @@
                 <div class="row margin-top">
                     <!-- Main intro -->
                     <div class="col-xs-12 col-md-6">
-                        <h1>@Messages("startpage.main-content.header")</h1>
+                        <h1 class="page-header">@Messages("startpage.main-content.header")</h1>
                         @Html(Messages("startpage.main-content.body"))
                     </div>
 

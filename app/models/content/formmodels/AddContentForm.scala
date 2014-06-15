@@ -1,5 +1,5 @@
 package models.content.formmodels
 
-case class AddContentForm(name: String, route: String, preamble: Option[String], body: Option[String]) {
+case class AddContentForm(name: String, route: String, title: Option[String], preamble: Option[String], mainBody: Option[String]) {
 
 }

@@ -11,8 +11,8 @@ import java.util.Set;
 @NodeEntity
 public class ContentPage extends ContentBase {
 
-    public String route;
     public String name;
+    public String route;
     public String title;
     public String preamble;
     public String mainBody;
@@ -25,9 +25,30 @@ public class ContentPage extends ContentBase {
         this.name = name;
     }
 
-    public ContentPage(String route, String name) {
+    public ContentPage(String name, String route) {
         this.route = cleanRoute(route);
         this.name = name;
+    }
+
+    public ContentPage(String name, String route, String title) {
+        this.route = cleanRoute(route);
+        this.name = name;
+        this.title = title;
+    }
+
+    public ContentPage(String name, String route, String title, String preamble) {
+        this.route = cleanRoute(route);
+        this.name = name;
+        this.preamble = preamble;
+        this.title = title;
+    }
+
+    public ContentPage(String name, String route, String title, String preamble, String mainBody) {
+        this.route = cleanRoute(route);
+        this.name = name;
+        this.preamble = preamble;
+        this.title = title;
+        this.mainBody = mainBody;
     }
 
     private String cleanRoute(String input) {
