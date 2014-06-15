@@ -35,6 +35,7 @@ import securesocial.core.providers.utils.BCryptPasswordHasher
  *
  * 1. Username/Password storage
  * 2. Facebook autentication
+ * 3. Google autentication
  *
  */
 
@@ -99,92 +100,12 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
   // om element redan finns skall id med dvs sättas.
   def save(user: Identity): Identity = {
 
-
-    println("333333")
-
     println("Method: Save ...................")
-    println("UserId:        " + user.identityId.userId)
-    println("UserProvider:  " + user.identityId.providerId)
-    println("email:         " + user.email)
-    println("First name : " + user.firstName)
-
-
-    println("22222222")
-
-
-    println("----------------------------------------------------------------------")
-    println("USER - INDATA ")
-    println("----------------------------------------------------------------------")
-    println("PROVIDER: " + user.identityId.providerId)
-    println("USERID: " + user.identityId.userId)
-    println("FIRSTNAME : " + user.firstName)
-    println("LASTNAME : " + user.lastName)
-    println("FULNAME : " + user.fullName)
-    println("EMAIL : " + user.email)
-    //println("PASSWORD: " + user.passwordInfo.get.password)
-    //println("SALT: " + user.passwordInfo.get.salt)
-    //println("HASHER: " + user.passwordInfo.get.hasher)
-    //println("authMethod: " + user.authMethod)
-    //println("AVATAR_URL : " + user.avatarUrl)
-
-    println("----------------------------------------------------------------------")
-/*
-    // Konvertera in data för att kunna spara ner i databasen
-    // spara inte nere i databasen utan kovertera tillbaka
-    var user2 : Identity = userCredential2socialUser(socialUser2UserCredential(user))
-
-    println("----------------------------------------------------------------------")
-    println("USER2 - KONTROLL ")
-    println("----------------------------------------------------------------------")
-
-    println("PROVIDER: " + user2.identityId.providerId)
-    println("USERID: " + user2.identityId.userId)
-    println("FIRSTNAME : " + user2.firstName)
-    println("LASTNAME : " + user2.lastName)
-    println("FULNAME : " + user2.fullName)
-    println("EMAIL : " + user2.email)
-    //println("PASSWORD: " + user2.passwordInfo.get.password)
-    //println("SALT: " + user2.passwordInfo.get.salt)
-    //println("HASHER: " + user2.passwordInfo.get.hasher)
-    //println("authMethod: " + user2.authMethod)
-    //println("AVATAR_URL : " + user2.avatarUrl)
-    //println("----------------------------------------------------------------------")
-
-
-    if(user.passwordInfo == user2.passwordInfo) {
-      println("passwordInfo is ok")
-    } else {
-      println("passwordInfo error!!!")
-    }
-
-    if(user.oAuth1Info == user2.oAuth1Info) {
-      println("oAuth1Info : OK")
-    } else {
-      println("oAuth1Info : ERROR")
-    }
-
-    if(user.oAuth2Info == user2.oAuth2Info) {
-      println("oAuth2Info : OK")
-    } else {
-      println("oAuth2Info : ERROR")
-    }
-
-   if(user == user2) {
-      println("User is ok")
-    } else {
-      println("User error!!")
-    }
-*
-*/
-
-    println("11111111111111111111111111111111111")
-
 
     // Kontrollera om användaren finns
     val exitsUser = exists(user.identityId.userId, user.identityId.providerId)
 
     println("Finns: " + exitsUser)
-
 
     // check if exists
     var uc  : UserCredential = getUserById(user.identityId.userId, user.identityId.providerId)
@@ -204,12 +125,9 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
     //var uc2 : UserCredential = socialUser2UserCredential(user)
     // Ett värde som säger om värdet redan finns i databasen uc.id
 
-
     user
 
   }
-
-
 
 
   /**
