@@ -1,6 +1,8 @@
+# Main layout
 main.title=Home Dining Club
 main.language=sv
 
+# Header
 header.link.campaign=Nyhetsbrev
 header.link.host-profile=Din profil
 header.link.inbox=Inkorg
@@ -12,13 +14,16 @@ header.login-form.submit=Logga in
 header.logo.alt=Home dining club logotyp
 header.mobile-menu.title=Visa meny
 
+# Footer
 footer.text=© Home Dining Club AB
 footer.link.mail.href=mailto:info@homediningclub.se?Subject=Hej%20Home%20dining%20club
 footer.link.mail.title=Maila till info@homediningclub.se
 footer.link.mail.text=info@homediningclub.se
 
+# Banner
 banner.header=Annons:
 
+# Content
 person.formular=Personliga inställningar (svenska)
 person.lista=Lista personer (svenska)
 
@@ -27,8 +32,6 @@ startpage.main-aside.header=Introduktionsvideo
 startpage.main-aside.body=
 startpage.main-content.header=Hej och välkommen till Home Dining Club!
 startpage.main-content.body=<p>Bjud hem nya vänner på middag och få betyg och omdömen på din kokkonst. Håll arrangemang för små och stora grupper. Ta betalt eller bjud! Det är upp till dig. Du kanske har den bästa Paellan i hela Stockholm. Varför inte låta folk få komma hem till dig och prova den?</p><p>Eller så är du bara intresserad av att läsa recept, eller äta hos andra. Upptäcka nya kulinariska höjder och lära känna andra lika matintresserade. Det här är tjänsten för dig!</p>
-
-
 
 aboutus.title=Om oss
 aboutus.header=Om oss
@@ -58,7 +61,6 @@ examplehosttext.title=Exempel på en profiltext
 examplehosttext.header=Exempel på en profiltext
 examplehosttext.body=body
 
-
 becomeahost.title=Bli en medlem
 becomeahost.header=Bli en medlem
 becomeahost.body=body
@@ -77,6 +79,40 @@ contact.body1=body
 contact.header2=Kontakta oss
 contact.body2=body
 
+
+
+
+# Content - Edit
+edit.content.title=Home Dining Club
+edit.title=Administration
+
+edit.success=Lyckades
+edit.error=Fel
+
+edit.menu.title=HDC - Admin
+edit.menu.pages=Sidor
+edit.menu.users=Användare
+edit.menu.files=Filer
+edit.menu.backtosite=Tillbaka till hemsidan
+
+edit.index.title=Det här är redigeringsläget
+edit.index.body=Redigera loss, men ta det försiktigt, då det inte finns några säkerhetsspärrar, och ingen "ångra".
+
+edit.content.list.header=Lista av sidor
+edit.content.list.name=Namn
+edit.content.list.route=Sökväg
+edit.content.list.action=Funktioner
+
+edit.content.add.header=Skapa ny sida
+edit.content.add.name=Namn
+edit.content.add.route=Sökväg (exempel: my-page)
+edit.content.add.preamble=Ingress
+edit.content.add.body=Huvudtext
+edit.content.add.status=Huvudtext
+
+edit.content.actions.add=Lägg till
+edit.content.actions.edit=Redigera
+edit.content.actions.delete=Ta bort
 
 
 

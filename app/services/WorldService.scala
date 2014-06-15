@@ -11,7 +11,7 @@ import repositories.WorldRepository
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConverters._
 import scala.List
-import models.relationships.RelationshipTypes
+import models.enums.{RelationshipTypesEnums}
 import org.springframework.transaction.annotation.Transactional
 
 @Service
@@ -82,7 +82,7 @@ class WorldService {
 
   @Transactional(readOnly = true)
   def getWorldPath(worldA: World, worldB: World): List[World] = {
-    val pathExp: PathExpander[_] = PathExpanders.forTypeAndDirection(RelationshipTypes.REACHABLE_BY_ROCKET, Direction.OUTGOING)
+    val pathExp: PathExpander[_] = PathExpanders.forTypeAndDirection(RelationshipTypesEnums.REACHABLE_BY_ROCKET, Direction.OUTGOING)
     val path = GraphAlgoFactory.shortestPath(pathExp, 100)
       .findSinglePath(template.getNode(worldA.id), template.getNode(worldB.id))
 

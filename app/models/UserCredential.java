@@ -1,16 +1,10 @@
 package models;
 
-import java.util.Set;
-
-import org.neo4j.graphdb.Direction;
-import org.springframework.data.neo4j.annotation.Fetch;
+import models.base.AbstractEntity;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.support.index.IndexType;
-import models.relationships.RelationshipTypes;
-import securesocial.core.Identity;
 
 
 /**
@@ -22,10 +16,7 @@ import securesocial.core.Identity;
 
 
 @NodeEntity
-public class UserCredential {
-
-    @GraphId
-    public Long id;
+public class UserCredential extends AbstractEntity {
 
     @Indexed(indexType = IndexType.FULLTEXT, indexName = "userId")
     public String userId = "";

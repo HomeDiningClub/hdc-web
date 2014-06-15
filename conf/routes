@@ -17,9 +17,17 @@ GET         /about-us/user-terms-and-conditions        @controllers.ContentContr
 GET         /faq                                       @controllers.ContentController.faq
 GET         /contact                                   @controllers.ContentController.contact
 
-
 # Campaign
-GET         /newsletter                                controllers.CampaignController.index
+GET         /newsletter                                @controllers.CampaignController.index
+
+# EDIT - Content
+GET         /edit                                      @controllers.EditController.index
+GET         /edit/content/contentlist                  @controllers.ContentController.editListContent
+GET         /edit/content/add                          @controllers.ContentController.addContentIndex
+POST        /edit/content/add                          @controllers.ContentController.addContentSubmit
+GET         /edit/content/edit/:id                     @controllers.ContentController.editContent(id: java.lang.Long)
+GET         /edit/content/delete/:id                   @controllers.ContentController.deleteContent(id: java.lang.Long)
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                              controllers.Assets.at(path="/public", file)

@@ -4,10 +4,20 @@ import play.api.mvc._
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
 import play.api.i18n.Messages
-import models.content.MenuItem
+import org.springframework.beans.factory.annotation.Autowired
+import services.ContentService
+import models.content._
+import play.api.data._
+import play.api.data.Forms._
+import models.content.formmodels.AddContentForm
 
 @SpringController
-class ContentController extends Controller {
+class ContentController extends Controller with securesocial.core.SecureSocial {
+
+  @Autowired
+  private var contentService: ContentService = _
+
+
 
   // About us, Press and UserTerms
   // Menu
@@ -156,5 +166,57 @@ class ContentController extends Controller {
       column2Body = Messages("contact.body2"))
     )
   }
+
+
+
+  // Edit - Listing
+  def editListContent = SecuredAction {
+    val listOfPage: List[ContentPage] = contentService.getListOfAllContentPages()
+    Ok(views.html.edit.contentlist(listOfPage))
+  }
+
+  // Edit - Add Content
+  val pageName = Messages("edit.content.add.name")
+  val pageRoute = Messages("edit.content.add.route")
+  val pagePreAmble = Messages("edit.content.add.preamble")
+  val pageBody = Messages("edit.content.add.body")
+  val pageStatus = Messages("edit.content.add.status")
+  val Success = Messages("edit.success")
+  val Error = Messages("edit.error")
+
+  val contentForm = Form(
+    mapping(
+      pageName -> nonEmptyText(minLength = 1, maxLength = 255),
+      pageRoute -> nonEmptyText(minLength = 1, maxLength = 255),
+      pagePreAmble -> optional(text),
+      pageBody -> optional(text)
+    )(AddContentForm.apply _)(AddContentForm.unapply _)
+  )
+
+  def addContentIndex() = SecuredAction {
+    Ok(views.html.edit.contentadd(contentForm))
+  }
+
+  def addContentSubmit = SecuredAction { implicit request =>
+
+    contentForm.bindFromRequest.fold(
+      errors => BadRequest(views.html.edit.contentadd(contentForm)),
+      contact => Redirect(controllers.routes.ContentController.editListContent())
+    )
+
+  }
+
+
+  // Edit - Edit content
+  def editContent(id: java.lang.Long) = SecuredAction { implicit request =>
+    Ok(views.html.edit.contentlist(Nil))
+  }
+
+  // Edit - Delete content
+  def deleteContent(id: java.lang.Long) = SecuredAction { implicit request =>
+    Ok(views.html.edit.contentlist(Nil))
+  }
+
+
 
 }

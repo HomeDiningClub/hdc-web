@@ -32,10 +32,9 @@ public abstract class ContentFile extends AbstractEntity {
 
     @Transient
     public String url;
-
-    public String getUrl() throws MalformedURLException {
-        return new URL("https://s3.amazonaws.com/" + this.bucketDir + this.key).toString();
-    }
+    //public String getUrl() throws MalformedURLException {
+    //    return new URL("https://s3.amazonaws.com/" + this.bucketDir + this.key).toString();
+    //}
 
     protected ContentFile() {
         this.key = UUID.randomUUID();
