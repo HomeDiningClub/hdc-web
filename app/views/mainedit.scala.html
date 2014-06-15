@@ -1,0 +1,47 @@
+@(title: String)(content: Html)(implicit flash: Flash =  Flash(Map(("",""))))
+<!DOCTYPE html>
+
+<html lang="@Messages("main.language")">
+    <head>
+        <title>@title - @Messages("edit.title")</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")" />
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.min.css")">
+        <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")">
+    </head>
+    <body>
+        <div id="wrap">
+            <div class="container-fluid">
+                <div class="navbar-static-top">
+                    <a class="navbar-brand" href="#">@Messages("edit.menu.title")</a>
+                    <ul class="nav navbar-nav">
+                        <li><a href="@routes.ContentController.editListContent()">@Messages("edit.menu.pages")</a></li>
+                        <li><a href="#">@Messages("edit.menu.users")</a></li>
+                        <li><a href="#">@Messages("edit.menu.files")</a></li>
+                        <li><a href="@routes.StartPageController.index()">@Messages("edit.menu.backtosite")&nbsp;<span class="glyphicon glyphicon-globe"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="container">
+                @if(flash.get(Messages("edit.success")).isDefined) {
+                    <div class="alert alert-success animated fadeIn">
+                        @flash.get(Messages("edit.success"))
+                    </div>
+                }
+                @if(flash.get(Messages("edit.error")).isDefined){
+                    <div class="alert alert-error animated fadeIn">
+                        @flash.get(Messages("edit.error"))
+                    </div>
+                }
+                @content
+            </div>
+        </div>
+        @*TODO - Create controllers with local backups, also bundle *@
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/site.js")"></script>
+    </body>
+</html>

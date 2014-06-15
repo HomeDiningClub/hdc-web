@@ -6,10 +6,10 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
 
 @SpringController
-class CampaignController extends Controller {
+class EditController extends Controller with securesocial.core.SecureSocial {
 
-  def index = Action {
-    Ok(views.html.campaign.index())
+  def index = SecuredAction {
+    Ok(views.html.edit.index())
   }
 
 }

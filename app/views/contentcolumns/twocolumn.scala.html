@@ -7,11 +7,11 @@
             <div class="col-xs-12 col-md-8 col-md-offset-1 col-xs-offset-0">
                 <div class="row">
                     <div class="col-xs-12 @if(menuList.isEmpty){col-md-6}else{col-md-4}">
-                        @if(!column1Header.isEmpty){ <h1>@column1Header</h1> }
+                        @if(!column1Header.isEmpty){ <h1 class="page-header">@column1Header</h1> }
                         @if(!column1Body.isEmpty){ <div class="content-body">@column1Body</div> }
                     </div>
                     <div class="col-xs-12 @if(menuList.isEmpty){col-md-6}else{col-md-4}">
-                        @if(!column2Header.isEmpty){ <h1>@column2Header</h1> }
+                        @if(!column2Header.isEmpty){ <h1 class="page-header">@column2Header</h1> }
                         @if(!column1Body.isEmpty){ <div class="content-body">@column1Body</div> }
                     </div>
                     @contentcolumns.columnitems.menu(asideHeader = menuHeader, asideMenu = menuList)

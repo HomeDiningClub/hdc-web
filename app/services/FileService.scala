@@ -73,8 +73,8 @@ class FileService {
   }
 
   // Uploads a file
-  // Return URL of file if successful
-  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile]): String = {
+  // Return ContentObject if found
+  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile]): Option[ContentFile] = {
 
     // Check the Mime-type from the actual file
     val contentType = file.contentType match {
@@ -119,7 +119,7 @@ class FileService {
     if (!file.contentType.equals(fileExtensionMimeType)) {
 
       Logger.error("Error: File has an invalid mime-type, aborting.")
-      return ""
+      return None
 
     } else {
 
@@ -141,14 +141,14 @@ class FileService {
         unitResponse =>
           Logger.info("Uploaded and saved file: " + fileUrl)
           saveToDB(newFile)
-          newFile.getUrl
+          return Some(newFile)
       }
         .recover {
         case S3Exception(status, code, message, originalXml) => Logger.error("Error: " + message)
         case _ => Logger.error("Error: Cannot upload image.")
       }
 
-      ""
+      None
     }
   }
 

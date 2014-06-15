@@ -1,0 +1,24 @@
+@(contentForm: Form[models.content.formmodels.AddContentForm])
+@import helper.twitterBootstrap._
+
+@mainedit(Messages("edit.content.title")) {
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            <h1 class="page-header">@Messages("edit.content.add.header")</h1>
+            @helper.form(action=routes.ContentController.addContentSubmit(), 'class -> "form-horizontal"){
+                @helper.inputText(contentForm(Messages("edit.content.add.name")))
+                @helper.inputText(contentForm(Messages("edit.content.add.route")))
+                @helper.inputText(contentForm(Messages("edit.content.add.title")), 'class -> "form-horizontal")
+                @helper.textarea(contentForm(Messages("edit.content.add.preamble")), 'class -> "tinymce")
+                @helper.textarea(contentForm(Messages("edit.content.add.body")), 'class -> "tinymce")
+                <button class="btn btn-primary" type="submit">@Messages("edit.content.add.save")</button>
+                <a class="btn" href="@routes.ContentController.editListContent()">@Messages("edit.content.add.abort")</a>
+            }
+
+
+        </div>
+    </div>
+
+}

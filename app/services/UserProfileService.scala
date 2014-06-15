@@ -13,7 +13,7 @@ import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConverters._
 import scala.List
 import scala.language.implicitConversions
-import models.relationships.RelationshipTypes
+import models.enums.RelationshipTypesEnums
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.data.neo4j.conversion.EndResult
 import org.springframework.data.neo4j.repository.GraphRepository

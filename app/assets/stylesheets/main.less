@@ -20,6 +20,11 @@
 @host-level-03-color: @hdc-gray;
 @host-level-04-color: @hdc-gold;
 
+@alert-error: #fff4f4;
+@alert-success: #f4fff4;
+@alert-info: #f4f4ff;
+@alert-warning: #fffff4;
+
 @text-color: #666;
 @header-color: @hdc-green;
 @header-color-extra: #222;
@@ -27,8 +32,8 @@
 @maincontent-background-color: #fff;
 @footer-background-color: @hdc-green;
 @footer-border-color: @hdc-green;
-@link-color: #428bca;
-@link-color-hover: darken(@link-color, 10%);
+@link-color: @hdc-green;
+@link-color-hover: darken(@link-color, 30%);
 @label-color: #666;
 @input-border-color: #eee;
 @input-button-bg-color: @hdc-green;
@@ -116,6 +121,36 @@ img
   padding-right:0px;
 }
 
+
+// General alerts
+.alert
+{
+  border-width: 2px;
+}
+.alert-error
+{
+  color: darken(@alert-error, 70%);
+  border-color:darken(@alert-error, 10%);
+  background-color:@alert-error;
+}
+.alert-success
+{
+  color: darken(@alert-success, 70%);
+  border-color:darken(@alert-success, 10%);
+  background-color:@alert-success;
+}
+.alert-info
+{
+  color: darken(@alert-info, 70%);
+  border-color:darken(@alert-info, 10%);
+  background-color:@alert-info;
+}
+.alert-warning
+{
+  color: darken(@alert-warning, 70%);
+  border-color:darken(@alert-warning, 10%);
+  background-color:@alert-warning;
+}
 
 
 
@@ -782,8 +817,7 @@ input[type="reset"]:hover
   }
   .food-image-nav
   {
-    z-index:-1;
-
+    display: none;
   }
   .nav-main-menu
   {
