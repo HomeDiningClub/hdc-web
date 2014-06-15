@@ -99,11 +99,17 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
   // om element redan finns skall id med dvs sättas.
   def save(user: Identity): Identity = {
 
+
+    println("333333")
+
     println("Method: Save ...................")
     println("UserId:        " + user.identityId.userId)
     println("UserProvider:  " + user.identityId.providerId)
     println("email:         " + user.email)
     println("First name : " + user.firstName)
+
+
+    println("22222222")
 
 
     println("----------------------------------------------------------------------")
@@ -115,14 +121,14 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
     println("LASTNAME : " + user.lastName)
     println("FULNAME : " + user.fullName)
     println("EMAIL : " + user.email)
-    println("PASSWORD: " + user.passwordInfo.get.password)
-    println("SALT: " + user.passwordInfo.get.salt)
-    println("HASHER: " + user.passwordInfo.get.hasher)
-    println("authMethod: " + user.authMethod)
-    println("AVATAR_URL : " + user.avatarUrl)
+    //println("PASSWORD: " + user.passwordInfo.get.password)
+    //println("SALT: " + user.passwordInfo.get.salt)
+    //println("HASHER: " + user.passwordInfo.get.hasher)
+    //println("authMethod: " + user.authMethod)
+    //println("AVATAR_URL : " + user.avatarUrl)
 
     println("----------------------------------------------------------------------")
-
+/*
     // Konvertera in data för att kunna spara ner i databasen
     // spara inte nere i databasen utan kovertera tillbaka
     var user2 : Identity = userCredential2socialUser(socialUser2UserCredential(user))
@@ -137,12 +143,12 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
     println("LASTNAME : " + user2.lastName)
     println("FULNAME : " + user2.fullName)
     println("EMAIL : " + user2.email)
-    println("PASSWORD: " + user2.passwordInfo.get.password)
-    println("SALT: " + user2.passwordInfo.get.salt)
-    println("HASHER: " + user2.passwordInfo.get.hasher)
-    println("authMethod: " + user2.authMethod)
-    println("AVATAR_URL : " + user2.avatarUrl)
-    println("----------------------------------------------------------------------")
+    //println("PASSWORD: " + user2.passwordInfo.get.password)
+    //println("SALT: " + user2.passwordInfo.get.salt)
+    //println("HASHER: " + user2.passwordInfo.get.hasher)
+    //println("authMethod: " + user2.authMethod)
+    //println("AVATAR_URL : " + user2.avatarUrl)
+    //println("----------------------------------------------------------------------")
 
 
     if(user.passwordInfo == user2.passwordInfo) {
@@ -168,6 +174,11 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
     } else {
       println("User error!!")
     }
+*
+*/
+
+    println("11111111111111111111111111111111111")
+
 
     // Kontrollera om användaren finns
     val exitsUser = exists(user.identityId.userId, user.identityId.providerId)
@@ -178,7 +189,7 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
     // check if exists
     var uc  : UserCredential = getUserById(user.identityId.userId, user.identityId.providerId)
 
-    println("id: " + uc.id)
+    println("Befitligt id: " + uc.id)
 
 
     var userCredential : UserCredential = socialUser2UserCredential(user)
