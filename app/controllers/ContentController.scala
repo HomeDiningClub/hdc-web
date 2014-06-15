@@ -176,23 +176,14 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
   }
 
   // Edit - Add Content
-  val pageName = Messages("edit.content.add.name")
-  val pageRoute = Messages("edit.content.add.route")
-  val pagePreAmble = Messages("edit.content.add.preamble")
-  val pageTitle = Messages("edit.content.add.title")
-  val pageBody = Messages("edit.content.add.body")
-  val pageStatus = Messages("edit.content.add.status")
-
-  val Success = Messages("edit.success")
-  val Error = Messages("edit.error")
-
   val contentForm = Form(
     mapping(
-      pageName -> nonEmptyText(minLength = 1, maxLength = 255),
-      pageRoute -> nonEmptyText(minLength = 1, maxLength = 255),
-      pagePreAmble -> optional(text),
-      pagePreAmble -> optional(text),
-      pageBody -> optional(text)
+      "pageid" -> optional(number),
+      "pagename" -> nonEmptyText(minLength = 1, maxLength = 255),
+      "pageroute" -> nonEmptyText(minLength = 1, maxLength = 255),
+      "pagepreamble" -> optional(text),
+      "pagetitle" -> optional(text),
+      "pagebody" -> optional(text)
     )(AddContentForm.apply _)(AddContentForm.unapply _)
   )
 
@@ -201,6 +192,9 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
   }
 
   def addContentSubmit = SecuredAction { implicit request =>
+
+    val Success = Messages("edit.success")
+    val Error = Messages("edit.error")
 
     contentForm.bindFromRequest.fold(
       errors => {
@@ -211,12 +205,15 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
         var newContent = new ContentPage(contentData.name,contentData.route)
         contentData.title match {
           case Some(title) => newContent.title = title
+          case None =>
         }
         contentData.preamble match {
           case Some(preamble) => newContent.preamble = preamble
+          case None =>
         }
         contentData.mainBody match {
           case Some(content) => newContent.mainBody = content
+          case None =>
         }
         val savedContentPage = contentService.addContentPage(newContent)
         val successMessage = Success + " - " + Messages("edit.content.add.success", savedContentPage.name, savedContentPage.id.toString)
@@ -234,6 +231,11 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
   // Edit - Delete content
   def deleteContent(id: java.lang.Long) = SecuredAction { implicit request =>
+    contentService.deleteContentById(id)
+    Ok(views.html.edit.contentlist(Nil))
+  }
+
+  def deleteAllContent = SecuredAction { implicit request =>
     Ok(views.html.edit.contentlist(Nil))
   }
 

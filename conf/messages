@@ -105,7 +105,9 @@ edit.content.list.action=Funktioner
 
 edit.content.add.header=Skapa ny sida
 edit.content.add.name=Namn
+edit.content.add.name.validation=(Tvingande, max längd 255)
 edit.content.add.route=Sökväg (exempel: my-page)
+edit.content.add.route.validation=(Tvingande, max längd 255)
 edit.content.add.title=Titel
 edit.content.add.preamble=Ingress
 edit.content.add.body=Huvudtext

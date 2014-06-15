@@ -10,7 +10,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 public abstract class AbstractEntity {
 
     @GraphId
-    public Long id;
+    public Long id; //java.lang.Long
 
     // This method is needed to compare two different objects from DB using hash
     // Otherwise they are different objects

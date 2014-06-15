@@ -27,7 +27,7 @@ GET         /edit/content/add                          @controllers.ContentContr
 POST        /edit/content/add                          @controllers.ContentController.addContentSubmit
 GET         /edit/content/edit/:id                     @controllers.ContentController.editContent(id: java.lang.Long)
 GET         /edit/content/delete/:id                   @controllers.ContentController.deleteContent(id: java.lang.Long)
-
+GET         /edit/content/delete/all                   @controllers.ContentController.deleteAllContent
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                              controllers.Assets.at(path="/public", file)

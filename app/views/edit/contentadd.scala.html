@@ -8,11 +8,11 @@
 
             <h1 class="page-header">@Messages("edit.content.add.header")</h1>
             @helper.form(action=routes.ContentController.addContentSubmit(), 'class -> "form-horizontal"){
-                @helper.inputText(contentForm(Messages("edit.content.add.name")))
-                @helper.inputText(contentForm(Messages("edit.content.add.route")))
-                @helper.inputText(contentForm(Messages("edit.content.add.title")), 'class -> "form-horizontal")
-                @helper.textarea(contentForm(Messages("edit.content.add.preamble")), 'class -> "tinymce")
-                @helper.textarea(contentForm(Messages("edit.content.add.body")), 'class -> "tinymce")
+                @helper.inputText(contentForm("pagename"), '_label -> Messages("edit.content.add.name"), '_help -> Messages("edit.content.add.name.validation"))
+                @helper.inputText(contentForm("pageroute"), '_label -> Messages("edit.content.add.route"), '_help -> Messages("edit.content.add.route.validation"))
+                @helper.inputText(contentForm("pagetitle"), '_label -> Messages("edit.content.add.title"))
+                @helper.textarea(contentForm("pagepreamble"), '_label -> Messages("edit.content.add.preamble"), 'class -> "tinymce")
+                @helper.textarea(contentForm("pagebody"), '_label -> Messages("edit.content.add.body"), 'class -> "tinymce")
                 <button class="btn btn-primary" type="submit">@Messages("edit.content.add.save")</button>
                 <a class="btn" href="@routes.ContentController.editListContent()">@Messages("edit.content.add.abort")</a>
             }

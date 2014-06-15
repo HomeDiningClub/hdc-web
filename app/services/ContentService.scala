@@ -30,16 +30,18 @@ class ContentService {
 
   @Transactional(readOnly = true)
   def findContentById(id: Long): ContentBase = {
-    contentRepository.findBySchemaPropertyValue("id", id)
+    contentRepository.findOne(id)
   }
 
   @Transactional(readOnly = true)
   def getListOfAllContentPages(): List[ContentPage] = {
-    val listOfContent: List[ContentPage] = contentRepository.getContentPages match {
-      case null => Nil
-      case Some(content) => content.toList
-    }
-    listOfContent
+    val listOfContentPages: List[ContentPage] = template.findAll(classOf[ContentPage]).iterator.asScala.toList
+
+//    val listOfContent: List[ContentPage] = contentRepository.getContentPages match {
+//      case null => Nil
+//      case content => content.toList
+//    }
+    listOfContentPages
   }
 
 //  private def convertNodesToContent(list: Path): List[ContentBase] = {
@@ -63,15 +65,14 @@ class ContentService {
 //  }
 
   @Transactional(readOnly = false)
-  def deleteContent(toDelete: ContentBase) {
-    contentRepository.delete(toDelete)
+  def deleteContentById(id: Long) {
+    contentRepository.delete(id)
   }
 
   @Transactional(readOnly = false)
   def deleteAllContent() {
     contentRepository.deleteAll()
   }
-
 
   @Transactional(readOnly = false)
   def addContentPage(newContent: ContentPage): ContentPage = {
