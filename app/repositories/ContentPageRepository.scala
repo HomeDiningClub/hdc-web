@@ -4,7 +4,7 @@ import org.springframework.data.neo4j.repository.GraphRepository
 import models.content._
 import org.springframework.data.neo4j.annotation.Query
 
-trait ContentRepository extends GraphRepository[ContentBase]{
+trait ContentPageRepository extends GraphRepository[ContentPage]{
 
 //  Doesn't work, need a manual mapper:
 //  template.createEntityFrom[Stored]State(userNode[,User.class)

@@ -13,7 +13,7 @@ import scala.List
 import models.enums.RelationshipTypesEnums
 import org.springframework.transaction.annotation.Transactional
 import org.neo4j.graphdb.index.Index
-import repositories.ContentRepository
+import repositories._
 
 @Service
 class ContentService {
@@ -22,25 +22,20 @@ class ContentService {
   private var template: Neo4jTemplate = _
 
   @Autowired
-  private var contentRepository: ContentRepository = _
+  private var contentPageRepository: ContentPageRepository = _
 
-  def findContentByName(contentName: String): ContentBase = {
-    contentRepository.findBySchemaPropertyValue("name", contentName)
+  def findContentPageByName(pageName: String): ContentPage = {
+    contentPageRepository.findBySchemaPropertyValue("name", pageName)
   }
 
   @Transactional(readOnly = true)
-  def findContentById(id: Long): ContentBase = {
-    contentRepository.findOne(id)
+  def findContentById(id: Long): ContentPage = {
+    contentPageRepository.findOne(id)
   }
 
   @Transactional(readOnly = true)
   def getListOfAllContentPages(): List[ContentPage] = {
     val listOfContentPages: List[ContentPage] = template.findAll(classOf[ContentPage]).iterator.asScala.toList
-
-//    val listOfContent: List[ContentPage] = contentRepository.getContentPages match {
-//      case null => Nil
-//      case content => content.toList
-//    }
     listOfContentPages
   }
 
@@ -65,18 +60,18 @@ class ContentService {
 //  }
 
   @Transactional(readOnly = false)
-  def deleteContentById(id: Long) {
-    contentRepository.delete(id)
+  def deleteContentPageById(id: Long) {
+    contentPageRepository.delete(id)
   }
 
   @Transactional(readOnly = false)
-  def deleteAllContent() {
-    contentRepository.deleteAll()
+  def deleteAllContentPages() {
+    contentPageRepository.deleteAll()
   }
 
   @Transactional(readOnly = false)
   def addContentPage(newContent: ContentPage): ContentPage = {
-    val newContentResult = contentRepository.save(newContent)
+    val newContentResult = contentPageRepository.save(newContent)
     newContentResult
   }
 

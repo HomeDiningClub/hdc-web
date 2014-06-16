@@ -231,7 +231,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
   // Edit - Delete content
   def deleteContent(id: java.lang.Long) = SecuredAction { implicit request =>
-    contentService.deleteContentById(id)
+    contentService.deleteContentPageById(id)
     Ok(views.html.edit.contentlist(Nil))
   }
 

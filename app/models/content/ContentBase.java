@@ -12,23 +12,20 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
-@NodeEntity
 public abstract class ContentBase extends AbstractEntity {
 
     @CreatedDate
-    public Long createdDate;
+    public Date createdDate;
 
     @LastModifiedDate
-    private Long lastModifiedDate;
+    public Date lastModifiedDate;
 
     @Fetch
     @RelatedTo(type = "CONTENT_STATE", direction = Direction.OUTGOING) // TODO - Improve enum (http://components.neo4j.org/neo4j/1.6.M02/apidocs/org/neo4j/graphdb/DynamicRelationshipType.html)
     public Set<ContentState> contentState;
 
-    protected ContentBase() {
-
-    }
 }

@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
-@NodeEntity
 public abstract class AbstractEntity {
 
     @GraphId
