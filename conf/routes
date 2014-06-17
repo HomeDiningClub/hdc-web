@@ -22,11 +22,12 @@ GET         /newsletter                                @controllers.CampaignCont
 
 # EDIT - Content
 GET         /edit                                      @controllers.EditController.index
-GET         /edit/content/contentlist                  @controllers.ContentController.editListContent
-GET         /edit/content/add                          @controllers.ContentController.addContentIndex
-POST        /edit/content/add                          @controllers.ContentController.addContentSubmit
-GET         /edit/content/edit/:id                     @controllers.ContentController.editContent(id: java.lang.Long)
-GET         /edit/content/delete/:id                   @controllers.ContentController.deleteContent(id: java.lang.Long)
+GET         /edit/content                              @controllers.ContentController.indexContentPages
+GET         /edit/content/list                         @controllers.ContentController.listContentPages
+GET         /edit/content/add                          @controllers.ContentController.addContentPage
+POST        /edit/content/add                          @controllers.ContentController.addContentPageSubmit
+GET         /edit/content/edit/:id                     @controllers.ContentController.editContentPage(id: java.lang.Long)
+GET         /edit/content/delete/:id                   @controllers.ContentController.deleteContentPage(id: java.lang.Long)
 GET         /edit/content/delete/all                   @controllers.ContentController.deleteAllContent
 
 # Map static resources from the /public folder to the /assets URL path

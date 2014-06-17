@@ -39,29 +39,14 @@ class ContentService {
     listOfContentPages
   }
 
-//  private def convertNodesToContent(list: Path): List[ContentBase] = {
-//    var convertList: ListBuffer[ContentBase] = ListBuffer()
-//
-//    for (node <- list.iterator().asScala) {
-//      convertList += template.load(node, classOf[ContentBase])
-//    }
-//    convertList.result()
-//  }
-
-//  @Transactional(readOnly = true)
-//  def getAllContentOfType[T](): List[ContentBase] = {
-//
-//    var contentIndex: Index[Node] = template.getIndex(classOf[T],"id")
-//    var hits = contentIndex.getEntityType
-//    //var hits = userCredentialIndex.query("userId", userId)
-//
-//    val listOfContent: List[ContentBase] = IteratorUtil.asCollection(contentRepository.findAll()).asScala.toList
-//    listOfContent
-//  }
-
   @Transactional(readOnly = false)
-  def deleteContentPageById(id: Long) {
-    contentPageRepository.delete(id)
+  def deleteContentPageById(id: Long): Boolean = {
+    if(this.findContentById(id) != null)
+    {
+      contentPageRepository.delete(id)
+      true
+    }
+    false
   }
 
   @Transactional(readOnly = false)

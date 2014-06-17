@@ -86,8 +86,11 @@ contact.body2=body
 edit.content.title=Home Dining Club
 edit.title=Administration
 
-edit.success=Lyckades
-edit.error=Fel
+edit.success=Lyckades!
+edit.error=Fel!
+edit.warning=Varning!
+edit.info=Information!
+
 
 edit.menu.title=HDC - Admin
 edit.menu.pages=Sidor
@@ -103,7 +106,7 @@ edit.content.list.name=Namn
 edit.content.list.route=Sökväg
 edit.content.list.action=Funktioner
 
-edit.content.add.header=Skapa ny sida
+edit.content.index.header=Sidfunktioner
 edit.content.add.name=Namn
 edit.content.add.name.validation=(Tvingande, max längd 255)
 edit.content.add.route=Sökväg (exempel: my-page)
@@ -117,9 +120,13 @@ edit.content.add.abort=Avbryt
 edit.content.add.success=Sidan sparad: {0} (id:{1})
 edit.content.add.error=Kunde inte spara sidan.
 
-edit.content.actions.add=Lägg till
-edit.content.actions.edit=Redigera
-edit.content.actions.delete=Ta bort
+edit.content.delete.success=Sidan borttagen (id:{0})
+edit.content.delete.error=Kunda inte radera sidan.
+
+edit.content.actions.add=Lägg till ny sida
+edit.content.actions.list=Visa alla sidor
+edit.content.actions.edit=Redigera sida
+edit.content.actions.delete=Ta bort sida
 
 
 

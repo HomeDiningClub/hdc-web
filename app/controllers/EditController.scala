@@ -8,7 +8,7 @@ import play.api.mvc.Controller
 @SpringController
 class EditController extends Controller with securesocial.core.SecureSocial {
 
-  def index = SecuredAction {
+  def index = SecuredAction { implicit request =>
     Ok(views.html.edit.index())
   }
 

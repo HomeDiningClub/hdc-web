@@ -1,4 +1,4 @@
-@(title: String)(content: Html)(implicit flash: Flash =  Flash(Map(("",""))))
+@(title: String)(content: Html)(implicit flash: Flash = Flash.emptyCookie)
 <!DOCTYPE html>
 
 <html lang="@Messages("main.language")">
@@ -18,24 +18,15 @@
                 <div class="navbar-static-top">
                     <a class="navbar-brand" href="#">@Messages("edit.menu.title")</a>
                     <ul class="nav navbar-nav">
-                        <li><a href="@routes.ContentController.editListContent()">@Messages("edit.menu.pages")</a></li>
-                        <li><a href="#">@Messages("edit.menu.users")</a></li>
-                        <li><a href="#">@Messages("edit.menu.files")</a></li>
+                        <li><a href="@routes.ContentController.indexContentPages()">@Messages("edit.menu.pages")&nbsp;<span class="glyphicon glyphicon-list"></span></a></li>
+                        <li><a href="#">@Messages("edit.menu.users")&nbsp;<span class="glyphicon glyphicon-user"></span></a></li>
+                        <li><a href="#">@Messages("edit.menu.files")&nbsp;<span class="glyphicon glyphicon-file"></span></a></li>
                         <li><a href="@routes.StartPageController.index()">@Messages("edit.menu.backtosite")&nbsp;<span class="glyphicon glyphicon-globe"></span></a></li>
                     </ul>
                 </div>
             </div>
             <div class="container">
-                @if(flash.get(Messages("edit.success")).isDefined) {
-                    <div class="alert alert-success animated fadeIn">
-                        @flash.get(Messages("edit.success"))
-                    </div>
-                }
-                @if(flash.get(Messages("edit.error")).isDefined){
-                    <div class="alert alert-error animated fadeIn">
-                        @flash.get(Messages("edit.error"))
-                    </div>
-                }
+                @shared.flashmsg(flash)
                 @content
             </div>
         </div>

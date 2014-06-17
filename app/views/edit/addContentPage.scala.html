@@ -1,0 +1,27 @@
+@(contentForm: Form[models.content.formmodels.AddContentForm])(implicit flash: Flash)
+@import helper.twitterBootstrap._
+
+@mainedit(Messages("edit.content.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("edit.content.add.header")</h1>
+            @helper.form(action=routes.ContentController.addContentPageSubmit(), 'class -> "form-horizontal"){
+                <fieldset>
+                    @helper.inputText(contentForm("pagename"), '_label -> Messages("edit.content.add.name"), '_help -> Messages("edit.content.add.name.validation"))
+                    @helper.inputText(contentForm("pageroute"), '_label -> Messages("edit.content.add.route"), '_help -> Messages("edit.content.add.route.validation"))
+                    @helper.inputText(contentForm("pagetitle"), '_label -> Messages("edit.content.add.title"))
+                    @helper.textarea(contentForm("pagepreamble"), '_label -> Messages("edit.content.add.preamble"), 'class -> "tinymce")
+                    @helper.textarea(contentForm("pagebody"), '_label -> Messages("edit.content.add.body"), 'class -> "tinymce")
+                </fieldset>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">@Messages("edit.content.add.save")</button>
+                    <a class="btn" href="@routes.ContentController.indexContentPages()">@Messages("edit.content.add.abort")</a>
+                </div>
+            }
+
+
+        </div>
+    </div>
+
+}

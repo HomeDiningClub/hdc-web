@@ -1,0 +1,25 @@
+@(flash: Flash)
+@import constants.FlashMsgConstants
+
+@if(flash != null) {
+    @if(flash.get(FlashMsgConstants.Success).isDefined) {
+        <div class="alert alert-success animated fadeIn">
+        @flash.get(FlashMsgConstants.Success)
+        </div>
+    }
+    @if(flash.get(FlashMsgConstants.Error).isDefined) {
+        <div class="alert alert-error animated fadeIn">
+        @flash.get(FlashMsgConstants.Error)
+        </div>
+    }
+    @if(flash.get(FlashMsgConstants.Warning).isDefined) {
+        <div class="alert alert-warning animated fadeIn">
+        @flash.get(FlashMsgConstants.Warning)
+        </div>
+    }
+    @if(flash.get(FlashMsgConstants.Info).isDefined) {
+        <div class="alert alert-info animated fadeIn">
+        @flash.get(FlashMsgConstants.Info)
+        </div>
+    }
+}

@@ -10,6 +10,7 @@ import models.content._
 import play.api.data._
 import play.api.data.Forms._
 import models.content.formmodels.AddContentForm
+import constants.FlashMsgConstants
 
 @SpringController
 class ContentController extends Controller with securesocial.core.SecureSocial {
@@ -170,9 +171,9 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
 
   // Edit - Listing
-  def editListContent = SecuredAction {
+  def listContentPages = SecuredAction { implicit request =>
     val listOfPage: List[ContentPage] = contentService.getListOfAllContentPages()
-    Ok(views.html.edit.contentlist(listOfPage))
+    Ok(views.html.edit.listContentPages(listOfPage))
   }
 
   // Edit - Add Content
@@ -187,19 +188,20 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
     )(AddContentForm.apply _)(AddContentForm.unapply _)
   )
 
-  def addContentIndex() = SecuredAction {
-    Ok(views.html.edit.contentadd(contentForm))
+  def indexContentPages() = SecuredAction { implicit request =>
+    Ok(views.html.edit.indexContentPages())
   }
 
-  def addContentSubmit = SecuredAction { implicit request =>
+  def addContentPage() = SecuredAction { implicit request =>
+    Ok(views.html.edit.addContentPage(contentForm))
+  }
 
-    val Success = Messages("edit.success")
-    val Error = Messages("edit.error")
+  def addContentPageSubmit() = SecuredAction { implicit request =>
 
     contentForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Error + " - " + Messages("edit.content.add.error")
-        BadRequest(views.html.edit.contentadd(contentForm)).flashing(Error -> errorMessage)
+        val errorMessage = Messages("edit.error") + " - " + Messages("edit.content.add.error")
+        BadRequest(views.html.edit.addContentPage(contentForm)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
         var newContent = new ContentPage(contentData.name,contentData.route)
@@ -216,8 +218,8 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
           case None =>
         }
         val savedContentPage = contentService.addContentPage(newContent)
-        val successMessage = Success + " - " + Messages("edit.content.add.success", savedContentPage.name, savedContentPage.id.toString)
-        Redirect(controllers.routes.ContentController.editListContent()).flashing(Success -> successMessage)
+        val successMessage = Messages("edit.success") + " - " + Messages("edit.content.add.success", savedContentPage.name, savedContentPage.id.toString)
+        Redirect(controllers.routes.ContentController.indexContentPages()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -225,18 +227,29 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
 
   // Edit - Edit content
-  def editContent(id: java.lang.Long) = SecuredAction { implicit request =>
-    Ok(views.html.edit.contentlist(Nil))
+  def editContentPage(id: java.lang.Long) = SecuredAction { implicit request =>
+    Ok(views.html.edit.indexContentPages())
   }
 
   // Edit - Delete content
-  def deleteContent(id: java.lang.Long) = SecuredAction { implicit request =>
-    contentService.deleteContentPageById(id)
-    Ok(views.html.edit.contentlist(Nil))
+  def deleteContentPage(id: java.lang.Long) = SecuredAction { implicit request =>
+    val result: Boolean = contentService.deleteContentPageById(id)
+
+    result match {
+      case true => {
+        val successMessage = Messages("edit.success") + " - " + Messages("edit.content.delete.success", id.toString)
+        Redirect(controllers.routes.ContentController.indexContentPages()).flashing(FlashMsgConstants.Success -> successMessage)
+      }
+      case false => {
+        val errorMessage = Messages("edit.error") + " - " + Messages("edit.content.delete.error")
+        Redirect(controllers.routes.ContentController.indexContentPages()).flashing(FlashMsgConstants.Error -> errorMessage)
+      }
+    }
+
   }
 
   def deleteAllContent = SecuredAction { implicit request =>
-    Ok(views.html.edit.contentlist(Nil))
+    Ok(views.html.edit.indexContentPages())
   }
 
 
