@@ -2,6 +2,7 @@ package services
 
 // MATCH (tom) RETURN tom
 // MATCH (tom) DELETE tom
+// MATCH (tom) RETURN tom.providerId, tom.lastName, tom.firstName,tom.emailAddress
 
 
 
@@ -305,7 +306,15 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
     userCredential.firstName          = socialUser.firstName
     userCredential.lastName           = socialUser.lastName
     userCredential.fullName           = socialUser.fullName
-    userCredential.authMethod       = socialUser.authMethod.toString // ???? Kontrollera  ????????
+    //userCredential.authMethod       = socialUser.authMethod.toString // ???? Kontrollera  ????????
+
+    // todo bättre kontroll att det finns ett värde
+    if(socialUser.authMethod.toString().size > 0) {
+      userCredential.authMethod = socialUser.authMethod.method
+    } else {
+      userCredential.authMethod = ""
+    }
+
 
     // Password information
     userCredential.password = pinfo.password
@@ -319,8 +328,10 @@ class UserCredentialService  (application: Application) extends UserServicePlugi
     // oAuth2
     userCredential.oAuth2InfoAccessToken    = oauth2.accessToken
     userCredential.oAuth2InfoExpiresIn      = oauth2.expiresIn.getOrElse(0).toString
-    userCredential.oAuth2InfoRefreshToken   = oauth2.refreshToken.toString
-    userCredential.oAuth2InfoTokenType      = oauth2.tokenType.toString
+
+    //userCredential.oAuth2InfoRefreshToken   = oauth2.refreshToken.toString
+    userCredential.oAuth2InfoRefreshToken   = oauth2.refreshToken.getOrElse("")
+    userCredential.oAuth2InfoTokenType      = oauth2.tokenType.getOrElse("")
 
     userCredential.avatarUrl = socialUser.avatarUrl.getOrElse("")
     userCredential.emailAddress = socialUser.email.getOrElse("")
