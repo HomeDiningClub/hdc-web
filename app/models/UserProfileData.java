@@ -1,5 +1,6 @@
 package models;
 
+import models.base.AbstractEntity;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
@@ -8,28 +9,25 @@ import securesocial.core.Identity;
 
 
 @NodeEntity
-public class UserProfileData {
-    @GraphId
-    public Long id;
+public class UserProfileData extends AbstractEntity {
 
-
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "username-ProfileData")
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "usernameProfileData")
     public String userName;
 
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "email-ProfileData")
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "emailProfileData")
     public String emailAddress;
 
     public String passWord;
 
     public Identity identity;
 
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "firstname-ProfileData")
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "firstnameProfileData")
     public String firstName;
 
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "lastname-ProfileData")
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "lastnameProfileData")
     public String lastName;
 
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "aboutme-ProfileData")
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "aboutmeProfileData")
     public String aboutMe;
 
     // Constructors
