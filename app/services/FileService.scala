@@ -41,10 +41,10 @@ class FileService {
     returnRes
   }
 
-  // Accepts Unique ID, returns url of db node
+  // Accepts Unique ID
   def getImageByKey(key: UUID): Option[ImageFile] = {
     val dbRes = imageRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
-      case unit => Some(unit)
+      case unit => return Some(unit)
     }
     None
   }
@@ -52,7 +52,7 @@ class FileService {
   // Accepts Unique ID, returns url of db node
   def getVideoByKey(key: UUID): Option[VideoFile] = {
     val dbRes = videoRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
-      case unit => Some(unit)
+      case unit => return Some(unit)
     }
     None
   }
@@ -154,21 +154,30 @@ class FileService {
 
 
   // Deletes any file, can be any that inherits from ContentFile
-  def deleteFile(key: UUID) {
-    val fileToDelete: ContentFile = getImageByKey(key).head // TODO: Add extra check if file doesn't exists
+  // Returns false is failure, true if success
+  def deleteFile(key: UUID): Boolean = {
+    // Check file in DB
+    val fileToDelete: ContentFile = getImageByKey(key) match {
+      case Some(file) => file
+      case None => return false
+    }
 
+    // Remove file if found in DB
     val result: Future[Unit] = Future {
-      S3Bucket.remove(key.toString)
+      S3Bucket.remove(fileToDelete.key.toString)
     }
     val timeoutFuture = Promise.timeout("Delete failed, timeout occurred", 20.seconds)
 
     Future.firstCompletedOf(Seq(result, timeoutFuture)).map {
-      unit => Logger.info("Deleted file: " + key.toString)
+      unit => Logger.info("Deleted file: " + fileToDelete.key.toString)
         deleteFromDB(fileToDelete)
+        true
     }
     .recover {
       case S3Exception(status, code, message, originalXml) => Logger.info("Error: " + message)
+        false
     }
+    false
   }
 
 

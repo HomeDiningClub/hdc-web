@@ -41,9 +41,10 @@ class ContentService {
 
   @Transactional(readOnly = false)
   def deleteContentPageById(id: Long): Boolean = {
-    if(this.findContentById(id) != null)
+    val contentPage: ContentPage = this.findContentById(id)
+    if(contentPage != null)
     {
-      contentPageRepository.delete(id)
+      contentPageRepository.delete(contentPage)
       true
     }
     false

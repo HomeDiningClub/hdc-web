@@ -13,23 +13,23 @@ public class UserProfileData {
     public Long id;
 
 
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "username")
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "username-ProfileData")
     public String userName;
 
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "email")
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "email-ProfileData")
     public String emailAddress;
 
     public String passWord;
 
     public Identity identity;
 
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "firstname")
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "firstname-ProfileData")
     public String firstName;
 
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "lastname")
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "lastname-ProfileData")
     public String lastName;
 
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "aboutme")
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "aboutme-ProfileData")
     public String aboutMe;
 
     // Constructors
