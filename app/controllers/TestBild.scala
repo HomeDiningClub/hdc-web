@@ -7,7 +7,7 @@ object TestBild extends Controller {
 
 
   def testsida = Action {
-    Ok("OK")
+    Ok(views.html.testbild.bild())
   }
 
 }

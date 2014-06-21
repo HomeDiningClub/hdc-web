@@ -39,13 +39,16 @@ GET         /personer/testbild                         controllers.Personer.test
 GET         /personer/skapa                            controllers.Personer.ny
 POST        /personer/skapa                            controllers.Personer.save
 
+GET         /testbild/bild                             controllers.TestBild.testsida
+
+
 # UserProfile
 GET         /profile                                   @controllers.UserProfileController.index
 POST        /profile/skapa                             @controllers.UserProfileController.save
 POST        /profile/spara                             @controllers.UserProfileController.saveUserProfile
 GET         /profile/ny                                @controllers.UserProfileController.skapaNyProfil
-GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
-GET         /profile/tabort/:userName                  @controllers.UserProfileController.deleteProfil(userName)
+#GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
+#GET         /profile/tabort/:userName                  @controllers.UserProfileController.deleteProfil(userName)
 
 # Host
 GET         /host                                      @controllers.HostController.index
