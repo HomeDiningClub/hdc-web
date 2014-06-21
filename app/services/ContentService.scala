@@ -45,9 +45,9 @@ class ContentService {
     if(contentPage != null)
     {
       contentPageRepository.delete(contentPage)
-      true
+      return true
     }
-    false
+    return false
   }
 
   @Transactional(readOnly = false)
