@@ -103,18 +103,24 @@ class UserProfileController  extends Controller{
     userProfileForm.bindFromRequest.fold(
       errors => {
         // Felaktigt ifyllt formulär
-        Ok(views.html.profile.createUserProfile(errors))
+
+        val typ = new models.Types
+        Ok(views.html.profile.createUserProfile(errors, typ.findAll))
       },
       userProfile => {
 
+
+
         // Spara UserProfile
+        /*
         userProfileService.saveUserProfile(
           userProfile.userName,
           userProfile.emailAddress)
-
+        */
         // Hämta värden
         val savedForm =  userProfileForm.fill(userProfile)
-        Ok(views.html.profile.createUserProfile(savedForm))
+        val typ = new models.Types
+        Ok(views.html.profile.createUserProfile(savedForm, typ.findAll))
       }
     )
   }
@@ -145,20 +151,10 @@ class UserProfileController  extends Controller{
 
 
   def skapaNyProfil = Action {
- /*
-      var daniel = userProfileService.getUserProfile("Daniel")
-      println("e-post till Daniel: " + daniel.emailAddress)
-
-    var sven = userProfileService.getUserProfile("Sven")
-    println("e-post till Sven: " + sven.emailAddress)
-
-    var fredrik = userProfileService.getUserProfile("Fredrik")
-    println("e-post till Fredrik: " + fredrik.emailAddress)
-*/
-
      var userProfile = models.formdata.UserProfile("","","","","",0)
      val dufulatValueForm =  userProfileForm.fill(userProfile)
-    Ok(views.html.profile.createUserProfile(dufulatValueForm))
+     val typ = new models.Types
+    Ok(views.html.profile.createUserProfile(dufulatValueForm, typ.findAll))
   }
 
 }

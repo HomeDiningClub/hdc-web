@@ -1,6 +1,11 @@
-@(UserProfileForm: Form[models.formdata.UserProfile])
+@(UserProfileForm: Form[models.formdata.UserProfile], element : List[Type])
 
 @helper.form(action = routes.UserProfileController.save()) {
+
+
+<h2>Registrera användareuppgifter</h2>
+
+
 
     @if(UserProfileForm.hasGlobalErrors) {
         <ul>
@@ -9,6 +14,13 @@
         }
         </ul>
     }
+
+        @helper.inputText(UserProfileForm("emailAddress"),
+        'id -> "emailAddress",
+        '_label -> "E-postadress",
+        '_showErrors -> true,
+        '_help -> "Skriv in din e-postadress"
+        )
 
     @helper.inputText(UserProfileForm("userName"),
         'id -> "userName",
@@ -33,12 +45,18 @@
 
 
 
+
     @helper.inputText(UserProfileForm("idno"),
         'id -> "idno",
         '_showErrors -> true,
         '_label -> "idno",
         '_help -> "Hidden value, visas endast under utveckling"
     )
+
+     <p>Beskrivning:</p>
+
+    <textarea name="aboutMe" rows="12" cols="100">
+    </textarea>
 
     @helper.inputText(UserProfileForm("aboutme"),
         'id -> "aboutme",
@@ -47,13 +65,37 @@
         '_help -> "Beskrivning"
     )
 
+<br>
 
-    @helper.inputText(UserProfileForm("emailAddress"),
-        'id -> "emailAddress",
-        '_label -> "E-postadress",
-        '_showErrors -> true,
-        '_help -> "Skriv in din e-postadress"
-    )
+<p>
+        <input type="checkbox" id="pay" name="pay" value="pay">
+        Guld medlem?
+        </input>
+</p>
+
+
+<p>
+<input type="checkbox" id="host" name="quality" value="host">
+Värd?
+</input>
+</p>
+
+
+<br>
+
+Jag är bra på:
+@for(t <- element) {
+    <br>
+    <input type="checkbox" id="@t.name" name="quality" value="@t.key">
+        @t.name
+    </input>
+}
+
+
+
+
+
+<br>
 
     <input type="submit" value="Spara">
 
