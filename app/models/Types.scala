@@ -7,7 +7,7 @@ case class Type (
 
 object Types {
 
-  //
+
 
   var typeList = Set(
     Type(1L, "Amerikanskt", "Amerikanskt"),
