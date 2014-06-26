@@ -1,0 +1,79 @@
+@()
+
+@main(Messages("recipe.title")) {
+
+    <div class="container-fluid host-container">
+        <div class="row-fluid">
+            <div class="col-xs-12 col-md-8 col-md-offset-1 col-xs-offset-0">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12 big-margin-top">
+                        <div class="host-header">
+                            <header>
+                                <h2>Alexandra</h2>
+                                <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
+                            </header>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 big-margin-top">
+                        <h1 class="page-header">Räkmackor med parmesan och dillkvistar</h1>
+                    </div>
+                    <div class="col-xs-12 col-md-4">
+                        <section>
+                            <article>
+
+                                <div class="breadtext">
+                                    <p>Lagat mat sedan 5-årsåldern, sida vid sida med min duktiga (och tålmodiga) hobby-kock-mamma - vilket gjorde att jag som tonåring kunde laga många klassiska husmansrätter (kåldolmar, kroppkakor, porterstek) och gärna experimenterade med egna skapelser.</p>
+                                    <p>Tankar fanns på en kockkarriär, men det blev annat kreativt yrke istället - men står gärna i köket med/för nära och kära.</p>
+                                    <p>Lagat mat sedan 5-årsåldern, sida vid sida med min duktiga (och tålmodiga) hobby-kock-mamma - vilket gjorde att jag som tonåring kunde laga många klassiska husmansrätter (kåldolmar, kroppkakor, porterstek) och gärna experimenterade med egna skapelser.</p>
+                                    <p>Tankar fanns på en kockkarriär, men det blev annat kreativt yrke istället - men står gärna i köket med/för nära och kära.</p>
+                                    <p>Lagat mat sedan 5-årsåldern, sida vid sida med min duktiga (och tålmodiga) hobby-kock-mamma - vilket gjorde att jag som tonåring kunde laga många klassiska husmansrätter (kåldolmar, kroppkakor, porterstek) och gärna experimenterade med egna skapelser.</p>
+                                    <p>Tankar fanns på en kockkarriär, men det blev annat kreativt yrke istället - men står gärna i köket med/för nära och kära.</p>
+                                </div>
+                            </article>
+                        </section>
+                    </div>
+                    <div class="col-xs-12 col-md-8 host-image-gallery">
+
+                        <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide">
+                                <!-- Slider carousel items -->
+                            <div class="carousel-inner">
+                                <div class="active item" data-slide-number="0">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</div>
+                            </div>
+                                <!-- Carousel nav controls -->
+                            <a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                            <a class="carousel-control right hidden-md hidden-lg" href="#host-main-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                        </div>
+                            <!-- Thumbnails, don't show responsive -->
+                        <ul class="host-main-carousel-thumbs list-inline hidden-xs hidden-sm">
+                            <li class="col-md-3"><a id="carousel-selector-0" class="selected">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</a></li>
+                        </ul>
+
+                        <div class="col-xs-12 big-margin-top">
+                            <ul class="nav navbar-link recipe-like">
+                                <li>
+                                    @shared.hdcShare(url = "http://hdc-web.hewrokuapp.com/")
+                                </li>
+                                <li>
+                                    @shared.fbShare(url = "http://hdc-web.hewrokuapp.com/")
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Banner -->
+            <div class="col-xs-12 col-md-2 col-banner">
+            @shared.banner("images/banners/banner-0001.png","http://www.bannertarget.se","Senaste nyheterna","Senaste nyheterna")
+            </div>
+        </div>
+    </div>
+}

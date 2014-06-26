@@ -9,8 +9,8 @@ import services.ContentService
 import models.content._
 import play.api.data._
 import play.api.data.Forms._
-import models.content.formmodels.AddContentForm
 import constants.FlashMsgConstants
+import models.viewmodels.AddContentForm
 
 @SpringController
 class ContentController extends Controller with securesocial.core.SecureSocial {

@@ -1,4 +1,5 @@
 @()
+@*(searchForm: Form[models.viewmodels.SearchStartPageForm])*@
 
 @main(Messages("startpage.title")) {
 
@@ -66,17 +67,20 @@
             <div class="col-xs-12 col-md-8 col-md-offset-1 col-xs-offset-0">
 
 
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h1 class="page-header">@Messages("startpage.main-content.header")</h1>
+                    </div>
+                </div>
                 <div class="row margin-top">
                     <!-- Main intro -->
                     <div class="col-xs-12 col-md-6">
-                        <h1 class="page-header">@Messages("startpage.main-content.header")</h1>
                         @Html(Messages("startpage.main-content.body"))
                     </div>
 
                     <!-- News -->
                     <div class="col-xs-12 col-md-6">
                         <aside>
-                            <h2>@Messages("startpage.main-aside.header")</h2>
                             @Html(Messages("startpage.main-aside.body"))
                             <iframe style="margin:0 auto; display:block;" src="//player.vimeo.com/video/97540915?title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff&amp;autoplay=0" width="100%" height="259" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                         </aside>
@@ -84,11 +88,27 @@
                 </div>
 
                 <div class="row big-margin-top">
-                    <div class="col-xs-12 col-md-9">
+                    <!-- Filtering push -->
+                    <div class="col-xs-12">
+                        Form be here..
+                        @*
+                    @helper.form(action=routes.StartPageController.filterProfiles(), 'class -> "form-horizontal"){
+                        <fieldset>
+                            @helper.inputText(searchForm("freeText"), '_label -> Messages("startpage.filterform.freetext"))
+                            @helper.inputText(searchForm("area"), '_label -> Messages("startpage.filterform.area"))
+                            @helper.inputText(searchForm("foodArea"), '_label -> Messages("startpage.filterform.foodarea"))
+                        </fieldset>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button>
+                        </div>
+                    }
+                            *@
+                    </div>
+                    <div class="col-xs-12">
                         <div class="row center-block">
                             <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
                                 <div class="body">
-                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
+                                    @shared.hostImageCircle()
                                     <a href="#">
                                         <h2>Host name</h2>
                                         <hr>
@@ -100,7 +120,7 @@
                             </div>
                             <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box2.png")')">
                                 <div class="body">
-                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
+                                    @shared.hostImageCircle()
                                     <a href="#">
                                         <h2>Host name</h2>
                                         <hr>
@@ -112,7 +132,7 @@
                             </div>
                             <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box3.png")')">
                                 <div class="body">
-                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
+                                    @shared.hostImageCircle()
                                     <a href="#">
                                         <h2>Host name</h2>
                                         <hr>
@@ -124,7 +144,7 @@
                             </div>
                             <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
                                 <div class="body">
-                                    <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
+                                    @shared.hostImageCircle()
                                     <a href="#">
                                         <h2>Host name</h2>
                                         <hr>
@@ -138,13 +158,34 @@
                     </div>
 
                     <!-- Functions -->
-                    <div class="col-xs-12 col-md-3">
-                        <aside>
-                            <h2>Funktioner</h2>
+                    @*<div class="col-xs-12 col-md-3">*@
+                        @*<aside>*@
+                            @*<h2>Funktioner</h2>*@
 
-                        </aside>
+                        @*</aside>*@
+                    @*</div>*@
+                </div>
+
+                <!-- Reviews -->
+                <div class="row big-margin-top">
+                    <div class="col-xs-12 col-md-6">
+                        <ul class="media-list">
+                            <li class="media">
+                                @shared.hostImageCircle(cssClass = "media-object pull-left")
+                                <div class="media-body">
+                                    <h4 class="media-heading">Utmärkt!</h4>
+                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
+                                </div>
+                            </li>
+                            <li class="media">
+                                @shared.hostImageCircle(cssClass = "media-object pull-left")
+                                <div class="media-body">
+                                    <h4 class="media-heading">Utmärkt!</h4>
+                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
+                                </div>
+                            </li>
+                        </ul>
                     </div>
-
                 </div>
             </div>
 

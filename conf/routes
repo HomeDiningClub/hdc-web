@@ -2,8 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
+# Start page
 GET         /                                          @controllers.StartPageController.index
+POST        /                                          @controllers.StartPageController.filterProfiles
+
+# Home page
 GET         /how-does-it-work                          @controllers.ContentController.howDoesItWork
 GET         /become-a-member                           @controllers.ContentController.becomeAMember
 GET         /become-a-member/the-perfect-guest         @controllers.ContentController.thePerfectGuest
@@ -30,6 +33,17 @@ GET         /edit/content/edit/:id                     @controllers.ContentContr
 GET         /edit/content/delete/:id                   @controllers.ContentController.deleteContentPage(id: java.lang.Long)
 GET         /edit/content/delete/all                   @controllers.ContentController.deleteAllContent
 
+# EDIT - Recipe
+GET         /edit/recipe                              @controllers.RecipeController.indexRecipe
+GET         /edit/recipe/list                         @controllers.RecipeController.listRecipes
+GET         /edit/recipe/add                          @controllers.RecipeController.addRecipe
+POST        /edit/recipe/add                          @controllers.RecipeController.addRecipeSubmit
+GET         /edit/recipe/edit/:id                     @controllers.RecipeController.edit(id: java.lang.Long)
+GET         /edit/recipe/delete/:id                   @controllers.RecipeController.delete(id: java.lang.Long)
+GET         /edit/recipe/delete/all                   @controllers.RecipeController.deleteAll
+
+
+
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                              controllers.Assets.at(path="/public", file)
 
@@ -47,11 +61,14 @@ GET         /profile                                   @controllers.UserProfileC
 POST        /profile/skapa                             @controllers.UserProfileController.save
 POST        /profile/spara                             @controllers.UserProfileController.saveUserProfile
 GET         /profile/ny                                @controllers.UserProfileController.skapaNyProfil
-#GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
+GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
 #GET         /profile/tabort/:userName                  @controllers.UserProfileController.deleteProfil(userName)
 
 # Host
 GET         /host                                      @controllers.HostController.index
+
+# Recipe
+GET         /host/recipes                              @controllers.RecipeController.index
 
 
 # Worlds example
