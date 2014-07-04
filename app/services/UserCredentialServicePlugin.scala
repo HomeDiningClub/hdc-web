@@ -222,7 +222,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    * 1. Username and password
    * 2. Facebook
    * 3. Google
-   *
+   * 4. ....
    *
    * @param emailAddress
    * @return
