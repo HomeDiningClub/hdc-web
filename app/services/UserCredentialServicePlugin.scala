@@ -1,7 +1,19 @@
 package services
+
+// Get UserCredential
+// MATCH (a:UserCredential) RETURN a
+// MATCH (a:UserCredential) RETURN a.providerId, a.lastName, a.firstName, a.emailAddress
+
+// Gooogle
+// MATCH (a:UserCredential {providerId:'google'}) RETURN a.providerId, a.lastName, a.firstName, a.emailAddress
+// facebook
+// MATCH (a:UserCredential {providerId:'facebook'}) RETURN a.providerId, a.lastName, a.firstName, a.emailAddress
+
+// Fetch all nodes
 // MATCH (tom) RETURN tom
+
+// Delete all nodes
 // MATCH (tom) DELETE tom
-// MATCH (tom) RETURN tom.providerId, tom.lastName, tom.firstName,tom.emailAddress
 
 import models.{UserCredential, UserProfileData}
 import repositories.UserCredentialRepository
