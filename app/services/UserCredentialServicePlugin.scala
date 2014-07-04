@@ -88,7 +88,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     // Kontrollera om användaren finns
     val exitsUser = exists(user.identityId.userId, user.identityId.providerId)
 
-    println("Finns: " + exitsUser)
+    println("Exits : " + exitsUser)
 
     // check if exists
     var uc  : UserCredential = getUserById(user.identityId.userId, user.identityId.providerId)
@@ -129,15 +129,17 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     if(userId == null || providerId == null) {
       finns = false
       idNo = -1L
+      throw new Exception("UserId or ProviderId could not be null")
     } else if(user.userId == null || user.providerId == null) {
-      finns = false
-      idNo = -1L
+        // Could not find anything on UserId and ProviderId
+        finns = false
+        idNo = -1L
     } else if(user.id != null && userId.equals(user.userId) && providerId.equals(user.providerId)) {
-      finns = true
-      idNo = user.id
+        finns = true
+        idNo = user.id
     } else {
-      finns = false
-      idNo = -1L
+        finns = false
+        idNo = -1L
     }
 
     val t = (idNo, finns)
@@ -145,7 +147,11 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   }
 
 
-
+  /***
+  * Return the UserCredentials with the userId and providerId by
+  * first fetching on userid and filter out the right providerid
+  * assures that it is online one answer
+  */
   @Transactional(readOnly = true)
   def getUserById(userId: String, providerId: String) :  UserCredential = {
 
@@ -160,22 +166,27 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   }
 
 
-
+  /***
+   * Get the credetials for one userid
+   */
   @Transactional(readOnly = true)
   def getUserById(userId: String) :  List[UserCredential] =  {
+
     val list : ListBuffer[UserCredential] = new ListBuffer[UserCredential]()
+
     var userCredentialIndex: Index[Node] = UserCredentialService.template.getIndex(classOf[UserCredential],"userId")
     var hits = userCredentialIndex.query("userId", userId)
 
     var nods = hits.iterator()
     var id : Long = 0
-      while(nods.hasNext) {
-      id = nods.next().getId
-      var node : UserCredential = new UserCredential()
-      node = UserCredentialService.userCredentialRepository.findOne(id)
 
-      list += node
-    }
+      while(nods.hasNext) {
+            id = nods.next().getId
+            var node : UserCredential = new UserCredential()
+            // Fetch by id
+            node = UserCredentialService.userCredentialRepository.findOne(id)
+            list += node
+      }
 
     list.toList
   }
@@ -208,7 +219,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    * Get all list of UserCredential for
    * 1. Username and password
    * 2. Facebook
-   * 3. Twiter
+   * 3. Google
    *
    * @param emailAddress
    * @return
@@ -235,21 +246,34 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
   /**
    * Creates a new user or updates an existing user with
-   * the same UserId and ProviderId, taking the key from the allready
-   * existing user
+   * the same UserId and ProviderId.
+   *  Checks if the same user credentials allready is stored meaning then same
+   *  userid and provider id when update the existing one othervice create
+   *  a new user.
+   *
    * @param userCredential
-   * @return
+   * @return modified userCredential
    */
   @Transactional(readOnly = false)
   def createOrUpdateUser(userCredential: UserCredential): UserCredential = {
+
+    // check if the same userId and providerId is already stored in the database
     val exitsUser = exists(userCredential.userId, userCredential.providerId)
+
+    // creates the return type
     var modUserCredential: UserCredential = new UserCredential()
 
     if(exitsUser._2 == true) {
-      userCredential.id = exitsUser._1
-      modUserCredential = saveUser(userCredential)
+        // User is allready stored in the database, when update
+        println("update id: " + userCredential.id)
+
+        // set the correct id
+        userCredential.id = exitsUser._1
+        modUserCredential = saveUser(userCredential)
     } else {
-      modUserCredential = saveUser(userCredential)
+
+        println("create")
+        modUserCredential = saveUser(userCredential)
     }
 
     modUserCredential

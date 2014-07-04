@@ -113,3 +113,6 @@ GET         /profile/loggain                           @controllers.UserProfileC
 GET         /profilen/spara                            @controllers.UserCredentialController.spara
 GET         /profilen/visa                             @controllers.UserCredentialController.visa
 
+
+GET         /prodata/visa                               @controllers.UserProfileController.skapavy
+POST        /prodata/skicka                             @controllers.UserProfileController.taemot

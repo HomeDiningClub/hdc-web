@@ -1,26 +1,32 @@
 package controllers
 
+// http://www.playframework.com/documentation/2.2.x/ScalaForms
+
 import org.springframework.beans.factory.annotation.Autowired
-import play.api._
-import play.api.mvc._
-import services.UserProfileService
-import play.data.Form
-import models.UserProfileData
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.data.Form
-import play.data.Form
+
+import services.UserProfileService
+import models.UserProfileData
+import models.formdata.UserProfile
+
 
 import play.api.data._
 import play.api.data.Forms._
 
+import play.api._
+import play.api.mvc._
 
-import models.formdata.UserProfile
 
 @SpringController
 class UserProfileController  extends Controller{
 
   @Autowired
   var userProfileService: UserProfileService = _
+
+
+
+
+
 
   val userProfileForm : play.api.data.Form[UserProfile]  = play.api.data.Form(
     mapping(
@@ -29,9 +35,65 @@ class UserProfileController  extends Controller{
       "firstName" -> text,
       "lastName" -> text,
       "aboutme" -> text,
+      "quality" -> list(boolean),
       "idno" -> longNumber
     )(UserProfile.apply)(UserProfile.unapply)
   )
+
+
+
+
+    val AnvandareForm = Form(
+      mapping(
+        "name" -> text,
+        "emails" -> list(text),
+        "quality" -> list(text)
+      )
+      (EnvData.apply) (EnvData.unapply)
+    )
+
+
+def skapavy = Action {
+val typ = new models.Types
+typ.addVald("Amerikanskt")
+typ.addVald("LCHF")
+
+val eData : EnvData = new controllers.EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
+val nyForm =  AnvandareForm.fill(eData)
+ Ok(views.html.profile.skapa(nyForm, typ.findAll, typ))
+}
+
+
+def taemot = Action {
+    implicit request =>
+      AnvandareForm.bindFromRequest.fold(
+        errors => {
+          if(errors.hasErrors) {
+            println("Fel data!")
+
+            println("Fel lista: "  + errors.toString)
+          }
+
+          // Felaktigt ifyllt formulär
+
+        },
+        anvadare => {
+            // test
+            println(anvadare.name)
+            for(v <- anvadare.emails) {
+                println("v : " + v)
+            }
+
+            println("Do" + anvadare.quality.size)
+            for(d <- anvadare.quality) {
+                println("v : " + d)
+            }
+
+
+        })
+    Ok("OK")
+}
+
 
 
   def login = Action {
@@ -99,10 +161,31 @@ class UserProfileController  extends Controller{
 
 
   def save = Action {
+
+  val form1   = Form(
+    mapping(
+      "userName" -> nonEmptyText,
+      "emailAddress" -> email,
+      "firstName" -> text,
+      "lastName" -> text,
+      "aboutme" -> text,
+      "quality" -> list(boolean),
+      "idno" -> longNumber
+    )(UserProfile.apply)(UserProfile.unapply)
+  )
+
+
+
+
+    System.out.println("SVAR: " +form1)
+
+  /*
     implicit request =>
     userProfileForm.bindFromRequest.fold(
       errors => {
         // Felaktigt ifyllt formulär
+
+           System.out.println("TEST ... TEST... ERROR ")
 
         val typ = new models.Types
         Ok(views.html.profile.createUserProfile(errors, typ.findAll))
@@ -118,16 +201,24 @@ class UserProfileController  extends Controller{
           userProfile.emailAddress)
         */
         // Hämta värden
-        val savedForm =  userProfileForm.fill(userProfile)
+        val savedForm  =  userProfileForm.fill(userProfile)
+
+       System.out.println("TEST ... TEST ")
+
+
+
         val typ = new models.Types
-        Ok(views.html.profile.createUserProfile(savedForm, typ.findAll))
+        //Ok(views.html.profile.createUserProfile(savedForm, typ.findAll))
+        Ok("TEST")
       }
     )
+    */
+    Ok("TEST")
   }
 
   def hamtaProfil(userName : String) = Action {
     println("userName : " + userName)
-
+/*
     var up = userProfileService.getUserProfile(userName)
     val enProfileForm
       =  userProfileForm.fill(
@@ -140,18 +231,21 @@ class UserProfileController  extends Controller{
           up.id)
     )
 
-    println("ID  : " + up.id)
-    println("firstname  : " + up.firstName)
-    println("epostadress  : " + up.emailAddress)
-
-   Ok(views.html.profile.updateUserProfile(enProfileForm))
+)
+*/
+     val enProfileForm = UserProfile
+   //Ok(views.html.profile.updateUserProfile(enProfileForm))
+   Ok("testbild")
   }
 
 
 
-
+/******************************************************************************************
+ *  Skapa en profil
+ *
+ */
   def skapaNyProfil = Action {
-     var userProfile = models.formdata.UserProfile("","","","","",0)
+     var userProfile = models.formdata.UserProfile("","","","","",List(true, true), 0)
      val dufulatValueForm =  userProfileForm.fill(userProfile)
      val typ = new models.Types
     Ok(views.html.profile.createUserProfile(dufulatValueForm, typ.findAll))

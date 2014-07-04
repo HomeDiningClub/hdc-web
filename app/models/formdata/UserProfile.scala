@@ -13,6 +13,7 @@ case class UserProfile
   firstName    : String,
   lastName     : String,
   aboutMe      : String,
+  quality: List[Boolean],
   idNo         : Long
 ) {
   var id:Int = UserProfile.nextId

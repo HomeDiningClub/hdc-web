@@ -1,0 +1,48 @@
+@(EnvDataForm: Form[controllers.EnvData], element : List[Type], klass : Types)
+
+@helper.form(action = routes.UserProfileController.taemot) {
+
+
+
+@for(t <- element) {
+<br>
+
+<input type="checkbox" id="@t.name" name="@t.v" value="@t.name" @klass.getString(t.name)>
+@t.name
+</input>
+}
+
+
+@helper.inputText(EnvDataForm("name"),
+'id -> "name",
+'_showErrors -> true,
+'_label -> "Name",
+'_help -> "e-post"
+)
+
+@helper.inputText(EnvDataForm("emails[0]"),
+'id -> "idno",
+'_showErrors -> true,
+'_label -> "E-post",
+'_help -> "e-post"
+)
+
+@helper.inputText(EnvDataForm("emails[1]"),
+'id -> "idno",
+'_showErrors -> true,
+'_label -> "E-post",
+'_help -> "e-post"
+)
+
+@helper.inputText(EnvDataForm("emails[2]"),
+'id -> "idno",
+'_showErrors -> true,
+'_label -> "E-post",
+'_help -> "e-post"
+)
+
+
+<input type="submit" value="Spara">
+
+
+}

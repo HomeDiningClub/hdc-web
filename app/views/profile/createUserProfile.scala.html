@@ -86,7 +86,7 @@ Värd?
 Jag är bra på:
 @for(t <- element) {
     <br>
-    <input type="checkbox" id="@t.name" name="quality" value="@t.key">
+    <input type="checkbox" id="@t.name" name="@t.v" value="@t.name">
         @t.name
     </input>
 }
