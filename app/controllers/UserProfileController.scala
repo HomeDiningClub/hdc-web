@@ -54,12 +54,17 @@ class UserProfileController  extends Controller{
 
 
 def skapavy = Action {
-val typ = new models.Types
-typ.addVald("Amerikanskt")
-typ.addVald("LCHF")
 
-val eData : EnvData = new controllers.EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
-val nyForm =  AnvandareForm.fill(eData)
+  // Pre selected
+  val typ = new models.Types
+  typ.addVald("Amerikanskt")
+  typ.addVald("LCHF")
+  typ.addVald("Budget")
+  typ.addVald("Finns_inte")
+  typ.addVald("Kött")
+
+  val eData : EnvData = new controllers.EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
+  val nyForm =  AnvandareForm.fill(eData)
  Ok(views.html.profile.skapa(nyForm, typ.findAll, typ))
 }
 
