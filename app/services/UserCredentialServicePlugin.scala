@@ -223,8 +223,6 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    * 2. Facebook
    * 3. Google
    *
-   * TEST
-   *
    * @param emailAddress
    * @return
    */
