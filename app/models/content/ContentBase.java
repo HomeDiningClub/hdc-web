@@ -2,6 +2,7 @@ package models.content;
 
 import models.UserProfileData;
 import models.base.AbstractEntity;
+import models.constants.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -25,7 +26,7 @@ public abstract class ContentBase extends AbstractEntity {
     public Date lastModifiedDate;
 
     @Fetch
-    @RelatedTo(type = "CONTENT_STATE", direction = Direction.OUTGOING) // TODO - Improve enum (http://components.neo4j.org/neo4j/1.6.M02/apidocs/org/neo4j/graphdb/DynamicRelationshipType.html)
+    @RelatedTo(type = RelationshipTypesJava.CONTENT_STATE.Constant, direction = Direction.OUTGOING)
     public Set<ContentState> contentState;
 
 }

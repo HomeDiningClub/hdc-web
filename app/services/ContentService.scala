@@ -1,19 +1,19 @@
 package services
 
-import org.neo4j.graphalgo.GraphAlgoFactory
-import org.neo4j.graphdb._
-import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import models.content._
-import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConverters._
 import scala.List
-import models.enums.RelationshipTypesEnums
 import org.springframework.transaction.annotation.Transactional
-import org.neo4j.graphdb.index.Index
 import repositories._
+
+/* This deletes all nodes and all relationships in the whole database
+MATCH (n)
+OPTIONAL MATCH (n)-[r]-()
+DELETE n,r
+ */
 
 @Service
 class ContentService {

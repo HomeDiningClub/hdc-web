@@ -17,4 +17,8 @@ S3
 
 SecureSocial
 ===
-http://www.securesocial.ws/
+[UserLogin] http://www.securesocial.ws/
+
+Scrimage
+===
+[Image Resize] https://github.com/sksamuel/scrimage
