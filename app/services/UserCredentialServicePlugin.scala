@@ -33,7 +33,6 @@ import securesocial.core.providers.utils.BCryptPasswordHasher
  * 1. Username/Password storage
  * 2. Facebook autentication
  * 3. Google autentication
- *
  */
 
 class UserCredentialServicePlugin (application: Application) extends UserServicePlugin(application) {
