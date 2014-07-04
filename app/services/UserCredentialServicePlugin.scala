@@ -83,27 +83,28 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   // om element redan finns skall id med dvs sättas.
   def save(user: Identity): Identity = {
 
-    println("Method: Save ...................")
 
-    // Kontrollera om användaren finns
-    val exitsUser = exists(user.identityId.userId, user.identityId.providerId)
 
-    println("Exits : " + exitsUser)
+
+    //val exitsUser = exists(user.identityId.userId, user.identityId.providerId)
+
+
 
     // check if exists
-    var uc  : UserCredential = getUserById(user.identityId.userId, user.identityId.providerId)
+    //var uc  : UserCredential = getUserById(user.identityId.userId, user.identityId.providerId)
 
-    println("Befitligt id: " + uc.id)
+    //println("Befitligt id: " + uc.id)
 
 
     var userCredential : UserCredential = UserCredentialService.socialUser2UserCredential(user)
-    if(exitsUser._2 == true) {
-      println("user finns")
-    }
+
+    //if(exitsUser._2 == true) {
+    //  println("user finns")
+    //}
 
     var userCredential2 = createOrUpdateUser(userCredential)
 
-    println("svar: " + userCredential2.firstName )
+    //println("svar: " + userCredential2.firstName )
 
     //var uc2 : UserCredential = userCredentialService.socialUser2UserCredential(user)
     // Ett värde som säger om värdet redan finns i databasen uc.id
