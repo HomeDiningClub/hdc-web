@@ -46,18 +46,23 @@ import securesocial.core.providers.utils.BCryptPasswordHasher
  * 2. Facebook autentication
  * 3. Google autentication
  */
-
 class UserCredentialServicePlugin (application: Application) extends UserServicePlugin(application) {
 
   private var tokens = Map[String, Token]()
   var users = Map[String, Identity]()
 
-  // Kontrollerar om id finns
-  // dvs. userid och provider id genom att söka i databasen.
 
+  /** *
+    * Fetch user by IdentityId meaning userId and ProviderId
+    * from the database
+    * @param id
+    * @return
+    */
   def find(id: IdentityId): Option[Identity] = {
 
+    // check databaseId and true/false
     val exitsUser = exists(id.userId, id.providerId)
+    // fetch user
     var uc  : UserCredential =  getuser(id.userId, id.providerId)
 
     if(exitsUser._2 == true){
@@ -69,8 +74,12 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   }
 
 
-
-  // find by email and provider
+  /**
+   * Fetch by email and providerId (facebook/google/....)
+   * @param email email
+   * @param providerId provider for exampel facebook, google
+   * @return UserCredential
+   */
   def findByEmailAndProvider(email: String, providerId: String): Option[Identity] = {
 
     var uc  : UserCredential =  getuser(email, providerId)
@@ -86,40 +95,16 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   }
 
 
-
-
-
-  // Kontrollera om elemen redan finns eller inte
-  //  IdentityId = userId + providerId
-  // om element redan finns skall id med dvs sättas.
+  /** *
+    * Store Identity in the database
+    * @param user
+    * @return
+    */
   def save(user: Identity): Identity = {
-
-
-
-
-    //val exitsUser = exists(user.identityId.userId, user.identityId.providerId)
-
-
-
-    // check if exists
-    //var uc  : UserCredential = getUserById(user.identityId.userId, user.identityId.providerId)
-
-    //println("Befitligt id: " + uc.id)
-
 
     var userCredential : UserCredential = UserCredentialService.socialUser2UserCredential(user)
 
-    //
-    //if(exitsUser._2 == true) {
-    //  println("user finns")
-    //}
-
     var userCredential2 = createOrUpdateUser(userCredential)
-
-    //println("svar: " + userCredential2.firstName )
-
-    //var uc2 : UserCredential = userCredentialService.socialUser2UserCredential(user)
-    // Ett värde som säger om värdet redan finns i databasen uc.id
 
     user
 
@@ -257,10 +242,14 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   }
 
 
+
+
+
+
   /**
    * Creates a new user or updates an existing user with
    * the same UserId and ProviderId.
-   *  Checks if the same user credentials allready is stored meaning then same
+   *  Checks if the same user credentials already is stored meaning then same
    *  userid and provider id when update the existing one othervice create
    *  a new user.
    *
@@ -278,14 +267,14 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     if(exitsUser._2 == true) {
         // User is allready stored in the database, when update
-        println("update id: " + userCredential.id)
+        println("update id: " + userCredential.id + "email : " + userCredential.emailAddress)
 
         // set the correct id
         userCredential.id = exitsUser._1
         modUserCredential = saveUser(userCredential)
     } else {
 
-        println("create")
+        println("create, email : " + userCredential.emailAddress)
         modUserCredential = saveUser(userCredential)
     }
 
@@ -305,9 +294,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    * @return
    */
   @Transactional(readOnly = false)
-  def saveUser(userCredential: UserCredential): UserCredential = {
+  private def saveUser(userCredential: UserCredential): UserCredential = {
     var modUser =  UserCredentialService.userCredentialRepository.save(userCredential)
-
     modUser
   }
 
