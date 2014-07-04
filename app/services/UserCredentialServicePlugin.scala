@@ -98,6 +98,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     var userCredential : UserCredential = UserCredentialService.socialUser2UserCredential(user)
 
+    //
     //if(exitsUser._2 == true) {
     //  println("user finns")
     //}
