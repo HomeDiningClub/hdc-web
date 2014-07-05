@@ -34,13 +34,13 @@ GET         /edit/content/delete/:id                   @controllers.ContentContr
 GET         /edit/content/delete/all                   @controllers.ContentController.deleteAllContent
 
 # EDIT - Recipe
-GET         /edit/recipe                              @controllers.RecipeController.indexRecipe
-GET         /edit/recipe/list                         @controllers.RecipeController.listRecipes
-GET         /edit/recipe/add                          @controllers.RecipeController.addRecipe
-POST        /edit/recipe/add                          @controllers.RecipeController.addRecipeSubmit
-GET         /edit/recipe/edit/:id                     @controllers.RecipeController.edit(id: java.lang.Long)
-GET         /edit/recipe/delete/:id                   @controllers.RecipeController.delete(id: java.lang.Long)
-GET         /edit/recipe/delete/all                   @controllers.RecipeController.deleteAll
+GET         /edit/recipe                               @controllers.RecipeController.indexRecipe
+GET         /edit/recipe/list                          @controllers.RecipeController.listRecipes
+GET         /edit/recipe/add                           @controllers.RecipeController.addRecipe
+POST        /edit/recipe/add                           @controllers.RecipeController.addRecipeSubmit
+GET         /edit/recipe/edit/:id                      @controllers.RecipeController.edit(id: java.lang.Long)
+GET         /edit/recipe/delete/:id                    @controllers.RecipeController.delete(id: java.lang.Long)
+GET         /edit/recipe/delete/all                    @controllers.RecipeController.deleteAll
 
 
 
@@ -114,5 +114,7 @@ GET         /profilen/spara                            @controllers.UserCredenti
 GET         /profilen/visa                             @controllers.UserCredentialController.visa
 
 # New profile
-GET         /prodata/visa                               @controllers.UserProfileController.skapavy
-POST        /prodata/skicka                             @controllers.UserProfileController.taemot
+GET         /prodata/visa                              @controllers.UserProfileController.skapavy
+POST        /prodata/skicka                            @controllers.UserProfileController.taemot
+GET         /prodata/skapa                             @controllers.UserProfileController.createTags
+GET         /prodata/test                              @controllers.UserProfileController.test

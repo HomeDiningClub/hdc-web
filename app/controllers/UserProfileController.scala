@@ -2,19 +2,23 @@ package controllers
 
 // http://www.playframework.com/documentation/2.2.x/ScalaForms
 
+import models.profile.TaggedUserProfile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 
 import services.UserProfileService
-import models.UserProfileData
+import models.UserProfile
 import models.formdata.UserProfile
 
+import services.TagWordService
 
 import play.api.data._
 import play.api.data.Forms._
 
 import play.api._
 import play.api.mvc._
+
+import scala.collection.mutable.ListBuffer
 
 
 @SpringController
@@ -23,12 +27,14 @@ class UserProfileController  extends Controller{
   @Autowired
   var userProfileService: UserProfileService = _
 
+  @Autowired
+  var tagWordService : TagWordService = _
 
 
 
 
 
-  val userProfileForm : play.api.data.Form[UserProfile]  = play.api.data.Form(
+  val userProfileForm : play.api.data.Form[models.formdata.UserProfile]  = play.api.data.Form(
     mapping(
       "userName" -> nonEmptyText,
       "emailAddress" -> email,
@@ -37,7 +43,7 @@ class UserProfileController  extends Controller{
       "aboutme" -> text,
       "quality" -> list(boolean),
       "idno" -> longNumber
-    )(UserProfile.apply)(UserProfile.unapply)
+    )(models.formdata.UserProfile.apply)(models.formdata.UserProfile.unapply)
   )
 
 
@@ -49,8 +55,63 @@ class UserProfileController  extends Controller{
         "emails" -> list(text),
         "quality" -> list(text)
       )
-      (EnvData.apply) (EnvData.unapply)
+      (controllers.EnvData.apply) (controllers.EnvData.unapply)
     )
+
+
+
+
+def createTags = Action {
+
+  // MATCH (b:TagWord) RETURN b
+  // MATCH (b:TagWord) delete b
+
+  // tagWordService.createTag("Fisk", "Fisk", "quality[1]")
+  // tagWordService.createTag("Köt", "Köt", "quality[2]")
+  /*
+  tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]")
+  tagWordService.createTag("Italienskt", "Italienskt", "quality[1]")
+  tagWordService.createTag("Franskt", "Franskt", "quality[2]")
+  tagWordService.createTag("Asiatiskt", "Asiatiskt", "quality[3]")
+  tagWordService.createTag("Svensk husman", "Svensk husman", "quality[4]")
+  tagWordService.createTag("Mellanöstern", "Mellanöstern", "quality[5]")
+  tagWordService.createTag( "Vegetarisk", "Vegetarisk", "quality[6]")
+  tagWordService.createTag("RAW-food", "RAW-food", "quality[7]")
+  tagWordService.createTag("LCHF", "LCHF", "quality[8]")
+  tagWordService.createTag("Koscher", "Koscher", "quality[9]")
+  tagWordService.createTag("Vilt", "Vilt", "quality[10]")
+  tagWordService.createTag("Kött", "Kött", "quality[11]")
+  tagWordService.createTag("Fisk och skaldjur", "Fisk och skaldjur", "quality[12]")
+  tagWordService.createTag("Lyx", "Lyx", "quality[13]")
+  tagWordService.createTag("Budget", "Budget", "quality[14]")
+  tagWordService.createTag("Barnvänligt", "Barnvänligt", "quality[15]")
+  tagWordService.createTag("Friluftsmat", "Friluftsmat", "quality[16]")
+  tagWordService.createTag("Drycker", "Drycker", "quality[17]")
+  tagWordService.createTag("Efterrätter", "Efterrätter", "quality[18]")
+  tagWordService.createTag("Bakverk", "Bakverk", "quality[19]")
+  var lista = tagWordService.listAll()
+  */
+
+  var lista = tagWordService.listAll()
+  var v : StringBuilder = new StringBuilder
+
+
+  for( a <- lista) {
+    v.append("\n")
+
+    v.append(a.tagName)
+    v.append(", ")
+    v.append(a.tagId)
+    v.append(", ")
+    v.append(a.orderId)
+
+
+  }
+
+
+ Ok(v.toString())
+}
+
 
 
 def skapavy = Action {
@@ -89,7 +150,7 @@ def taemot = Action {
                 println("v : " + v)
             }
 
-            println("Do" + anvadare.quality.size)
+            println("Do, antal : " + anvadare.quality.size)
             for(d <- anvadare.quality) {
                 println("v : " + d)
             }
@@ -113,7 +174,8 @@ def taemot = Action {
 
   def index = Action {
     val userProfilesList = userProfileService.getAllUserProfiles()
-    Ok(views.html.profile.listofProfiles(userProfilesList))
+    //Ok(views.html.profile.listofProfiles(userProfilesList))
+    Ok("OK")
   }
 
 
@@ -142,23 +204,18 @@ def taemot = Action {
           // Felaktigt ifyllt formulär
           Ok(views.html.profile.updateUserProfile(errors))
         },
-        userProfile => {
+        userProfileForm => {
 
           // Spara UserProfile
           // var userProfileData = form2Data(userProfile)
-          var userProfileData : UserProfileData = new UserProfileData("","")
-          userProfileData.id = userProfile.idNo
-          userProfileData.userName = userProfile.userName
-          userProfileData.emailAddress = userProfile.emailAddress
-          userProfileData.firstName = userProfile.firstName
-          userProfileData.lastName = userProfile.lastName
-          userProfileData.aboutMe = userProfile.aboutMe
+          var userProfile : models.UserProfile = new models.UserProfile
 
-          userProfileService.saveUserProfile(userProfileData)
+          userProfileService.saveUserProfile(userProfile)
 
           // Hämta värden
-          val savedForm =  userProfileForm.fill(userProfile)
-          Ok(views.html.profile.updateUserProfile(savedForm))
+          //val savedForm =  userProfileForm.fill()
+          // Ok(views.html.profile.updateUserProfile())
+          Ok("TEST")
         }
       )
   }
@@ -176,7 +233,7 @@ def taemot = Action {
       "aboutme" -> text,
       "quality" -> list(boolean),
       "idno" -> longNumber
-    )(UserProfile.apply)(UserProfile.unapply)
+    )(models.formdata.UserProfile.apply)(models.formdata.UserProfile.unapply)
   )
 
 
@@ -238,7 +295,7 @@ def taemot = Action {
 
 )
 */
-     val enProfileForm = UserProfile
+     val enProfileForm = models.formdata.UserProfile
    //Ok(views.html.profile.updateUserProfile(enProfileForm))
    Ok("testbild")
   }
@@ -256,4 +313,61 @@ def taemot = Action {
     Ok(views.html.profile.createUserProfile(dufulatValueForm, typ.findAll))
   }
 
+
+  def test = Action {
+    var user: models.UserProfile = new models.UserProfile()
+    user.userId = "test"
+    user.providerId = "test"
+
+    var userList = userProfileService.getAllUserProfiles()
+    var tagList = tagWordService.listAll()
+
+    if (userList.size > 0) {
+
+      println("Users : " +  userList.size)
+
+
+      var up = userList.tail.tail.head
+
+      var antal: Int = 0
+      var tagItter = up.getUserProfileTags.iterator()
+
+
+      var list: ListBuffer[TaggedUserProfile] = new ListBuffer[TaggedUserProfile]()
+
+      while (tagItter.hasNext) {
+        var d = tagItter.next()
+        println("TAG NAME: " + d.tagWord.tagName + ", " + d.tagWord.tagId + ", " + d.tagWord.orderId)
+        list += d
+      }
+
+      // remove all tagwords to profile
+      /*
+      for (vx <- list) {
+        println("\ntest :" + vx.tagWord.orderId)
+        up.remove(vx)
+      }
+      userProfileService.saveUserProfile(up)
+      */
+
+
+    // add tagwords to profile
+    /*
+    up.aboutMe = "vinter"
+    up.isHost = true
+      println("Key: " + up.key)
+
+    for( tag <- tagList) {
+      up.memberOf(tag)
+    }
+    userProfileService.saveUserProfile(up)
+    */
+
+      // userProfileService.saveUserProfile("","")
+
+
+    }
+
+    Ok("OK")
+  }
 }
