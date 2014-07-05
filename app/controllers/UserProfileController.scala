@@ -210,7 +210,7 @@ def taemot = Action {
           // var userProfileData = form2Data(userProfile)
           var userProfile : models.UserProfile = new models.UserProfile
 
-          userProfileService.saveUserProfile(userProfile)
+          //userProfileService.saveUserProfile(userProfile)
 
           // Hämta värden
           //val savedForm =  userProfileForm.fill()
@@ -316,8 +316,8 @@ def taemot = Action {
 
   def test = Action {
     var user: models.UserProfile = new models.UserProfile()
-    user.userId = "test"
-    user.providerId = "test"
+   // user.userId = "test"
+   //user.providerId = "test"
 
     var userList = userProfileService.getAllUserProfiles()
     var tagList = tagWordService.listAll()
@@ -330,6 +330,7 @@ def taemot = Action {
       var up = userList.tail.tail.head
 
       var antal: Int = 0
+      /*
       var tagItter = up.getUserProfileTags.iterator()
 
 
@@ -340,7 +341,7 @@ def taemot = Action {
         println("TAG NAME: " + d.tagWord.tagName + ", " + d.tagWord.tagId + ", " + d.tagWord.orderId)
         list += d
       }
-
+*/
       // remove all tagwords to profile
       /*
       for (vx <- list) {
@@ -370,4 +371,5 @@ def taemot = Action {
 
     Ok("OK")
   }
+
 }
