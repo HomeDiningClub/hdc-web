@@ -1,7 +1,7 @@
 package services
 
 import org.springframework.beans.factory.annotation.Autowired
-import repositories.{VideoRepository, ImageRepository}
+import repositories.{FileTransformationRepository, BucketRepository, VideoRepository, ImageRepository}
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import models.files._
@@ -20,6 +20,11 @@ import org.neo4j.helpers.collection.IteratorUtil
 import scala.collection.JavaConverters._
 import play.api.libs.MimeTypes
 import scala.collection.mutable.ListBuffer
+import java.io.File
+import com.sksamuel.scrimage._
+import models.UserCredential
+import constants.FileTransformationConstants
+import scala.collection.mutable.HashSet
 
 @Service
 class FileService {
@@ -28,31 +33,32 @@ class FileService {
   private var imageRepository: ImageRepository = _
   @Autowired
   private var videoRepository: VideoRepository = _
-
-  private lazy val bucketStore: String = Play.application.configuration.getString("aws.s3bucket")
-  lazy val S3Bucket = S3(bucketStore)
+  @Autowired
+  private var fileTransformationRepository: FileTransformationRepository = _
+  @Autowired
+  private var bucketRepository: BucketRepository = _
 
   private val keyConstant = "key"
 
-  // Just for testing
+  // Just for testing, don't use in production
   def listFilesRawFromS3(prefix: String = ""): List[String] = {
-    val result = Await.result(S3Bucket.list(prefix), 10 seconds)
+    val result = Await.result(bucketRepository.S3Bucket.list(prefix), 10 seconds)
     val returnRes: List[String] = result.map(item => item.name).toList
     returnRes
   }
 
-  // Accepts Unique ID
+  // Accepts Unique ID, returns ImageObject
   def getImageByKey(key: UUID): Option[ImageFile] = {
     val dbRes = imageRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
-      case unit => return Some(unit)
+      case unit => return Some(populateBucketUrl(unit).asInstanceOf[ImageFile])
     }
     None
   }
 
-  // Accepts Unique ID, returns url of db node
+  // Accepts Unique ID returns VideoObject
   def getVideoByKey(key: UUID): Option[VideoFile] = {
     val dbRes = videoRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
-      case unit => return Some(unit)
+      case unit => return Some(populateBucketUrl(unit).asInstanceOf[VideoFile])
     }
     None
   }
@@ -61,20 +67,51 @@ class FileService {
   // TODO: Add user constraint
   def getImages(): List[ImageFile] = {
     val dbRes = IteratorUtil.asCollection(imageRepository.findAll()).asScala
+    val parsedList: List[ImageFile] = populateBucketUrls(dbRes).asInstanceOf[List[ImageFile]]
+    parsedList
+  }
 
-    var parsedList: ListBuffer[ImageFile] = ListBuffer()
+  // This method populates all urls for base image and all it's transforms
+  private def populateBucketUrls(filesToParse: Iterable[ContentFile]): List[ContentFile] = {
+    var parsedList: ListBuffer[ContentFile] = ListBuffer()
 
-    for(image <- dbRes) {
-      image.url = S3Bucket.url(image.bucketDir + image.key.toString)
-      parsedList += image
+    for (file <- filesToParse) {
+      val basePath = getFilePath(file)
+      val fileExt = getFileExtension(file)
+
+      // Set the original url
+      file.basePath = basePath + fileExt
+      file.url = bucketRepository.S3Bucket.url(file.basePath)
+      for (fileTransformation <- file.fileTransformations.asScala)
+      {
+        val variationPath: String = getTransformationPath(fileTransformation)
+
+        // Set the transformation url
+        fileTransformation.basePath = basePath + variationPath + fileExt
+        fileTransformation.url = bucketRepository.S3Bucket.url(fileTransformation.basePath)
+      }
+      parsedList += file
     }
-
     parsedList.result()
   }
 
+  // Wrapper method for one item
+  private def populateBucketUrl(fileToParse: ContentFile): ContentFile = {
+    val fileList: List[ContentFile] = List{fileToParse}
+    val returnList = populateBucketUrls(fileList)
+    returnList.head
+  }
+
+
   // Uploads a file
   // Return ContentObject if found
-  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile]): Option[ContentFile] = {
+  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile], user: UserCredential, fileTransformations: List[FileTransformation] = Nil): Option[ContentFile] = {
+
+    // Is user logged in?
+    if(user == null && user.userId == null) {
+      Logger.debug("Debug: Cannot upload image no logged in user.")
+      return None
+    }
 
     // Check the Mime-type from the actual file
     val contentType = file.contentType match {
@@ -123,35 +160,160 @@ class FileService {
 
     } else {
 
+      // Parse file extension
       val fileExtension = fileName.split('.').drop(1).lastOption match {
-        case None => ""
+        case None => "unknown"
         case Some(fileExt) => fileExt
       }
-      val newFile: ImageFile = new ImageFile(fileName,fileExtension,contentType)
-      val fileUrl = newFile.bucketDir + newFile.key
 
-      //newFile.OwnedBy = TODO: Add user connecting using SecureSocial
-      //newFile.url = fileUrl
-      //val newFileResults = newFile
+      // Set filename & path
+      // Goal is the following:
+      //<userid>/<fileid>/<fileid>.<fileextension>
+      val newFile: ImageFile = new ImageFile(fileName,fileExtension,contentType,user) // TODO: Add support for other types
+      val fileUrl = getFilePath(newFile) + getFileExtension(newFile)
 
-      val uploadedFile: BucketFile = BucketFile(fileUrl, contentType, FileUtils.readAllBytes(file.ref.file))
-      val result = S3Bucket.add(uploadedFile)
+      // Upload original
+      val result = doUpload(fileUrl,contentType,file.ref.file)
 
+      // Handle result
       result.map {
         unitResponse =>
           Logger.info("Uploaded and saved file: " + fileUrl)
-          saveToDB(newFile)
-          return Some(newFile)
+          saveFile(newFile)
       }
         .recover {
-        case S3Exception(status, code, message, originalXml) => Logger.error("Error: " + message)
-        case _ => Logger.error("Error: Cannot upload image.")
+          case S3Exception(status, code, message, originalXml) => Logger.error("Error: " + message)
+          case _ => Logger.error("Error: Cannot upload file.")
       }
 
-      None
+      // Successfully saved and uploaded, lets make the transforms if any
+      if(!fileTransformations.isEmpty){
+        val editedFile: ContentFile = uploadAndCreateTransformations(newFile,file.ref.file,fileTransformations)
+      }
+
+      return Some(newFile)
     }
   }
 
+  // Handles the basic upload to bucket
+  private def doUpload(fileUrl: String, contentType: String, fileToUpload: File): Future[Unit] = {
+
+    val uploadedFile: BucketFile = BucketFile(fileUrl, contentType, FileUtils.readAllBytes(fileToUpload))
+    val result = bucketRepository.S3Bucket.add(uploadedFile)
+
+    result
+  }
+
+  // Handle transformations
+  private def uploadAndCreateTransformations(contentFile: ContentFile, fileToUpload: File, fileTransformations: List[FileTransformation]): ContentFile = {
+
+    if(!fileTransformations.isEmpty && contentFile != null)
+    {
+      for(transform <- fileTransformations)
+      {
+        //var usingStoredTransform = false
+        // Lookup earlier created transform if name is defined, this way all transforms with names are not unique:
+        // This might cause confusion, since we use the stored values from the DB, not the ones passed in the method, however this is a small issue
+//        val workingTransform: FileTransformation = fileTransformationRepository.findByName(transform.name) match {
+//          case storedTransform: FileTransformation => {
+//            Logger.debug("Debug: Transformation already exists, using the stored instance instead: " + storedTransform.name)
+//            usingStoredTransform = true
+//            storedTransform
+//          }
+//          case _ => transform
+//        }
+
+        // Build path to new file transformation
+        val fileUrl = getFilePath(contentFile) + getTransformationPath(transform) + getFileExtension(contentFile)
+
+        // Transform it
+        val transformedFile = new File("/tmp/" + fileUrl)
+        val transformType = "png"
+
+        // We can add more transforms:
+        // https://github.com/sksamuel/scrimage
+        // Remember, here we might use the stored transformationType instead of the one entered by the developer
+        transform.transformationType match {
+          case FileTransformationConstants.FIT => Image(fileToUpload).fit(transform.width, transform.height, color = Color.White).write(transformedFile, Format.PNG)
+          case FileTransformationConstants.SCALE => Image(fileToUpload).scale(transform.scale).write(transformedFile, Format.PNG)
+          case FileTransformationConstants.COVER => Image(fileToUpload).cover(transform.width, transform.height).write(transformedFile, Format.PNG)
+          case _ => Image(fileToUpload).cover(transform.width, transform.height).write(transformedFile, Format.PNG)
+        }
+
+        // Add the type
+        transform.extension = transformType
+
+        // Move to immutable
+        val permTrans = transform
+
+        // Upload it
+        val results = doUpload(fileUrl,transformType,transformedFile).map {
+          unitResponse =>
+            Logger.info("Uploaded and saved transformation of file: " + fileUrl)
+
+            // Success upload, add / update this entry to db
+            val savedTransform = saveTransformation(permTrans)
+
+            // Add relation
+            val editedFile = addTransformToFile(contentFile, savedTransform)
+
+            // Save the file parent object
+            saveFile(editedFile)
+
+          }
+          .recover {
+            case S3Exception(status, code, message, originalXml) =>
+              Logger.error("Error: " + message)
+              return null
+            case _ =>
+              Logger.error("Error: Cannot upload transformation of file.")
+              return null
+        }
+
+        // Clean up local file
+        transformedFile.delete()
+      }
+    }
+    contentFile
+  }
+
+
+  // Returns file path using a file entry
+  // Returns an String with full path
+  private def getFilePath(file: ContentFile): String = {
+
+    var retString: String = ""
+
+    if(file.owner != null && !file.owner.userId.isEmpty())
+      retString += file.owner.userId + "/"
+    else
+      Logger.debug("Debug: Missing owner on content file")
+
+    if(!file.key.toString.isEmpty())
+      retString += file.key.toString + "/" + file.key.toString
+    else
+      Logger.debug("Debug: Missing key on content file")
+
+    retString
+  }
+
+  // Returns the file extensions using a file entry
+  // if empty, just returns an empty string
+  private def getFileExtension(file: ContentFile): String = {
+    if(!file.extension.isEmpty())
+      return "." + file.extension
+    else
+      Logger.error("Error: Cannot return file extension, extension if missing.")
+
+    ""
+  }
+
+  // Returns a correct partial path from a FileTransform
+  // If empty, just returns an empty string
+  // Use this in combination with getFilePath & getFileExtension
+  private def getTransformationPath(fileTransformation: FileTransformation): String = {
+    "-" + fileTransformation.name.toLowerCase() + "-" + fileTransformation.width + "-" + fileTransformation.height
+  }
 
   // Deletes any file, can be any that inherits from ContentFile
   // Returns false is failure, true if success
@@ -162,27 +324,57 @@ class FileService {
       case None => return false
     }
 
+    val fileTransformations: Iterable[FileTransformation] = IteratorUtil.asCollection(fileToDelete.fileTransformations).asScala
+
     // Remove file if found in DB
+    // Also remove all its transforms
     val result: Future[Unit] = Future {
-      S3Bucket.remove(fileToDelete.key.toString)
+      bucketRepository.S3Bucket.remove(fileToDelete.basePath)
+      for(transform <- fileTransformations) {
+        bucketRepository.S3Bucket.remove(transform.basePath)
+      }
     }
     val timeoutFuture = Promise.timeout("Delete failed, timeout occurred", 20.seconds)
 
     Future.firstCompletedOf(Seq(result, timeoutFuture)).map {
-      unit => Logger.info("Deleted file: " + fileToDelete.key.toString)
-        deleteFromDB(fileToDelete)
-        true
+      unitResponse => Logger.info("Deleted file: " + fileToDelete.basePath.toString)
+        for(transform <- fileTransformations) {
+          deleteTransformation(transform)
+        }
+        deleteFile(fileToDelete)
+        return true
     }
     .recover {
-      case S3Exception(status, code, message, originalXml) => Logger.info("Error: " + message)
-        false
+      case S3Exception(status, code, message, originalXml) =>
+        Logger.info("Error: " + message)
+        return false
     }
     false
   }
 
 
   @Transactional(readOnly = false)
-  private def saveToDB(file: ContentFile) {
+  def addTransformToFile(file: ContentFile, transform: FileTransformation): ContentFile = {
+    if(file != null && transform != null)
+      file.fileTransformations.add(transform)
+
+    file
+  }
+
+  @Transactional(readOnly = false)
+  private def saveTransformation(transform: FileTransformation): FileTransformation = {
+    val returnTransform: FileTransformation = fileTransformationRepository.save(transform)
+    returnTransform
+  }
+
+  @Transactional(readOnly = false)
+  private def deleteTransformation(transform: FileTransformation) {
+    fileTransformationRepository.delete(transform)
+  }
+
+
+  @Transactional(readOnly = false)
+  private def saveFile(file: ContentFile) {
 
     if(file.isInstanceOf[ImageFile])
       imageRepository.save(file.asInstanceOf[ImageFile])
@@ -192,7 +384,7 @@ class FileService {
   }
 
   @Transactional(readOnly = false)
-  private def deleteFromDB(file: ContentFile) {
+  private def deleteFile(file: ContentFile) {
 
     if(file.isInstanceOf[ImageFile])
       imageRepository.delete(file.asInstanceOf[ImageFile])

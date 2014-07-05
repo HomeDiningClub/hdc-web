@@ -73,15 +73,12 @@ GET         /host/recipes                              @controllers.RecipeContro
 
 # Worlds example
 GET         /worlds                                    @controllers.WorldController.index
-#POST        /worlds/add                    controllers.WorldController.add
-#POST        /worlds/delete                 controllers.WorldController.delete
+
 
 # Files
 GET         /file                                      @controllers.FileController.index
-#GET         /file/listS3                   @controllers.FileController.listS3Files(prefix = "")
-#GET         /file/listS3/:prefix           @controllers.FileController.listS3Files(prefix)
-#GET         /file/list/images              @controllers.FileListController.listAllImages
 POST        /file/add                                  @controllers.FileController.add
+GET         /file/add                                  @controllers.FileController.index
 GET         /file/delete/:key                          @controllers.FileController.deleteImage(key: java.util.UUID)
 
 

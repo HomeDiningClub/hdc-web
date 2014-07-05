@@ -1,23 +1,30 @@
 package models.files;
 
-import org.springframework.data.annotation.Transient;
+import models.UserCredential;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import java.util.Set;
 
 @NodeEntity
-public class VideoFile extends ContentFile{
+public class VideoFile extends ContentFile {
 
-    @Transient
-    private String bucketStoreDir = "videos/";
+    public VideoFile(String name, String extension, String contentType, UserCredential ownerUser, Set<FileTransformation> fileTransforms){
 
-    public VideoFile(String name, String extension, String contentType){
-        this.name = name;
-        this.bucketDir = bucketStoreDir;
-        this.contentType = contentType;
-        this.extension = extension;
+        if(fileTransforms.size() > 0) {
+            this.fileTransformations = fileTransforms;
+        }
+        populateBaseData(name, extension, contentType, ownerUser);
     }
 
-    public VideoFile(){
-        this.bucketDir = bucketStoreDir;
-        //this.url = this.bucketDir + this.key;
+    public VideoFile(String name, String extension, String contentType, UserCredential ownerUser){
+        populateBaseData(name, extension, contentType, ownerUser);
+    }
+
+    private VideoFile(){    }
+
+    private void populateBaseData(String name, String extension, String contentType, UserCredential ownerUser) {
+        this.owner = ownerUser;
+        this.name = name;
+        this.contentType = contentType;
+        this.extension = extension;
     }
 }

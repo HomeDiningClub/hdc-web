@@ -1,8 +1,10 @@
 package models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import models.base.AbstractEntity;
+import models.constants.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;
@@ -22,8 +24,8 @@ public class World extends AbstractEntity {
     public String spokenLanguage;
 
     @Fetch
-    @RelatedTo(type = "REACHABLE_BY_ROCKET", direction = Direction.OUTGOING) // TODO - Improve enum
-    public Set<World> reachableByRocket;
+    @RelatedTo(type = RelationshipTypesJava.REACHABLE_BY_ROCKET.Constant, direction = Direction.OUTGOING) // TODO - Improve enum
+    public Set<World> reachableByRocket = new HashSet<World>();
 
     // Constructors
     public World(String name, int moons, String spokenLanguage) {

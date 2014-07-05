@@ -29,7 +29,10 @@ libraryDependencies ++= Seq(
   "com.typesafe" %% "play-plugins-util" % "2.2.0",
   "com.typesafe" %% "play-plugins-mailer" % "2.2.0",
   "ws.securesocial" %% "securesocial" % "2.1.3",
-  "nl.rhinofly" %% "play-s3" % "3.3.4"
+  "nl.rhinofly" %% "play-s3" % "3.3.4",
+  "com.sksamuel.scrimage" %% "scrimage-core" % "1.4.1"
+  //"com.sksamuel.scrimage" %% "scrimage-filters" % "1.4.1" (for filter and effects)
+  //"com.sksamuel.scrimage" %% "scrimage-canvas" % "1.4.1" (for image manipulation)
   //"org.julienrf" %% "play-jsmessages" % "1.6.2"
 )
 

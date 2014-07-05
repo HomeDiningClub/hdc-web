@@ -12,7 +12,7 @@ import java.util.List;
 @NodeEntity
 public class Recipe extends ContentBase {
 
-    @Indexed(indexType = IndexType.LABEL)
+    @Indexed(indexType = IndexType.FULLTEXT,indexName = "recipeName")
     public String name;
     public String mainBody;
 

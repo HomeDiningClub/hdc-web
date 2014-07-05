@@ -1,9 +1,31 @@
 @(images: List[models.files.ImageFile] = Nil)
 
 @if(!images.isEmpty){
-    <ul>
+    <table>
     @for(image <- images) {
-        <li><img src="@image.url">@image.name<a href="@routes.FileController.deleteImage(image.key)">@Messages("file.list.delete") (Not working)</a></li>
+        <tr>
+            <td>
+                <img src="@image.url">
+            </td>
+            <td>
+                @image.name
+            </td>
+            <td>
+                <a href="@routes.FileController.deleteImage(image.key)">@Messages("file.list.delete")</a>
+            </td>
+
+            @if(!image.fileTransformations.isEmpty) {
+            <td>
+                <table>
+                    <tr>
+                        @for(transformedImage <- image.fileTransformations){
+                            <td><img src="@transformedImage.url"></td>
+                        }
+                    </tr>
+                </table>
+            </td>
+            }
+        </tr>
     }
-    </ul>
+    </table>
 }
