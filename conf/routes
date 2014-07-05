@@ -54,7 +54,7 @@ POST        /profile/skapa                             @controllers.UserProfileC
 POST        /profile/spara                             @controllers.UserProfileController.saveUserProfile
 GET         /profile/ny                                @controllers.UserProfileController.skapaNyProfil
 GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
-#GET         /profile/tabort/:userName                  @controllers.UserProfileController.deleteProfil(userName)
+
 
 # Host
 GET         /host                                      @controllers.HostController.index
@@ -98,9 +98,6 @@ GET         /not-authorized                            securesocial.controllers.
 # TEST
 GET         /profile/loggain                           @controllers.UserProfileController.login
 
-
-GET         /profilen/spara                            @controllers.UserCredentialController.spara
-GET         /profilen/visa                             @controllers.UserCredentialController.visa
 
 # New profile
 GET         /prodata/visa                              @controllers.UserProfileController.skapavy
