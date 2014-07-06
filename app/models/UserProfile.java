@@ -1,12 +1,10 @@
 package models;
 
 import models.base.AbstractEntity;
-import models.constants.RelationshipTypesJava;
+import models.types.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.RelatedTo;
-
-import java.util.Set;
 
 public class UserProfile extends AbstractEntity {
 

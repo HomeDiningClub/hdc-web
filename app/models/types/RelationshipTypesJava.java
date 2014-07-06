@@ -1,4 +1,4 @@
-package models.constants;
+package models.types;
 
 import org.neo4j.graphdb.RelationshipType;
 
