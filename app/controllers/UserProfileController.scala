@@ -66,33 +66,33 @@ def createTags = Action {
   // MATCH (b:TagWord) RETURN b
   // MATCH (b:TagWord) delete b
 
-  // tagWordService.createTag("Fisk", "Fisk", "quality[1]")
-  // tagWordService.createTag("Köt", "Köt", "quality[2]")
-  /*
-  tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]")
-  tagWordService.createTag("Italienskt", "Italienskt", "quality[1]")
-  tagWordService.createTag("Franskt", "Franskt", "quality[2]")
-  tagWordService.createTag("Asiatiskt", "Asiatiskt", "quality[3]")
-  tagWordService.createTag("Svensk husman", "Svensk husman", "quality[4]")
-  tagWordService.createTag("Mellanöstern", "Mellanöstern", "quality[5]")
-  tagWordService.createTag( "Vegetarisk", "Vegetarisk", "quality[6]")
-  tagWordService.createTag("RAW-food", "RAW-food", "quality[7]")
-  tagWordService.createTag("LCHF", "LCHF", "quality[8]")
-  tagWordService.createTag("Koscher", "Koscher", "quality[9]")
-  tagWordService.createTag("Vilt", "Vilt", "quality[10]")
-  tagWordService.createTag("Kött", "Kött", "quality[11]")
-  tagWordService.createTag("Fisk och skaldjur", "Fisk och skaldjur", "quality[12]")
-  tagWordService.createTag("Lyx", "Lyx", "quality[13]")
-  tagWordService.createTag("Budget", "Budget", "quality[14]")
-  tagWordService.createTag("Barnvänligt", "Barnvänligt", "quality[15]")
-  tagWordService.createTag("Friluftsmat", "Friluftsmat", "quality[16]")
-  tagWordService.createTag("Drycker", "Drycker", "quality[17]")
-  tagWordService.createTag("Efterrätter", "Efterrätter", "quality[18]")
-  tagWordService.createTag("Bakverk", "Bakverk", "quality[19]")
-  var lista = tagWordService.listAll()
-  */
+/*
+  tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "profile")
+  tagWordService.createTag("Italienskt", "Italienskt", "quality[1]", "profile")
+  tagWordService.createTag("Franskt", "Franskt", "quality[2]", "profile")
+  tagWordService.createTag("Asiatiskt", "Asiatiskt", "quality[3]", "profile")
+  tagWordService.createTag("Svensk husman", "Svensk husman", "quality[4]", "profile")
+  tagWordService.createTag("Mellanöstern", "Mellanöstern", "quality[5]", "profile")
+  tagWordService.createTag( "Vegetarisk", "Vegetarisk", "quality[6]", "profile")
+  tagWordService.createTag("RAW-food", "RAW-food", "quality[7]", "profile")
+  tagWordService.createTag("LCHF", "LCHF", "quality[8]", "profile")
+  tagWordService.createTag("Koscher", "Koscher", "quality[9]", "profile")
+  tagWordService.createTag("Vilt", "Vilt", "quality[10]", "profile")
+  tagWordService.createTag("Kött", "Kött", "quality[11]", "profile")
+  tagWordService.createTag("Fisk och skaldjur", "Fisk och skaldjur", "quality[12]", "profile")
+  tagWordService.createTag("Lyx", "Lyx", "quality[13]", "profile")
+  tagWordService.createTag("Budget", "Budget", "quality[14]", "profile")
+  tagWordService.createTag("Barnvänligt", "Barnvänligt", "quality[15]", "profile")
+  tagWordService.createTag("Friluftsmat", "Friluftsmat", "quality[16]", "profile")
+  tagWordService.createTag("Drycker", "Drycker", "quality[17]", "profile")
+  tagWordService.createTag("Efterrätter", "Efterrätter", "quality[18]", "profile")
+  tagWordService.createTag("Bakverk", "Bakverk", "quality[19]", "profile")
+*/
 
-  var lista = tagWordService.listAll()
+
+
+var lista = tagWordService.listAll()
+//var lista = tagWordService.listByGroup("profile")
   var v : StringBuilder = new StringBuilder
 
 

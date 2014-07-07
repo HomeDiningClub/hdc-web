@@ -24,12 +24,13 @@ class TagWordService {
   var tagWordRepository: TagWordRepository = _
 
   @Transactional(readOnly = false)
-   def createTag(name: String, idName: String, order: String = ""): TagWord = {
+   def createTag(name: String, idName: String, order: String = "", tagGroupName : String = "" ): TagWord = {
     var newTag: TagWord = new TagWord
     var resultTag : TagWord = new TagWord
     newTag.tagName = name
     newTag.tagId = idName
     newTag.orderId = order
+    newTag.tagGroupName = tagGroupName
 
     resultTag = tagWordRepository.save(newTag)
     resultTag
@@ -39,6 +40,14 @@ class TagWordService {
   def listAll(): List[TagWord] = {
    // val listOfTags: List[TagWord] = IteratorUtil.asCollection(tagWordRepository.findAll()).asScala.toList
    val listOfTags: List[TagWord] = IteratorUtil.asCollection(tagWordRepository.findAll()).asScala.toList
+    listOfTags
+  }
+
+
+  @Transactional(readOnly = true)
+  def listByGroup(groupName: String): List[TagWord] = {
+
+    val listOfTags: List[TagWord] = (tagWordRepository.getByGroupName(groupName)).toList
     listOfTags
   }
 

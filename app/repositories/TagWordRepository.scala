@@ -8,6 +8,6 @@ import org.springframework.data.neo4j.repository.GraphRepository
 trait TagWordRepository extends GraphRepository[TagWord] {
 
   @Query("start up=node:TagWord(tagGroupName={0}) return up")
-  def getGroup(groupName: String ): List[TagWord]
+  def getByGroupName(groupName: String ):  Array[TagWord]
 
 }
