@@ -4,7 +4,9 @@ import models.base.AbstractEntity;
 import models.types.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.RelatedTo;
+import org.springframework.data.neo4j.support.index.IndexType;
 
 public class UserProfile extends AbstractEntity {
 
@@ -19,10 +21,18 @@ public class UserProfile extends AbstractEntity {
 
     public String group = "";
 
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "userprofile_userid")
+    public String userId = "";
+
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "userprofile_providerid")
+    public String providerId = "";
+
+
     // Platinum premim
     // Gold
     // Silver
     // Admin
+    public Integer memberStatus = 0;
 
     public boolean isHost = false;
 
