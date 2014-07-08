@@ -13,7 +13,7 @@ public class TagWord  extends AbstractEntity {
     public String tagId        = "";
     public String orderId      = "";
 
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "tagGroupName")
+    @Indexed
     public String tagGroupName = "";
 
 

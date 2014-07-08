@@ -92,11 +92,13 @@ def createTags = Action {
 
 
 
-var lista = tagWordService.listAll()
-//var lista = tagWordService.listByGroup("profile")
+//var lista = tagWordService.listAll()
+var lista = tagWordService.listByGroup2("profile")
   var v : StringBuilder = new StringBuilder
 
-  //tagWordService.listByGroup("profile")
+
+
+
 
 
   for( a <- lista) {
@@ -107,7 +109,6 @@ var lista = tagWordService.listAll()
     v.append(a.tagId)
     v.append(", ")
     v.append(a.orderId)
-
 
   }
 

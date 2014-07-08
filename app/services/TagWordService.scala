@@ -1,5 +1,7 @@
 package services
 
+import _root_.java.util
+
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Autowired
@@ -47,8 +49,14 @@ class TagWordService {
   @Transactional(readOnly = true)
   def listByGroup(groupName: String): List[TagWord] = {
 
-    val listOfTags: List[TagWord] = (tagWordRepository.getByGroupName(groupName)).toList
-    listOfTags
+   listAll().filter(t=>t.tagGroupName.equalsIgnoreCase(groupName))
   }
+
+  @Transactional(readOnly = true)
+  def listByGroup2(groupName: String): List[TagWord] = {
+
+    tagWordRepository.findAllBySchemaPropertyValue("tagGroupName", groupName).asScala.toList
+  }
+
 
 }
