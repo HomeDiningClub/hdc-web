@@ -96,6 +96,8 @@ var lista = tagWordService.listAll()
 //var lista = tagWordService.listByGroup("profile")
   var v : StringBuilder = new StringBuilder
 
+  //tagWordService.listByGroup("profile")
+
 
   for( a <- lista) {
     v.append("\n")
