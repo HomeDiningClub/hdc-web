@@ -1,7 +1,7 @@
 package models;
 
 import models.base.AbstractEntity;
-import models.types.RelationshipTypesJava;
+import models.modelconstants.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;

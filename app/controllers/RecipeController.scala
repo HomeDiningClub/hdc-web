@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import services.{UserCredentialService, FileService, RecipeService}
 import play.api.libs.Files.TemporaryFile
 import models.files.ImageFile
+import enums.FileTypeEnums
 
 @SpringController
 class RecipeController extends Controller with SecureSocial {
@@ -65,7 +66,7 @@ class RecipeController extends Controller with SecureSocial {
         request.body.file("recipemainimage").map {
           file =>
             val filePerm: MultipartFormData.FilePart[TemporaryFile] = file
-            val imageFile = fileService.uploadFile(filePerm, UserCredentialService.socialUser2UserCredential(request.user))
+            val imageFile = fileService.uploadFile(filePerm, UserCredentialService.socialUser2UserCredential(request.user), FileTypeEnums.IMAGE)
               imageFile match {
                 case Some(imageFile) => newRec.mainImage = imageFile.asInstanceOf[ImageFile]
                 case _ => None

@@ -12,7 +12,7 @@ import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConverters._
 import scala.List
 import org.springframework.transaction.annotation.Transactional
-import models.types.RelationshipTypesScala
+import models.modelconstants.RelationshipTypesScala
 
 @Service
 class WorldService {

@@ -1,0 +1,17 @@
+@(nameOfConfig: String = null)
+
+@mainedit(Messages("file.title")) {
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>@Messages("file.upload.header")</h1>
+            @edit.file.uploadform()
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h2>@Messages("file.filelist.header")</h2>
+            @FileListController.listAllImages
+        </div>
+    </div>
+}

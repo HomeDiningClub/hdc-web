@@ -6,6 +6,7 @@ db
 tmp
 .history
 dist
+/SQL.md
 /.idea
 /*.iml
 /out

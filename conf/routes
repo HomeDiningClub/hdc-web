@@ -68,10 +68,10 @@ GET         /worlds                                    @controllers.WorldControl
 
 
 # Files
-GET         /file                                      @controllers.FileController.index
-POST        /file/add                                  @controllers.FileController.add
-GET         /file/add                                  @controllers.FileController.index
-GET         /file/delete/:key                          @controllers.FileController.deleteImage(key: java.util.UUID)
+GET         /edit/file                                      @controllers.FileController.index
+POST        /edit/file/add                                  @controllers.FileController.add
+GET         /edit/file/add                                  @controllers.FileController.index
+GET         /edit/file/delete/:key                          @controllers.FileController.deleteImage(key: java.util.UUID)
 
 
 # Login page

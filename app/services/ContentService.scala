@@ -9,12 +9,6 @@ import scala.List
 import org.springframework.transaction.annotation.Transactional
 import repositories._
 
-/* This deletes all nodes and all relationships in the whole database
-MATCH (n)
-OPTIONAL MATCH (n)-[r]-()
-DELETE n,r
- */
-
 @Service
 class ContentService {
 

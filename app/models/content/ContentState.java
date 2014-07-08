@@ -1,8 +1,7 @@
 package models.content;
 
 import models.base.AbstractEntity;
-import models.enums.ContentStateEnums;
-import org.springframework.data.neo4j.annotation.GraphId;
+import models.modelenums.ContentStateEnums;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 @NodeEntity

@@ -1,7 +1,7 @@
 package models.content;
 
 import models.base.AbstractEntity;
-import models.types.RelationshipTypesJava;
+import models.modelconstants.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

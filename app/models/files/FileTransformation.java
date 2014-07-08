@@ -8,7 +8,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 @NodeEntity
 public class FileTransformation extends AbstractEntity {
 
-    @Indexed(unique = true)
+    @Indexed(unique = false)
     public String name;
     public int width;
     public int height;

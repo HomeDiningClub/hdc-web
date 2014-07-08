@@ -1,6 +1,4 @@
-package models.enums;
-
-import org.neo4j.graphdb.RelationshipType;
+package models.modelenums;
 
 public enum ContentStateEnums {
     PUBLISHED,

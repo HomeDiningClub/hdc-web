@@ -24,7 +24,8 @@ import java.io.File
 import com.sksamuel.scrimage._
 import models.UserCredential
 import constants.FileTransformationConstants
-import scala.collection.mutable.HashSet
+import enums.FileTypeEnums
+import FileTypeEnums.FileTypeEnums
 
 @Service
 class FileService {
@@ -39,6 +40,7 @@ class FileService {
   private var bucketRepository: BucketRepository = _
 
   private val keyConstant = "key"
+  private val fileTransformNameConstant = "name"
 
   // Just for testing, don't use in production
   def listFilesRawFromS3(prefix: String = ""): List[String] = {
@@ -49,18 +51,20 @@ class FileService {
 
   // Accepts Unique ID, returns ImageObject
   def getImageByKey(key: UUID): Option[ImageFile] = {
-    val dbRes = imageRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
-      case unit => return Some(populateBucketUrl(unit).asInstanceOf[ImageFile])
+    val results = imageRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
+      case unit => Some(populateBucketUrl(unit).asInstanceOf[ImageFile])
+      case _ => None
     }
-    None
+    results
   }
 
   // Accepts Unique ID returns VideoObject
   def getVideoByKey(key: UUID): Option[VideoFile] = {
-    val dbRes = videoRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
-      case unit => return Some(populateBucketUrl(unit).asInstanceOf[VideoFile])
+    val results = videoRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
+      case unit => Some(populateBucketUrl(unit).asInstanceOf[VideoFile])
+      case _ => None
     }
-    None
+    results
   }
 
   // Get all Images
@@ -70,6 +74,19 @@ class FileService {
     val parsedList: List[ImageFile] = populateBucketUrls(dbRes).asInstanceOf[List[ImageFile]]
     parsedList
   }
+
+  // Get a single transform by name
+  // Returns Option[FileTransformation]
+  def getTransformationByName(name: String, file: ContentFile): Option[FileTransformation] = {
+    if(!file.fileTransformations.isEmpty){
+      for (transform: FileTransformation <- file.fileTransformations.asScala) {
+        if(transform.name.equalsIgnoreCase(name))
+          return Some(transform)
+      }
+    }
+    None
+  }
+
 
   // This method populates all urls for base image and all it's transforms
   private def populateBucketUrls(filesToParse: Iterable[ContentFile]): List[ContentFile] = {
@@ -105,13 +122,24 @@ class FileService {
 
   // Uploads a file
   // Return ContentObject if found
-  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile], user: UserCredential, fileTransformations: List[FileTransformation] = Nil): Option[ContentFile] = {
+  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile], user: UserCredential, fileType: FileTypeEnums, fileTransformations: List[FileTransformation] = Nil): Option[ContentFile] = {
 
     // Is user logged in?
     if(user == null && user.userId == null) {
       Logger.debug("Debug: Cannot upload image no logged in user.")
       return None
     }
+
+    // Is the size too big, bail out
+    // 1MB = 1048576
+    // 2MB = 2097152
+    // 3MB = 3145728
+    // 4MB = 4194304
+    if(file.ref.file.length() > 2097152) {
+      Logger.debug("Debug: Cannot upload image, image is too large, largest image is 2MB.")
+      return None
+    }
+
 
     // Check the Mime-type from the actual file
     val contentType = file.contentType match {
@@ -169,7 +197,13 @@ class FileService {
       // Set filename & path
       // Goal is the following:
       //<userid>/<fileid>/<fileid>.<fileextension>
-      val newFile: ImageFile = new ImageFile(fileName,fileExtension,contentType,user) // TODO: Add support for other types
+      val newFile = fileType match {
+        case FileTypeEnums.IMAGE => new ImageFile(fileName,fileExtension,contentType,user)
+        case FileTypeEnums.VIDEO => new VideoFile(fileName,fileExtension,contentType,user)
+        case _ =>
+          Logger.error("Error: No filetype specified on upload, must be either any of the FileTypeConstants")
+          return null
+      }
       val fileUrl = getFilePath(newFile) + getFileExtension(newFile)
 
       // Upload original
@@ -187,7 +221,8 @@ class FileService {
       }
 
       // Successfully saved and uploaded, lets make the transforms if any
-      if(!fileTransformations.isEmpty){
+      // But only on the image objects
+      if(!fileTransformations.isEmpty && newFile.isInstanceOf[ImageFile]){
         val editedFile: ContentFile = uploadAndCreateTransformations(newFile,file.ref.file,fileTransformations)
       }
 
@@ -328,27 +363,71 @@ class FileService {
 
     // Remove file if found in DB
     // Also remove all its transforms
-    val result: Future[Unit] = Future {
+    val future: Future[Unit] = Future {
       bucketRepository.S3Bucket.remove(fileToDelete.basePath)
-      for(transform <- fileTransformations) {
-        bucketRepository.S3Bucket.remove(transform.basePath)
+      if(!fileTransformations.isEmpty) {
+        for (transform <- fileTransformations) {
+          bucketRepository.S3Bucket.remove(transform.basePath)
+        }
       }
     }
-    val timeoutFuture = Promise.timeout("Delete failed, timeout occurred", 20.seconds)
 
-    Future.firstCompletedOf(Seq(result, timeoutFuture)).map {
-      unitResponse => Logger.info("Deleted file: " + fileToDelete.basePath.toString)
-        for(transform <- fileTransformations) {
-          deleteTransformation(transform)
+    val results = future.map {
+      unitResponse =>
+        Logger.info("Deleted file: " + fileToDelete.basePath.toString)
+        if(!fileTransformations.isEmpty) {
+          for (transform <- fileTransformations) {
+            deleteTransformation(transform)
+          }
         }
         deleteFile(fileToDelete)
         return true
     }
     .recover {
+      case timeout:
+        scala.concurrent.TimeoutException =>
+          Logger.info("Error: Timeout before deleting files.")
+          return false
       case S3Exception(status, code, message, originalXml) =>
         Logger.info("Error: " + message)
         return false
     }
+
+    Await.result(future, 10.seconds)
+
+//    result.onComplete {
+//      case Success(_) =>
+//        Logger.info("Deleted file: " + fileToDelete.basePath.toString)
+//
+//        for(transform <- fileTransformations) {
+//          deleteTransformation(transform)
+//        }
+//        deleteFile(fileToDelete)
+//
+//        return true
+//      case Failure(error) =>
+//        Logger.info("Error: " + error)
+//        return false
+//    }
+
+//    val waitedResult = Await.result(result, 10 seconds) : Unit
+//    waitedResult
+
+//    val timeoutFuture = Promise.timeout("Delete failed, timeout occurred", 20.seconds)
+//    Future.firstCompletedOf(Seq(result, timeoutFuture)).map {
+//      unitResponse => Logger.info("Deleted file: " + fileToDelete.basePath.toString)
+//        for(transform <- fileTransformations) {
+//          deleteTransformation(transform)
+//        }
+//        deleteFile(fileToDelete)
+//        return true
+//    }
+//    .recover {
+//      case S3Exception(status, code, message, originalXml) =>
+//        Logger.info("Error: " + message)
+//        return false
+//    }
+
     false
   }
 
