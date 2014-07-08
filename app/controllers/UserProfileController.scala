@@ -67,6 +67,7 @@ def createTags = Action {
   // MATCH (b:TagWord) delete b
 
 /*
+  tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "test")
   tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "profile")
   tagWordService.createTag("Italienskt", "Italienskt", "quality[1]", "profile")
   tagWordService.createTag("Franskt", "Franskt", "quality[2]", "profile")
