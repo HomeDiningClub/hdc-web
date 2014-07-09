@@ -4,6 +4,7 @@
     <table class="table table-striped table-hover table-bordered">
         <thead>
         <tr>
+            <th>Created date</th>
             <th>Thumbnail</th>
             <th>Name</th>
             <th>Owner</th>
@@ -15,6 +16,7 @@
         <tbody>
         @for(image <- images) {
             <tr>
+                <td>@image.createdDate</td>
                 <td>
                 @Option(image.getTransformByName("thumbnail")) match {
                     case Some(transform) => { <img src="@transform.url"> }
@@ -33,7 +35,7 @@
                     </ul>
                 }
                 </td>
-                <td><a href="@routes.FileController.deleteImage(image.key)">@Messages("file.list.delete")</a></td>
+                <td><a href="@routes.FileController.deleteImage(image.contentFileId)">@Messages("file.list.delete")</a></td>
             </tr>
         }
         </tbody>

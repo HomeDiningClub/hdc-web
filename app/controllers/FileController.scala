@@ -38,8 +38,8 @@ class FileController extends Controller with SecureSocial {
       //Redirect(routes.FileController.index)
   }
 
-  def deleteImage(key: UUID) = SecuredAction {
-    val result = fileService.deleteFile(key)
+  def deleteImage(id: UUID) = SecuredAction {
+    val result = fileService.deleteFile(id)
     if(result)
       Redirect(routes.FileController.index()).flashing(FlashMsgConstants.Success -> "File deleted")
     else

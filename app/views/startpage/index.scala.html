@@ -90,8 +90,7 @@
                 <div class="row big-margin-top">
                     <!-- Filtering push -->
                     <div class="col-xs-12">
-                        Form be here..
-                        @*
+                    @* Search filter form
                     @helper.form(action=routes.StartPageController.filterProfiles(), 'class -> "form-horizontal"){
                         <fieldset>
                             @helper.inputText(searchForm("freeText"), '_label -> Messages("startpage.filterform.freetext"))
@@ -102,22 +101,12 @@
                             <button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button>
                         </div>
                     }
-                            *@
+                    *@
                     </div>
                     <div class="col-xs-12">
                         <div class="row center-block">
-                            <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
-                                <div class="body">
-                                    @shared.hostImageCircle()
-                                    <a href="#">
-                                        <h2>Host name</h2>
-                                        <hr>
-                                        <p class="location">Location</p>
-                                        @shared.grade(inputId = "host-grade", initialValue = 1, disabled = true, size = "xxs")
-                                    </a>
-                                    <div class="host-level-icon level-guest01" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
-                                </div>
-                            </div>
+
+
                             <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box2.png")')">
                                 <div class="body">
                                     @shared.hostImageCircle()

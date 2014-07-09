@@ -1,0 +1,19 @@
+@(boxes: List[models.viewmodels.StartPageBox] = Nil)
+
+@if(!boxes.isEmpty) {
+    @for(box: models.viewmodels.StartPageBox <- boxes){
+
+        <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@box.mainImage.getTransformByName("box").url')">
+            <a href="@box.linkToProfile">
+                <div class="body">
+                    @shared.hostImageCircle(box.userImage.getTransformByName("thumbnail").url))
+                    <h2>@box.fullName</h2>
+                    <hr>
+                    <p class="location">@box.location</p>
+                    @shared.grade(inputId = "host-grade", initialValue = 1, disabled = true, size = "xxs")
+                    <div class="host-level-icon level-guest01" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
+                </div>
+            </a>
+        </div>
+    }
+}

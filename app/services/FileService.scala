@@ -39,7 +39,7 @@ class FileService {
   @Autowired
   private var bucketRepository: BucketRepository = _
 
-  private val keyConstant = "key"
+  private val idConstant = "contentFileId"
   private val fileTransformNameConstant = "name"
 
   // Just for testing, don't use in production
@@ -50,8 +50,8 @@ class FileService {
   }
 
   // Accepts Unique ID, returns ImageObject
-  def getImageByKey(key: UUID): Option[ImageFile] = {
-    val results = imageRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
+  def getImageByKey(id: UUID): Option[ImageFile] = {
+    val results = imageRepository.findAllBySchemaPropertyValue(idConstant,id).single match {
       case unit => Some(populateBucketUrl(unit).asInstanceOf[ImageFile])
       case _ => None
     }
@@ -59,8 +59,8 @@ class FileService {
   }
 
   // Accepts Unique ID returns VideoObject
-  def getVideoByKey(key: UUID): Option[VideoFile] = {
-    val results = videoRepository.findAllBySchemaPropertyValue(keyConstant,key).single match {
+  def getVideoByKey(id: UUID): Option[VideoFile] = {
+    val results = videoRepository.findAllBySchemaPropertyValue(idConstant,id).single match {
       case unit => Some(populateBucketUrl(unit).asInstanceOf[VideoFile])
       case _ => None
     }
@@ -69,7 +69,7 @@ class FileService {
 
   // Get all Images
   // TODO: Add user constraint
-  def getImages(): List[ImageFile] = {
+  def getImages: List[ImageFile] = {
     val dbRes = IteratorUtil.asCollection(imageRepository.findAll()).asScala
     val parsedList: List[ImageFile] = populateBucketUrls(dbRes).asInstanceOf[List[ImageFile]]
     parsedList
@@ -104,7 +104,7 @@ class FileService {
         val variationPath: String = getTransformationPath(fileTransformation)
 
         // Set the transformation url
-        fileTransformation.basePath = basePath + variationPath + fileExt
+        fileTransformation.basePath = basePath + variationPath + getFileExtension(fileTransformation)
         fileTransformation.url = bucketRepository.S3Bucket.url(fileTransformation.basePath)
       }
       parsedList += file
@@ -259,30 +259,29 @@ class FileService {
 //        }
 
         // Build path to new file transformation
-        val fileUrl = getFilePath(contentFile) + getTransformationPath(transform) + getFileExtension(contentFile)
+        // Set the extension - All transforms should be saved as PNG
+        transform.extension = "png"
+        val fileUrl = getFilePath(contentFile) + getTransformationPath(transform) + getFileExtension(transform)
 
-        // Transform it
+        // Create a receiving file
         val transformedFile = new File("/tmp/" + fileUrl)
-        val transformType = "png"
 
+        // Do transformation!
         // We can add more transforms:
         // https://github.com/sksamuel/scrimage
-        // Remember, here we might use the stored transformationType instead of the one entered by the developer
         transform.transformationType match {
           case FileTransformationConstants.FIT => Image(fileToUpload).fit(transform.width, transform.height, color = Color.White).write(transformedFile, Format.PNG)
           case FileTransformationConstants.SCALE => Image(fileToUpload).scale(transform.scale).write(transformedFile, Format.PNG)
+          case FileTransformationConstants.BOUND=> Image(fileToUpload).bound(transform.width, transform.height).write(transformedFile, Format.PNG)
           case FileTransformationConstants.COVER => Image(fileToUpload).cover(transform.width, transform.height).write(transformedFile, Format.PNG)
           case _ => Image(fileToUpload).cover(transform.width, transform.height).write(transformedFile, Format.PNG)
         }
-
-        // Add the type
-        transform.extension = transformType
 
         // Move to immutable
         val permTrans = transform
 
         // Upload it
-        val results = doUpload(fileUrl,transformType,transformedFile).map {
+        val results = doUpload(fileUrl,permTrans.extension,transformedFile).map {
           unitResponse =>
             Logger.info("Uploaded and saved transformation of file: " + fileUrl)
 
@@ -319,13 +318,13 @@ class FileService {
 
     var retString: String = ""
 
-    if(file.owner != null && !file.owner.userId.isEmpty())
+    if(file.owner != null && !file.owner.userId.isEmpty)
       retString += file.owner.userId + "/"
     else
       Logger.debug("Debug: Missing owner on content file")
 
-    if(!file.key.toString.isEmpty())
-      retString += file.key.toString + "/" + file.key.toString
+    if(!file.contentFileId.toString.isEmpty)
+      retString += file.contentFileId.toString + "/" + file.contentFileId.toString
     else
       Logger.debug("Debug: Missing key on content file")
 
@@ -335,26 +334,36 @@ class FileService {
   // Returns the file extensions using a file entry
   // if empty, just returns an empty string
   private def getFileExtension(file: ContentFile): String = {
-    if(!file.extension.isEmpty())
+    if(!file.extension.isEmpty)
       return "." + file.extension
     else
-      Logger.error("Error: Cannot return file extension, extension if missing.")
+      Logger.error("Error: Cannot return file extension, extension is missing.")
 
     ""
   }
+
+  private def getFileExtension(transform: FileTransformation): String = {
+    if(!transform.extension.isEmpty)
+      return "." + transform.extension
+    else
+      Logger.error("Error: Cannot return file extension, extension is missing.")
+
+    ""
+  }
+
 
   // Returns a correct partial path from a FileTransform
   // If empty, just returns an empty string
   // Use this in combination with getFilePath & getFileExtension
   private def getTransformationPath(fileTransformation: FileTransformation): String = {
-    "-" + fileTransformation.name.toLowerCase() + "-" + fileTransformation.width + "-" + fileTransformation.height
+    "-" + fileTransformation.name.toLowerCase + "-" + fileTransformation.width + "-" + fileTransformation.height
   }
 
   // Deletes any file, can be any that inherits from ContentFile
   // Returns false is failure, true if success
-  def deleteFile(key: UUID): Boolean = {
+  def deleteFile(id: UUID): Boolean = {
     // Check file in DB
-    val fileToDelete: ContentFile = getImageByKey(key) match {
+    val fileToDelete: ContentFile = getImageByKey(id) match {
       case Some(file) => file
       case None => return false
     }
@@ -374,7 +383,7 @@ class FileService {
 
     val results = future.map {
       unitResponse =>
-        Logger.info("Deleted file: " + fileToDelete.basePath.toString)
+        Logger.info("Deleted file: " + fileToDelete.basePath)
         if(!fileTransformations.isEmpty) {
           for (transform <- fileTransformations) {
             deleteTransformation(transform)

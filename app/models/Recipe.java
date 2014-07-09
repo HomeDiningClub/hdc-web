@@ -1,13 +1,17 @@
 package models;
 
-import models.base.AbstractEntity;
 import models.content.ContentBase;
 import models.files.ImageFile;
+import models.modelconstants.RelationshipTypesJava;
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.support.index.IndexType;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @NodeEntity
 public class Recipe extends ContentBase {
@@ -16,21 +20,28 @@ public class Recipe extends ContentBase {
     public String name;
     public String mainBody;
 
-    // Size: 460*305
-    // Size: 151*100
+    @Fetch
     public ImageFile mainImage;
 
-    public List<ImageFile> recipeImages;
-    // Sizes:
-    // 460*305
-    // 151*100
+    @Fetch
+    @RelatedTo(type = RelationshipTypesJava.USED_BY.Constant, direction = Direction.OUTGOING)
+    public Set<ImageFile> recipeImages = new HashSet<>();
 
-    public Recipe(String name){
+    public Recipe(String name, String mainBody, ImageFile mainImage, Set<ImageFile> recipeImages){
+        this.mainImage = mainImage;
+        this.recipeImages = recipeImages;
         this.name = name;
+        this.mainBody = mainBody;
     }
 
     public Recipe(String name, String mainBody){
         this.name = name;
         this.mainBody = mainBody;
     }
+
+    public Recipe(String name){
+        this.name = name;
+    }
+
+    protected Recipe(){ }
 }
