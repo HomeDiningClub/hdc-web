@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
 
-@RelationshipEntity(type = "USERPROFILE_TAGWORD_OF")
+@RelationshipEntity(type = "PROFILE_TAGGED_AS")
 public class TaggedUserProfile  extends AbstractEntity {
 
     @Fetch @StartNode   public UserProfile userProfile;

@@ -128,9 +128,17 @@ def skapavy = Action {
   typ.addVald("Finns_inte")
   typ.addVald("Kött")
 
-  val eData : EnvData = new controllers.EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
-  val nyForm =  AnvandareForm.fill(eData)
- Ok(views.html.profile.skapa(nyForm, typ.findAll, typ))
+ // val eData : EnvData = new controllers.EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
+ // val nyForm =  AnvandareForm.fill(eData)
+ //Ok(views.html.profile.skapa(nyForm, typ.findAll, typ))
+/*
+  var u : models.UserProfile = new models.UserProfile
+  u.userId = "test"
+  u.providerId = "test"
+  userProfileService.saveUserProfile(u)
+*/
+
+  Ok("OK")
 }
 
 

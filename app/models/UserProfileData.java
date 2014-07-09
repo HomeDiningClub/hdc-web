@@ -8,7 +8,7 @@ import org.springframework.data.neo4j.support.index.IndexType;
 import securesocial.core.Identity;
 
 
-@NodeEntity
+
 public class UserProfileData extends AbstractEntity {
 
     @Indexed(indexType = IndexType.FULLTEXT, indexName = "usernameProfileData")

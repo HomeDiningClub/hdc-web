@@ -6,7 +6,8 @@ import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
-import models.UserProfileData
+
+import models.UserProfile
 import models.formdata.UserProfile
 import repositories.UserProfileRepository
 import scala.collection.mutable.ListBuffer
@@ -42,7 +43,7 @@ class UserProfileService {
 
 
   @Transactional(readOnly = false)
-  def saveUserProfile(userProfile: UserProfileData): UserProfileData = {
+  def saveUserProfile(userProfile: models.UserProfile): models.UserProfile = {
 
     println("ID: " + userProfile.id)
     var modUserProfile = userProfileRepository.save(userProfile)
@@ -53,19 +54,9 @@ class UserProfileService {
 
 
 
-  @Transactional(readOnly = false)
-   def saveUserProfile(userName: String, emailAddress: String = ""): UserProfileData = {
-    var userProfile: UserProfileData = new UserProfileData(userName, emailAddress)
-
-    userProfile = userProfileRepository.save(userProfile)
-    userProfile
-  }
-
-
-
   @Transactional(readOnly = true)
-  def getAllUserProfiles(): List[UserProfileData] = {
-    val listOfUserProfiles: List[UserProfileData] = IteratorUtil.asCollection(userProfileRepository.findAll()).asScala.toList
+  def getAllUserProfiles(): List[models.UserProfile] = {
+    val listOfUserProfiles: List[models.UserProfile] = IteratorUtil.asCollection(userProfileRepository.findAll()).asScala.toList
     listOfUserProfiles
   }
 
@@ -85,7 +76,7 @@ class UserProfileService {
   }
 
 
-    var userProfileDataIndex: Index[Node] = template.getIndex(classOf[UserProfileData], "userName")
+    var userProfileDataIndex: Index[Node] = template.getIndex(classOf[models.UserProfile], "userName")
     //val node: Node = userProfileDataIndex.query("userName", userName).getSingle()
 
   if(userProfileDataIndex == null){
@@ -108,9 +99,8 @@ class UserProfileService {
       println("Id: " + id)
     }
 
-  println("...........................................")
 
-    var currNode: UserProfileData = new UserProfileData("","")
+    var currNode: models.UserProfile = new models.UserProfile
 
     // node != null
     if (id != 0) {
@@ -122,52 +112,8 @@ class UserProfileService {
 
 
     @Transactional(readOnly = true)
-  def getAllUserProfile(): List[UserProfileData] = {
-
-    // userProfileRepository.finB
-
-
-    //  var actorRepo : GraphRepository[UserProfileData] =repoFactory.createGraphRepository(UserProfileData);
-
-
-    //var devs : EndResult[UserProfileData] = userProfileRepository.findAllByPropertyValue("userName", "fredrik")
-
-    //var user : UserProfileData =  devs.single()
-    //println("UserName : " + user.emailAddress)
-
-
-    //userProfileRepository.findByPropertyValue("userName", "fredrik")
-
-    //userProfileRepository.findByPropertyValue("title", "name")
-
-    userProfileRepository.count()
-
-    // var user : UserProfileData = userProfileRepository.getUserProfilesByName("fredrik")
-    // println("UserName: " + user.emailAddress)
-
-    var userProfileDataIndex: Index[Node] = template.getIndex(classOf[UserProfileData], "userName")
-    val node: Node = userProfileDataIndex.query("userName", "Daniel").getSingle()
-
-
-    println("Name: " + userProfileDataIndex.getName())
-
-
-
-    println("Daniel: " + node.getId())
-    println("Daniel: " + node.getProperty("emailAddress"))
-    // personFulltextIndex.
-
-    var currNode : UserProfileData = userProfileRepository.findOne(node.getId)
-
-    println("Nod x: " + currNode.emailAddress)
-
-    //personFulltextIndex.getName()
-
-    //userProfileRepository.findA llByQuery("username", "test")
-
-    val listOfUserProfiles: List[UserProfileData] = Nil
-    // val listOfUserProfiles: List[UserProfileData] = IteratorUtil.asCollection(userProfileRepository.findAllByQuery("username","fredrik")).asScala.toList
-    listOfUserProfiles
+  def getAllUserProfile(): List[models.UserProfile] = {
+     userProfileRepository.findAll().asScala.toList
   }
 
 
