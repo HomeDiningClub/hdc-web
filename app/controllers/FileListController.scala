@@ -15,7 +15,7 @@ object FileListController extends Controller {
   private var fileService: FileService = _
 
   def listAllImages = {
-    val imagesList = fileService.getImages()
+    val imagesList = fileService.getImages
     views.html.edit.file.imagelist(imagesList)
   }
 }
