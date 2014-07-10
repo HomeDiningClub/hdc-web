@@ -148,9 +148,12 @@ def skapavy = Action {
     println("About Me: " + theUser.aboutMe +", id : "+ theUser.id )
     for(vv <- d ) {
       println(vv.tagGroupName)
-      //theUser.tag(vv)
-      theUser.unTag(vv)
+      theUser.tag(vv)
     }
+    userProfileService.saveUserProfile(theUser)
+
+    // remove all tags
+    theUser.removeAllTags()
     userProfileService.saveUserProfile(theUser)
 
   }
