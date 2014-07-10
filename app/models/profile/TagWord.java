@@ -9,12 +9,13 @@ import org.springframework.data.neo4j.support.index.IndexType;
 @NodeEntity
 public class TagWord  extends AbstractEntity {
 
-    @Indexed
+
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "TagWordSearchTagName")
     public String tagName      = "";
     public String tagId        = "";
     public String orderId      = "";
 
-    @Indexed
+    @Indexed(indexType = IndexType.FULLTEXT, indexName = "TagWordSearchGroupName")
     public String tagGroupName = "";
 
 

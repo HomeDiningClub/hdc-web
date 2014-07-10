@@ -44,11 +44,10 @@ class UserProfileService {
 
   @Transactional(readOnly = false)
   def saveUserProfile(userProfile: models.UserProfile): models.UserProfile = {
+    println("saveUserProfile ")
 
-    println("ID: " + userProfile.id)
-    var modUserProfile = userProfileRepository.save(userProfile)
 
-    modUserProfile
+   userProfileRepository.save(userProfile)
   }
 
 

@@ -93,7 +93,7 @@ def createTags = Action {
 
 
 //var lista = tagWordService.listAll()
-var lista = tagWordService.listByGroup2("profile")
+var lista = tagWordService.listByGroup("profile")
   var v : StringBuilder = new StringBuilder
 
 
@@ -131,12 +131,32 @@ def skapavy = Action {
  // val eData : EnvData = new controllers.EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
  // val nyForm =  AnvandareForm.fill(eData)
  //Ok(views.html.profile.skapa(nyForm, typ.findAll, typ))
-/*
+
   var u : models.UserProfile = new models.UserProfile
-  u.userId = "test"
-  u.providerId = "test"
-  userProfileService.saveUserProfile(u)
-*/
+  u.aboutMe = "test"
+
+  println("start ....")
+  //userProfileService.saveUserProfile(u)
+
+  var up = userProfileService.getAllUserProfile()
+
+
+  var d = tagWordService.listByGroup("profile")
+
+
+  for(theUser <- up) {
+    println("About Me: " + theUser.aboutMe +", id : "+ theUser.id )
+    for(vv <- d ) {
+      println(vv.tagGroupName)
+      //theUser.tag(vv)
+      theUser.unTag(vv)
+    }
+    userProfileService.saveUserProfile(theUser)
+
+  }
+
+
+  println("start ....")
 
   Ok("OK")
 }

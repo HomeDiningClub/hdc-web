@@ -11,4 +11,5 @@ trait TagWordRepository extends GraphRepository[TagWord] {
   def getByGroupName2(tagGroupName: String ):  Array[TagWord]
 
 
+ // def findByGruoupName(tagGroupName :String ): Iterable[TagWord]
 }

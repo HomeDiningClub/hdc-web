@@ -35,7 +35,7 @@ public class UserProfile extends AbstractEntity {
 
 
 
-    @RelatedToVia(type = "PROFILE_TAGGED_AS")
+    @RelatedToVia(type = "TAGGED_ON")
     private Set<TaggedUserProfile> userProfileTag;
 
     public TaggedUserProfile tag(TagWord tagWord) {

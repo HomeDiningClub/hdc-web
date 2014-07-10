@@ -55,7 +55,9 @@ class TagWordService {
   @Transactional(readOnly = true)
   def listByGroup2(groupName: String): List[TagWord] = {
 
-    tagWordRepository.findAllBySchemaPropertyValue("tagGroupName", groupName).asScala.toList
+    tagWordRepository.findAllBySchemaPropertyValue("searchGroup", groupName).asScala.toList
+    // template.lookup("search","tagGroupName:profile").asScala.toList
+    //tagWordRepository.findByGruoupName("profile").toList
   }
 
 
