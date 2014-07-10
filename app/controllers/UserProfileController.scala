@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 
 import services.UserProfileService
-import models.UserProfile
+import models.{Type, UserProfile}
 import models.formdata.UserProfile
 
 import services.TagWordService
@@ -18,6 +18,7 @@ import play.api.data.Forms._
 import play.api._
 import play.api.mvc._
 
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 
@@ -128,9 +129,6 @@ def skapavy = Action {
   typ.addVald("Finns_inte")
   typ.addVald("Kött")
 
- // val eData : EnvData = new controllers.EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
- // val nyForm =  AnvandareForm.fill(eData)
- //Ok(views.html.profile.skapa(nyForm, typ.findAll, typ))
 
   var u : models.UserProfile = new models.UserProfile
   u.aboutMe = "test"
@@ -138,19 +136,24 @@ def skapavy = Action {
   println("start ....")
   //userProfileService.saveUserProfile(u)
 
+
+  // get alla profiles
   var up = userProfileService.getAllUserProfile()
 
-
+  // get all TagWords in gruoup profile
   var d = tagWordService.listByGroup("profile")
 
 
+  // Loop all users
   for(theUser <- up) {
     println("About Me: " + theUser.aboutMe +", id : "+ theUser.id )
     for(vv <- d ) {
       println(vv.tagGroupName)
-      //theUser.tag(vv)
-      theUser.unTag(vv)
+      theUser.tag(vv)
     }
+
+    // remove all tags for theuser
+    theUser.removeAllTags()
     userProfileService.saveUserProfile(theUser)
 
   }
@@ -158,7 +161,22 @@ def skapavy = Action {
 
   println("start ....")
 
-  Ok("OK")
+  var tagSet : mutable.HashSet[models.Type] = new mutable.HashSet[Type]()
+  var l : Long = 0
+  for(oneTag <- d ) {
+    var t : models.Type = new models.Type(l, oneTag.tagName, oneTag.tagName, "quality[" + l + "]")
+    tagSet.add(t)
+    l = l +1
+  }
+
+
+
+
+  val eData : EnvData = new controllers.EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
+  val nyForm =  AnvandareForm.fill(eData)
+  //Ok(views.html.profile.skapa(nyForm, typ.findAll, typ))
+  Ok(views.html.profile.skapa(nyForm, tagSet.toList, typ))
+//  Ok("OK")
 }
 
 

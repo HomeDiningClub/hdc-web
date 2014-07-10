@@ -8,6 +8,8 @@ import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Set;
 
 @NodeEntity
@@ -44,10 +46,20 @@ public class UserProfile extends AbstractEntity {
         return taggedProfile;
     }
 
-    public TaggedUserProfile unTag(TagWord tagWord) {
-        TaggedUserProfile taggedProfile = new TaggedUserProfile(this, tagWord);
-        userProfileTag.remove(taggedProfile);
-        return taggedProfile;
+    public void removeAllTags() {
+
+        Iterable<TaggedUserProfile> itter = getTags();
+        ArrayList<TaggedUserProfile> arr = new ArrayList<TaggedUserProfile>();
+        for(TaggedUserProfile tagProfile : itter) {
+           arr.add(tagProfile);
+        }
+
+        Iterator<TaggedUserProfile> itter2 = (Iterator<TaggedUserProfile>)arr.iterator();
+
+        while(itter2.hasNext())
+        {
+            userProfileTag.remove(itter2.next());
+        }
     }
 
 
