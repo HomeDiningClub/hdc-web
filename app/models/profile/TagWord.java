@@ -15,7 +15,7 @@ public class TagWord  extends AbstractEntity {
     public String tagId        = "";
     public String orderId      = "";
 
-    @Indexed(indexType = IndexType.FULLTEXT, indexName = "TagWordSearchGroupName")
+    @Indexed(indexType = IndexType.LABEL)
     public String tagGroupName = "";
 
 

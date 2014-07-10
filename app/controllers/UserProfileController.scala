@@ -66,51 +66,53 @@ def createTags = Action {
   // MATCH (b:TagWord) RETURN b
   // MATCH (b:TagWord) delete b
 
-/*
-  tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "test")
-  tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "profile")
-  tagWordService.createTag("Italienskt", "Italienskt", "quality[1]", "profile")
-  tagWordService.createTag("Franskt", "Franskt", "quality[2]", "profile")
-  tagWordService.createTag("Asiatiskt", "Asiatiskt", "quality[3]", "profile")
-  tagWordService.createTag("Svensk husman", "Svensk husman", "quality[4]", "profile")
-  tagWordService.createTag("Mellanöstern", "Mellanöstern", "quality[5]", "profile")
-  tagWordService.createTag( "Vegetarisk", "Vegetarisk", "quality[6]", "profile")
-  tagWordService.createTag("RAW-food", "RAW-food", "quality[7]", "profile")
-  tagWordService.createTag("LCHF", "LCHF", "quality[8]", "profile")
-  tagWordService.createTag("Koscher", "Koscher", "quality[9]", "profile")
-  tagWordService.createTag("Vilt", "Vilt", "quality[10]", "profile")
-  tagWordService.createTag("Kött", "Kött", "quality[11]", "profile")
-  tagWordService.createTag("Fisk och skaldjur", "Fisk och skaldjur", "quality[12]", "profile")
-  tagWordService.createTag("Lyx", "Lyx", "quality[13]", "profile")
-  tagWordService.createTag("Budget", "Budget", "quality[14]", "profile")
-  tagWordService.createTag("Barnvänligt", "Barnvänligt", "quality[15]", "profile")
-  tagWordService.createTag("Friluftsmat", "Friluftsmat", "quality[16]", "profile")
-  tagWordService.createTag("Drycker", "Drycker", "quality[17]", "profile")
-  tagWordService.createTag("Efterrätter", "Efterrätter", "quality[18]", "profile")
-  tagWordService.createTag("Bakverk", "Bakverk", "quality[19]", "profile")
-*/
+//
+//  tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "test")
+//  tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "profile")
+//  tagWordService.createTag("Italienskt", "Italienskt", "quality[1]", "profile")
+//  tagWordService.createTag("Franskt", "Franskt", "quality[2]", "profile")
+//  tagWordService.createTag("Asiatiskt", "Asiatiskt", "quality[3]", "profile")
+//  tagWordService.createTag("Svensk husman", "Svensk husman", "quality[4]", "profile")
+//  tagWordService.createTag("Mellanöstern", "Mellanöstern", "quality[5]", "profile")
+//  tagWordService.createTag( "Vegetarisk", "Vegetarisk", "quality[6]", "profile")
+//  tagWordService.createTag("RAW-food", "RAW-food", "quality[7]", "profile")
+//  tagWordService.createTag("LCHF", "LCHF", "quality[8]", "profile")
+//  tagWordService.createTag("Koscher", "Koscher", "quality[9]", "profile")
+//  tagWordService.createTag("Vilt", "Vilt", "quality[10]", "profile")
+//  tagWordService.createTag("Kött", "Kött", "quality[11]", "profile")
+//  tagWordService.createTag("Fisk och skaldjur", "Fisk och skaldjur", "quality[12]", "profile")
+//  tagWordService.createTag("Lyx", "Lyx", "quality[13]", "profile")
+//  tagWordService.createTag("Budget", "Budget", "quality[14]", "profile")
+//  tagWordService.createTag("Barnvänligt", "Barnvänligt", "quality[15]", "profile")
+//  tagWordService.createTag("Friluftsmat", "Friluftsmat", "quality[16]", "profile")
+//  tagWordService.createTag("Drycker", "Drycker", "quality[17]", "profile")
+//  tagWordService.createTag("Efterrätter", "Efterrätter", "quality[18]", "profile")
+//  tagWordService.createTag("Bakverk", "Bakverk", "quality[19]", "profile")
+//
 
 
 
 //var lista = tagWordService.listAll()
-var lista = tagWordService.listByGroup("profile")
-  var v : StringBuilder = new StringBuilder
+//var lista = tagWordService.listByGroup("profile")
 
-
-
-
-
-
-  for( a <- lista) {
-    v.append("\n")
-
-    v.append(a.tagName)
-    v.append(", ")
-    v.append(a.tagId)
-    v.append(", ")
-    v.append(a.orderId)
-
-  }
+//  var lista = tagWordService.listByGroupMange("profile")
+ var v : StringBuilder = new StringBuilder
+//
+//
+//
+//
+//
+//
+//  for( a <- lista) {
+//    v.append("\n")
+//
+//    v.append(a.tagName)
+//    v.append(", ")
+//    v.append(a.tagId)
+//    v.append(", ")
+//    v.append(a.orderId)
+//
+//  }
 
 
  Ok(v.toString())
@@ -141,12 +143,12 @@ def skapavy = Action {
   var up = userProfileService.getAllUserProfile()
 
 
-  var d = tagWordService.listByGroup("profile")
+  var d = tagWordService.listByGroupMange("profile")
 
 
   for(theUser <- up) {
     println("About Me: " + theUser.aboutMe +", id : "+ theUser.id )
-    for(vv <- d ) {
+    for(vv <- d.get) {
       println(vv.tagGroupName)
       //theUser.tag(vv)
       theUser.unTag(vv)
