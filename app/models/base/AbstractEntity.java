@@ -4,12 +4,16 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 public abstract class AbstractEntity {
 
     @GraphId
     public Long id; //java.lang.Long
+
+//    @Indexed(unique = true)
+//    public Long objectId; //java.lang.Long
 
     // This method is needed to compare two different objects from DB using hash
     // Otherwise they are different objects
@@ -34,6 +38,10 @@ public abstract class AbstractEntity {
         if (hash == null) hash = id == null ? System.identityHashCode(this) : id.hashCode();
         return hash.hashCode();
     }
+
+//    public void setUniqueId(Long objectId) {
+//        this.objectId =  objectId;
+//    }
 
     public String getHashCodeAsString() {
         return String.valueOf(hashCode());

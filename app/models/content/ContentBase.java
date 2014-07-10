@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public abstract class ContentBase extends AbstractEntity {
 
-//    @Indexed(unique = true)
+//    @Indexed
 //    public UUID contentId;
 
     @CreatedDate
@@ -27,7 +27,7 @@ public abstract class ContentBase extends AbstractEntity {
     @RelatedTo(type = RelationshipTypesJava.CONTENT_STATE.Constant, direction = Direction.OUTGOING)
     public Set<ContentState> contentState = new HashSet<ContentState>();
 
-    protected ContentBase() {
-        //this.contentId = UUID.randomUUID();
-    }
+//    protected ContentBase() {
+//        this.contentId = UUID.randomUUID();
+//    }
 }
