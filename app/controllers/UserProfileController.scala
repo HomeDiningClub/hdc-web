@@ -141,11 +141,14 @@ def skapavy = Action {
   var up = userProfileService.getAllUserProfile()
 
 
+
   var d = tagWordService.listByGroup("profile")
 
 
   for(theUser <- up) {
     println("About Me: " + theUser.aboutMe +", id : "+ theUser.id )
+
+    // tag alla profiles
     for(vv <- d ) {
       println(vv.tagGroupName)
       theUser.tag(vv)
