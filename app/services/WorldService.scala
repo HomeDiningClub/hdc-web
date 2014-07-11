@@ -30,7 +30,7 @@ class WorldService {
   }
 
   @Transactional(readOnly = true)
-  def getAllWorlds(): List[World] = {
+  def getAllWorlds: List[World] = {
     val listOfWorlds: List[World] = IteratorUtil.asCollection(worldRepository.findAll()).asScala.toList
     listOfWorlds
   }
@@ -84,7 +84,7 @@ class WorldService {
   def getWorldPath(worldA: World, worldB: World): List[World] = {
     val pathExp: PathExpander[_] = PathExpanders.forTypeAndDirection(RelationshipTypesScala.REACHABLE_BY_ROCKET, Direction.OUTGOING)
     val path = GraphAlgoFactory.shortestPath(pathExp, 100)
-      .findSinglePath(template.getNode(worldA.id), template.getNode(worldB.id))
+      .findSinglePath(template.getNode(worldA.graphId), template.getNode(worldB.graphId))
 
     if (path == null) {
       return Nil

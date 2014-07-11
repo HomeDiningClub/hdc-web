@@ -21,8 +21,8 @@
                     <td>@recipe.name</td>
                     <td>
                         <ul class="nav nav-pills">
-                            <li><a href="@routes.RecipeController.edit(recipe.id)"><span class="glyphicon glyphicon-edit"></span>&nbsp;@Messages("edit.recipe.actions.edit")</a></li>
-                            <li><a href="@routes.RecipeController.delete(recipe.id)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("edit.recipe.actions.delete")</a></li>
+                            <li><a href="@routes.RecipeController.edit(recipe.objectId)"><span class="glyphicon glyphicon-edit"></span>&nbsp;@Messages("edit.recipe.actions.edit")</a></li>
+                            <li><a href="@routes.RecipeController.delete(recipe.objectId)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("edit.recipe.actions.delete")</a></li>
                         </ul>
                     </td>
                 </tr>

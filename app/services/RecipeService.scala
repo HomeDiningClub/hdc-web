@@ -8,6 +8,7 @@ import repositories._
 import models.Recipe
 import scala.collection.JavaConverters._
 import scala.List
+import java.util.UUID
 
 @Service
 class RecipeService {
@@ -23,8 +24,9 @@ class RecipeService {
   }
 
   @Transactional(readOnly = true)
-  def findById(id: Long): Recipe = {
-    recipeRepository.findOne(id)
+  def findById(objectId: UUID): Recipe = {
+    recipeRepository.findByobjectId(objectId)
+    //recipeRepository.findOne(objectId)
   }
 
   @Transactional(readOnly = true)
@@ -34,14 +36,14 @@ class RecipeService {
   }
 
   @Transactional(readOnly = false)
-  def deleteById(id: Long): Boolean = {
-    val recipe: Recipe = this.findById(id)
+  def deleteById(objectId: UUID): Boolean = {
+    val recipe: Recipe = this.findById(objectId)
     if(recipe != null)
     {
       recipeRepository.delete(recipe)
       return true
     }
-    return false
+    false
   }
 
   @Transactional(readOnly = false)

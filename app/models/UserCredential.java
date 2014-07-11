@@ -1,10 +1,13 @@
 package models;
 
 import models.base.AbstractEntity;
-import org.springframework.data.neo4j.annotation.GraphId;
-import org.springframework.data.neo4j.annotation.Indexed;
-import org.springframework.data.neo4j.annotation.NodeEntity;
+import models.modelconstants.RelationshipTypesJava;
+import models.rating.RatingUserCredential;
+import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
+import org.springframework.data.neo4j.template.Neo4jOperations;
+
+import java.util.Set;
 
 
 /**
@@ -64,6 +67,27 @@ public class UserCredential extends AbstractEntity {
 
     public String salt = "";
 
+    // Rating embryo,
+    // Move to services
+
+    @RelatedToVia(type = RelationshipTypesJava.RATED.Constant)
+    @Fetch
+    Set<RatingUserCredential> ratings;
+
+    public RatingUserCredential rate(Neo4jOperations template, UserCredential userCredential, int ratingValue, String userIP, String comment) {
+        final RatingUserCredential rating = template.createRelationshipBetween(this, userCredential, RatingUserCredential.class, RelationshipTypesJava.RATED.Constant, false);
+        rating.rate(ratingValue, comment, userIP);
+        return template.save(rating);
+    }
+
+    public int getAverageRating() {
+        int sumOfRatingValues = 0, count = 0;
+        for (RatingUserCredential rating : this.ratings) {
+            sumOfRatingValues += rating.ratingValue;
+            count++;
+        }
+        return count == 0 ? 0 : sumOfRatingValues / count;
+    }
 
     public UserCredential() {
 

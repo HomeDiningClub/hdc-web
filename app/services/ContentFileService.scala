@@ -1,7 +1,7 @@
 package services
 
 import org.springframework.beans.factory.annotation.Autowired
-import repositories.{FileTransformationRepository, BucketRepository, VideoRepository, ImageRepository}
+import repositories._
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import models.files._
@@ -10,11 +10,9 @@ import play.{Logger, Play}
 import play.api.mvc.MultipartFormData
 import play.api.libs.Files.TemporaryFile
 import org.parboiled.common.FileUtils
-import play.api.libs.concurrent._
 import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
-import scala.util.{Success, Failure}
 import java.util.UUID
 import org.neo4j.helpers.collection.IteratorUtil
 import scala.collection.JavaConverters._
@@ -26,21 +24,18 @@ import models.UserCredential
 import constants.FileTransformationConstants
 import enums.FileTypeEnums
 import FileTypeEnums.FileTypeEnums
+import scala.Some
+import fly.play.s3.BucketFile
 
 @Service
-class FileService {
+class ContentFileService {
 
   @Autowired
-  private var imageRepository: ImageRepository = _
-  @Autowired
-  private var videoRepository: VideoRepository = _
+  private var contentFileRepository: ContentFileRepository = _
   @Autowired
   private var fileTransformationRepository: FileTransformationRepository = _
   @Autowired
   private var bucketRepository: BucketRepository = _
-
-  private val idConstant = "contentFileId"
-  private val fileTransformNameConstant = "name"
 
   // Just for testing, don't use in production
   def listFilesRawFromS3(prefix: String = ""): List[String] = {
@@ -49,31 +44,41 @@ class FileService {
     returnRes
   }
 
-  // Accepts Unique ID, returns ImageObject
-  def getImageByKey(id: UUID): Option[ImageFile] = {
-    val results = imageRepository.findAllBySchemaPropertyValue(idConstant,id).single match {
-      case unit => Some(populateBucketUrl(unit).asInstanceOf[ImageFile])
-      case _ => None
+  // Accepts Unique ID, returns ContentFile is any
+  def getFileByKey(objectId: UUID): Option[ContentFile] = {
+    val results = contentFileRepository.findByobjectId(objectId) match {
+      case null => None
+      case unit => Some(populateBucketUrl(unit))
     }
     results
   }
 
-  // Accepts Unique ID returns VideoObject
-  def getVideoByKey(id: UUID): Option[VideoFile] = {
-    val results = videoRepository.findAllBySchemaPropertyValue(idConstant,id).single match {
-      case unit => Some(populateBucketUrl(unit).asInstanceOf[VideoFile])
-      case _ => None
-    }
-    results
-  }
 
-  // Get all Images
-  // TODO: Add user constraint
-  def getImages: List[ImageFile] = {
-    val dbRes = IteratorUtil.asCollection(imageRepository.findAll()).asScala
-    val parsedList: List[ImageFile] = populateBucketUrls(dbRes).asInstanceOf[List[ImageFile]]
+  // Get all files
+  def getAllFiles: List[ContentFile] = {
+    val dbRes = IteratorUtil.asCollection(contentFileRepository.findAll()).asScala
+    val parsedList: List[ContentFile] = populateBucketUrls(dbRes)
     parsedList
   }
+
+  // Get all images
+  def getAllImages: List[ContentFile] = {
+    val results = contentFileRepository.findBybaseContentType(FileTypeEnums.IMAGE.toString).asScala match {
+      case null => Nil
+      case unit => populateBucketUrls(unit)
+    }
+    results
+  }
+
+  // Get all videos
+  def getAllVideos: List[ContentFile] = {
+    val results = contentFileRepository.findBybaseContentType(FileTypeEnums.VIDEO.toString).asScala match {
+      case null => Nil
+      case unit => populateBucketUrls(unit)
+    }
+    results
+  }
+
 
   // Get a single transform by name
   // Returns Option[FileTransformation]
@@ -92,22 +97,25 @@ class FileService {
   private def populateBucketUrls(filesToParse: Iterable[ContentFile]): List[ContentFile] = {
     var parsedList: ListBuffer[ContentFile] = ListBuffer()
 
-    for (file <- filesToParse) {
-      val basePath = getFilePath(file)
-      val fileExt = getFileExtension(file)
+    if(filesToParse != Nil || filesToParse != null)
+    {
+      for (file <- filesToParse) {
+        val basePath = getFilePath(file)
+        val fileExt = getFileExtension(file)
 
-      // Set the original url
-      file.basePath = basePath + fileExt
-      file.url = bucketRepository.S3Bucket.url(file.basePath)
-      for (fileTransformation <- file.fileTransformations.asScala)
-      {
-        val variationPath: String = getTransformationPath(fileTransformation)
+        // Set the original url
+        file.basePath = basePath + fileExt
+        file.url = bucketRepository.S3Bucket.url(file.basePath)
+        for (fileTransformation <- file.fileTransformations.asScala)
+        {
+          val variationPath: String = getTransformationPath(fileTransformation)
 
-        // Set the transformation url
-        fileTransformation.basePath = basePath + variationPath + getFileExtension(fileTransformation)
-        fileTransformation.url = bucketRepository.S3Bucket.url(fileTransformation.basePath)
+          // Set the transformation url
+          fileTransformation.basePath = basePath + variationPath + getFileExtension(fileTransformation)
+          fileTransformation.url = bucketRepository.S3Bucket.url(fileTransformation.basePath)
+        }
+        parsedList += file
       }
-      parsedList += file
     }
     parsedList.result()
   }
@@ -142,15 +150,40 @@ class FileService {
 
 
     // Check the Mime-type from the actual file
-    val contentType = file.contentType match {
-      case Some("js") => ""
-      case Some("java") => ""
-      case Some("cmd") => ""
-      case Some("bat") => ""
-      case Some("jar") => ""
-      case Some("exe") => ""
-      case Some(contentType) => contentType
-      case None => ""
+//    val contentType = file.contentType match {
+//      case Some("js") => ""
+//      case Some("java") => ""
+//      case Some("cmd") => ""
+//      case Some("bat") => ""
+//      case Some("jar") => ""
+//      case Some("exe") => ""
+//      case Some(contentType) => contentType
+//      case None => ""
+//    }
+
+    // Compare mime-type with approved types and fetch and return is so
+    var contentType: String = ""
+
+    if(fileType == FileTypeEnums.IMAGE){
+        contentType = file.contentType match {
+          case Some("image/jpeg") => contentType
+          case Some("image/png") => contentType
+          case Some("image/gif") => contentType
+          case _ =>
+          Logger.debug("Debug: Cannot upload image, file is of wrong mime-type")
+          return None
+        }
+    }else if (fileType == FileTypeEnums.VIDEO){
+        contentType = file.contentType match {
+          case Some("video/mpeg") => contentType
+          case Some("video/mp4") => contentType
+          case Some("video/x-flv") => contentType
+          case _ =>
+            Logger.debug("Debug: Cannot upload video, file is of wrong mime-type")
+            return None
+        }
+    }else {
+        throw new IllegalArgumentException("Missing a correct fileType")
     }
 
     // Fetch the uploaded filename
@@ -162,15 +195,15 @@ class FileService {
       case integer => integer
     }
 
-    // Grab extensions
+    // Grab extensions, if no extension on file, add
     val uncleanedFileExt: String = uncleanedFullFileName.split('.').takeRight(1).headOption match {
-      case None => ""  // TODO - Improve file extensions if none found
+      case None => "unknown"
       case Some(extension) => extension
     }
 
     // Grab just the filename by removing the extension
     val uncleanedFileName: String = uncleanedFullFileName.substring(0, lastIndexOfDot) match {
-        case "" => "nofilename"
+        case "" => "no-filename"
         case filename => filename
       }
 
@@ -180,11 +213,11 @@ class FileService {
     // Get Mime-type as given by the filename
     val fileExtensionMimeType = MimeTypes.forFileName(fileName)
 
-    // If they match set the file ending, else abort upload
+    // If Filename and File-Mime type match set the file ending, else abort upload
     if (!file.contentType.equals(fileExtensionMimeType)) {
 
-      Logger.error("Error: File has an invalid mime-type, aborting.")
-      return None
+      Logger.error("Error: File and file-extensions has an different mime-types, aborting.")
+      None
 
     } else {
 
@@ -198,10 +231,10 @@ class FileService {
       // Goal is the following:
       //<userid>/<fileid>/<fileid>.<fileextension>
       val newFile = fileType match {
-        case FileTypeEnums.IMAGE => new ImageFile(fileName,fileExtension,contentType,user)
-        case FileTypeEnums.VIDEO => new VideoFile(fileName,fileExtension,contentType,user)
+        case FileTypeEnums.IMAGE => new ContentFile(fileName,fileExtension,contentType,FileTypeEnums.IMAGE.toString,user)
+        case FileTypeEnums.VIDEO => new ContentFile(fileName,fileExtension,contentType,FileTypeEnums.VIDEO.toString,user)
         case _ =>
-          Logger.error("Error: No filetype specified on upload, must be either any of the FileTypeConstants")
+          Logger.error("Error: No base file type specified on upload, must be either any of the FileTypeConstants")
           return null
       }
       val fileUrl = getFilePath(newFile) + getFileExtension(newFile)
@@ -222,11 +255,11 @@ class FileService {
 
       // Successfully saved and uploaded, lets make the transforms if any
       // But only on the image objects
-      if(!fileTransformations.isEmpty && newFile.isInstanceOf[ImageFile]){
+      if(!fileTransformations.isEmpty && newFile.baseContentType.equalsIgnoreCase(FileTypeEnums.IMAGE.toString)){
         val editedFile: ContentFile = uploadAndCreateTransformations(newFile,file.ref.file,fileTransformations)
       }
 
-      return Some(newFile)
+      Some(newFile)
     }
   }
 
@@ -323,8 +356,8 @@ class FileService {
     else
       Logger.debug("Debug: Missing owner on content file")
 
-    if(!file.contentFileId.toString.isEmpty)
-      retString += file.contentFileId.toString + "/" + file.contentFileId.toString
+    if(!file.objectId.toString.isEmpty)
+      retString += file.objectId.toString + "/" + file.objectId.toString
     else
       Logger.debug("Debug: Missing key on content file")
 
@@ -361,9 +394,9 @@ class FileService {
 
   // Deletes any file, can be any that inherits from ContentFile
   // Returns false is failure, true if success
-  def deleteFile(id: UUID): Boolean = {
+  def deleteFile(objectId: UUID): Boolean = {
     // Check file in DB
-    val fileToDelete: ContentFile = getImageByKey(id) match {
+    val fileToDelete: ContentFile = getFileByKey(objectId) match {
       case Some(file) => file
       case None => return false
     }
@@ -463,21 +496,12 @@ class FileService {
 
   @Transactional(readOnly = false)
   private def saveFile(file: ContentFile) {
-
-    if(file.isInstanceOf[ImageFile])
-      imageRepository.save(file.asInstanceOf[ImageFile])
-    else if(file.isInstanceOf[VideoFile])
-      videoRepository.save(file.asInstanceOf[VideoFile])
-
+      contentFileRepository.save(file)
   }
 
   @Transactional(readOnly = false)
   private def deleteFile(file: ContentFile) {
-
-    if(file.isInstanceOf[ImageFile])
-      imageRepository.delete(file.asInstanceOf[ImageFile])
-    else if(file.isInstanceOf[VideoFile])
-      videoRepository.delete(file.asInstanceOf[VideoFile])
+    contentFileRepository.delete(file)
   }
 
 }

@@ -2,7 +2,7 @@ package controllers
 
 import org.springframework.beans.factory.annotation.Autowired
 import play.api.mvc._
-import services.FileService
+import services.ContentFileService
 import org.springframework.stereotype.{Controller => SpringController}
 
 // Object just needs a default constructor
@@ -12,10 +12,10 @@ class FileListController extends Controller { }
 object FileListController extends Controller {
 
   @Autowired
-  private var fileService: FileService = _
+  private var fileService: ContentFileService = _
 
   def listAllImages = {
-    val imagesList = fileService.getImages
-    views.html.edit.file.imagelist(imagesList)
+    val imageList = fileService.getAllImages
+    views.html.edit.file.imagelist(imageList)
   }
 }

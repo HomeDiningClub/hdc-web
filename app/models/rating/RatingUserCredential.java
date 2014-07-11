@@ -9,8 +9,15 @@ import org.springframework.data.neo4j.annotation.*;
 @RelationshipEntity
 public class RatingUserCredential extends AbstractEntity {
 
-    public Double rating;
-    public String ratingIP;
+    @StartNode
+    private UserCredential userWhoIsRating;
+
+    @EndNode
+    private UserCredential userRates;
+
+    public int ratingValue;
+    public String userRaterIP;
+    String ratingComment;
 
     @CreatedDate
     public Long createdDate;
@@ -18,11 +25,11 @@ public class RatingUserCredential extends AbstractEntity {
     @LastModifiedDate
     public Long lastModifiedDate;
 
-    @StartNode
-    private UserCredential userWhoIsRating;
-
-    @EndNode
-    private UserCredential userRates;
-
+    public RatingUserCredential rate(int ratingValue, String ratingComment, String userRaterIP) {
+        this.userRaterIP = userRaterIP;
+        this.ratingValue = ratingValue;
+        this.ratingComment = ratingComment;
+        return this;
+    }
 
 }

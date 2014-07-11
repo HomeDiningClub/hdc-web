@@ -11,10 +11,10 @@ import models.viewmodels.RecipeForm
 import play.api.i18n.Messages
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
-import services.{UserCredentialService, FileService, RecipeService}
+import services.{UserCredentialService, ContentFileService, RecipeService}
 import play.api.libs.Files.TemporaryFile
-import models.files.ImageFile
 import enums.FileTypeEnums
+import java.util.UUID
 
 @SpringController
 class RecipeController extends Controller with SecureSocial {
@@ -24,7 +24,7 @@ class RecipeController extends Controller with SecureSocial {
   private var recipeService: RecipeService = _
 
   @Autowired
-  private var fileService: FileService = _
+  private var fileService: ContentFileService = _
 
   def index = Action {
     Ok(views.html.recipe.recipe())
@@ -68,7 +68,8 @@ class RecipeController extends Controller with SecureSocial {
             val filePerm: MultipartFormData.FilePart[TemporaryFile] = file
             val imageFile = fileService.uploadFile(filePerm, UserCredentialService.socialUser2UserCredential(request.user), FileTypeEnums.IMAGE)
               imageFile match {
-                case Some(imageFile) => newRec.mainImage = imageFile.asInstanceOf[ImageFile]
+                case Some(imageFile) =>
+                  newRec.mainImage = imageFile
                 case _ => None
             }
         }
@@ -78,7 +79,7 @@ class RecipeController extends Controller with SecureSocial {
           case None =>
         }
         val savedContentPage = recipeService.add(newRec)
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.recipe.add.success", savedContentPage.name, savedContentPage.id.toString)
+        val successMessage = Messages("edit.success") + " - " + Messages("edit.recipe.add.success", savedContentPage.name, savedContentPage.objectId.toString)
         Redirect(controllers.routes.RecipeController.indexRecipe()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
@@ -87,17 +88,17 @@ class RecipeController extends Controller with SecureSocial {
 
 
   // Edit - Edit content
-  def edit(id: java.lang.Long) = SecuredAction { implicit request =>
+  def edit(objectId: UUID) = SecuredAction { implicit request =>
     Ok(views.html.edit.indexContentPages())
   }
 
   // Edit - Delete content
-  def delete(id: java.lang.Long) = SecuredAction { implicit request =>
-    val result: Boolean = recipeService.deleteById(id)
+  def delete(objectId: UUID) = SecuredAction { implicit request =>
+    val result: Boolean = recipeService.deleteById(objectId)
 
     result match {
       case true => {
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.recipe.delete.success", id.toString)
+        val successMessage = Messages("edit.success") + " - " + Messages("edit.recipe.delete.success", objectId.toString)
         Redirect(controllers.routes.RecipeController.indexRecipe()).flashing(FlashMsgConstants.Success -> successMessage)
       }
       case false => {

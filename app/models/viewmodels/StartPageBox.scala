@@ -1,6 +1,6 @@
 package models.viewmodels
 
-import models.files.ImageFile
+import models.files.ContentFile
 import models.rating.RatingUserCredential
 
 // Used on the startpage, collects profile information and userinformation
@@ -10,7 +10,7 @@ case class StartPageBox (
     fullName: String,
     location: String,
     mainBody: Option[String],
-    mainImage: ImageFile,
-    userImage: ImageFile,
+    mainImage: ContentFile,
+    userImage: ContentFile,
     userRating: RatingUserCredential
 )

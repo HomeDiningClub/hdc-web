@@ -4,13 +4,11 @@ import org.springframework.data.neo4j.repository.GraphRepository
 import models.content._
 import org.springframework.data.neo4j.annotation.Query
 import models.Recipe
+import java.util.UUID
 
-trait RecipeRepository extends GraphRepository[Recipe]{
+trait RecipeRepository extends GraphRepository[Recipe] {
 
-//  Doesn't work, need a manual mapper:
-//  template.createEntityFrom[Stored]State(userNode[,User.class)
-
-//  @Query("MATCH (pages:`ContentPage`) RETURN pages")
-//  def getContentPages(): Array[ContentPage]
+  // Auto-mapped by Spring
+  def findByobjectId(objectId: UUID): Recipe
 
 }

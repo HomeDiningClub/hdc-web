@@ -1,3 +1,4 @@
+//import java.util.UUID
 //import models.base.AbstractEntity
 //import org.springframework.context.annotation.{Bean, Configuration}
 //import org.springframework.context.ApplicationListener
@@ -10,12 +11,12 @@
 //class ApplicationConfig extends Neo4jConfiguration {
 //
 //  @Bean
-//  def beforeSaveEventApplicationListener(): ApplicationListener[BeforeSaveEvent] = {
-//    new ApplicationListener[BeforeSaveEvent]() {
+//  def beforeSaveEventApplicationListener(): ApplicationListener[BeforeSaveEvent[AbstractEntity]] = {
+//    new ApplicationListener[BeforeSaveEvent[AbstractEntity]]() {
 //
-//      override def onApplicationEvent(event: BeforeSaveEvent) {
-//        val entity = event.getEntity.asInstanceOf[AbstractEntity]
-//        entity.setUniqueId(hdcIdFactory.create())
+//      override def onApplicationEvent(event: BeforeSaveEvent[AbstractEntity]) {
+//        val entity = event.getEntity
+//        entity.setUniqueId(UUID.randomUUID)
 //      }
 //    }
 //  }
@@ -26,7 +27,7 @@
 //
 //      override def onApplicationEvent(event: AfterSaveEvent) {
 //        val entity = event.getEntity.asInstanceOf[AbstractEntity]
-//        Logger.debug("Saved entity (" + entity.graphId + ") objectId(" + entity.objectId + ")")
+//        Logger.debug("Saved entity (" + entity.id + ") objectId(" + entity.objectId + ")")
 //      }
 //    }
 //  }

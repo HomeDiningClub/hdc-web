@@ -2,9 +2,6 @@ package models.modelconstants
 
 import org.neo4j.graphdb.RelationshipType
 
-/**
- * Created by XxWallin on 2014-07-06.
- */
 object RelationshipTypesScala {
 
    object REACHABLE_BY_ROCKET extends RelationshipType {
@@ -19,6 +16,11 @@ object RelationshipTypesScala {
 
   object USED_BY {
     final val Constant = "USED_BY"
+    def name(): String = Constant
+  }
+
+  object RATED {
+    final val Constant = "RATED"
     def name(): String = Constant
   }
 
