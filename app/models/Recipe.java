@@ -1,7 +1,7 @@
 package models;
 
 import models.content.ContentBase;
-import models.files.ImageFile;
+import models.files.ContentFile;
 import models.modelconstants.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
@@ -21,13 +21,13 @@ public class Recipe extends ContentBase {
     public String mainBody;
 
     @Fetch
-    public ImageFile mainImage;
+    public ContentFile mainImage;
 
     @Fetch
     @RelatedTo(type = RelationshipTypesJava.USED_BY.Constant, direction = Direction.OUTGOING)
-    public Set<ImageFile> recipeImages = new HashSet<>();
+    public Set<ContentFile> recipeImages = new HashSet<>();
 
-    public Recipe(String name, String mainBody, ImageFile mainImage, Set<ImageFile> recipeImages){
+    public Recipe(String name, String mainBody, ContentFile mainImage, Set<ContentFile> recipeImages){
         this.mainImage = mainImage;
         this.recipeImages = recipeImages;
         this.name = name;

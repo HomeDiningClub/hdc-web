@@ -19,6 +19,11 @@ public final class RelationshipTypesJava {
         public static final String Constant = "USED_BY";
     }
 
+    public final static class RATED implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "RATED";
+    }
+
     public static class RECOMMENDED implements RelationshipType {
         public String name() { return Constant; }
         public static final String Constant = "RECOMMENDED";

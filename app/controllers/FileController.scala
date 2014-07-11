@@ -2,7 +2,7 @@ package controllers
 
 import org.springframework.beans.factory.annotation.Autowired
 import play.api.mvc._
-import services.{UserCredentialService, FileService}
+import services.{UserCredentialService, ContentFileService}
 import models.files._
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.libs.Files.TemporaryFile
@@ -16,7 +16,7 @@ import presets.ImagePreSets
 class FileController extends Controller with SecureSocial {
 
   @Autowired
-  private var fileService: FileService = _
+  private var fileService: ContentFileService = _
 
   def index = SecuredAction {
     Ok(views.html.edit.file.index())

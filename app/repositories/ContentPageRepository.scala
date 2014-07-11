@@ -3,13 +3,11 @@ package repositories
 import org.springframework.data.neo4j.repository.GraphRepository
 import models.content._
 import org.springframework.data.neo4j.annotation.Query
+import java.util.UUID
 
-trait ContentPageRepository extends GraphRepository[ContentPage]{
+trait ContentPageRepository extends GraphRepository[ContentPage] {
 
-//  Doesn't work, need a manual mapper:
-//  template.createEntityFrom[Stored]State(userNode[,User.class)
-
-//  @Query("MATCH (pages:`ContentPage`) RETURN pages")
-//  def getContentPages(): Array[ContentPage]
+  // Auto-mapped by Spring
+  def findByobjectId(objectId: UUID): ContentPage
 
 }

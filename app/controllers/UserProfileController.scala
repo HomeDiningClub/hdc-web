@@ -145,7 +145,7 @@ def skapavy = Action {
     println("ID : " + theUser.id)
   }
 */
- println("theuser : " + theUser.id + ", about = "+ theUser.aboutMe)
+ println("theuser : " + theUser.objectId + ", about = "+ theUser.aboutMe)
 
 
   // Pre selected

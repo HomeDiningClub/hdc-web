@@ -29,18 +29,16 @@ GET         /edit/content                              @controllers.ContentContr
 GET         /edit/content/list                         @controllers.ContentController.listContentPages
 GET         /edit/content/add                          @controllers.ContentController.addContentPage
 POST        /edit/content/add                          @controllers.ContentController.addContentPageSubmit
-GET         /edit/content/edit/:id                     @controllers.ContentController.editContentPage(id: java.lang.Long)
-GET         /edit/content/delete/:id                   @controllers.ContentController.deleteContentPage(id: java.lang.Long)
-GET         /edit/content/delete/all                   @controllers.ContentController.deleteAllContent
+GET         /edit/content/edit/:objectId               @controllers.ContentController.editContentPage(objectId: java.util.UUID)
+GET         /edit/content/delete/:objectId             @controllers.ContentController.deleteContentPage(objectId: java.util.UUID)
 
 # EDIT - Recipe
 GET         /edit/recipe                               @controllers.RecipeController.indexRecipe
 GET         /edit/recipe/list                          @controllers.RecipeController.listRecipes
 GET         /edit/recipe/add                           @controllers.RecipeController.addRecipe
 POST        /edit/recipe/add                           @controllers.RecipeController.addRecipeSubmit
-GET         /edit/recipe/edit/:id                      @controllers.RecipeController.edit(id: java.lang.Long)
-GET         /edit/recipe/delete/:id                    @controllers.RecipeController.delete(id: java.lang.Long)
-GET         /edit/recipe/delete/all                    @controllers.RecipeController.deleteAll
+GET         /edit/recipe/edit/:objectId                @controllers.RecipeController.edit(objectId: java.util.UUID)
+GET         /edit/recipe/delete/:objectId              @controllers.RecipeController.delete(objectId: java.util.UUID)
 
 
 
@@ -68,10 +66,9 @@ GET         /worlds                                    @controllers.WorldControl
 
 
 # Files
-GET         /edit/file                                      @controllers.FileController.index
-POST        /edit/file/add                                  @controllers.FileController.add
-GET         /edit/file/add                                  @controllers.FileController.index
-GET         /edit/file/delete/:id                          @controllers.FileController.deleteImage(id: java.util.UUID)
+GET         /edit/file                                 @controllers.FileController.index
+POST        /edit/file/add                             @controllers.FileController.add
+GET         /edit/file/delete/:objectId                @controllers.FileController.deleteImage(objectId: java.util.UUID)
 
 
 # Login page

@@ -1,19 +1,14 @@
 package models.base;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.GraphId;
-import org.springframework.data.neo4j.annotation.Indexed;
-import org.springframework.data.neo4j.annotation.NodeEntity;
+import java.util.UUID;
 
 public abstract class AbstractEntity {
 
     @GraphId
-    public Long id; //java.lang.Long
-
-//    @Indexed(unique = true)
-//    public Long objectId; //java.lang.Long
+    public Long graphId; //java.lang.Long
+    public UUID objectId;
 
     // This method is needed to compare two different objects from DB using hash
     // Otherwise they are different objects
@@ -24,10 +19,10 @@ public abstract class AbstractEntity {
             return true;
         }
 
-        if (id == null || obj == null || !getClass().equals(obj.getClass())) {
+        if (graphId == null || obj == null || !getClass().equals(obj.getClass())) {
             return false;
         }
-        return id.equals(((AbstractEntity) obj).id);
+        return graphId.equals(((AbstractEntity) obj).graphId);
     }
 
     @Transient
@@ -35,13 +30,18 @@ public abstract class AbstractEntity {
 
     @Override
     public int hashCode() {
-        if (hash == null) hash = id == null ? System.identityHashCode(this) : id.hashCode();
+        if (hash == null) hash = graphId == null ? System.identityHashCode(this) : graphId.hashCode();
         return hash.hashCode();
     }
 
-//    public void setUniqueId(Long objectId) {
-//        this.objectId =  objectId;
-//    }
+    protected void setUniqueId() {
+        if(this.objectId == null)
+            this.objectId = UUID.randomUUID();
+    }
+
+    protected AbstractEntity(){
+        setUniqueId();
+    }
 
     public String getHashCodeAsString() {
         return String.valueOf(hashCode());

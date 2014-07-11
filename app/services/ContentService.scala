@@ -23,25 +23,26 @@ class ContentService {
   }
 
   @Transactional(readOnly = true)
-  def findContentById(id: Long): ContentPage = {
-    contentPageRepository.findOne(id)
+  def findContentById(objectId: java.util.UUID): ContentPage = {
+    contentPageRepository.findByobjectId(objectId)
+    //contentPageRepository.findOne(objectId)
   }
 
   @Transactional(readOnly = true)
-  def getListOfAllContentPages(): List[ContentPage] = {
+  def getListOfAllContentPages: List[ContentPage] = {
     val listOfContentPages: List[ContentPage] = template.findAll(classOf[ContentPage]).iterator.asScala.toList
     listOfContentPages
   }
 
   @Transactional(readOnly = false)
-  def deleteContentPageById(id: Long): Boolean = {
-    val contentPage: ContentPage = this.findContentById(id)
+  def deleteContentPageById(objectId: java.util.UUID): Boolean = {
+    val contentPage: ContentPage = this.findContentById(objectId)
     if(contentPage != null)
     {
       contentPageRepository.delete(contentPage)
       return true
     }
-    return false
+    false
   }
 
   @Transactional(readOnly = false)

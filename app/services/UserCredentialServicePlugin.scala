@@ -15,6 +15,7 @@ package services
 // Delete all nodes
 // MATCH (tom) DELETE tom
 
+import _root_.java.util.UUID
 import models.{UserCredential, UserProfileData}
 import repositories.UserCredentialRepository
 
@@ -118,29 +119,34 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    * @return id in Neo4j database and if the user exits true else false
    */
   @Transactional(readOnly = true)
-  def exists(userId: String, providerId: String) :  (Long, Boolean) = {
+  def exists(userId: String, providerId: String) :  (UUID, Boolean, Long) = {
 
     var user = getUserById(userId, providerId)
     var finns : Boolean = false
-    var idNo  : Long    = -1L
+    var idNo  : UUID    = null
+    var graphId : Long = -1L
 
     if(userId == null || providerId == null) {
       finns = false
-      idNo = -1L
+      idNo = null
+      graphId = -1L
       throw new Exception("UserId or ProviderId could not be null")
     } else if(user.userId == null || user.providerId == null) {
-        // Could not find anything on UserId and ProviderId
-        finns = false
-        idNo = -1L
-    } else if(user.id != null && userId.equals(user.userId) && providerId.equals(user.providerId)) {
-        finns = true
-        idNo = user.id
+      // Could not find anything on UserId and ProviderId
+      finns = false
+      idNo = null
+      graphId = -1L
+    } else if(user.objectId != null && userId.equals(user.userId) && providerId.equals(user.providerId)) {
+      finns = true
+      idNo = user.objectId
+      graphId = user.graphId
     } else {
-        finns = false
-        idNo = -1L
+      finns = false
+      idNo = null
+      graphId = -1L
     }
 
-    val t = (idNo, finns)
+    val t = (idNo, finns, graphId)
     t
   }
 
@@ -267,10 +273,11 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     if(exitsUser._2 == true) {
         // User is allready stored in the database, when update
-        println("update id: " + userCredential.id + "email : " + userCredential.emailAddress)
+        println("update id: " + userCredential.objectId + "email : " + userCredential.emailAddress)
 
         // set the correct id
-        userCredential.id = exitsUser._1
+        userCredential.objectId = exitsUser._1
+        userCredential.graphId = exitsUser._3
         modUserCredential = saveUser(userCredential)
     } else {
 
