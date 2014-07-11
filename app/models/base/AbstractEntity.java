@@ -14,11 +14,7 @@ public abstract class AbstractEntity {
     // Otherwise they are different objects
     @Override
     public boolean equals(Object obj) {
-
-        if (this == obj) {
-            return true;
-        }
-        return !(objectId == null || obj == null || !getClass().equals(obj.getClass())) && objectId.equals(((AbstractEntity) obj).objectId);
+        return this == obj || !(objectId == null || obj == null || !getClass().equals(obj.getClass())) && objectId.equals(((AbstractEntity) obj).objectId);
     }
 
     @Transient

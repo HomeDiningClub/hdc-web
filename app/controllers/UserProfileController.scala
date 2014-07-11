@@ -56,7 +56,7 @@ class UserProfileController  extends Controller{
         "emails" -> list(text),
         "quality" -> list(text)
       )
-      (controllers.EnvData.apply) (controllers.EnvData.unapply)
+      (EnvData.apply) (EnvData.unapply)
     )
 
 
@@ -151,7 +151,7 @@ def skapavy = Action {
   // Pre selected
   val typ = new models.Types
 
-var userTags = theUser.getTags()
+var userTags = theUser.getTags
 
 if(userTags != null) {
   var itterTags = userTags.iterator()
@@ -203,7 +203,7 @@ if(userTags != null) {
 
   //Ok("OK")
 
-  val eData : EnvData = new controllers.EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
+  val eData : EnvData = new EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
   val nyForm =  AnvandareForm.fill(eData)
   Ok(views.html.profile.skapa(nyForm, tagList.toList, typ))
 
