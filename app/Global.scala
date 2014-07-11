@@ -40,8 +40,8 @@ class Global extends GlobalSettings {
    * @param app
    */
   override def onStop(app: Application) {
-    val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate]);
-    neoTemplate.getGraphDatabaseService.shutdown();
+    val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate])
+    neoTemplate.getGraphDatabaseService.shutdown()
     ctx.stop()
     //ctx.close() - May or may not be needed
   }

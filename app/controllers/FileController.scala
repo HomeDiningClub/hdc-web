@@ -22,8 +22,7 @@ class FileController extends Controller with SecureSocial {
     Ok(views.html.edit.file.index())
   }
 
-  def add = SecuredAction(parse.multipartFormData) {
-    request =>
+  def add = SecuredAction(parse.multipartFormData) { request =>
       request.body.file("file").map {
         file =>
           val tempFile: MultipartFormData.FilePart[TemporaryFile] = file

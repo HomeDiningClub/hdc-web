@@ -101,7 +101,7 @@ object UserCredentialService {
     //userCredential.authMethod       = socialUser.authMethod.toString // ???? Kontrollera  ????????
 
     // todo bättre kontroll att det finns ett värde
-    if(socialUser.authMethod.toString().size > 0) {
+    if(socialUser.authMethod.toString.size > 0) {
       userCredential.authMethod = socialUser.authMethod.method
     } else {
       userCredential.authMethod = ""

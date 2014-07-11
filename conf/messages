@@ -236,8 +236,36 @@ securesocial.loginRequired=Du måste logga in för att komma åt sidan.
 # Mails
 #
 mails.sendAlreadyRegisteredEmail.subject=Instruktioner för registrering
+mails.sendAlreadyRegisteredEmail.body.part1=Hej {0},
+mails.sendAlreadyRegisteredEmail.body.part2=Du har redan ett konto hos oss. Om du inte kommer ihåg ditt lösenord så {0} för att ändra ditt lösenord.
+mails.sendAlreadyRegisteredEmail.body.linkToResetPassword=klicka här
+
 mails.sendSignUpEmail.subject=Instruktioner för registrering
-mails.welcomeEmail.subject=Välkommen
+mails.sendSignUpEmail.body.part1=Hej,
+mails.sendSignUpEmail.body.part2=Följ denna {0} för att fullfölja din registrering.
+mails.sendSignUpEmail.body.linkToRegistration=länk
+
+mails.welcomeEmail.subject=Registrerad hos Home Dining Club
+mails.welcomeEmail.body.part1=Välkommen till Home Dining Club {0}!
+mails.welcomeEmail.body.part2=Ditt nya konto är redo att användas.
+mails.welcomeEmail.body.linkToLogin=Klicka på länken och logga in.
+
 mails.passwordResetEmail.subject=Instruktioner för lösenordsåterställning
+mails.passwordResetEmail.body.part1=Hej {0},
+mails.passwordResetEmail.body.part2=Klicka på {0} för att ändra ditt lösenord.
+mails.passwordResetEmail.body.linkToResetPassword=länken
+
+mails.passwordChangedNotice.subject=Ditt lösenord har ändrats
+mails.passwordChangedNotice.body.part1=Hej {0},
+mails.passwordChangedNotice.body.part2=Ditt lösenord är nu ändrat. Logga in med ditt nya lösenord genom att klicka {0}
+mails.passwordChangedNotice.body.linkToLogin=här.
+
+
 mails.unknownEmail.subject=Återställ lösenord
+mails.unknownEmail.body.part1=Hej,
+mails.unknownEmail.body.part2=Vi har fått en förfrågan om att ändra ett lösenord i vårt system. Detta kunde inte utföras då vi inte hittar ett konto med med denna epostadress. Detta kan bero på att du loggade in med ett externt konto som tillexempel Facebook eller Google+.
+mails.unknownEmail.body.part3=Om du inte skapat ett konto hos oss kan du ignorera detta mail. I annat fall om du tror att du har ett konto hos oss så kontakta {0}.
+mails.unknownEmail.body.maillink=admin@homediningclub.se
+mails.unknownEmail.body.mailtitle=admin@homediningclub.se
+
 mails.passwordResetOk.subject=Bekräftelse för lösenordsåterställning

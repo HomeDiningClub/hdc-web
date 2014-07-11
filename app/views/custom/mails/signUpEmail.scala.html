@@ -1,11 +1,9 @@
 @(token: String)(implicit request: play.api.mvc.RequestHeader)
 @import securesocial.core.IdentityProvider
 <html>
-<body>
-<p>Hello,</p>
-
-<p>Please follow this
-    <a href="@securesocial.core.providers.utils.RoutesHelper.signUp(token).absoluteURL(IdentityProvider.sslEnabled)(request)">link</a> to complete your registration.
-</p>
-</body>
+    <body>
+        <p>@Messages("mails.sendSignUpEmail.body.part1")</p>
+        @mailLink = { <a href="@securesocial.core.providers.utils.RoutesHelper.signUp(token).absoluteURL(IdentityProvider.sslEnabled)(request)">@Messages("mails.sendSignUpEmail.body.linkToRegistration")</a> }
+        <p>@Html(Messages("mails.sendSignUpEmail.body.part2", mailLink))</p>
+    </body>
 </html>
