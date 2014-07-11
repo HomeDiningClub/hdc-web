@@ -36,7 +36,13 @@ public class UserProfile extends AbstractEntity {
     public String providerId = "";
 */
 
+    public String userIdentity = "";
 
+    public String providerIdentity = "";
+
+    // Userid + "_" + providerId
+    @Indexed(indexType = IndexType.LABEL)
+    public String keyIdentity = "";
 
     @RelatedToVia(type = "TAGGED_ON")
     private Set<TaggedUserProfile> userProfileTag = new HashSet<TaggedUserProfile>();
