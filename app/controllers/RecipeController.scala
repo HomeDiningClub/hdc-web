@@ -32,7 +32,7 @@ class RecipeController extends Controller with SecureSocial {
 
   // Edit - Listing
   def listRecipes = SecuredAction { implicit request =>
-    val listOfPage: List[Recipe] = recipeService.getListOfAll()
+    val listOfPage: List[Recipe] = recipeService.getListOfAll
     Ok(views.html.edit.listRecipes(listOfPage))
   }
 
@@ -97,20 +97,14 @@ class RecipeController extends Controller with SecureSocial {
     val result: Boolean = recipeService.deleteById(objectId)
 
     result match {
-      case true => {
+      case true =>
         val successMessage = Messages("edit.success") + " - " + Messages("edit.recipe.delete.success", objectId.toString)
         Redirect(controllers.routes.RecipeController.indexRecipe()).flashing(FlashMsgConstants.Success -> successMessage)
-      }
-      case false => {
+      case false =>
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.recipe.delete.error")
         Redirect(controllers.routes.RecipeController.indexRecipe()).flashing(FlashMsgConstants.Error -> errorMessage)
-      }
     }
 
-  }
-
-  def deleteAll = SecuredAction { implicit request =>
-    Ok(views.html.edit.indexRecipes())
   }
 
 }

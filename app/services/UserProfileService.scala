@@ -44,7 +44,7 @@ class UserProfileService {
 
 
   @Transactional(readOnly = true)
-  def getAllUserProfiles(): List[models.UserProfile] = {
+  def getAllUserProfiles: List[models.UserProfile] = {
     val listOfUserProfiles: List[models.UserProfile] = IteratorUtil.asCollection(userProfileRepository.findAll()).asScala.toList
     listOfUserProfiles
   }
@@ -101,7 +101,7 @@ class UserProfileService {
 
 
     @Transactional(readOnly = true)
-  def getAllUserProfile(): List[models.UserProfile] = {
+  def getAllUserProfile: List[models.UserProfile] = {
      userProfileRepository.findAll().asScala.toList
   }
 

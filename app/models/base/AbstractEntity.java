@@ -18,11 +18,7 @@ public abstract class AbstractEntity {
         if (this == obj) {
             return true;
         }
-
-        if (graphId == null || obj == null || !getClass().equals(obj.getClass())) {
-            return false;
-        }
-        return graphId.equals(((AbstractEntity) obj).graphId);
+        return !(objectId == null || obj == null || !getClass().equals(obj.getClass())) && objectId.equals(((AbstractEntity) obj).objectId);
     }
 
     @Transient
@@ -30,7 +26,7 @@ public abstract class AbstractEntity {
 
     @Override
     public int hashCode() {
-        if (hash == null) hash = graphId == null ? System.identityHashCode(this) : graphId.hashCode();
+        if (hash == null) hash = objectId == null ? System.identityHashCode(this) : objectId.hashCode();
         return hash.hashCode();
     }
 
@@ -43,7 +39,7 @@ public abstract class AbstractEntity {
         setUniqueId();
     }
 
-    public String getHashCodeAsString() {
-        return String.valueOf(hashCode());
-    }
+//    public String getHashCodeAsString() {
+//        return String.valueOf(hashCode());
+//    }
 }

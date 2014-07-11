@@ -23,9 +23,9 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
   // About us, Press and UserTerms
   // Menu
   lazy val aboutUsAsideMenu = List[MenuItem](
-    new MenuItem(Messages("aboutus.header"),Messages("aboutus.header"),Messages("aboutus.header"), routes.ContentController.aboutUs.url, ""),
-    new MenuItem(Messages("press.header"),Messages("press.header"),Messages("press.header"), routes.ContentController.press.url, ""),
-    new MenuItem(Messages("usertermsandconditions.header"),Messages("usertermsandconditions.header"),Messages("usertermsandconditions.header"), routes.ContentController.userTermsAndConditions.url, "")
+    new MenuItem(Messages("aboutus.header"),Messages("aboutus.header"),Messages("aboutus.header"), routes.ContentController.aboutUs().url, ""),
+    new MenuItem(Messages("press.header"),Messages("press.header"),Messages("press.header"), routes.ContentController.press().url, ""),
+    new MenuItem(Messages("usertermsandconditions.header"),Messages("usertermsandconditions.header"),Messages("usertermsandconditions.header"), routes.ContentController.userTermsAndConditions().url, "")
   )
   // Actions
   def aboutUs = Action {
@@ -73,8 +73,8 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
   // Become a member & Perfect guest
   // Menu
   lazy val becomeAMemberAsideMenu = List[MenuItem](
-    new MenuItem(Messages("becomeamember.header"),Messages("becomeamember.header"),Messages("becomeamember.header"), routes.ContentController.becomeAMember.url, ""),
-    new MenuItem(Messages("theperfectguest.header"),Messages("theperfectguest.header"),Messages("theperfectguest.header"), routes.ContentController.thePerfectGuest.url, "")
+    new MenuItem(Messages("becomeamember.header"),Messages("becomeamember.header"),Messages("becomeamember.header"), routes.ContentController.becomeAMember().url, ""),
+    new MenuItem(Messages("theperfectguest.header"),Messages("theperfectguest.header"),Messages("theperfectguest.header"), routes.ContentController.thePerfectGuest().url, "")
   )
   // Actions
   def becomeAMember = Action {
@@ -101,9 +101,9 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
   // Become a host & practical info & profiletext
   // Menu
   lazy val becomeAHostAsideMenu = List[MenuItem](
-    new MenuItem(Messages("becomeahost.header"),Messages("becomeahost.header"),Messages("becomeahost.header"), routes.ContentController.becomeAHost.url, ""),
-    new MenuItem(Messages("practicalinfo.header"),Messages("practicalinfo.header"),Messages("practicalinfo.header"), routes.ContentController.practicalInfo.url, ""),
-    new MenuItem(Messages("examplehosttext.header"),Messages("examplehosttext.header"),Messages("examplehosttext.header"), routes.ContentController.exampleHostText.url, "")
+    new MenuItem(Messages("becomeahost.header"),Messages("becomeahost.header"),Messages("becomeahost.header"), routes.ContentController.becomeAHost().url, ""),
+    new MenuItem(Messages("practicalinfo.header"),Messages("practicalinfo.header"),Messages("practicalinfo.header"), routes.ContentController.practicalInfo().url, ""),
+    new MenuItem(Messages("examplehosttext.header"),Messages("examplehosttext.header"),Messages("examplehosttext.header"), routes.ContentController.exampleHostText().url, "")
   )
   // Actions
   def becomeAHost = Action {
@@ -236,22 +236,15 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
     val result: Boolean = contentService.deleteContentPageById(objectId)
 
     result match {
-      case true => {
+      case true =>
         val successMessage = Messages("edit.success") + " - " + Messages("edit.content.delete.success", objectId.toString)
         Redirect(controllers.routes.ContentController.indexContentPages()).flashing(FlashMsgConstants.Success -> successMessage)
-      }
-      case false => {
+      case false =>
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.content.delete.error")
         Redirect(controllers.routes.ContentController.indexContentPages()).flashing(FlashMsgConstants.Error -> errorMessage)
-      }
     }
 
   }
-
-  def deleteAllContent = SecuredAction { implicit request =>
-    Ok(views.html.edit.indexContentPages())
-  }
-
 
 
 }
