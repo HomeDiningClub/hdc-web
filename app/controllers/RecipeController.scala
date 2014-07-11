@@ -70,7 +70,7 @@ class RecipeController extends Controller with SecureSocial {
               imageFile match {
                 case Some(imageFile) =>
                   newRec.mainImage = imageFile
-                case _ => None
+                case None => None
             }
         }
 
