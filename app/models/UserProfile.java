@@ -9,6 +9,7 @@ import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class UserProfile extends AbstractEntity {
 
 
     @RelatedToVia(type = "TAGGED_ON")
-    private Set<TaggedUserProfile> userProfileTag;
+    private Set<TaggedUserProfile> userProfileTag = new HashSet<TaggedUserProfile>();
 
     public TaggedUserProfile tag(TagWord tagWord) {
         TaggedUserProfile taggedProfile = new TaggedUserProfile(this, tagWord);
@@ -49,16 +50,21 @@ public class UserProfile extends AbstractEntity {
     public void removeAllTags() {
 
         Iterable<TaggedUserProfile> itter = getTags();
-        ArrayList<TaggedUserProfile> arr = new ArrayList<TaggedUserProfile>();
-        for(TaggedUserProfile tagProfile : itter) {
-           arr.add(tagProfile);
-        }
 
-        Iterator<TaggedUserProfile> itter2 = (Iterator<TaggedUserProfile>)arr.iterator();
 
-        while(itter2.hasNext())
-        {
-            userProfileTag.remove(itter2.next());
+        if(itter != null) {
+
+            // temporary store all tags
+            ArrayList<TaggedUserProfile> arr = new ArrayList<TaggedUserProfile>();
+            for (TaggedUserProfile tagProfile : itter) {
+                arr.add(tagProfile);
+            }
+
+            // remove all tags
+            Iterator<TaggedUserProfile> itter2 = (Iterator<TaggedUserProfile>) arr.iterator();
+            while (itter2.hasNext()) {
+                userProfileTag.remove(itter2.next());
+            }
         }
     }
 

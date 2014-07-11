@@ -18,6 +18,7 @@ import play.api.data.Forms._
 import play.api._
 import play.api.mvc._
 
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 
@@ -66,7 +67,15 @@ def createTags = Action {
   // MATCH (b:TagWord) RETURN b
   // MATCH (b:TagWord) delete b
 
-/*
+
+  // create userPrifile
+  var u : models.UserProfile = new models.UserProfile
+  u.aboutMe = "test"
+
+  println("start ....")
+  userProfileService.saveUserProfile(u)
+
+
   tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "test")
   tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "profile")
   tagWordService.createTag("Italienskt", "Italienskt", "quality[1]", "profile")
@@ -88,8 +97,6 @@ def createTags = Action {
   tagWordService.createTag("Drycker", "Drycker", "quality[17]", "profile")
   tagWordService.createTag("Efterrätter", "Efterrätter", "quality[18]", "profile")
   tagWordService.createTag("Bakverk", "Bakverk", "quality[19]", "profile")
-*/
-
 
 
 //var lista = tagWordService.listAll()
@@ -120,56 +127,105 @@ var lista = tagWordService.listByGroup("profile")
 
 def skapavy = Action {
 
-  // Pre selected
-  val typ = new models.Types
-  typ.addVald("Amerikanskt")
-  typ.addVald("LCHF")
-  typ.addVald("Budget")
-  typ.addVald("Finns_inte")
-  typ.addVald("Kött")
 
- // val eData : EnvData = new controllers.EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
- // val nyForm =  AnvandareForm.fill(eData)
- //Ok(views.html.profile.skapa(nyForm, typ.findAll, typ))
+  println("##### skapa vy #######")
 
-  var u : models.UserProfile = new models.UserProfile
-  u.aboutMe = "test"
+  // show profile
 
-  println("start ....")
-  //userProfileService.saveUserProfile(u)
+  // 1. Get the correct profile
+
+  // 2. Load the tags
+
 
   var up = userProfileService.getAllUserProfile()
+ var theUser : models.UserProfile  = up.iterator.next()
+
+/*
+  for(theUser <- up) {
+    println("ID : " + theUser.id)
+  }
+*/
+ println("theuser : " + theUser.id + ", about = "+ theUser.aboutMe)
 
 
+  // Pre selected
+  val typ = new models.Types
 
+var userTags = theUser.getTags()
+
+if(userTags != null) {
+  var itterTags = userTags.iterator()
+
+  while (itterTags.hasNext) {
+    typ.addVald(itterTags.next().tagWord.tagName)
+  }
+}
+
+  // Fetch all tags
   var d = tagWordService.listByGroup("profile")
 
+  var l : Long = 0
+  var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
+  for(theTag <- d) {
+    var newType : models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l+"]" )
+    l = l + 1
+    println(theTag.tagName)
+    tagList.add(newType)
+  }
 
-  for(theUser <- up) {
-    println("About Me: " + theUser.aboutMe +", id : "+ theUser.id )
+
+
+  //var u : models.UserProfile = new models.UserProfile
+  //u.aboutMe = "test"
+
+ // println("start ....")
+  //userProfileService.saveUserProfile(u)
+
+
+    //println("About Me: " + theUser.aboutMe +", id : "+ theUser.id )
 
     // tag alla profiles
+  /*
     for(vv <- d ) {
       println(vv.tagGroupName)
       theUser.tag(vv)
     }
     userProfileService.saveUserProfile(theUser)
-
-    // remove all tags
-    theUser.removeAllTags()
-    userProfileService.saveUserProfile(theUser)
-
-  }
+*/
+  // remove all tags
+  //  theUser.removeAllTags()
+  //userProfileService.saveUserProfile(theUser)
 
 
-  println("start ....")
 
-  Ok("OK")
+
+  //println("start ....")
+
+  //Ok("OK")
+
+  val eData : EnvData = new controllers.EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
+  val nyForm =  AnvandareForm.fill(eData)
+  Ok(views.html.profile.skapa(nyForm, tagList.toList, typ))
+
+
 }
 
 
 def taemot = Action {
+
+      // Fetch user
+
+      // Fetch usersprofile
+
+      // remove all tags
+
+      // add all new tags
+
+
     implicit request =>
+
+      var map:Map[String,String] = Map()
+
       AnvandareForm.bindFromRequest.fold(
         errors => {
           if(errors.hasErrors) {
@@ -188,13 +244,43 @@ def taemot = Action {
                 println("v : " + v)
             }
 
+
+
             println("Do, antal : " + anvadare.quality.size)
             for(d <- anvadare.quality) {
                 println("v : " + d)
+                map += (d->d)
             }
 
 
         })
+
+      var up = userProfileService.getAllUserProfile()
+      var theUser : models.UserProfile = up.iterator.next()
+
+      /*
+      for(theUser <- up) {
+        println("ID2 : " + theUser.id)
+      }
+      */
+
+
+      theUser.removeAllTags()
+
+      // Fetch all tags
+      var d = tagWordService.listByGroup("profile")
+
+      for(theTag <- d ) {
+        var value = map.getOrElse(theTag.tagName, "empty")
+
+        if(!value.equals("empty")) {
+          theUser.tag(theTag)
+        }
+
+      }
+
+      userProfileService.saveUserProfile(theUser)
+
     Ok("OK")
 }
 
