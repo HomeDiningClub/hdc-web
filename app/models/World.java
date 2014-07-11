@@ -25,7 +25,7 @@ public class World extends AbstractEntity {
 
     @Fetch
     @RelatedTo(type = RelationshipTypesJava.REACHABLE_BY_ROCKET.Constant, direction = Direction.OUTGOING) // TODO - Improve enum
-    public Set<World> reachableByRocket = new HashSet<World>();
+    public Set<World> reachableByRocket = new HashSet<>();
 
     // Constructors
     public World(String name, int moons, String spokenLanguage) {

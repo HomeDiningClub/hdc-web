@@ -1,11 +1,8 @@
 @(user: securesocial.core.Identity)(implicit request: play.api.mvc.RequestHeader)
 @import securesocial.core.IdentityProvider
 <html>
-<body>
-<p>Welcome @user.firstName,</p>
-
-<p>
-    Your new account is ready.
-    Click <a href="@securesocial.core.providers.utils.RoutesHelper.login.absoluteURL(IdentityProvider.sslEnabled)(request)">here</a> to log in</p>
-</body>
+    <body>
+        <p>@Messages("mails.welcomeEmail.body.part1", user.firstName)</p>
+        <p>@Messages("mails.welcomeEmail.body.part2") <a href="@securesocial.core.providers.utils.RoutesHelper.login.absoluteURL(IdentityProvider.sslEnabled)(request)">@Messages("mails.welcomeEmail.body.linkToLogin")</a></p>
+    </body>
 </html>

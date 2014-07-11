@@ -1,14 +1,14 @@
-//import java.util.UUID
-//import models.base.AbstractEntity
-//import org.springframework.context.annotation.{Bean, Configuration}
-//import org.springframework.context.ApplicationListener
-//import org.springframework.data.neo4j.config.{Neo4jConfiguration, EnableNeo4jRepositories}
-//import org.springframework.data.neo4j.lifecycle.{AfterDeleteEvent, AfterSaveEvent, BeforeSaveEvent}
-//import play.api.Logger
-//
-//@Configuration
-//@EnableNeo4jRepositories
-//class ApplicationConfig extends Neo4jConfiguration {
+import java.util.UUID
+import models.base.AbstractEntity
+import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.ApplicationListener
+import org.springframework.data.neo4j.config.{Neo4jConfiguration, EnableNeo4jRepositories}
+import org.springframework.data.neo4j.lifecycle.{AfterDeleteEvent, AfterSaveEvent, BeforeSaveEvent}
+import play.api.Logger
+
+@Configuration
+@EnableNeo4jRepositories
+class ApplicationConfig extends Neo4jConfiguration {
 //
 //  @Bean
 //  def beforeSaveEventApplicationListener(): ApplicationListener[BeforeSaveEvent[AbstractEntity]] = {
@@ -41,4 +41,4 @@
 //      }
 //    }
 //  }
-//}
+}

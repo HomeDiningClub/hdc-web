@@ -26,7 +26,7 @@ public abstract class AbstractEntity {
         return hash.hashCode();
     }
 
-    protected void setUniqueId() {
+    void setUniqueId() {
         if(this.objectId == null)
             this.objectId = UUID.randomUUID();
     }
