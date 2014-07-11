@@ -59,16 +59,16 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     * @param id
     * @return
     */
-  def find(id: IdentityId): Option[Identity] = {
+  def find(id: IdentityId): Option[UserCredential] = {
 
     // check databaseId and true/false
     val exitsUser = exists(id.userId, id.providerId)
-    // fetch user
-    var uc  : UserCredential =  getuser(id.userId, id.providerId)
+    // Fetch user
+    val uc : UserCredential = getuser(id.userId, id.providerId)
 
     if(exitsUser._2 == true){
-      val returnUser = UserCredentialService.userCredential2socialUser(uc)
-      return Some(returnUser)
+      //val returnUser = UserCredentialService.userCredential2socialUser(uc)
+      return Some(uc)
     }
 
     None
@@ -81,18 +81,17 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    * @param providerId provider for exampel facebook, google
    * @return UserCredential
    */
-  def findByEmailAndProvider(email: String, providerId: String): Option[Identity] = {
+  def findByEmailAndProvider(email: String, providerId: String): Option[UserCredential] = {
 
-    var uc  : UserCredential =  getuser(email, providerId)
+    val uc : UserCredential = getuser(email, providerId)
     val exitsUser = exists(email, providerId)
 
     if(exitsUser._2 == true){
-      val returnUser = UserCredentialService.userCredential2socialUser(uc)
-      return Some(returnUser)
+      //val returnUser = UserCredentialService.userCredential2socialUser(uc)
+      return Some(uc)
 
     }
     None
-
   }
 
 
@@ -102,13 +101,9 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     * @return
     */
   def save(user: Identity): Identity = {
-
-    var userCredential : UserCredential = UserCredentialService.socialUser2UserCredential(user)
-
-    var userCredential2 = createOrUpdateUser(userCredential)
-
-    user
-
+    val userCredential : UserCredential = UserCredentialService.socialUser2UserCredential(user)
+    val userCredential2 = createOrUpdateUser(userCredential)
+    userCredential2
   }
 
 
@@ -160,7 +155,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   def getUserById(userId: String, providerId: String) :  UserCredential = {
 
     var userCredential : UserCredential = new UserCredential()
-    var list = getUserById(userId).filter(p=>p.providerId.equalsIgnoreCase(providerId))
+    val list = getUserById(userId).filter(p=>p.providerId.equalsIgnoreCase(providerId))
 
     if(list.size > 0) {
       userCredential = list.head
@@ -272,7 +267,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     var modUserCredential: UserCredential = new UserCredential()
 
     if(exitsUser._2 == true) {
-        // User is allready stored in the database, when update
+        // User is already stored in the database, when update
         println("update id: " + userCredential.objectId + "email : " + userCredential.emailAddress)
 
         // set the correct id
@@ -302,7 +297,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    */
   @Transactional(readOnly = false)
   private def saveUser(userCredential: UserCredential): UserCredential = {
-    var modUser =  UserCredentialService.userCredentialRepository.save(userCredential)
+    val modUser = UserCredentialService.userCredentialRepository.save(userCredential)
     modUser
   }
 

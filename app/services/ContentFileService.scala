@@ -133,8 +133,8 @@ class ContentFileService {
   def uploadFile(file: MultipartFormData.FilePart[TemporaryFile], user: UserCredential, fileType: FileTypeEnums, fileTransformations: List[FileTransformation] = Nil): Option[ContentFile] = {
 
     // Is user logged in?
-    if(user == null && user.userId == null) {
-      Logger.debug("Debug: Cannot upload image no logged in user.")
+    if(user == null && user.objectId == null) {
+      Logger.debug("Debug: Cannot upload image no logged in user, or user missing objectId.")
       return None
     }
 
@@ -351,8 +351,8 @@ class ContentFileService {
 
     var retString: String = ""
 
-    if(file.owner != null && !file.owner.userId.isEmpty)
-      retString += file.owner.userId + "/"
+    if(file.owner != null && file.owner.objectId != null)
+      retString += file.owner.objectId + "/"
     else
       Logger.debug("Debug: Missing owner on content file")
 

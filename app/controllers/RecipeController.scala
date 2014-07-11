@@ -3,7 +3,7 @@ package controllers
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.{MultipartFormData, Action, Controller}
 import securesocial.core.SecureSocial
-import models.Recipe
+import models.{UserCredential, Recipe}
 import play.api.data.Form
 import play.api.data.Forms._
 import scala.Some
@@ -66,7 +66,7 @@ class RecipeController extends Controller with SecureSocial {
         request.body.file("recipemainimage").map {
           file =>
             val filePerm: MultipartFormData.FilePart[TemporaryFile] = file
-            val imageFile = fileService.uploadFile(filePerm, UserCredentialService.socialUser2UserCredential(request.user), FileTypeEnums.IMAGE)
+            val imageFile = fileService.uploadFile(filePerm, request.user.asInstanceOf[UserCredential], FileTypeEnums.IMAGE)
               imageFile match {
                 case Some(imageFile) => newRec.mainImage = imageFile
                 case None => None

@@ -11,6 +11,7 @@ import securesocial.core.SecureSocial
 import constants.{FlashMsgConstants, FileTransformationConstants}
 import enums.FileTypeEnums
 import presets.ImagePreSets
+import models.UserCredential
 
 @SpringController
 class FileController extends Controller with SecureSocial {
@@ -18,7 +19,7 @@ class FileController extends Controller with SecureSocial {
   @Autowired
   private var fileService: ContentFileService = _
 
-  def index = SecuredAction {
+  def index = SecuredAction { request =>
     Ok(views.html.edit.file.index())
   }
 
@@ -27,7 +28,7 @@ class FileController extends Controller with SecureSocial {
         file =>
           val tempFile: MultipartFormData.FilePart[TemporaryFile] = file
 
-          fileService.uploadFile(tempFile, UserCredentialService.socialUser2UserCredential(request.user), FileTypeEnums.IMAGE, ImagePreSets.testImages) match {
+          fileService.uploadFile(tempFile, request.user.asInstanceOf[UserCredential], FileTypeEnums.IMAGE, ImagePreSets.testImages) match {
             case Some(value) => Redirect(routes.FileController.index()).flashing(FlashMsgConstants.Success -> {"File uploaded successfully:" + value.name})
             case None => BadRequest(views.html.edit.file.index()).flashing(FlashMsgConstants.Error -> "Something went wrong during upload, make sure it is a valid file (jpg,png,gif) and is less than 2MB.")
           }
