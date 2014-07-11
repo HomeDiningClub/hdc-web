@@ -172,7 +172,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
   // Edit - Listing
   def listContentPages = SecuredAction { implicit request =>
-    val listOfPage: List[ContentPage] = contentService.getListOfAllContentPages()
+    val listOfPage: List[ContentPage] = contentService.getListOfAllContentPages
     Ok(views.html.edit.listContentPages(listOfPage))
   }
 
