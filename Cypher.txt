@@ -1,0 +1,22 @@
+This deletes all nodes and all relationships in the whole database
+MATCH (n)
+OPTIONAL MATCH (n)-[r]-()
+DELETE n,r
+
+Create index on a label:
+CREATE INDEX ON :Person(name)
+
+Drop index on a label:
+DROP INDEX ON :Person(name)
+
+Create uniqueness constraint:
+CREATE CONSTRAINT ON (book:Book) ASSERT book.isbn IS UNIQUE
+
+Drop uniqueness constraint:
+DROP CONSTRAINT ON (book:Book) ASSERT book.isbn IS UNIQUE
+
+For listing all indexes and constraints in neo4j-browser, following command is useful:
+:schema
+
+List indices and constraints for specific label with:
+:schema ls -l :YourLabel
