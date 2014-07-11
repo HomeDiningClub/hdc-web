@@ -137,7 +137,7 @@ def skapavy = Action {
   // 2. Load the tags
 
 
-  var up = userProfileService.getAllUserProfile()
+  var up = userProfileService.getAllUserProfile
  var theUser : models.UserProfile  = up.iterator.next()
 
 /*
@@ -255,7 +255,7 @@ def taemot = Action {
 
         })
 
-      var up = userProfileService.getAllUserProfile()
+      var up = userProfileService.getAllUserProfile
       var theUser : models.UserProfile = up.iterator.next()
 
       /*
@@ -297,7 +297,7 @@ def taemot = Action {
 
 
   def index = Action {
-    val userProfilesList = userProfileService.getAllUserProfiles()
+    val userProfilesList = userProfileService.getAllUserProfiles
     //Ok(views.html.profile.listofProfiles(userProfilesList))
     Ok("OK")
   }
@@ -443,7 +443,7 @@ def taemot = Action {
    // user.userId = "test"
    //user.providerId = "test"
 
-    var userList = userProfileService.getAllUserProfiles()
+    var userList = userProfileService.getAllUserProfiles
     var tagList = tagWordService.listAll()
 
     if (userList.size > 0) {

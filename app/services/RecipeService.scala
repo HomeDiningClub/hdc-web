@@ -30,7 +30,7 @@ class RecipeService {
   }
 
   @Transactional(readOnly = true)
-  def getListOfAll(): List[Recipe] = {
+  def getListOfAll: List[Recipe] = {
     val list: List[Recipe] = template.findAll(classOf[Recipe]).iterator.asScala.toList
     list
   }
