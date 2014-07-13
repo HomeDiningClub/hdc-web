@@ -66,7 +66,7 @@ class RecipeController extends Controller with SecureSocial {
         request.body.file("recipemainimage").map {
           file =>
             val filePerm: MultipartFormData.FilePart[TemporaryFile] = file
-            val imageFile = fileService.uploadFile(filePerm, request.user.asInstanceOf[UserCredential], FileTypeEnums.IMAGE)
+            val imageFile = fileService.uploadFile(filePerm, request.user.asInstanceOf[UserCredential].objectId, FileTypeEnums.IMAGE)
               imageFile match {
                 case Some(imageFile) => newRec.mainImage = imageFile
                 case None => None

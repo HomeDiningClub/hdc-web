@@ -13,7 +13,7 @@ import org.parboiled.common.FileUtils
 import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
-import java.util.UUID
+import java.util.{Locale, UUID}
 import org.neo4j.helpers.collection.IteratorUtil
 import scala.collection.JavaConverters._
 import play.api.libs.MimeTypes
@@ -36,6 +36,8 @@ class ContentFileService {
   private var fileTransformationRepository: FileTransformationRepository = _
   @Autowired
   private var bucketRepository: BucketRepository = _
+  @Autowired
+  private var userCredentialRepository: UserCredentialRepository = _
 
   // Just for testing, don't use in production
   def listFilesRawFromS3(prefix: String = ""): List[String] = {
@@ -130,10 +132,17 @@ class ContentFileService {
 
   // Uploads a file
   // Return ContentObject if found
-  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile], user: UserCredential, fileType: FileTypeEnums, fileTransformations: List[FileTransformation] = Nil): Option[ContentFile] = {
+  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile], userObjectId: UUID, fileType: FileTypeEnums, fileTransformations: List[FileTransformation] = Nil): Option[ContentFile] = {
 
-    // Is user logged in?
-    if(user == null && user.objectId == null) {
+    // Prepare object
+    var user: UserCredential = null
+
+    // Is user logged in and can be found?
+    if(userObjectId != null) {
+      user = userCredentialRepository.findByobjectId(userObjectId)
+    }
+
+    if(user == null) {
       Logger.debug("Debug: Cannot upload image no logged in user, or user missing objectId.")
       return None
     }
@@ -162,29 +171,33 @@ class ContentFileService {
 //    }
 
     // Compare mime-type with approved types and fetch and return is so
-    var contentType: String = ""
+    var contentType: Option[String] = None
+    val fileContentType: Option[String] = file.contentType.map(_.toLowerCase(Locale.ENGLISH))
 
     if(fileType == FileTypeEnums.IMAGE){
-        contentType = file.contentType match {
-          case Some("image/jpeg") => contentType
-          case Some("image/png") => contentType
-          case Some("image/gif") => contentType
+        contentType = fileContentType match {
+          case Some("image/jpeg") => Some("image/jpeg")
+          case Some("image/png") => Some("image/png")
+          case Some("image/gif") => Some("image/gif")
           case _ =>
-          Logger.debug("Debug: Cannot upload image, file is of wrong mime-type")
-          return None
+            Logger.debug("Debug: Cannot upload image, file is of wrong mime-type")
+            None
         }
     }else if (fileType == FileTypeEnums.VIDEO){
-        contentType = file.contentType match {
-          case Some("video/mpeg") => contentType
-          case Some("video/mp4") => contentType
-          case Some("video/x-flv") => contentType
+        contentType = fileContentType match {
+          case Some("video/mpeg") => Some("video/mpeg")
+          case Some("video/mp4") => Some("video/mp4")
+          case Some("video/x-flv") => Some("video/x-flv")
           case _ =>
             Logger.debug("Debug: Cannot upload video, file is of wrong mime-type")
-            return None
+            None
         }
     }else {
         throw new IllegalArgumentException("Missing a correct fileType")
     }
+
+    if(contentType.isEmpty)
+      return None
 
     // Fetch the uploaded filename
     val uncleanedFullFileName: String = play.utils.UriEncoding.encodePathSegment(file.filename, "UTF-8")
@@ -215,10 +228,8 @@ class ContentFileService {
 
     // If Filename and File-Mime type match set the file ending, else abort upload
     if (!file.contentType.equals(fileExtensionMimeType)) {
-
       Logger.error("Error: File and file-extensions has an different mime-types, aborting.")
       None
-
     } else {
 
       // Parse file extension
@@ -231,35 +242,49 @@ class ContentFileService {
       // Goal is the following:
       //<userid>/<fileid>/<fileid>.<fileextension>
       val newFile = fileType match {
-        case FileTypeEnums.IMAGE => new ContentFile(fileName,fileExtension,contentType,FileTypeEnums.IMAGE.toString,user)
-        case FileTypeEnums.VIDEO => new ContentFile(fileName,fileExtension,contentType,FileTypeEnums.VIDEO.toString,user)
+        case FileTypeEnums.IMAGE => new ContentFile(fileName,fileExtension,contentType.get,FileTypeEnums.IMAGE.toString,user)
+        case FileTypeEnums.VIDEO => new ContentFile(fileName,fileExtension,contentType.get,FileTypeEnums.VIDEO.toString,user)
         case _ =>
           Logger.error("Error: No base file type specified on upload, must be either any of the FileTypeConstants")
-          return null
+          null
       }
+      if(newFile == null)
+        return None
+
+
+      // Set path and Upload original
       val fileUrl = getFilePath(newFile) + getFileExtension(newFile)
 
-      // Upload original
-      val result = doUpload(fileUrl,contentType,file.ref.file)
-
       // Handle result
-      result.map {
+      val futureResult: Future[Option[ContentFile]] = doUpload(fileUrl,contentType.get,file.ref.file).map {
         unitResponse =>
           Logger.info("Uploaded and saved file: " + fileUrl)
-          saveFile(newFile)
+          val savedFile = saveFile(newFile)
+          Some(savedFile)
       }
-        .recover {
-          case S3Exception(status, code, message, originalXml) => Logger.error("Error: " + message)
-          case _ => Logger.error("Error: Cannot upload file.")
+      .recover {
+        case S3Exception(status, code, message, originalXml) =>
+          Logger.error("Error: " + message)
+          None
+        case _ =>
+          Logger.error("Error: Cannot upload file.")
+          None
       }
 
-      // Successfully saved and uploaded, lets make the transforms if any
-      // But only on the image objects
-      if(!fileTransformations.isEmpty && newFile.baseContentType.equalsIgnoreCase(FileTypeEnums.IMAGE.toString)){
-        val editedFile: ContentFile = uploadAndCreateTransformations(newFile,file.ref.file,fileTransformations)
-      }
+      val uploadResult = Await.result(futureResult, 10 seconds)
 
-      Some(newFile)
+      if(!uploadResult.isEmpty)
+      {
+        // Successfully saved and uploaded, lets make the transforms if any
+        // But only on the image objects
+        if(!fileTransformations.isEmpty && newFile.baseContentType.equalsIgnoreCase(FileTypeEnums.IMAGE.toString)){
+          val editedFile: ContentFile = uploadAndCreateTransformations(uploadResult.get,file.ref.file,fileTransformations)
+          Some(editedFile)
+        }
+
+        Some(newFile)
+      }
+      None
     }
   }
 
@@ -274,6 +299,8 @@ class ContentFileService {
 
   // Handle transformations
   private def uploadAndCreateTransformations(contentFile: ContentFile, fileToUpload: File, fileTransformations: List[FileTransformation]): ContentFile = {
+
+    var uploadResult: Option[ContentFile] = None
 
     if(!fileTransformations.isEmpty && contentFile != null)
     {
@@ -305,7 +332,7 @@ class ContentFileService {
         transform.transformationType match {
           case FileTransformationConstants.FIT => Image(fileToUpload).fit(transform.width, transform.height, color = Color.White).write(transformedFile, Format.PNG)
           case FileTransformationConstants.SCALE => Image(fileToUpload).scale(transform.scale).write(transformedFile, Format.PNG)
-          case FileTransformationConstants.BOUND=> Image(fileToUpload).bound(transform.width, transform.height).write(transformedFile, Format.PNG)
+          case FileTransformationConstants.BOUND => Image(fileToUpload).bound(transform.width, transform.height).write(transformedFile, Format.PNG)
           case FileTransformationConstants.COVER => Image(fileToUpload).cover(transform.width, transform.height).write(transformedFile, Format.PNG)
           case _ => Image(fileToUpload).cover(transform.width, transform.height).write(transformedFile, Format.PNG)
         }
@@ -313,8 +340,9 @@ class ContentFileService {
         // Move to immutable
         val permTrans = transform
 
+
         // Upload it
-        val results = doUpload(fileUrl,permTrans.extension,transformedFile).map {
+        val futureResult: Future[Option[ContentFile]] = doUpload(fileUrl,permTrans.extension,transformedFile).map {
           unitResponse =>
             Logger.info("Uploaded and saved transformation of file: " + fileUrl)
 
@@ -325,23 +353,27 @@ class ContentFileService {
             val editedFile = addTransformToFile(contentFile, savedTransform)
 
             // Save the file parent object
-            saveFile(editedFile)
-
+            val updatedParentFile = saveFile(editedFile)
+            Some(updatedParentFile)
           }
           .recover {
             case S3Exception(status, code, message, originalXml) =>
               Logger.error("Error: " + message)
-              return null
+              None
             case _ =>
               Logger.error("Error: Cannot upload transformation of file.")
-              return null
+              None
         }
+
+        uploadResult = Await.result(futureResult, 10 seconds)
 
         // Clean up local file
         transformedFile.delete()
       }
     }
-    contentFile
+
+    // Return the re-saved file or the original file
+    uploadResult.getOrElse(contentFile)
   }
 
 
@@ -395,18 +427,21 @@ class ContentFileService {
   // Deletes any file, can be any that inherits from ContentFile
   // Returns false is failure, true if success
   def deleteFile(objectId: UUID): Boolean = {
-    // Check file in DB
-    val fileToDelete: ContentFile = getFileByKey(objectId) match {
-      case Some(file) => file
-      case None => return false
-    }
 
-    val fileTransformations: Iterable[FileTransformation] = IteratorUtil.asCollection(fileToDelete.fileTransformations).asScala
+    // Check file in DB
+    val fileToDelete: Option[ContentFile] = getFileByKey(objectId) match {
+      case Some(file) => Some(file)
+      case None => None
+    }
+    if(fileToDelete.isEmpty)
+      return false
+
+    val fileTransformations: Iterable[FileTransformation] = IteratorUtil.asCollection(fileToDelete.get.fileTransformations).asScala
 
     // Remove file if found in DB
     // Also remove all its transforms
     val future: Future[Unit] = Future {
-      bucketRepository.S3Bucket.remove(fileToDelete.basePath)
+      bucketRepository.S3Bucket.remove(fileToDelete.get.basePath)
       if(!fileTransformations.isEmpty) {
         for (transform <- fileTransformations) {
           bucketRepository.S3Bucket.remove(transform.basePath)
@@ -414,28 +449,28 @@ class ContentFileService {
       }
     }
 
-    val results = future.map {
+    val results: Future[Boolean] = future.map {
       unitResponse =>
-        Logger.info("Deleted file: " + fileToDelete.basePath)
+        Logger.debug("Deleted file: " + fileToDelete.get.basePath)
         if(!fileTransformations.isEmpty) {
           for (transform <- fileTransformations) {
             deleteTransformation(transform)
           }
         }
-        deleteFile(fileToDelete)
-        return true
+        deleteFile(fileToDelete.get)
+        true
     }
     .recover {
       case timeout:
         scala.concurrent.TimeoutException =>
-          Logger.info("Error: Timeout before deleting files.")
-          return false
+          Logger.error("Error: Timeout before deleting files.")
+          false
       case S3Exception(status, code, message, originalXml) =>
-        Logger.info("Error: " + message)
-        return false
+        Logger.error("Error: " + message)
+        false
     }
 
-    Await.result(future, 10.seconds)
+    val deleteResults = Await.result(results, 10 seconds)
 
 //    result.onComplete {
 //      case Success(_) =>
@@ -470,7 +505,7 @@ class ContentFileService {
 //        return false
 //    }
 
-    false
+    deleteResults
   }
 
 
@@ -495,8 +530,9 @@ class ContentFileService {
 
 
   @Transactional(readOnly = false)
-  private def saveFile(file: ContentFile) {
-      contentFileRepository.save(file)
+  private def saveFile(file: ContentFile): ContentFile = {
+    val returnFile: ContentFile = contentFileRepository.save(file)
+    returnFile
   }
 
   @Transactional(readOnly = false)

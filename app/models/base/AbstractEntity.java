@@ -2,6 +2,8 @@ package models.base;
 
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
+
 import java.util.UUID;
 
 public abstract class AbstractEntity {
