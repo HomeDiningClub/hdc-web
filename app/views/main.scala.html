@@ -1,4 +1,4 @@
-@(title: String, headerVisible: Boolean = true, footerVisible: Boolean = true)(content: Html)
+@(title: String, headerVisible: Boolean = true, footerVisible: Boolean = true)(content: Html)(implicit userFromRequest:Option[models.UserCredential] = None)
 <!DOCTYPE html>
 
 <html lang="@Messages("main.language")">
