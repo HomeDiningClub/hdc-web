@@ -21,7 +21,7 @@ class HostController extends Controller {
     ("Inbox", "Inbox", INBOX, "")
   )
 
-  def index = Action {
+  def index = Action { implicit request =>
     Ok(views.html.host.index(menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX))
   }
 

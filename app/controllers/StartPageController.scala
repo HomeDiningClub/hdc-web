@@ -25,7 +25,7 @@ class StartPageController extends Controller {
     //Ok(views.html.startpage.index(searchStartPageForm))
   }
 
-  def index = Action {
+  def index = Action { implicit request =>
     Ok(views.html.startpage.index())
   }
 

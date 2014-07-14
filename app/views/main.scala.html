@@ -1,4 +1,4 @@
-@(title: String, headerVisible: Boolean = true, footerVisible: Boolean = true)(content: Html)(implicit userFromRequest:Option[models.UserCredential] = None)
+@(title: String, headerVisible: Boolean = true, footerVisible: Boolean = true)(content: Html)(implicit request: RequestHeader)
 <!DOCTYPE html>
 
 <html lang="@Messages("main.language")">
@@ -14,7 +14,7 @@
     </head>
     <body>
         <div id="wrap">
-            @if(headerVisible){ @HeaderController.index }
+            @if(headerVisible){ @HeaderController.index(request) }
             @content
             @if(footerVisible){ @footer.footer() }
         </div>

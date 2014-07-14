@@ -5,6 +5,8 @@ import play.api.i18n.Messages
 import securesocial.core.SecureSocial
 import play.api.Logger
 import models.UserCredential
+import securesocial.core.java.SecureSocial.UserAwareAction
+import play.api.templates.Html
 
 object HeaderController extends Controller with SecureSocial {
 
@@ -18,33 +20,37 @@ object HeaderController extends Controller with SecureSocial {
     ("Campaign page", "Campaign title", routes.CampaignController.index, "")
   )
 
-  // Name, Title, Href, Class, Extra HTML
-  var quickLinkList = Seq[(String,String,Call,String,String)](
-    (Messages("header.link.host-profile"), Messages("header.link.host-profile"), routes.HostController.index, "", ""),
-    (Messages("header.link.inbox"), Messages("header.link.inbox"), routes.HostController.index, "", "<span class=\"badge\">0</span>"),
-    (Messages("header.link.login"), Messages("header.link.login"), securesocial.controllers.routes.LoginPage.login, "", "")
-  )
-
-  implicit def getUserFromRequest(implicit request: play.api.mvc.RequestHeader): Option[UserCredential] = {
-    SecureSocial.currentUser.map {
+  implicit def getUserFromRequest(implicit request: RequestHeader): Option[UserCredential] = {
+    val user = SecureSocial.currentUser.map {
       u =>
         Logger.debug("Debug:" + u.fullName)
-        Some(u.asInstanceOf[UserCredential])
+        u.asInstanceOf[UserCredential]
     }
-    None
+
+    if(user.isDefined)
+      user
+    else
+      None
   }
 
-  def index = {
-    views.html.header.header(menuItemsList, quickLinkList)
-  }
+  def index(request: RequestHeader) = {
 
-  /*
-    private def selectedOrNot(reqUri: String, menuUri: String): String = {
-      if(reqUri == menuUri)
-        "active"
-      else
-        ""
+    // Name, Title, Href, Class, Extra HTML
+    val quickLinkList: Seq[(String,String,Call,String,String)] = getUserFromRequest(request) match {
+      case Some(user) =>
+        Seq[(String,String,Call,String,String)](
+          (user.fullName(), Messages("header.link.host-profile", user.fullName()), routes.HostController.index, "", ""),
+          (Messages("header.link.inbox"), Messages("header.link.inbox"), routes.HostController.index, "", "<span class=\"badge\">0</span>"),
+          (Messages("header.link.logout"), Messages("header.link.logout"), securesocial.controllers.routes.LoginPage.logout(), "", "")
+        )
+      case None =>
+        Seq[(String,String,Call,String,String)](
+          (Messages("header.link.become-member"), Messages("header.link.become-member"), securesocial.controllers.routes.LoginPage.login, "", ""),
+          (Messages("header.link.login"), Messages("header.link.login"), securesocial.controllers.routes.LoginPage.login, "", "")
+        )
     }
-  */
+
+    views.html.header.header.render(menuItemsList, quickLinkList)
+  }
 
 }

@@ -62,7 +62,7 @@ class UserProfileController  extends Controller{
 
 
 
-def createTags = Action {
+def createTags = Action { implicit request =>
 
   // MATCH (b:TagWord) RETURN b
   // MATCH (b:TagWord) delete b
@@ -125,7 +125,7 @@ var lista = tagWordService.listByGroup("profile")
 
 
 
-def skapavy = Action {
+def skapavy = Action { implicit request =>
 
 
   println("##### skapa vy #######")
@@ -211,7 +211,7 @@ if(userTags != null) {
 }
 
 
-def taemot = Action {
+def taemot = Action { implicit request =>
 
       // Fetch user
 
@@ -220,9 +220,6 @@ def taemot = Action {
       // remove all tags
 
       // add all new tags
-
-
-    implicit request =>
 
       var map:Map[String,String] = Map()
 
@@ -286,7 +283,7 @@ def taemot = Action {
 
 
 
-  def login = Action {
+  def login = Action { implicit request =>
     //Redirect(routes.Application.hello("Bob"))
     // Redirect(routes.securesocial.controllers.LoginPage.login)
     Redirect("/login",301)
@@ -296,7 +293,7 @@ def taemot = Action {
   }
 
 
-  def index = Action {
+  def index = Action { implicit request =>
     val userProfilesList = userProfileService.getAllUserProfiles
     //Ok(views.html.profile.listofProfiles(userProfilesList))
     Ok("OK")
@@ -312,8 +309,7 @@ def taemot = Action {
 */
 
 
-  def saveUserProfile = Action {
-    implicit request =>
+  def saveUserProfile = Action { implicit request =>
       userProfileForm.bindFromRequest.fold(
         errors => {
 
@@ -346,7 +342,7 @@ def taemot = Action {
 
 
 
-  def save = Action {
+  def save = Action { implicit request =>
 
   val form1   = Form(
     mapping(
@@ -402,7 +398,7 @@ def taemot = Action {
     Ok("TEST")
   }
 
-  def hamtaProfil(userName : String) = Action {
+  def hamtaProfil(userName : String) = Action { implicit request =>
     println("userName : " + userName)
 /*
     var up = userProfileService.getUserProfile(userName)
@@ -430,7 +426,7 @@ def taemot = Action {
  *  Skapa en profil
  *
  */
-  def skapaNyProfil = Action {
+  def skapaNyProfil = Action { implicit request =>
      var userProfile = models.formdata.UserProfile("","","","","",List(true, true), 0)
      val dufulatValueForm =  userProfileForm.fill(userProfile)
      val typ = new models.Types
@@ -438,7 +434,7 @@ def taemot = Action {
   }
 
 
-  def test = Action {
+  def test = Action { implicit request =>
     var user: models.UserProfile = new models.UserProfile()
    // user.userId = "test"
    //user.providerId = "test"

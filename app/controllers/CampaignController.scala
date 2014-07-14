@@ -8,7 +8,7 @@ import play.api.mvc.Controller
 @SpringController
 class CampaignController extends Controller {
 
-  def index = Action {
+  def index = Action { implicit request =>
     Ok(views.html.campaign.index())
   }
 

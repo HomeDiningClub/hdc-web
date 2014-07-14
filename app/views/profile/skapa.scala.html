@@ -1,4 +1,4 @@
-@(EnvDataForm: Form[controllers.EnvData], element : List[Type], klass : Types)
+@(EnvDataForm: Form[controllers.EnvData], element : List[Type], klass : Types)(implicit request: RequestHeader)
 
 @helper.form(action = routes.UserProfileController.taemot) {
 

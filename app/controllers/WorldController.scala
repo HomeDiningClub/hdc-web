@@ -13,7 +13,7 @@ class WorldController extends Controller {
   @Autowired
   var worldService: WorldService = _
 
-  def index = Action {
+  def index = Action { implicit request =>
     if (worldService.getNumberOfWorlds > 0) {
       worldService.deleteAllWorlds()
     }
@@ -28,6 +28,6 @@ class WorldController extends Controller {
       val last: World = allWorlds.last
       pathFromFirstToLast = worldService.getWorldPath(first, last)
     }
-    Ok(views.html.worlds.index.render(allWorlds, pathFromFirstToLast))
+    Ok(views.html.worlds.index.render(allWorlds, pathFromFirstToLast, request))
   }
 }

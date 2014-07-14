@@ -1,4 +1,4 @@
-@()
+@()(implicit request: RequestHeader)
 @*(searchForm: Form[models.viewmodels.SearchStartPageForm])*@
 
 @main(Messages("startpage.title")) {
@@ -76,6 +76,7 @@
                     <!-- Main intro -->
                     <div class="col-xs-12 col-md-6">
                         @Html(Messages("startpage.main-content.body"))
+                        <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
                     </div>
 
                     <!-- News -->

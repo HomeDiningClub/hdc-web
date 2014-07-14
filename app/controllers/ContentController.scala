@@ -28,7 +28,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
     new MenuItem(Messages("usertermsandconditions.header"),Messages("usertermsandconditions.header"),Messages("usertermsandconditions.header"), routes.ContentController.userTermsAndConditions().url, "")
   )
   // Actions
-  def aboutUs = Action {
+  def aboutUs = Action { implicit request =>
     Ok(views.html.contentcolumns.onecolumn(
       urlTitle = Messages("aboutus.title"),
       column1Header = Messages("aboutus.header"),
@@ -37,7 +37,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
       menuHeader = Messages("aboutus.header"))
     )
   }
-  def press = Action {
+  def press = Action { implicit request =>
     Ok(views.html.contentcolumns.onecolumn(
       urlTitle = Messages("press.title"),
       column1Header = Messages("press.header"),
@@ -46,7 +46,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
       menuHeader = Messages("press.header"))
     )
   }
-  def userTermsAndConditions = Action {
+  def userTermsAndConditions = Action { implicit request =>
     Ok(views.html.contentcolumns.onecolumn(
       urlTitle = Messages("usertermsandconditions.title"),
       column1Header = Messages("usertermsandconditions.header"),
@@ -60,7 +60,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
 
   // How does it work
-  def howDoesItWork = Action {
+  def howDoesItWork = Action { implicit request =>
     Ok(views.html.contentcolumns.onecolumn(
       urlTitle = Messages("howdoesitwork.title"),
       column1Header = Messages("howdoesitwork.header"),
@@ -77,7 +77,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
     new MenuItem(Messages("theperfectguest.header"),Messages("theperfectguest.header"),Messages("theperfectguest.header"), routes.ContentController.thePerfectGuest().url, "")
   )
   // Actions
-  def becomeAMember = Action {
+  def becomeAMember = Action { implicit request =>
     Ok(views.html.contentcolumns.onecolumn(
       urlTitle = Messages("becomeamember.title"),
       column1Header = Messages("becomeamember.header"),
@@ -86,7 +86,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
       menuHeader = Messages("becomeamember.header"))
     )
   }
-  def thePerfectGuest = Action {
+  def thePerfectGuest = Action { implicit request =>
     Ok(views.html.contentcolumns.onecolumn(
       urlTitle = Messages("theperfectguest.title"),
       column1Header = Messages("theperfectguest.header"),
@@ -106,7 +106,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
     new MenuItem(Messages("examplehosttext.header"),Messages("examplehosttext.header"),Messages("examplehosttext.header"), routes.ContentController.exampleHostText().url, "")
   )
   // Actions
-  def becomeAHost = Action {
+  def becomeAHost = Action { implicit request =>
     Ok(views.html.contentcolumns.onecolumn(
       urlTitle = Messages("becomeahost.title"),
       column1Header = Messages("becomeahost.header"),
@@ -115,7 +115,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
       menuHeader = Messages("becomeahost.header"))
     )
   }
-  def practicalInfo = Action {
+  def practicalInfo = Action { implicit request =>
     Ok(views.html.contentcolumns.onecolumn(
       urlTitle = Messages("practicalinfo.title"),
       column1Header = Messages("practicalinfo.header"),
@@ -124,7 +124,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
       menuHeader = Messages("practicalinfo.header"))
     )
   }
-  def exampleHostText = Action {
+  def exampleHostText = Action { implicit request =>
     Ok(views.html.contentcolumns.onecolumn(
       urlTitle = Messages("examplehosttext.title"),
       column1Header = Messages("examplehosttext.header"),
@@ -138,7 +138,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
 
   // References
-  def references = Action {
+  def references = Action { implicit request =>
     Ok(views.html.contentcolumns.onecolumn(
       urlTitle = Messages("references.title"),
       column1Header = Messages("references.header"),
@@ -148,7 +148,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
 
   // FAQ
-  def faq = Action {
+  def faq = Action { implicit request =>
     Ok(views.html.contentcolumns.onecolumn(
       urlTitle = Messages("faq.title"),
       column1Header = Messages("faq.header"),
@@ -158,7 +158,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
 
   // Contact us
-  def contact = Action {
+  def contact = Action { implicit request =>
     Ok(views.html.contentcolumns.twocolumn(
       urlTitle = Messages("contact.title"),
       column1Header = Messages("contact.header1"),

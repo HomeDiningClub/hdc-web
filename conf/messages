@@ -4,9 +4,11 @@ main.language=sv
 
 # Header
 header.link.campaign=Nyhetsbrev
-header.link.host-profile=Din profil
+header.link.host-profile=Gå till {0} profilsida
 header.link.inbox=Inkorg
+header.link.become-member=Bli medlem
 header.link.login=Logga in
+header.link.logout=Logga ut
 header.login-form.email=E-post
 header.login-form.password=Lösenord
 header.login-form.forgot-password=Har du glömt ditt lösenord?
@@ -32,6 +34,7 @@ startpage.main-aside.header=Introduktionsvideo
 startpage.main-aside.body=
 startpage.main-content.header=Hej och välkommen till Home Dining Club!
 startpage.main-content.body=<p>Bjud hem nya vänner på middag och få betyg och omdömen på din kokkonst. Håll arrangemang för små och stora grupper. Ta betalt eller bjud! Det är upp till dig. Du kanske har den bästa Paellan i hela Stockholm. Varför inte låta folk få komma hem till dig och prova den?</p><p>Eller så är du bara intresserad av att läsa recept, eller äta hos andra. Upptäcka nya kulinariska höjder och lära känna andra lika matintresserade. Det här är tjänsten för dig!</p>
+startpage.main-content.body.btn.signup=Bli medlem idag!
 
 startpage.filterform.freetext=Fritext
 startpage.filterform.area=Område

@@ -220,7 +220,10 @@ input[type="reset"]:hover
   background-color: lighten(@hdc-green, 10%);
   border-color:darken(@hdc-green, 20%);
 }
-
+.btn-big-padding
+{
+  padding:20px;
+}
 
 
 
@@ -362,6 +365,7 @@ input[type="reset"]:hover
   background-repeat: repeat-x;
   background-size: cover;
   height:84px;
+  box-shadow: 0px 2px 4px #999;
 }
 .logo-img
 {
@@ -376,14 +380,22 @@ input[type="reset"]:hover
 // Header - Quicklinks
 .quicklinks
 {
-  border:1px solid #999;
-  background-color: #fff;
+  position: relative;
+  top:-7px;
+  border:1px solid darken(@hdc-green, 10%);
+  background-color: lighten(@hdc-green, 20%);
   border-radius: 5px;
   float:right;
+  box-shadow: 0px 3px 3px #D0D0D0;
 }
 .quicklinks .nav > li > a {
   padding:8px 10px;
-  font-size:13px;
+  font-size:12px;
+  color:@hdc-black;
+}
+.quicklinks .nav > li > a:hover,
+.quicklinks .nav > li > a:focus {
+  background-color: lighten(@hdc-green, 30%);
 }
 
 // Header - Login form

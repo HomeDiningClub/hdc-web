@@ -26,8 +26,8 @@ class RecipeController extends Controller with SecureSocial {
   @Autowired
   private var fileService: ContentFileService = _
 
-  def index = Action {
-    Ok(views.html.recipe.recipe())
+  def index = Action { implicit request =>
+    Ok(views.html.recipe.recipe()(request))
   }
 
   // Edit - Listing
