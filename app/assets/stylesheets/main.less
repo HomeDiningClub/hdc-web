@@ -185,6 +185,10 @@ input[type="password"]
   margin-bottom:1em;
   border:1px solid @input-border-color;
 }
+select {
+  padding:5px 10px 5px 10px;
+  border:1px solid @hdc-green;
+}
 label{
   color: @label-color;
 }
@@ -225,7 +229,20 @@ input[type="reset"]:hover
   padding:20px;
 }
 
+// Rows
+.row-border-bottom {
+  border-bottom:1px solid #ddd;
+  padding-bottom:20px;
+}
+.row-border-top {
+  border-top:1px solid #ddd;
+  padding-top:20px;
+}
 
+// Alignment
+.valign-middle {
+  vertical-align: middle;
+}
 
 // Banners
 .col-banner
@@ -579,7 +596,17 @@ input[type="reset"]:hover
   color:#fff;
 }
 
-
+// Startpage CTA
+.panel-cta {
+  height:120px;
+  background-image: url("/assets/images/startpage/frontpage-cta-90x1024.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  color:#fff;
+  font-size:26px;
+  font-weight:bold;
+  vertical-align:middle;
+}
 
 // Startpage Boxes
 .panel-startpage
