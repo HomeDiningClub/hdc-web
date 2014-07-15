@@ -240,8 +240,24 @@ input[type="reset"]:hover
 }
 
 // Alignment
-.valign-middle {
-  vertical-align: middle;
+.row-centered {
+  text-align:center;
+}
+.col-centered {
+  display:inline-block;
+  float:none;
+  /* reset the text-align */
+  text-align:left;
+  /* inline-block space fix */
+  margin-right:-4px;
+}
+.col-centered-right {
+  display:inline-block;
+  float:none;
+  /* reset the text-align */
+  text-align:right;
+  /* inline-block space fix */
+  margin-right:-4px;
 }
 
 // Banners
@@ -598,16 +614,25 @@ input[type="reset"]:hover
 
 // Startpage CTA
 .panel-cta {
-  height:120px;
-  background-image: url("/assets/images/startpage/frontpage-cta-90x1024.jpg");
+  position: relative;
+  background-image: url("/assets/images/startpage/frontpage-cta-200x1024.jpg");
   background-repeat: no-repeat;
   background-size: cover;
+  background-position:right;
   color:#fff;
   font-size:26px;
-  font-weight:bold;
-  vertical-align:middle;
 }
-
+.panel-cta .col-cta {
+  padding:20px;
+  margin-bottom:0px;
+  vertical-align: middle;
+}
+.panel-cta .btn-cta {
+  margin:0px;
+}
+.panel-cta .text-cta {
+  padding-top:14px;
+}
 // Startpage Boxes
 .panel-startpage
 {
