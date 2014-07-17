@@ -1,4 +1,4 @@
-@()(implicit request: RequestHeader)
+@(startPageBoxes: List[models.viewmodels.StartPageBox] = Nil)(implicit request: RequestHeader)
 @*(searchForm: Form[models.viewmodels.SearchStartPageForm])*@
 
 @main(Messages("startpage.title")) {
@@ -63,215 +63,214 @@
     *@
 
     <div class="container maincontent-container">
-        <div class="row">
+        <div class="row big-margin-top">
             <div class="col-xs-12 col-md-8 col-md-offset-1 col-xs-offset-0">
-                <div class="row big-margin-top">
+                <div class="row">
+                    <!-- Filtering push -->
+                    <div class="col-xs-12">
+                    @* Search filter form *@
+                        <form class="form-horizontal">
+                            <select>
+                                <option>Välj län</option>
+                                <option>Stockholm</option>
+                                <option>Göteborg</option>
+                                <option>Malmö</option>
+                                <option>Malmö</option>
+                                <option>Malmö</option>
+                            </select>
 
-
-                    <div class="row">
-                        <!-- Filtering push -->
-                        <div class="col-xs-12">
-                        @* Search filter form *@
-                            <form class="form-horizontal">
-                                <select>
-                                    <option>Välj län</option>
-                                    <option>Stockholm</option>
-                                    <option>Göteborg</option>
-                                    <option>Malmö</option>
-                                    <option>Malmö</option>
-                                    <option>Malmö</option>
-                                </select>
-
-                                <select>
-                                    <option>Välj typ av mat</option>
-                                    <option>Asiatiskt</option>
-                                    <option>Franskt</option>
-                                    <option>Amerikanskt</option>
-                                </select>
-                                    <button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button>
-                            </form>
-
-                         @*
-                        @helper.form(action=routes.StartPageController.filterProfiles(), 'class -> "form-horizontal"){
-                            <fieldset>
-                                @helper.inputText(searchForm("freeText"), '_label -> Messages("startpage.filterform.freetext"))
-                                @helper.inputText(searchForm("area"), '_label -> Messages("startpage.filterform.area"))
-                                @helper.inputText(searchForm("foodArea"), '_label -> Messages("startpage.filterform.foodarea"))
-                            </fieldset>
-                            <div class="form-actions">
+                            <select>
+                                <option>Välj typ av mat</option>
+                                <option>Asiatiskt</option>
+                                <option>Franskt</option>
+                                <option>Amerikanskt</option>
+                            </select>
                                 <button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button>
+                        </form>
+
+                     @*
+                    @helper.form(action=routes.StartPageController.filterProfiles(), 'class -> "form-horizontal"){
+                        <fieldset>
+                            @helper.inputText(searchForm("freeText"), '_label -> Messages("startpage.filterform.freetext"))
+                            @helper.inputText(searchForm("area"), '_label -> Messages("startpage.filterform.area"))
+                            @helper.inputText(searchForm("foodArea"), '_label -> Messages("startpage.filterform.foodarea"))
+                        </fieldset>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button>
+                        </div>
+                    }
+                    *@
+                    </div>
+                </div>
+                <div class="row big-margin-top">
+                    @*<div class="col-xs-12">*@
+                        @*<div class="row center-block">*@
+                            @startpage.startpageBox(startPageBoxes)
+@*
+
+                            <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box2.png")')">
+                                <div class="body">
+                                    @shared.hostImageCircle()
+                                    <a href="#">
+                                        <h2>Host name</h2>
+                                        <hr>
+                                        <p class="location">Location</p>
+                                        @shared.grade(inputId = "host-grade", initialValue = 5, disabled = true, size = "xxs")
+                                     </a>
+                                    <div class="host-level-icon level-guest02" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
+                                </div>
                             </div>
-                        }
-                        *@
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="row center-block">
-
-
-                                <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box2.png")')">
-                                    <div class="body">
-                                        @shared.hostImageCircle()
-                                        <a href="#">
-                                            <h2>Host name</h2>
-                                            <hr>
-                                            <p class="location">Location</p>
-                                            @shared.grade(inputId = "host-grade", initialValue = 5, disabled = true, size = "xxs")
-                                         </a>
-                                        <div class="host-level-icon level-guest02" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
-                                    </div>
+                            <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box3.png")')">
+                                <div class="body">
+                                    @shared.hostImageCircle()
+                                    <a href="#">
+                                        <h2>Host name</h2>
+                                        <hr>
+                                        <p class="location">Location</p>
+                                        @shared.grade(inputId = "host-grade", initialValue = 6, disabled = true, size = "xxs")
+                                    </a>
+                                    <div class="host-level-icon level-guest03" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
                                 </div>
-                                <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box3.png")')">
-                                    <div class="body">
-                                        @shared.hostImageCircle()
-                                        <a href="#">
-                                            <h2>Host name</h2>
-                                            <hr>
-                                            <p class="location">Location</p>
-                                            @shared.grade(inputId = "host-grade", initialValue = 6, disabled = true, size = "xxs")
-                                        </a>
-                                        <div class="host-level-icon level-guest03" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
-                                    <div class="body">
-                                        @shared.hostImageCircle()
-                                        <a href="#">
-                                            <h2>Host name</h2>
-                                            <hr>
-                                            <p class="location">Location</p>
-                                            @shared.grade(inputId = "host-grade", initialValue = 10, disabled = true, size = "xxs")
-                                        </a>
-                                        <div class="host-level-icon level-host01" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description")"><span>@Messages("level.host.header")</span></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
-                                    <div class="body">
-                                        @shared.hostImageCircle()
-                                        <a href="#">
-                                            <h2>Host name</h2>
-                                            <hr>
-                                            <p class="location">Location</p>
-                                            @shared.grade(inputId = "host-grade", initialValue = 10, disabled = true, size = "xxs")
-                                        </a>
-                                        <div class="host-level-icon level-host01" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description")"><span>@Messages("level.host.header")</span></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
-                                    <div class="body">
-                                        @shared.hostImageCircle()
-                                        <a href="#">
-                                            <h2>Host name</h2>
-                                            <hr>
-                                            <p class="location">Location</p>
-                                            @shared.grade(inputId = "host-grade", initialValue = 10, disabled = true, size = "xxs")
-                                        </a>
-                                        <div class="host-level-icon level-host01" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description")"><span>@Messages("level.host.header")</span></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
-                                    <div class="body">
-                                        @shared.hostImageCircle()
-                                        <a href="#">
-                                            <h2>Host name</h2>
-                                            <hr>
-                                            <p class="location">Location</p>
-                                            @shared.grade(inputId = "host-grade", initialValue = 10, disabled = true, size = "xxs")
-                                        </a>
-                                        <div class="host-level-icon level-host01" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description")"><span>@Messages("level.host.header")</span></div>
-                                    </div>
-                                </div>
-
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- CTA -->
-                    <div class="row">
-                        <div class="col-xs-12 big-margin-top panel-cta">
-                            <div class="row">
-                                <div class="col-xs-7 col-cta"><p class="text-cta">@Messages("startpage.main.cta.text")</p></div>
-                                <div class="col-xs-3 col-cta pull-right"><a class="btn btn-primary btn-lg btn-big-padding btn-cta" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main.cta.link.text")</a></div>
+                            <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
+                                <div class="body">
+                                    @shared.hostImageCircle()
+                                    <a href="#">
+                                        <h2>Host name</h2>
+                                        <hr>
+                                        <p class="location">Location</p>
+                                        @shared.grade(inputId = "host-grade", initialValue = 10, disabled = true, size = "xxs")
+                                    </a>
+                                    <div class="host-level-icon level-host01" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description")"><span>@Messages("level.host.header")</span></div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Reviews -->
-                    <div class="row row-border-bottom">
-                        <div class="col-xs-12 big-margin-top">
-                            <ul class="media-list">
-                                <li class="media col-lg-6">
-                                    @shared.hostImageCircle(cssClass = "media-object pull-left")
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Utmärkt!</h4>
-                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
-                                    </div>
-                                </li>
-                                <li class="media col-lg-6">
-                                    @shared.hostImageCircle(cssClass = "media-object pull-left")
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Utmärkt!</h4>
-                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
-                                    </div>
-                                </li>
-                                <li class="media col-lg-6">
-                                    @shared.hostImageCircle(cssClass = "media-object pull-left")
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Utmärkt!</h4>
-                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
-                                    </div>
-                                </li>
-                                <li class="media col-lg-6">
-                                    @shared.hostImageCircle(cssClass = "media-object pull-left")
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Utmärkt!</h4>
-                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                            <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
+                                <div class="body">
+                                    @shared.hostImageCircle()
+                                    <a href="#">
+                                        <h2>Host name</h2>
+                                        <hr>
+                                        <p class="location">Location</p>
+                                        @shared.grade(inputId = "host-grade", initialValue = 10, disabled = true, size = "xxs")
+                                    </a>
+                                    <div class="host-level-icon level-host01" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description")"><span>@Messages("level.host.header")</span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
+                                <div class="body">
+                                    @shared.hostImageCircle()
+                                    <a href="#">
+                                        <h2>Host name</h2>
+                                        <hr>
+                                        <p class="location">Location</p>
+                                        @shared.grade(inputId = "host-grade", initialValue = 10, disabled = true, size = "xxs")
+                                    </a>
+                                    <div class="host-level-icon level-host01" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description")"><span>@Messages("level.host.header")</span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@routes.Assets.at("images/startpage/Box1.png")')">
+                                <div class="body">
+                                    @shared.hostImageCircle()
+                                    <a href="#">
+                                        <h2>Host name</h2>
+                                        <hr>
+                                        <p class="location">Location</p>
+                                        @shared.grade(inputId = "host-grade", initialValue = 10, disabled = true, size = "xxs")
+                                    </a>
+                                    <div class="host-level-icon level-host01" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description")"><span>@Messages("level.host.header")</span></div>
+                                </div>
+                            </div>
+*@
 
-
-
-                    <div class="row big-margin-top">
-                        <div class="col-xs-12">
-                            <h1 class="page-header">@Messages("startpage.main-content.header")</h1>
-                        </div>
-                    </div>
-
-                    <div class="row margin-top row-border-bottom">
-                            <!-- Main intro -->
-                        <div class="col-xs-12 col-md-6">
-                            @Html(Messages("startpage.main-content.body"))
-                            <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
-                        </div>
-
-                            <!-- News -->
-                        <div class="col-xs-12 col-md-6">
-                            <aside>
-                                @Html(Messages("startpage.main-aside.body"))
-                                <iframe style="margin:0 auto; display:block;" src="//player.vimeo.com/video/97540915?title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff&amp;autoplay=0" width="100%" height="259" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                            </aside>
-                        </div>
-                    </div>
-
-
-                    <!-- Functions -->
-                    @*<div class="col-xs-12 col-md-3">*@
-                        @*<aside>*@
-                            @*<h2>Funktioner</h2>*@
-
-                        @*</aside>*@
+                        @*</div>*@
                     @*</div>*@
                 </div>
 
+                <!-- CTA -->
+                <div class="row">
+                    <div class="col-xs-12 big-margin-top panel-cta">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-7 col-cta"><p class="text-cta">@Messages("startpage.main.cta.text")</p></div>
+                            <div class="col-xs-12 col-sm-5 col-cta text-right"><a class="btn btn-primary btn-lg btn-big-padding btn-cta" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main.cta.link.text")</a></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews -->
+                <div class="row row-border-bottom">
+                    <div class="col-xs-12 big-margin-top">
+                        <ul class="media-list reviews-list">
+                            <li class="media col-lg-6">
+                                @shared.hostImageCircle(cssClass = "media-object pull-left")
+                                <div class="media-body">
+                                    <h4 class="media-heading">Utmärkt!</h4>
+                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
+                                </div>
+                            </li>
+                            <li class="media col-lg-6">
+                                @shared.hostImageCircle(cssClass = "media-object pull-left")
+                                <div class="media-body">
+                                    <h4 class="media-heading">Utmärkt!</h4>
+                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
+                                </div>
+                            </li>
+                            <li class="media col-lg-6">
+                                @shared.hostImageCircle(cssClass = "media-object pull-left")
+                                <div class="media-body">
+                                    <h4 class="media-heading">Utmärkt!</h4>
+                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
+                                </div>
+                            </li>
+                            <li class="media col-lg-6">
+                                @shared.hostImageCircle(cssClass = "media-object pull-left")
+                                <div class="media-body">
+                                    <h4 class="media-heading">Utmärkt!</h4>
+                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+
+
+                <div class="row big-margin-top">
+                    <div class="col-xs-12">
+                        <h1 class="page-header">@Messages("startpage.main-content.header")</h1>
+                    </div>
+                </div>
+
+                <div class="row margin-top row-border-bottom">
+                        <!-- Main intro -->
+                    <div class="col-xs-12 col-md-6">
+                        @Html(Messages("startpage.main-content.body"))
+                        <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
+                    </div>
+
+                        <!-- News -->
+                    <div class="col-xs-12 col-md-6">
+                        <aside>
+                            @Html(Messages("startpage.main-aside.body"))
+                            <iframe style="margin:0 auto; display:block;" src="//player.vimeo.com/video/97540915?title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff&amp;autoplay=0" width="100%" height="259" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                        </aside>
+                    </div>
+                </div>
+
+
+                <!-- Functions -->
+                @*<div class="col-xs-12 col-md-3">*@
+                    @*<aside>*@
+                        @*<h2>Funktioner</h2>*@
+
+                    @*</aside>*@
+                @*</div>*@
             </div>
 
+
+
             <!-- Banner -->
-            <div class="col-xs-12 col-md-2 col-banner">
+            <div class="col-xs-12 col-md-3 col-banner">
                 @shared.banner("images/banners/banner-0001.png","http://www.bannertarget.se","Senaste nyheterna","Senaste nyheterna")
             </div>
         </div>

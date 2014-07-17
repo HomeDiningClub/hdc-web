@@ -623,7 +623,8 @@ input[type="reset"]:hover
   font-size:26px;
 }
 .panel-cta .col-cta {
-  padding:20px;
+  padding-top:20px;
+  padding-bottom:20px;
   margin-bottom:0px;
   vertical-align: middle;
 }
@@ -649,19 +650,36 @@ input[type="reset"]:hover
 {
   clear:both;
 }
+//
+//.panel-startpage.col-md-4
+//{
+//  margin:15px 15px 0px 0px;
+//  width:31.0%; /* non-css3 fallback */
+//  width: calc( 33.33333333% - 15px ); /* css3 calculation */
+//}
+//
+//.panel-startpage.col-sm-6
+//{
+//  margin:15px 15px 0px 0px;
+//  width:62.0%; /* non-css3 fallback */
+//  width: calc( 66.6666666% - 15px ); /* css3 calculation */
+//}
+//
+//.panel-startpage.col-xs-12
+//{
+//  margin:15px 15px 0px 0px;
+//  width:93.0%; /* non-css3 fallback */
+//  width: calc( 99.9999999% - 15px ); /* css3 calculation */
+//}
 
-.panel-startpage.col-md-4
-{
-  margin:15px 15px 0px 0px;
-  width:31.0%; /* non-css3 fallback */
-  //width: calc( 33.33333333% - 15px ); /* css3 calculation */
-}
 
 .panel-startpage .host-image
 {
   position: absolute;
   right:-12px;
   top:70px;
+  display: inline-block;
+  overflow: hidden;
 }
 .panel-startpage .body
 {
@@ -709,11 +727,19 @@ input[type="reset"]:hover
   bottom:0px;
   z-index:40;
 }
+.panel-startpage .hdc-grade .star-rating.rating-disabled:hover {
+  cursor: pointer;
+}
 .panel-startpage .host-level-icon:hover {
   opacity: .9;
   cursor: pointer;
 }
 
+
+// Startpage - Reviews
+.reviews-list .host-image {
+  margin-top:5px;
+}
 
 
 // Campaign

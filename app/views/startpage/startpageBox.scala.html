@@ -3,17 +3,17 @@
 @if(!boxes.isEmpty) {
     @for(box: models.viewmodels.StartPageBox <- boxes){
 
-        <div class="col-md-4 col-sm-6 col-xs-12 thumbnail panel-startpage" style="background-image: url('@box.mainImage.getTransformByName("box").url')">
-            <a href="@box.linkToProfile">
+        <a href="@box.linkToProfile">
+            <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-0 col-md-4 col-md-offset-0 thumbnail panel-startpage" style="background-image: url('@box.mainImage')">
                 <div class="body">
-                    @shared.hostImageCircle(box.userImage.getTransformByName("thumbnail").url))
+                    @shared.hostImageCircle(box.userImage)
                     <h2>@box.fullName</h2>
                     <hr>
                     <p class="location">@box.location</p>
-                    @shared.grade(inputId = "host-grade", initialValue = 1, disabled = true, size = "xxs")
+                    @shared.grade(inputId = "host-grade", initialValue = box.userRating, disabled = true, size = "xxs")
                     <div class="host-level-icon level-guest01" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
                 </div>
-            </a>
-        </div>
+            </div>
+        </a>
     }
 }

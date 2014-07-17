@@ -3,6 +3,7 @@ package controllers
 import play.api.mvc._
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
+import java.util.UUID
 
 @SpringController
 class HostController extends Controller {
@@ -25,4 +26,7 @@ class HostController extends Controller {
     Ok(views.html.host.index(menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX))
   }
 
+  def indexHost(objectId: UUID) = Action { implicit request =>
+    Ok(views.html.host.index(menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX))
+  }
 }

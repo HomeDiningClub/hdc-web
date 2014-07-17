@@ -2,15 +2,16 @@ package models.viewmodels
 
 import models.files.ContentFile
 import models.rating.RatingUserCredential
+import java.util.UUID
 
-// Used on the startpage, collects profile information and userinformation
+// Used on the Start page, collects profile information and user information
 case class StartPageBox (
-    id: Option[Int],
+    objectId: Option[UUID],
     linkToProfile: String,
     fullName: String,
     location: String,
     mainBody: Option[String],
-    mainImage: ContentFile,
-    userImage: ContentFile,
-    userRating: RatingUserCredential
+    mainImage: String,
+    userImage: String,
+    userRating: Int
 )
