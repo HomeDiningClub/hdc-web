@@ -1,9 +1,9 @@
 @(menuItems: Seq[(String, String, Call, String)], quicklinkItems: Seq[(String, String, Call, String, String)])
 <header>
-    <div class="navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="row-fluid no-gutter header-container">
-                <div class="col-xs-12 col-md-10 col-md-offset-1 col-xs-offset-0">
+    <div class="navbar-fixed-top header-navbar">
+        <div class="container">
+            <div class="row no-gutter header-container">
+                <div class="col-xs-12">
                     <a href="@routes.StartPageController.index()">@shared.img("images/general/logo-horizontal.png", alt = Messages("header.logo.alt"), cssClass = "logo-img img-responsive")</a>
                     <div class="quicklinks">
                         <ul class="nav nav-pills">
@@ -52,18 +52,21 @@
                 </div>
             </div>
 
-            <div class="row-fluid header-navigation">
-                <nav>
-                    <div class="col-xs-12 col-md-10 col-md-offset-1 col-xs-offset-0">
-                        <ul class="nav nav-pills nav-main-menu collapse bs-navbar-collapse">
+        </div>
+        <div class="nav-main-menu-wrapper">
+            <div class="container">
+                <div class="row header-navigation">
+                    <nav>
+                        <div class="col-xs-12">
+                            <ul class="nav nav-pills nav-main-menu collapse bs-navbar-collapse">
                             @for(nav <- menuItems) {
                                 <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
                             }
-                        </ul>
-                    </div>
-                </nav>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
             </div>
-
         </div>
         <div class="food-image-nav"><!-- no content --></div>
     </div>

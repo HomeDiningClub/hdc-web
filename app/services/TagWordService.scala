@@ -46,7 +46,7 @@ class TagWordService {
   }
 
   @Transactional(readOnly = true)
-  def listByGroupMange(groupName: String): Option[List[TagWord]] = {
+  def listByGroupOption(groupName: String): Option[List[TagWord]] = {
     tagWordRepository.findByTagGroupName(groupName).asScala.toList match {
       case null => None
       case tags => Some(tags)

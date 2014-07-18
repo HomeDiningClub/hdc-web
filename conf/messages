@@ -39,8 +39,8 @@ startpage.main.cta.text=Bli medlem idag!
 startpage.main.cta.link.text=Registrera dig
 
 startpage.filterform.freetext=Fritext
-startpage.filterform.area=Område
-startpage.filterform.foodarea=Mattyp
+startpage.filterform.area=Välj län
+startpage.filterform.foodarea=Välj typ av mat
 startpage.filterform.submit=Filtrera
 
 aboutus.title=Om oss

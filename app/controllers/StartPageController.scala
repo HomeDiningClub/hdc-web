@@ -11,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import services.{TagWordService, UserProfileService}
 import models.UserProfile
 import models.rating.RatingUserCredential
+import views.html.helper.{select, options}
+import models.profile.TagWord
+import play.api.i18n.Messages
+import scala.collection.mutable
 
 
 @SpringController
@@ -23,24 +27,54 @@ class StartPageController extends Controller with SecureSocial {
   var tagWordService : TagWordService = _
 
   // Search startpage form
-//  val searchStartPageForm = Form(
-//    mapping(
-//      "freeText" -> optional(text),
-//      "area" -> Seq[(String, String)],
-//      "foodArea" -> Seq[(String, String)]
-//    )(SearchStartPageForm.apply _)(SearchStartPageForm.unapply _)
-//  )
+  val searchStartPageForm = Form(
+    mapping(
+      //"freeText" -> optional(text),
+      "area" -> optional(text),
+      "foodArea" -> optional(text)
+    )(SearchStartPageForm.apply _)(SearchStartPageForm.unapply _)
+  )
 
   def filterProfiles = Action { implicit request =>
-    Ok(views.html.startpage.index())
-    //Ok(views.html.startpage.index(searchStartPageForm))
+    Ok(views.html.startpage.index(
+      searchForm = searchStartPageForm,
+      optionsFoodAreas = getFoodAreas,
+      optionsLocationAreas = None,
+      startPageBoxes = getStartPageBoxes))
   }
 
   def index = UserAwareAction { implicit request =>
+    Ok(views.html.startpage.index(
+      searchForm = searchStartPageForm,
+      optionsFoodAreas = getFoodAreas,
+      optionsLocationAreas = None,
+      startPageBoxes = getStartPageBoxes))
+  }
 
 
+  private def getFoodAreas: Option[Seq[(String,String)]] = {
+    val foodTags: Option[Seq[(String,String)]] = tagWordService.listByGroupOption("profile") match {
+      case Some(listOfTags) =>
+        var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
 
+        // Prepend the fist selection
+        bufferList += (("", Messages("startpage.filterform.foodarea")))
 
+        // Map and add the rest
+        listOfTags.sortBy(tw => tw.tagName).toBuffer.map {
+          tag: TagWord =>
+            bufferList += ((tag.objectId.toString, tag.tagName))
+        }
+
+        Some(bufferList.toSeq)
+      case None =>
+        None
+    }
+
+    foodTags
+  }
+
+  private def getStartPageBoxes: Option[List[StartPageBox]] = {
     val startPageBoxes: List[StartPageBox] = userProfileService.getAllUserProfile.map {
       userProfile: UserProfile =>
         StartPageBox(
@@ -54,10 +88,9 @@ class StartPageController extends Controller with SecureSocial {
           userRating = 5)
     }
 
-    if(!startPageBoxes.isEmpty)
-      Ok(views.html.startpage.index(startPageBoxes))
+    if(startPageBoxes.isEmpty)
+      None
     else
-      Ok(views.html.startpage.index())
+      Some(startPageBoxes)
   }
-
 }

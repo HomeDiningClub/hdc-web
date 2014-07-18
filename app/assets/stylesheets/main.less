@@ -268,7 +268,7 @@ input[type="reset"]:hover
 .banner img
 {
   max-width:240px;
-  min-width:240px;
+  width:100%
 }
 .banner .banner-header
 {
@@ -379,12 +379,13 @@ input[type="reset"]:hover
 .header-container
 {
   z-index:300;
-  background-image: url("/assets/images/general/bg-header.png");
-  background-repeat: repeat-x;
-  box-shadow: 0 0 10px 0px #aaa;
-  background-color: @header-background-color;
   padding-top: 4px;
   height:111px;
+}
+.header-navbar {
+  background-image: url("/assets/images/general/bg-header.png");
+  background-repeat: repeat-x;
+  background-color: @header-background-color;
 }
 .header-spacing
 {
@@ -441,12 +442,15 @@ input[type="reset"]:hover
 // Header - Main navigation
 .header-navigation
 {
+}
+.nav-main-menu-wrapper {
   position: relative;
+  box-shadow: 0 0 10px 0px #aaa;
+  background-image: url("/assets/images/general/bg-menu-gray-transparent.png");
+  background-repeat: repeat-x;
   z-index:300;
   max-height: 37px;
   height: 37px;
-  background-image: url("/assets/images/general/bg-menu-gray-transparent.png");
-  background-repeat: repeat-x;
 }
 .nav-main-menu
 {
@@ -637,6 +641,7 @@ input[type="reset"]:hover
 // Startpage Boxes
 .panel-startpage
 {
+  position: relative;
   display: inline-block;
   overflow: visible;
   border:1px solid #eee;
@@ -644,7 +649,8 @@ input[type="reset"]:hover
   background-color: @hdc-light-gray;
   background-repeat: no-repeat;
   background-size: 100%;
-  padding-top: 160px;
+  padding: 160px 0px 0px 0px;
+  width:100%;
 }
 .panel-startpage:nth-child(4n)
 {
@@ -676,7 +682,7 @@ input[type="reset"]:hover
 .panel-startpage .host-image
 {
   position: absolute;
-  right:-12px;
+  right:-16px;
   top:70px;
   display: inline-block;
   overflow: hidden;
@@ -685,7 +691,7 @@ input[type="reset"]:hover
 {
   background-color: @hdc-light-gray;
   padding:15px 5px 0px 10px;
-  margin-right:70px;
+  padding-right:70px;
   z-index:50;
 }
 .panel-startpage h2
@@ -741,6 +747,10 @@ input[type="reset"]:hover
   margin-top:5px;
 }
 
+// Startpage - Form filter
+.form-startpage-filter .form-actions{
+  padding-top:16px;
+}
 
 // Campaign
 .newsletter #mc_embed_signup
@@ -861,6 +871,13 @@ input[type="reset"]:hover
 }
 
 
+
+
+
+
+
+
+
 // Responsive
 /* Large devices (large desktops, 1200px and up) */
 @media screen and (min-width: 1200px) {
@@ -934,10 +951,18 @@ input[type="reset"]:hover
   {
     display: none;
   }
-  .nav-main-menu
-  {
-    height:auto;
+  .nav-main-menu {
     margin-top:15px;
+    margin-bottom:15px;
+  }
+  .nav-main-menu-wrapper
+  {
+    background-color: #fff;
+    max-height:none;
+    height:auto;
+    overflow: hidden;
+    /*margin-top:15px;*/
+    background-image: none;
   }
   .collapse
   {
