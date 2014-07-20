@@ -15,4 +15,7 @@ trait  UserProfileRepository extends GraphRepository[UserProfile] {
   @Query("start up=node:UserProfile(identity={0}) return up")
   def getUserProfilesByIdentityId(identityId: IdentityId ): UserProfile
 */
+
+  def findByKeyIdentity(keyIdentity : String) : UserProfile
+
 }
