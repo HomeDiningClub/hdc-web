@@ -8,13 +8,14 @@ import play.api.data.Forms._
 import models.viewmodels.{StartPageBox, SearchStartPageForm}
 import securesocial.core.SecureSocial
 import org.springframework.beans.factory.annotation.Autowired
-import services.{TagWordService, UserProfileService}
+import services.{CountyService, TagWordService, UserProfileService}
 import models.UserProfile
 import models.rating.RatingUserCredential
 import views.html.helper.{select, options}
 import models.profile.TagWord
 import play.api.i18n.Messages
 import scala.collection.mutable
+import models.location.County
 
 
 @SpringController
@@ -25,6 +26,10 @@ class StartPageController extends Controller with SecureSocial {
 
   @Autowired
   var tagWordService : TagWordService = _
+
+  @Autowired
+  var countyService : CountyService = _
+
 
   // Search startpage form
   val searchStartPageForm = Form(
@@ -39,7 +44,7 @@ class StartPageController extends Controller with SecureSocial {
     Ok(views.html.startpage.index(
       searchForm = searchStartPageForm,
       optionsFoodAreas = getFoodAreas,
-      optionsLocationAreas = None,
+      optionsLocationAreas = getCounties,
       startPageBoxes = getStartPageBoxes))
   }
 
@@ -47,7 +52,7 @@ class StartPageController extends Controller with SecureSocial {
     Ok(views.html.startpage.index(
       searchForm = searchStartPageForm,
       optionsFoodAreas = getFoodAreas,
-      optionsLocationAreas = None,
+      optionsLocationAreas = getCounties,
       startPageBoxes = getStartPageBoxes))
   }
 
@@ -73,6 +78,30 @@ class StartPageController extends Controller with SecureSocial {
 
     foodTags
   }
+
+  private def getCounties: Option[Seq[(String,String)]] = {
+    val counties: Option[Seq[(String,String)]] = countyService.getListOfAll match {
+      case Some(counties) =>
+        var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
+
+        // Prepend the fist selection
+        bufferList += (("", Messages("startpage.filterform.counties")))
+
+        // Map and add the rest
+        counties.sortBy(tw => tw.countyName).toBuffer.map {
+          item: County =>
+            bufferList += ((item.objectId.toString, item.countyName))
+        }
+
+        Some(bufferList.toSeq)
+      case None =>
+        None
+    }
+
+    counties
+  }
+
+
 
   private def getStartPageBoxes: Option[List[StartPageBox]] = {
     val startPageBoxes: List[StartPageBox] = userProfileService.getAllUserProfile.map {

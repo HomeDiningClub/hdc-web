@@ -94,9 +94,9 @@
                     @helper.form(action=routes.StartPageController.filterProfiles(), 'class -> "form-horizontal"){
                         <div class="form-group">
                             @* @helper.inputText(searchForm("freeText"), '_label -> Messages("startpage.filterform.freetext")) *@
-                            @if(!optionsFoodAreas.isEmpty){ <div class="col-xs-4"> @helper.select(searchForm("foodArea"), optionsFoodAreas.get, '_label -> Messages("startpage.filterform.foodarea"), 'class -> "form-control") </div>}
-                            @if(!optionsLocationAreas.isEmpty){ <div class="col-xs-4"> @helper.select(searchForm("area"), optionsLocationAreas.get, '_label -> Messages("startpage.filterform.area"), 'class -> "form-control") </div> }
-                            <div class="col-xs-4 form-actions"><button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button></div>
+                            @if(!optionsFoodAreas.isEmpty){ <div class="col-xs-12 col-sm-4"> @helper.select(searchForm("foodArea"), optionsFoodAreas.get, '_label -> Messages("startpage.filterform.foodarea"), 'class -> "form-control") </div>}
+                            @if(!optionsLocationAreas.isEmpty){ <div class="col-xs-12 col-sm-4"> @helper.select(searchForm("area"), optionsLocationAreas.get, '_label -> Messages("startpage.filterform.area"), 'class -> "form-control") </div> }
+                            <div class="col-xs-12 col-sm-4 form-actions"><button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button></div>
                         </div>
                         }
                     </div>

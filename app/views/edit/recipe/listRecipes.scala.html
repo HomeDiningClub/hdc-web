@@ -1,11 +1,11 @@
 @(recipeList: List[models.Recipe])
 
-@mainedit(Messages("edit.content.title")){
+@mainedit(Messages("edit.title")){
 
     <div class="row">
         <div class="col-xs-12">
         <h1 class="page-header">@Messages("edit.recipe.list.header")</h1>
-        <p><a href="@routes.RecipeController.addRecipe()" class="btn-primary">@Messages("edit.recipe.actions.add")</a></p>
+        <p><a href="@routes.RecipeController.addRecipe()" class="btn-primary">@Messages("edit.actions.add")</a></p>
 
         <table class="table table-striped table-hover table-bordered">
             <thead>
@@ -21,8 +21,8 @@
                     <td>@recipe.name</td>
                     <td>
                         <ul class="nav nav-pills">
-                            <li><a href="@routes.RecipeController.edit(recipe.objectId)"><span class="glyphicon glyphicon-edit"></span>&nbsp;@Messages("edit.recipe.actions.edit")</a></li>
-                            <li><a href="@routes.RecipeController.delete(recipe.objectId)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("edit.recipe.actions.delete")</a></li>
+                            <li><a href="@routes.RecipeController.edit(recipe.objectId)"><span class="glyphicon glyphicon-edit"></span>&nbsp;@Messages("edit.actions.edit")</a></li>
+                            <li><a href="@routes.RecipeController.delete(recipe.objectId)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("edit.actions.delete")</a></li>
                         </ul>
                     </td>
                 </tr>

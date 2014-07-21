@@ -1,11 +1,11 @@
 @(contentList: List[models.content.ContentPage])
 
-@mainedit(Messages("edit.content.title")){
+@mainedit(Messages("edit.title")){
 
     <div class="row">
         <div class="col-xs-12">
         <h1 class="page-header">@Messages("edit.content.list.header")</h1>
-        <p><a href="@routes.ContentController.addContentPage()" class="btn-primary">@Messages("edit.content.actions.add")</a></p>
+        <p><a href="@routes.ContentController.addContentPage()" class="btn-primary">@Messages("edit.actions.add")</a></p>
 
         <table class="table table-striped table-hover table-bordered">
             <thead>
@@ -24,8 +24,8 @@
                     <td>@contentPage.name</td>
                     <td>
                         <ul class="nav nav-pills">
-                            <li><a href="@routes.ContentController.editContentPage(contentPage.objectId)"><span class="glyphicon glyphicon-edit"></span>&nbsp;@Messages("edit.content.actions.edit")</a></li>
-                            <li><a href="@routes.ContentController.deleteContentPage(contentPage.objectId)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("edit.content.actions.delete")</a></li>
+                            <li><a href="@routes.ContentController.editContentPage(contentPage.objectId)"><span class="glyphicon glyphicon-edit"></span>&nbsp;@Messages("edit.actions.edit")</a></li>
+                            <li><a href="@routes.ContentController.deleteContentPage(contentPage.objectId)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("edit.actions.delete")</a></li>
                         </ul>
                     </td>
                 </tr>

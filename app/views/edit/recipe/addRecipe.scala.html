@@ -1,7 +1,7 @@
 @(recipeForm: Form[models.viewmodels.RecipeForm])(implicit flash: Flash)
 @import helper.twitterBootstrap._
 
-@mainedit(Messages("edit.content.title")){
+@mainedit(Messages("edit.title")){
 
     <div class="row">
         <div class="col-xs-12">
@@ -17,8 +17,8 @@
                     @helper.textarea(recipeForm("recipebody"), '_label -> Messages("edit.recipe.add.body"), 'class -> "tinymce")
                 </fieldset>
                 <div class="form-actions">
-                    <button class="btn btn-primary" type="submit">@Messages("edit.recipe.add.save")</button>
-                    <a class="btn" href="@routes.ContentController.indexContentPages()">@Messages("edit.recipe.add.abort")</a>
+                    <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>
+                    <a class="btn" href="@routes.ContentController.indexContentPages()">@Messages("edit.add.abort")</a>
                 </div>
             }
         </div>

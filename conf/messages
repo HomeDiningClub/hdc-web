@@ -41,6 +41,7 @@ startpage.main.cta.link.text=Registrera dig
 startpage.filterform.freetext=Fritext
 startpage.filterform.area=Välj län
 startpage.filterform.foodarea=Välj typ av mat
+startpage.filterform.counties=Välj län
 startpage.filterform.submit=Filtrera
 
 aboutus.title=Om oss
@@ -94,7 +95,7 @@ contact.body2=body
 like.text=Jag tycker om
 
 # Content - Edit
-edit.content.title=Home Dining Club
+edit.content.title=Home Dining Club - Admin mode
 edit.title=Administration
 
 edit.success=Lyckades!
@@ -102,24 +103,35 @@ edit.error=Fel!
 edit.warning=Varning!
 edit.info=Information!
 
-
 edit.menu.title=HDC - Admin
 edit.menu.pages=Sidor
 edit.menu.recipe=Recept
 edit.menu.users=Användare
 edit.menu.files=Filer
+edit.menu.county=Län
 edit.menu.backtosite=Tillbaka till hemsidan
 
 edit.index.title=Det här är redigeringsläget
 edit.index.body=Redigera loss, men ta det försiktigt, då det inte finns några säkerhetsspärrar, och ingen "ångra".
 
+edit.actions.add=Lägg till
+edit.actions.list=Visa alla
+edit.actions.edit=Redigera
+edit.actions.delete=Ta bort
+edit.add.save=Skapa
+edit.add.abort=Avbryt
+edit.add.success=Sparad: {0} (id:{1})
+edit.add.error=Kunde inte spara.
+edit.delete.success=Borttagen (id:{0})
+edit.delete.error=Kunde inte ta bort, något gick fel.
+
+edit.content.index.header=Sidfunktioner
 edit.content.list.header=Lista av sidor
 edit.content.list.created_date=Skapades datum
 edit.content.list.name=Namn
 edit.content.list.route=Sökväg
 edit.content.list.action=Funktioner
-
-edit.content.index.header=Sidfunktioner
+edit.content.add.header=Lägg till ny sida
 edit.content.add.name=Namn
 edit.content.add.name.validation=(Tvingande, max längd 255)
 edit.content.add.route=Sökväg (exempel: my-page)
@@ -128,18 +140,24 @@ edit.content.add.title=Titel
 edit.content.add.preamble=Ingress
 edit.content.add.body=Huvudtext
 edit.content.add.status=Status
-edit.content.add.save=Skapa sida
-edit.content.add.abort=Avbryt
-edit.content.add.success=Sidan sparad: {0} (id:{1})
-edit.content.add.error=Kunde inte spara sidan.
 
-edit.content.delete.success=Sidan borttagen (id:{0})
-edit.content.delete.error=Kunda inte radera sidan.
+edit.recipe.add.header=Lägg till recept
+edit.recipe.add.name=Namn
+edit.recipe.add.mainimage=Huvudbild
+edit.recipe.add.image=Bild
+edit.recipe.add.body=Huvudtext
+edit.recipe.add.name.validation=(Tvingande, max längd 255)
+edit.recipe.list.header=Lista av recept
+edit.recipe.list.name=Namn
+edit.recipe.list.action=Funktioner
 
-edit.content.actions.add=Lägg till ny sida
-edit.content.actions.list=Visa alla sidor
-edit.content.actions.edit=Redigera sida
-edit.content.actions.delete=Ta bort sida
+edit.county.index.header=Län
+edit.county.add.header=Lägg till nytt län
+edit.county.add.name=Namn
+edit.county.add.name.validation=(Tvingande, max längd 255)
+edit.county.list.header=Lista av län
+edit.county.list.name=Namn
+edit.county.list.action=Funktioner
 
 
 

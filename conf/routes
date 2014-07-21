@@ -40,6 +40,14 @@ POST        /edit/recipe/add                           @controllers.RecipeContro
 GET         /edit/recipe/edit/:objectId                @controllers.RecipeController.edit(objectId: java.util.UUID)
 GET         /edit/recipe/delete/:objectId              @controllers.RecipeController.delete(objectId: java.util.UUID)
 
+# EDIT - County
+GET         /edit/county                               @controllers.CountyController.indexCounty
+GET         /edit/county/list                          @controllers.CountyController.listCounty
+GET         /edit/county/add                           @controllers.CountyController.addCounty
+POST        /edit/county/add                           @controllers.CountyController.addCountySubmit
+GET         /edit/county/edit/:objectId                @controllers.CountyController.edit(objectId: java.util.UUID)
+GET         /edit/county/delete/:objectId              @controllers.CountyController.delete(objectId: java.util.UUID)
+
 
 
 # Map static resources from the /public folder to the /assets URL path

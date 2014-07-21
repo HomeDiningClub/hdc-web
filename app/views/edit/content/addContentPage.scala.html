@@ -1,7 +1,7 @@
 @(contentForm: Form[models.viewmodels.AddContentForm])(implicit flash: Flash)
 @import helper.twitterBootstrap._
 
-@mainedit(Messages("edit.content.title")){
+@mainedit(Messages("edit.title")){
 
     <div class="row">
         <div class="col-xs-12">
@@ -15,8 +15,8 @@
                     @helper.textarea(contentForm("pagebody"), '_label -> Messages("edit.content.add.body"), 'class -> "tinymce")
                 </fieldset>
                 <div class="form-actions">
-                    <button class="btn btn-primary" type="submit">@Messages("edit.content.add.save")</button>
-                    <a class="btn" href="@routes.ContentController.indexContentPages()">@Messages("edit.content.add.abort")</a>
+                    <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>
+                    <a class="btn" href="@routes.ContentController.indexContentPages()">@Messages("edit.add.abort")</a>
                 </div>
             }
 

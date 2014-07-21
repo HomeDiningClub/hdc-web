@@ -19,7 +19,6 @@ import java.util.UUID
 @SpringController
 class RecipeController extends Controller with SecureSocial {
 
-
   @Autowired
   private var recipeService: RecipeService = _
 
@@ -30,10 +29,13 @@ class RecipeController extends Controller with SecureSocial {
     Ok(views.html.recipe.recipe()(request))
   }
 
+
+
+
   // Edit - Listing
   def listRecipes = SecuredAction { implicit request =>
     val listOfPage: List[Recipe] = recipeService.getListOfAll
-    Ok(views.html.edit.listRecipes(listOfPage))
+    Ok(views.html.edit.recipe.listRecipes(listOfPage))
   }
 
   // Edit - Add Content
@@ -46,19 +48,19 @@ class RecipeController extends Controller with SecureSocial {
   )
 
   def indexRecipe() = SecuredAction { implicit request =>
-    Ok(views.html.edit.indexRecipes())
+    Ok(views.html.edit.recipe.indexRecipes())
   }
 
   def addRecipe() = SecuredAction { implicit request =>
-    Ok(views.html.edit.addRecipe(contentForm))
+    Ok(views.html.edit.recipe.addRecipe(contentForm))
   }
 
   def addRecipeSubmit() = SecuredAction(parse.multipartFormData) { implicit request =>
 
     contentForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.content.add.error")
-        BadRequest(views.html.edit.addRecipe(contentForm)).flashing(FlashMsgConstants.Error -> errorMessage)
+        val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
+        BadRequest(views.html.edit.recipe.addRecipe(contentForm)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
         var newRec = new Recipe(contentData.name)
@@ -77,8 +79,8 @@ class RecipeController extends Controller with SecureSocial {
           case Some(content) => newRec.mainBody = content
           case None =>
         }
-        val savedContentPage = recipeService.add(newRec)
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.recipe.add.success", savedContentPage.name, savedContentPage.objectId.toString)
+        val saved = recipeService.add(newRec)
+        val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
         Redirect(controllers.routes.RecipeController.indexRecipe()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
@@ -88,7 +90,7 @@ class RecipeController extends Controller with SecureSocial {
 
   // Edit - Edit content
   def edit(objectId: UUID) = SecuredAction { implicit request =>
-    Ok(views.html.edit.indexContentPages())
+    Ok(views.html.edit.recipe.indexRecipes())
   }
 
   // Edit - Delete content
@@ -97,10 +99,10 @@ class RecipeController extends Controller with SecureSocial {
 
     result match {
       case true =>
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.recipe.delete.success", objectId.toString)
+        val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
         Redirect(controllers.routes.RecipeController.indexRecipe()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.recipe.delete.error")
+        val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
         Redirect(controllers.routes.RecipeController.indexRecipe()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
