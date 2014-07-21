@@ -5,9 +5,10 @@ package controllers
 import models.profile.{TagWord, TaggedUserProfile}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
+import securesocial.core.SecureSocial
 
 import services.UserProfileService
-import models.UserProfile
+import models.{UserCredential, UserProfile}
 import models.formdata.UserProfile
 
 import services.TagWordService
@@ -23,7 +24,7 @@ import scala.collection.mutable.ListBuffer
 
 
 @SpringController
-class UserProfileController  extends Controller{
+class UserProfileController  extends Controller  with SecureSocial {
 
   @Autowired
   var userProfileService: UserProfileService = _
@@ -120,9 +121,16 @@ def createTags = Action { implicit request =>
 
 
 
-def skapavy = Action { implicit request =>
+def skapavy = SecuredAction { implicit request =>
 
-
+  println("=============================================================")
+  println("calling : skapavy ")
+  println("=============================================================")
+ // println("UserId: " + request.user.asInstanceOf[UserCredential].userId)
+ // println("ProviderId: " + request.user.asInstanceOf[UserCredential].providerId)
+  println("objectId: " + request.user.asInstanceOf[UserCredential].objectId)
+ // println("Email : " + request.user.email)
+  println("=============================================================")
   println("##### skapa vy #######")
 
   // show profile
