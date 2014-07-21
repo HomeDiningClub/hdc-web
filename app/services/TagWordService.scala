@@ -1,7 +1,6 @@
 package services
 
-import _root_.java.util
-
+import _root_.java.util.UUID
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,11 +38,19 @@ class TagWordService {
   }
 
   @Transactional(readOnly = true)
-  def listAll(): List[TagWord] = {
-   // val listOfTags: List[TagWord] = IteratorUtil.asCollection(tagWordRepository.findAll()).asScala.toList
-   val listOfTags: List[TagWord] = IteratorUtil.asCollection(tagWordRepository.findAll()).asScala.toList
+  def listAll(): Option[List[TagWord]] = {
+    val listOfTags: Option[List[TagWord]] = IteratorUtil.asCollection(tagWordRepository.findAll()).asScala.toList match {
+      case null => None
+      case tags => Some(tags)
+    }
     listOfTags
   }
+
+  @Transactional(readOnly = true)
+  def findById(objectId: UUID): TagWord = {
+    tagWordRepository.findByobjectId(objectId)
+  }
+
 
   @Transactional(readOnly = true)
   def listByGroupOption(groupName: String): Option[List[TagWord]] = {
@@ -53,11 +60,13 @@ class TagWordService {
     }
   }
 
-  @Transactional(readOnly = true)
-  def listByGroup(groupName: String): List[TagWord] = {
-
-   listAll().filter(t=>t.tagGroupName.equalsIgnoreCase(groupName))
-  }
+//  @Transactional(readOnly = true)
+//  def listByGroup(groupName: String): Option[List[TagWord]] = {
+//   listAll() match {
+//     case null => None
+//     case tags: List[TagWord] => Some(tags.filter(t: TagWord => t.tagGroupName.equalsIgnoreCase(groupName)))
+//    }
+//  }
 
   @Transactional(readOnly = true)
   def listByGroup2(groupName: String): List[TagWord] = {
@@ -65,6 +74,17 @@ class TagWordService {
     tagWordRepository.findAllBySchemaPropertyValue("searchGroup", groupName).asScala.toList
     // template.lookup("search","tagGroupName:profile").asScala.toList
     //tagWordRepository.findByGruoupName("profile").toList
+  }
+
+  @Transactional(readOnly = false)
+  def deleteById(objectId: UUID): Boolean = {
+    val item = this.findById(objectId)
+    if(item != null)
+    {
+      tagWordRepository.delete(item)
+      return true
+    }
+    false
   }
 
 

@@ -1,0 +1,13 @@
+@()(implicit flash: Flash)
+
+@mainedit(Messages("edit.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("edit.tagword.index.header")</h1>
+            <p><a href="@routes.TagWordController.add()" class="btn-primary">@Messages("edit.actions.add")</a></p>
+            <p><a href="@routes.TagWordController.list()" class="btn-primary">@Messages("edit.actions.list")</a></p>
+        </div>
+    </div>
+
+}

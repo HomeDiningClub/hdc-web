@@ -109,6 +109,7 @@ edit.menu.recipe=Recept
 edit.menu.users=Användare
 edit.menu.files=Filer
 edit.menu.county=Län
+edit.menu.tagword=Taggar
 edit.menu.backtosite=Tillbaka till hemsidan
 
 edit.index.title=Det här är redigeringsläget
@@ -159,6 +160,16 @@ edit.county.list.header=Lista av län
 edit.county.list.name=Namn
 edit.county.list.action=Funktioner
 
+edit.tagword.index.header=Taggar
+edit.tagword.add.header=Lägg till ny tagg
+edit.tagword.add.name=Namn
+edit.tagword.add.name.validation=(Tvingande, max längd 255)
+edit.tagword.add.groupname=Tagg-grupp
+edit.tagword.add.groupname.validation=(Tvingande, max längd 255, små bokstäver)
+edit.tagword.list.header=Lista av taggar
+edit.tagword.list.name=Namn
+edit.tagword.list.groupname=Tagg-grupp
+edit.tagword.list.action=Funktioner
 
 
 campaign.title=Anmäl dig till vår maillista

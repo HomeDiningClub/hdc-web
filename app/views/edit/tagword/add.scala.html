@@ -1,0 +1,22 @@
+@(countyForm: Form[models.viewmodels.TagWordForm])(implicit flash: Flash)
+@import helper.twitterBootstrap._
+
+@mainedit(Messages("edit.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("edit.tagword.add.header")</h1>
+            @helper.form(action=routes.TagWordController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
+                <fieldset>
+                    @helper.inputText(countyForm("tagwordname"), '_label -> Messages("edit.tagword.add.name"), '_help -> Messages("edit.tagword.add.name.validation"))
+                    @helper.inputText(countyForm("tagwordgroupname"), '_label -> Messages("edit.tagword.add.groupname"), '_help -> Messages("edit.tagword.add.groupname.validation"))
+                </fieldset>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>
+                    <a class="btn" href="@routes.TagWordController.index()">@Messages("edit.add.abort")</a>
+                </div>
+            }
+        </div>
+    </div>
+
+}

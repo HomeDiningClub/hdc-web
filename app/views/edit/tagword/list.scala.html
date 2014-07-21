@@ -1,0 +1,39 @@
+@(list: Option[List[models.profile.TagWord]])
+
+@mainedit(Messages("edit.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+        <h1 class="page-header">@Messages("edit.tagword.list.header")</h1>
+        <p><a href="@routes.TagWordController.add()" class="btn-primary">@Messages("edit.actions.add")</a></p>
+
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>@Messages("edit.tagword.list.name")</th>
+                    <th>@Messages("edit.tagword.list.groupname")</th>
+                    <th>@Messages("edit.tagword.list.action")</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if(list.isDefined){
+                    @for(item: models.profile.TagWord <- list.get) {
+                        <tr>
+                            <td>@item.tagName</td>
+                            <td>@item.tagGroupName</td>
+                            <td>
+                                <ul class="nav nav-pills">
+                                    <li><a href="@routes.TagWordController.edit(item.objectId)"><span class="glyphicon glyphicon-edit"></span> &nbsp; @Messages("edit.actions.edit")</a></li>
+                                    <li><a href="@routes.TagWordController.delete(item.objectId)"><span class="glyphicon glyphicon-trash"></span> &nbsp; @Messages("edit.actions.delete")</a></li>
+                                </ul>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+}

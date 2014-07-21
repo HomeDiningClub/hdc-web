@@ -2,7 +2,7 @@ package controllers
 
 // http://www.playframework.com/documentation/2.2.x/ScalaForms
 
-import models.profile.TaggedUserProfile
+import models.profile.{TagWord, TaggedUserProfile}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 
@@ -69,11 +69,11 @@ def createTags = Action { implicit request =>
 
 
   // create userPrifile
-  var u : models.UserProfile = new models.UserProfile
+  var u: models.UserProfile = new models.UserProfile
   u.aboutMe = "test"
 
   println("start ....")
-//  userProfileService.saveUserProfile(u)
+  //  userProfileService.saveUserProfile(u)
 
 
   tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "test")
@@ -83,7 +83,7 @@ def createTags = Action { implicit request =>
   tagWordService.createTag("Asiatiskt", "Asiatiskt", "quality[3]", "profile")
   tagWordService.createTag("Svensk husman", "Svensk husman", "quality[4]", "profile")
   tagWordService.createTag("Mellanöstern", "Mellanöstern", "quality[5]", "profile")
-  tagWordService.createTag( "Vegetarisk", "Vegetarisk", "quality[6]", "profile")
+  tagWordService.createTag("Vegetarisk", "Vegetarisk", "quality[6]", "profile")
   tagWordService.createTag("RAW-food", "RAW-food", "quality[7]", "profile")
   tagWordService.createTag("LCHF", "LCHF", "quality[8]", "profile")
   tagWordService.createTag("Koscher", "Koscher", "quality[9]", "profile")
@@ -99,24 +99,19 @@ def createTags = Action { implicit request =>
   tagWordService.createTag("Bakverk", "Bakverk", "quality[19]", "profile")
 
 
-//var lista = tagWordService.listAll()
-var lista = tagWordService.listByGroup("profile")
-  var v : StringBuilder = new StringBuilder
+  val lista = tagWordService.listByGroupOption("profile")
+  var v: StringBuilder = new StringBuilder
 
 
-
-
-
-
-  for( a <- lista) {
-    v.append("\n")
-
-    v.append(a.tagName)
-    v.append(", ")
-    v.append(a.tagId)
-    v.append(", ")
-    v.append(a.orderId)
-
+  if(lista.isDefined){
+    for (a <- lista.get) {
+      v.append("\n")
+      v.append(a.tagName)
+      v.append(", ")
+      v.append(a.tagId)
+      v.append(", ")
+      v.append(a.orderId)
+    }
   }
 
 
@@ -162,15 +157,17 @@ if(userTags != null) {
 }
 
   // Fetch all tags
-  var d = tagWordService.listByGroup("profile")
+  var d = tagWordService.listByGroupOption("profile")
 
   var l : Long = 0
   var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
-  for(theTag <- d) {
-    var newType : models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l+"]" )
-    l = l + 1
-    println(theTag.tagName)
-    tagList.add(newType)
+  if(d.isDefined){
+    for(theTag <- d.get) {
+      var newType : models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l+"]" )
+      l = l + 1
+      println(theTag.tagName)
+      tagList.add(newType)
+    }
   }
 
 
@@ -265,15 +262,17 @@ def taemot = Action { implicit request =>
       theUser.removeAllTags()
 
       // Fetch all tags
-      var d = tagWordService.listByGroup("profile")
+      var d = tagWordService.listByGroupOption("profile")
 
-      for(theTag <- d ) {
-        var value = map.getOrElse(theTag.tagName, "empty")
+      if(d.isDefined){
+        for(theTag <- d.get) {
+          var value = map.getOrElse(theTag.tagName, "empty")
 
-        if(!value.equals("empty")) {
-          theUser.tag(theTag)
+          if(!value.equals("empty")) {
+            theUser.tag(theTag)
+          }
+
         }
-
       }
 
       //userProfileService.saveUserProfile(theUser)
@@ -440,7 +439,7 @@ def taemot = Action { implicit request =>
    //user.providerId = "test"
 
     var userList = userProfileService.getAllUserProfiles
-    var tagList = tagWordService.listAll()
+    //var tagList = tagWordService.listAll()
 
     if (userList.size > 0) {
 

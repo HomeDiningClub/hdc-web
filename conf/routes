@@ -48,6 +48,14 @@ POST        /edit/county/add                           @controllers.CountyContro
 GET         /edit/county/edit/:objectId                @controllers.CountyController.edit(objectId: java.util.UUID)
 GET         /edit/county/delete/:objectId              @controllers.CountyController.delete(objectId: java.util.UUID)
 
+# EDIT - TagWords
+GET         /edit/tagword                               @controllers.TagWordController.index
+GET         /edit/tagword/list                          @controllers.TagWordController.list
+GET         /edit/tagword/add                           @controllers.TagWordController.add
+POST        /edit/tagword/add                           @controllers.TagWordController.addSubmit
+GET         /edit/tagword/edit/:objectId                @controllers.TagWordController.edit(objectId: java.util.UUID)
+GET         /edit/tagword/delete/:objectId              @controllers.TagWordController.delete(objectId: java.util.UUID)
+
 
 
 # Map static resources from the /public folder to the /assets URL path
