@@ -123,6 +123,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
       var up: UserProfile = new UserProfile()
       up.providerIdentity = user.identityId.providerId
+      up.fistName = user.firstName
+      up.lastName = user.lastName
       up.userIdentity = user.identityId.userId
       up.keyIdentity = user.identityId.userId + "_" + user.identityId.providerId
 

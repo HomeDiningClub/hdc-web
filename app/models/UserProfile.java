@@ -36,6 +36,11 @@ public class UserProfile extends AbstractEntity {
     public String providerId = "";
 */
 
+
+    public String fistName = "";
+
+    public String lastName = "";
+
     public String userIdentity = "";
 
     public String providerIdentity = "";
