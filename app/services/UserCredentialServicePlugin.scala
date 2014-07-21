@@ -17,6 +17,9 @@ package services
 
 import _root_.java.util.UUID
 import models.{UserCredential, UserProfileData}
+import models.UserProfile
+import repositories.UserProfileRepository
+
 import repositories.UserCredentialRepository
 
 import scala.collection.mutable.ListBuffer
@@ -51,6 +54,9 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
   private var tokens = Map[String, Token]()
   var users = Map[String, Identity]()
+
+
+
 
 
   /** *
@@ -101,6 +107,30 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     * @return
     */
   def save(user: Identity): Identity = {
+
+    var service = new services.UserProfileService()
+
+   println("userId : " + user.identityId.userId)
+    println("ProviderId : " + user.identityId.providerId)
+
+    var userProfile : Option[UserProfile] = service.findUserProfileByUserId(user)
+
+
+
+    if(userProfile == None) {
+
+      println("Hittade inte : " + user.identityId.userId)
+
+      var up: UserProfile = new UserProfile()
+      up.providerIdentity = user.identityId.providerId
+      up.userIdentity = user.identityId.userId
+      up.keyIdentity = user.identityId.userId + "_" + user.identityId.providerId
+
+      service.saveUserProfile(up)
+    } else {
+      println("Key id: " +  userProfile.getOrElse(new UserProfile).keyIdentity)
+    }
+
     val userCredential : UserCredential = UserCredentialService.socialUser2UserCredential(user)
     val userCredential2 = createOrUpdateUser(userCredential)
     userCredential2

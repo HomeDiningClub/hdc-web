@@ -73,7 +73,7 @@ def createTags = Action { implicit request =>
   u.aboutMe = "test"
 
   println("start ....")
-  userProfileService.saveUserProfile(u)
+//  userProfileService.saveUserProfile(u)
 
 
   tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "test")
@@ -276,7 +276,7 @@ def taemot = Action { implicit request =>
 
       }
 
-      userProfileService.saveUserProfile(theUser)
+      //userProfileService.saveUserProfile(theUser)
 
     Ok("OK")
 }
