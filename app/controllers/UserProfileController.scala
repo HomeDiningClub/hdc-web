@@ -289,15 +289,9 @@ def taemot = SecuredAction { implicit request =>
   println("userId : " + request.user.identityId.userId)
   println("ProviderId : " + request.user.identityId.providerId)
 
+  // Fetch the user by userid and providerid
   var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
 
-
-
-  /*
-  for(theUser <- up) {
-    println("ID2 : " + theUser.id)
-  }
-  */
 
 
       theUser.get.removeAllTags()
@@ -306,14 +300,19 @@ def taemot = SecuredAction { implicit request =>
       var d = tagWordService.listByGroupOption("profile")
 
       if(d.isDefined){
+
+        // Loop all available tags
         for(theTag <- d.get) {
           var value = map.getOrElse(theTag.tagName, "empty")
 
           if(!value.equals("empty")) {
+
+            // If the the user have tagged the particial chooice tag it
             theUser.get.tag(theTag)
           }
 
-        }
+        } // end loop
+
       }
 
       //userProfileService.saveUserProfile(theUser)
