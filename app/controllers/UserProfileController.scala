@@ -136,6 +136,7 @@ def skapavy = SecuredAction { implicit request =>
   val provider = request.user.identityId.providerId
   val user = request.user.identityId.userId
 
+ println("session: " + session.toString())
 
 
   println("*****************************************")
@@ -174,6 +175,14 @@ def skapavy = SecuredAction { implicit request =>
 
   // Pre selected
   val typ = new models.Types
+
+if(theUser.getOrElse("tom") == "tom"){
+  println("tom")
+  println("skriv : " + request.user.authMethod.method)
+  Ok("tom : " + request.request.headers.keys + ", Agent :  " + request.headers.get("User-Agent") )
+}
+else {
+
 
 var userTags = theUser.get.getTags
 
@@ -233,7 +242,7 @@ if(userTags != null) {
   val nyForm =  AnvandareForm.fill(eData)
   Ok(views.html.profile.skapa(nyForm, tagList.toList, typ))
 
-
+}
 }
 
 

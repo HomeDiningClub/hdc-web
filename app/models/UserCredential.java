@@ -114,12 +114,12 @@ public class UserCredential extends AbstractEntity implements Identity {
 
     @Override
     public String firstName() {
-        return firstName;
+        return this.firstName;
     }
 
     @Override
     public String lastName() {
-        return lastName;
+        return this.lastName;
     }
 
     @Override

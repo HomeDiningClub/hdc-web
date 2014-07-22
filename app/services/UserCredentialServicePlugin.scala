@@ -67,16 +67,35 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     */
   def find(id: IdentityId): Option[UserCredential] = {
 
+
+    println("***********************************************")
+    println("calling find method : ")
+    println("userid:  " +  id.userId)
+    println("providerid:  " +  id.providerId)
+    println("***********************************************")
     // check databaseId and true/false
     val exitsUser = exists(id.userId, id.providerId)
     // Fetch user
     val uc : UserCredential = getuser(id.userId, id.providerId)
 
+    println("id: " + exitsUser._1)
+
+    println("uc : >" + uc.email().toString())
+
+    println("uc->FirstName : " + uc.firstName())
+    println("uc->UserId : " + uc.identityId().userId)
+    println("uc->ProviderId : " + uc.identityId().providerId)
+    println("uc->Exits : "+ exitsUser._2)
+
+
+
     if(exitsUser._2 == true){
       //val returnUser = UserCredentialService.userCredential2socialUser(uc)
+      println("OK : userid" + uc.firstName() + uc.identityId())
       return Some(uc)
     }
 
+    println("Not ok")
     None
   }
 
@@ -91,6 +110,12 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     val uc : UserCredential = getuser(email, providerId)
     val exitsUser = exists(email, providerId)
+
+    println("uc->FirstName : " + uc.firstName())
+    println("uc->UserId : " + uc.identityId().userId)
+    println("uc->ProviderId : " + uc.identityId().providerId)
+    println("uc->Exits : "+ exitsUser._2)
+
 
     if(exitsUser._2 == true){
       //val returnUser = UserCredentialService.userCredential2socialUser(uc)
@@ -190,8 +215,13 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     var userCredential : UserCredential = new UserCredential()
     val list = getUserById(userId).filter(p=>p.providerId.equalsIgnoreCase(providerId))
 
+    println("Number of userids : " +list.size)
+
     if(list.size > 0) {
       userCredential = list.head
+      println("FirstName : " + userCredential.firstName())
+      println("UserId : " + userCredential.identityId().userId)
+      println("ProviderId : " + userCredential.identityId().providerId)
     }
 
     userCredential
