@@ -127,6 +127,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       up.lastName = user.lastName
       up.userIdentity = user.identityId.userId
       up.keyIdentity = user.identityId.userId + "_" + user.identityId.providerId
+      up.email = user.email.getOrElse("Not available")
 
       service.saveUserProfile(up)
     } else {

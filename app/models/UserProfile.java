@@ -45,6 +45,9 @@ public class UserProfile extends AbstractEntity {
 
     public String providerIdentity = "";
 
+    public String email = "";
+
+
     // Userid + "_" + providerId
     @Indexed(indexType = IndexType.LABEL)
     public String keyIdentity = "";
