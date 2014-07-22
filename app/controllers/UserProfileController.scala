@@ -8,7 +8,7 @@ import org.springframework.stereotype.{Controller => SpringController}
 import securesocial.core.SecureSocial
 
 import services.UserProfileService
-import models.{UserCredential, UserProfile}
+import models.{UserProfile, UserCredential}
 import models.formdata.UserProfile
 
 import services.TagWordService
@@ -133,6 +133,17 @@ def skapavy = SecuredAction { implicit request =>
   println("=============================================================")
   println("##### skapa vy #######")
 
+  val provider = request.user.identityId.providerId
+  val user = request.user.identityId.userId
+
+
+
+  println("*****************************************")
+  if(user.length > 0) {
+    println("UserName : " + user + "_" + provider)
+  }
+  println("*****************************************")
+
   // show profile
 
   // 1. Get the correct profile
@@ -140,21 +151,31 @@ def skapavy = SecuredAction { implicit request =>
   // 2. Load the tags
 
 
-  var up = userProfileService.getAllUserProfile
- var theUser : models.UserProfile  = up.iterator.next()
+
+
+  // var up = userProfileService.getAllUserProfile
+ //var theUser : models.UserProfile  = up.iterator.next()
+
+
+  var service = new services.UserProfileService()
+
+  println("userId : " + request.user.identityId.userId)
+  println("ProviderId : " + request.user.identityId.providerId)
+
+  var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
 
 /*
   for(theUser <- up) {
     println("ID : " + theUser.id)
   }
 */
- println("theuser : " + theUser.objectId + ", about = "+ theUser.aboutMe)
+ //println("theuser : " + theUser.objectId + ", about = "+ theUser.aboutMe)
 
 
   // Pre selected
   val typ = new models.Types
 
-var userTags = theUser.getTags
+var userTags = theUser.get.getTags
 
 if(userTags != null) {
   var itterTags = userTags.iterator()
@@ -216,7 +237,9 @@ if(userTags != null) {
 }
 
 
-def taemot = Action { implicit request =>
+def taemot = SecuredAction { implicit request =>
+
+  println("************************ save profile *********************************************")
 
       // Fetch user
 
@@ -250,24 +273,34 @@ def taemot = Action { implicit request =>
 
             println("Do, antal : " + anvadare.quality.size)
             for(d <- anvadare.quality) {
-                println("v : " + d)
+                println("VALD  : " + d)
                 map += (d->d)
+
             }
 
 
         })
 
-      var up = userProfileService.getAllUserProfile
-      var theUser : models.UserProfile = up.iterator.next()
+//      var up = userProfileService.getAllUserProfile
+//      var theUser : models.UserProfile = up.iterator.next()
 
-      /*
-      for(theUser <- up) {
-        println("ID2 : " + theUser.id)
-      }
-      */
+  var service = new services.UserProfileService()
+
+  println("userId : " + request.user.identityId.userId)
+  println("ProviderId : " + request.user.identityId.providerId)
+
+  var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
 
 
-      theUser.removeAllTags()
+
+  /*
+  for(theUser <- up) {
+    println("ID2 : " + theUser.id)
+  }
+  */
+
+
+      theUser.get.removeAllTags()
 
       // Fetch all tags
       var d = tagWordService.listByGroupOption("profile")
@@ -277,7 +310,7 @@ def taemot = Action { implicit request =>
           var value = map.getOrElse(theTag.tagName, "empty")
 
           if(!value.equals("empty")) {
-            theUser.tag(theTag)
+            theUser.get.tag(theTag)
           }
 
         }
