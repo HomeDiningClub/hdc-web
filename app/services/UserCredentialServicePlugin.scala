@@ -264,16 +264,16 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
   /**
    * Get one UserCredential search on email and provider (facebook, gmail, ...)
-   * @param emailAddress
+   * @param userId
    * @param providerId
    * @return
    */
   @Transactional(readOnly = true)
-  def getuser(emailAddress: String, providerId: String) :  UserCredential =  {
+  def getuser(userId: String, providerId: String) :  UserCredential =  {
 
     var userCredential : UserCredential = new UserCredential()
    // var list = getUser(emailAddress).filter(p=>p.providerId.equalsIgnoreCase(providerId))
-    var list = getUsers().filter(p=>p.providerId.equalsIgnoreCase(providerId)).filter(s=>s.userId.equalsIgnoreCase(emailAddress))
+    var list = getUsers().filter(p=>p.providerId.equalsIgnoreCase(providerId)).filter(s=>s.userId.equalsIgnoreCase(userId))
     // test
 
 
