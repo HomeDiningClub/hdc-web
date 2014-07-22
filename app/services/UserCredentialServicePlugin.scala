@@ -18,7 +18,10 @@ package services
 import _root_.java.util.UUID
 import models.{UserCredential, UserProfileData}
 import models.UserProfile
+import org.neo4j.helpers.collection.IteratorUtil
 import repositories.UserProfileRepository
+
+import scala.collection.JavaConverters._
 
 import repositories.UserCredentialRepository
 
@@ -76,9 +79,13 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     // check databaseId and true/false
     val exitsUser = exists(id.userId, id.providerId)
     // Fetch user
-    val uc : UserCredential = getuser(id.userId, id.providerId)
 
-    println("id: " + exitsUser._1)
+    println("call getuser ")
+    var uc  = getuser(id.userId, id.providerId)
+
+    println("finns 1: " + exitsUser._1)
+    println("finns 2: " + exitsUser._2)
+    println("finns 3: " + exitsUser._3)
 
     println("uc : >" + uc.email().toString())
 
@@ -265,10 +272,15 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   def getuser(emailAddress: String, providerId: String) :  UserCredential =  {
 
     var userCredential : UserCredential = new UserCredential()
-    var list = getUser(emailAddress).filter(p=>p.providerId.equalsIgnoreCase(providerId))
+   // var list = getUser(emailAddress).filter(p=>p.providerId.equalsIgnoreCase(providerId))
+    var list = getUsers().filter(p=>p.providerId.equalsIgnoreCase(providerId)).filter(s=>s.userId.equalsIgnoreCase(emailAddress))
+    // test
+
+
 
    if(list.size > 0) {
      userCredential = list.head
+     println("User (in) : " + userCredential.firstName())
    }
 
     userCredential
@@ -305,7 +317,15 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     list.toList
   }
 
+  @Transactional(readOnly = true)
+  def getUsers() :  List[UserCredential] =  {
+    val list : ListBuffer[UserCredential] = new ListBuffer[UserCredential]()
+    var userCredentialIndex: Index[Node] = UserCredentialService.template.getIndex(classOf[UserCredential], "emailAddress")
 
+
+    IteratorUtil.asCollection(UserCredentialService.userCredentialRepository.findAll()).asScala.toList
+
+   }
 
 
 
