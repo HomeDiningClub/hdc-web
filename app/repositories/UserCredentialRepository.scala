@@ -14,6 +14,12 @@ trait UserCredentialRepository extends GraphRepository[UserCredential]
   // Auto-mapped by Spring
   def findByobjectId(objectId: UUID): UserCredential
 
+  //def findByuserIdAndproviderId(userId : String, providerId: String) : UserCredential
+
+  def findByuserId(userId : String) : UserCredential
+
+  def findByuserId(userId : String, providerId: String) : UserCredential
+
   @Query("start up=node:UserCredential(email={0}) return up")
   def getUserCredentials(email: String ): Array[UserCredential]
 

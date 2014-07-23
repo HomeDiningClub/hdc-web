@@ -70,39 +70,19 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     */
   def find(id: IdentityId): Option[UserCredential] = {
 
-
-    println("***********************************************")
-    println("calling find method : ")
-    println("userid:  " +  id.userId)
-    println("providerid:  " +  id.providerId)
-    println("***********************************************")
     // check databaseId and true/false
     val exitsUser = exists(id.userId, id.providerId)
+
     // Fetch user
-
-    println("call getuser ")
-    var uc  = getuser(id.userId, id.providerId)
-
-    println("finns 1: " + exitsUser._1)
-    println("finns 2: " + exitsUser._2)
-    println("finns 3: " + exitsUser._3)
-
-    println("uc : >" + uc.email().toString())
-
-    println("uc->FirstName : " + uc.firstName())
-    println("uc->UserId : " + uc.identityId().userId)
-    println("uc->ProviderId : " + uc.identityId().providerId)
-    println("uc->Exits : "+ exitsUser._2)
-
+    //var uc  = getuser(id.userId, id.providerId)
+    // var uc = findByEmailAndProvider(id.userId, id.providerId)
+    var uc =  findByUserIdAndProviderId(id.userId, id.providerId)
 
 
     if(exitsUser._2 == true){
-      //val returnUser = UserCredentialService.userCredential2socialUser(uc)
-      println("OK : userid" + uc.firstName() + uc.identityId())
       return Some(uc)
     }
 
-    println("Not ok")
     None
   }
 
@@ -118,19 +98,17 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     val uc : UserCredential = getuser(email, providerId)
     val exitsUser = exists(email, providerId)
 
-    println("uc->FirstName : " + uc.firstName())
-    println("uc->UserId : " + uc.identityId().userId)
-    println("uc->ProviderId : " + uc.identityId().providerId)
-    println("uc->Exits : "+ exitsUser._2)
-
 
     if(exitsUser._2 == true){
-      //val returnUser = UserCredentialService.userCredential2socialUser(uc)
+
       return Some(uc)
 
     }
+
     None
   }
+
+
 
 
   /** *
@@ -140,36 +118,35 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     */
   def save(user: Identity): Identity = {
 
+    // UserProfileService object
     var service = new services.UserProfileService()
 
-   println("userId : " + user.identityId.userId)
-    println("ProviderId : " + user.identityId.providerId)
-
+    // Look up UserProfile
     var userProfile : Option[UserProfile] = service.findUserProfileByUserId(user)
-
 
 
     if(userProfile == None) {
 
-      println("Hittade inte : " + user.identityId.userId)
-
+      // if not UserProfile exits create one
       var up: UserProfile = new UserProfile()
       up.providerIdentity = user.identityId.providerId
       up.fistName = user.firstName
       up.lastName = user.lastName
       up.userIdentity = user.identityId.userId
       up.keyIdentity = user.identityId.userId + "_" + user.identityId.providerId
-      up.email = user.email.getOrElse("Not available")
+      up.email = user.email.getOrElse("")
 
       service.saveUserProfile(up)
     } else {
-      println("Key id: " +  userProfile.getOrElse(new UserProfile).keyIdentity)
+      // UserProfile allready exits do notthing
     }
 
     val userCredential : UserCredential = UserCredentialService.socialUser2UserCredential(user)
     val userCredential2 = createOrUpdateUser(userCredential)
     userCredential2
   }
+
+
 
 
   /**
@@ -285,6 +262,21 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     userCredential
   }
+
+  @Transactional(readOnly = true)
+  def findByUserIdAndProviderId(userId: String, providerId: String) :  UserCredential =  {
+
+    var userCredential : UserCredential = new UserCredential()
+    // var list = getUser(emailAddress).filter(p=>p.providerId.equalsIgnoreCase(providerId))
+    // var list = getUsers().filter(p=>p.providerId.equalsIgnoreCase(providerId)).filter(s=>s.userId.equalsIgnoreCase(userId))
+
+    //UserCredentialService.userCredentialRepository.findByuserIdAndproviderId(userId, providerId)
+    //var user = UserCredentialService.userCredentialRepository.findByuserId(userId)
+    var user = UserCredentialService.userCredentialRepository.findByuserId(userId,providerId)
+
+     return user
+  }
+
 
 
 
