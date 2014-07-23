@@ -272,8 +272,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     //UserCredentialService.userCredentialRepository.findByuserIdAndproviderId(userId, providerId)
     //var user = UserCredentialService.userCredentialRepository.findByuserId(userId)
-    var user = UserCredentialService.userCredentialRepository.findByuserId(userId,providerId)
-
+    //var user = UserCredentialService.userCredentialRepository.findByuserId(userId,providerId)
+    var user = UserCredentialService.userCredentialRepository.findByuserIdAndProviderId(userId,providerId)
      return user
   }
 

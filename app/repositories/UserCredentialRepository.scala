@@ -16,6 +16,8 @@ trait UserCredentialRepository extends GraphRepository[UserCredential]
 
   //def findByuserIdAndproviderId(userId : String, providerId: String) : UserCredential
 
+  def findByuserIdAndProviderId(userId : String, providerId: String) : UserCredential
+
   def findByuserId(userId : String) : UserCredential
 
   def findByuserId(userId : String, providerId: String) : UserCredential
