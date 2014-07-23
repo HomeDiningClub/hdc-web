@@ -71,7 +71,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   def find(id: IdentityId): Option[UserCredential] = {
 
     // check databaseId and true/false
-    val exitsUser = exists(id.userId, id.providerId)
+    val existsUser = exists(id.userId, id.providerId)
 
     // Fetch user
     //var uc  = getuser(id.userId, id.providerId)
@@ -79,7 +79,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     var uc =  findByUserIdAndProviderId(id.userId, id.providerId)
 
 
-    if(exitsUser._2 == true){
+    if(existsUser._2){
       return Some(uc)
     }
 
@@ -95,13 +95,13 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    */
   def findByEmailAndProvider(email: String, providerId: String): Option[UserCredential] = {
 
-    val uc : UserCredential = getuser(email, providerId)
+    val uc : Option[UserCredential] = Some(getUserByEmailAndProvider(email, providerId))
     val exitsUser = exists(email, providerId)
 
 
     if(exitsUser._2 == true){
 
-      return Some(uc)
+      return uc
 
     }
 
@@ -155,10 +155,11 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    * @param providerId
    * @return id in Neo4j database and if the user exits true else false
    */
+
   @Transactional(readOnly = true)
   def exists(userId: String, providerId: String) :  (UUID, Boolean, Long) = {
 
-    var user = getUserById(userId, providerId)
+    var user = findByUserIdAndProviderId(userId, providerId)
     var finns : Boolean = false
     var idNo  : UUID    = null
     var graphId : Long = -1L
@@ -188,11 +189,13 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   }
 
 
+
   /***
   * Return the UserCredentials with the userId and providerId by
   * first fetching on userid and filter out the right providerid
   * assures that it is online one answer
   */
+  /*
   @Transactional(readOnly = true)
   def getUserById(userId: String, providerId: String) :  UserCredential = {
 
@@ -210,11 +213,12 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     userCredential
   }
-
+*/
 
   /***
    * Get the credetials for one userid
    */
+  /*
   @Transactional(readOnly = true)
   def getUserById(userId: String) :  List[UserCredential] =  {
 
@@ -236,87 +240,34 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     list.toList
   }
-
+*/
 
 
   /**
-   * Get one UserCredential search on email and provider (facebook, gmail, ...)
-   * @param userId
-   * @param providerId
-   * @return
+   * Fetch an UserCredential by searching on userId and providerId
+   * @param userId id for the Authentication the user
+   * @param providerId the service used to authenticate the user
+   * @return UserCredential information to be able to authenticate the user
    */
-  @Transactional(readOnly = true)
-  def getuser(userId: String, providerId: String) :  UserCredential =  {
-
-    var userCredential : UserCredential = new UserCredential()
-   // var list = getUser(emailAddress).filter(p=>p.providerId.equalsIgnoreCase(providerId))
-    var list = getUsers().filter(p=>p.providerId.equalsIgnoreCase(providerId)).filter(s=>s.userId.equalsIgnoreCase(userId))
-    // test
-
-
-
-   if(list.size > 0) {
-     userCredential = list.head
-     println("User (in) : " + userCredential.firstName())
-   }
-
-    userCredential
-  }
-
   @Transactional(readOnly = true)
   def findByUserIdAndProviderId(userId: String, providerId: String) :  UserCredential =  {
-
-    var userCredential : UserCredential = new UserCredential()
-    // var list = getUser(emailAddress).filter(p=>p.providerId.equalsIgnoreCase(providerId))
-    // var list = getUsers().filter(p=>p.providerId.equalsIgnoreCase(providerId)).filter(s=>s.userId.equalsIgnoreCase(userId))
-
-    //UserCredentialService.userCredentialRepository.findByuserIdAndproviderId(userId, providerId)
-    //var user = UserCredentialService.userCredentialRepository.findByuserId(userId)
-    //var user = UserCredentialService.userCredentialRepository.findByuserId(userId,providerId)
     var user = UserCredentialService.userCredentialRepository.findByuserIdAndProviderId(userId,providerId)
-     return user
+    return user
   }
 
-
-
-
-
-  /**
-   * Get all list of UserCredential for
-   * 1. Username and password
-   * 2. Facebook
-   * 3. Google
-   *
-   * @param emailAddress
-   * @return
-   */
+  // Fetch user by emailAddress and providerId
   @Transactional(readOnly = true)
-  def getUser(emailAddress: String) :  List[UserCredential] =  {
-    val list : ListBuffer[UserCredential] = new ListBuffer[UserCredential]()
-    var userCredentialIndex: Index[Node] = UserCredentialService.template.getIndex(classOf[UserCredential], "emailAddress")
-    var hits = userCredentialIndex.query("emailAddress", emailAddress)
-
-    var nods = hits.iterator()
-    var id : Long = 0
-    while(nods.hasNext) {
-      id = nods.next().getId
-      var node : UserCredential = new UserCredential()
-      node = UserCredentialService.userCredentialRepository.findOne(id)
-
-      list += node
-    }
-
-    list.toList
+  def getUserByEmailAndProvider(emailAddress: String, providerId: String) :  UserCredential =  {
+    var user = UserCredentialService.userCredentialRepository.findByemailAddressAndProviderId(emailAddress, providerId)
+    return user
   }
 
+
+  // List alla users
   @Transactional(readOnly = true)
   def getUsers() :  List[UserCredential] =  {
-    val list : ListBuffer[UserCredential] = new ListBuffer[UserCredential]()
-    var userCredentialIndex: Index[Node] = UserCredentialService.template.getIndex(classOf[UserCredential], "emailAddress")
-
 
     IteratorUtil.asCollection(UserCredentialService.userCredentialRepository.findAll()).asScala.toList
-
    }
 
 
