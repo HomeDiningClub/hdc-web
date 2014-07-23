@@ -164,7 +164,12 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     var idNo  : UUID    = null
     var graphId : Long = -1L
 
-    if(userId == null || providerId == null) {
+    if(user == null) {
+      finns = false
+      idNo = null
+      graphId = -1L
+    }
+    else if(userId == null || providerId == null) {
       finns = false
       idNo = null
       graphId = -1L
