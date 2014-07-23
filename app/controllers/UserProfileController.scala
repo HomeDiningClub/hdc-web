@@ -121,6 +121,7 @@ def createTags = Action { implicit request =>
 
 
 
+// display profile
 def skapavy = SecuredAction { implicit request =>
 
   println("=============================================================")
@@ -238,7 +239,7 @@ if(userTags != null) {
 
   //Ok("OK")
 
-  val eData : EnvData = new EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
+  val eData : EnvData = new EnvData("user",List("adam","bertil", "cesar"), List("adam", "bertil"))
   val nyForm =  AnvandareForm.fill(eData)
   Ok(views.html.profile.skapa(nyForm, tagList.toList, typ))
 
@@ -246,6 +247,9 @@ if(userTags != null) {
 }
 
 
+
+
+// Save profile
 def taemot = SecuredAction { implicit request =>
 
   println("************************ save profile *********************************************")
