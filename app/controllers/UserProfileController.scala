@@ -341,7 +341,8 @@ def taemot = SecuredAction { implicit request =>
 
       userProfileService.saveUserProfile(theUser.get)
 
-    Ok("Sparad")
+    //Ok("Sparad")
+     Redirect("/prodata/visa")
 }
 
 
