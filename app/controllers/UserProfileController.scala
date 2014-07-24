@@ -199,6 +199,7 @@ if(userTags != null) {
   // Fetch all tags
   var d = tagWordService.listByGroupOption("profile")
 
+
   var l : Long = 0
   var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
   if(d.isDefined){
@@ -208,6 +209,18 @@ if(userTags != null) {
       println(theTag.tagName)
       tagList.add(newType)
     }
+  }
+
+
+  // member
+  var memberList = tagWordService.listByGroupOption("member")
+
+  if(memberList.isDefined) {
+    for(theMemberStatus <- memberList.get) {
+      println("Member status" + theMemberStatus.orderId + ", " + theMemberStatus.tagName)
+    }
+
+
   }
 
 
