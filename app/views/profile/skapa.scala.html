@@ -16,14 +16,11 @@ Profil
 
  <br>
 
-    Beskrivning:
-   <textarea rows="10" cols="100" name="aboutme" id="aboutme">
-
-   </textarea>
 
 
-    @helper.inputText(EnvDataForm("description"),
-        'id -> "description",
+
+    @helper.textarea(EnvDataForm("aboutme"),
+        'id -> "aboutme",
         '_showErrors -> true,
         '_label -> "Beskrivning",
         '_help -> "Bskriv dig själv"

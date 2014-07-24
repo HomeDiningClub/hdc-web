@@ -55,7 +55,8 @@ class UserProfileController  extends Controller  with SecureSocial {
       mapping(
         "name" -> text,
         "emails" -> list(text),
-        "quality" -> list(text)
+        "quality" -> list(text),
+        "aboutme" -> text
       )
       (EnvData.apply) (EnvData.unapply)
     )
@@ -239,7 +240,9 @@ if(userTags != null) {
 
   //Ok("OK")
 
-  val eData : EnvData = new EnvData("user",List("adam","bertil", "cesar"), List("adam", "bertil"))
+  println("theuser and aboutme : " + theUser.get.aboutMe)
+
+  val eData : EnvData = new EnvData("user",List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.get.aboutMe)
   val nyForm =  AnvandareForm.fill(eData)
   Ok(views.html.profile.skapa(nyForm, tagList.toList, typ))
 
@@ -263,6 +266,7 @@ def taemot = SecuredAction { implicit request =>
       // add all new tags
 
       var map:Map[String,String] = Map()
+      var aboutMeText : String = ""
 
       AnvandareForm.bindFromRequest.fold(
         errors => {
@@ -278,6 +282,11 @@ def taemot = SecuredAction { implicit request =>
         anvadare => {
             // test
             println(anvadare.name)
+
+            println("About Me: " + anvadare.aboutme)
+          aboutMeText = anvadare.aboutme
+
+
             for(v <- anvadare.emails) {
                 println("v : " + v)
             }
@@ -306,6 +315,8 @@ def taemot = SecuredAction { implicit request =>
   var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
 
 
+     theUser.get.aboutMe = aboutMeText
+
 
       theUser.get.removeAllTags()
 
@@ -328,9 +339,9 @@ def taemot = SecuredAction { implicit request =>
 
       }
 
-      //userProfileService.saveUserProfile(theUser)
+      userProfileService.saveUserProfile(theUser.get)
 
-    Ok("OK")
+    Ok("Sparad")
 }
 
 
