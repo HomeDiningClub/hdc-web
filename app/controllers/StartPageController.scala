@@ -84,13 +84,13 @@ class StartPageController extends Controller with SecureSocial {
       case Some(counties) =>
         var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
 
-        // Prepend the fist selection
+        // Prepend the first selection
         bufferList += (("", Messages("startpage.filterform.counties")))
 
         // Map and add the rest
-        counties.sortBy(tw => tw.countyName).toBuffer.map {
+        counties.sortBy(tw => tw.name).toBuffer.map {
           item: County =>
-            bufferList += ((item.objectId.toString, item.countyName))
+            bufferList += ((item.objectId.toString, item.name))
         }
 
         Some(bufferList.toSeq)

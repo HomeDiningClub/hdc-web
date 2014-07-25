@@ -22,38 +22,42 @@ class CountyController extends Controller with SecureSocial {
 
 
   // Edit - Listing
-  def listCounty = SecuredAction { implicit request =>
+  def list = SecuredAction { implicit request =>
     val list: Option[List[County]] = countyService.getListOfAll
-    Ok(views.html.edit.county.listCounty(list))
+    Ok(views.html.edit.county.list(list))
   }
 
   // Edit - Add
   val countyForm = Form(
     mapping(
-      "countyname" -> nonEmptyText(minLength = 1, maxLength = 255)
+      "name" -> nonEmptyText(minLength = 1, maxLength = 255),
+      "order" -> optional(number)
     )(CountyForm.apply _)(CountyForm.unapply _)
   )
 
-  def indexCounty() = SecuredAction { implicit request =>
-    Ok(views.html.edit.county.indexCounty())
+  def index() = SecuredAction { implicit request =>
+    Ok(views.html.edit.county.index())
   }
 
-  def addCounty() = SecuredAction { implicit request =>
-    Ok(views.html.edit.county.addCounty(countyForm))
+  def add() = SecuredAction { implicit request =>
+    Ok(views.html.edit.county.add(countyForm))
   }
 
-  def addCountySubmit() = SecuredAction(parse.multipartFormData) { implicit request =>
+  def addSubmit() = SecuredAction(parse.multipartFormData) { implicit request =>
 
     countyForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
-        BadRequest(views.html.edit.county.addCounty(countyForm)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.edit.county.add(countyForm)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
-        val newRec = new County(contentData.countyName)
+        val newRec = contentData.order match {
+          case None => new County(contentData.name)
+          case Some(ordering) => new County(contentData.name, ordering)
+        }
         val saved = countyService.add(newRec)
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.countyName, saved.objectId.toString)
-        Redirect(controllers.routes.CountyController.indexCounty()).flashing(FlashMsgConstants.Success -> successMessage)
+        val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
+        Redirect(controllers.routes.CountyController.index()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -63,7 +67,7 @@ class CountyController extends Controller with SecureSocial {
 
   // Edit - Edit content
   def edit(objectId: UUID) = SecuredAction { implicit request =>
-    Ok(views.html.edit.county.indexCounty())
+    Ok(views.html.edit.county.index())
   }
 
   // Edit - Delete content
@@ -73,10 +77,10 @@ class CountyController extends Controller with SecureSocial {
     result match {
       case true =>
         val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
-        Redirect(controllers.routes.CountyController.indexCounty()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.CountyController.index()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
-        Redirect(controllers.routes.CountyController.indexCounty()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.routes.CountyController.index()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

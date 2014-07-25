@@ -3,6 +3,7 @@ package models;
 import models.base.AbstractEntity;
 import models.modelconstants.RelationshipTypesJava;
 import models.rating.RatingUserCredential;
+import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
 import org.springframework.data.neo4j.template.Neo4jOperations;
@@ -10,6 +11,7 @@ import play.libs.Scala;
 import scala.Option;
 import securesocial.core.*;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -71,9 +73,13 @@ public class UserCredential extends AbstractEntity implements Identity {
 
     public String salt = "";
 
+    // Authorization
+    @Fetch
+    @RelatedTo(type = RelationshipTypesJava.IN_ROLE.Constant, direction = Direction.OUTGOING)
+    public Set<UserRole> roles =  new HashSet<>();
+
     // Rating embryo,
     // Move to services
-
     @RelatedToVia(type = RelationshipTypesJava.RATED.Constant)
     @Fetch
     Set<RatingUserCredential> ratings;
@@ -95,6 +101,21 @@ public class UserCredential extends AbstractEntity implements Identity {
 
     public UserCredential() {
 
+    }
+
+    public UserCredential(String email, String providerId, Set<UserRole> roles) {
+        this.roles          = roles;
+        this.providerId     = providerId;
+        this.emailAddress   = email;
+    }
+
+    public UserCredential(String email, String providerId, UserRole role) {
+        HashSet<UserRole> rolesToAdd = new HashSet<>();
+        rolesToAdd.add(role);
+
+        this.roles          = rolesToAdd;
+        this.providerId     = providerId;
+        this.emailAddress   = email;
     }
 
     public UserCredential(String email, String providerId) {

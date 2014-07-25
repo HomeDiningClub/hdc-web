@@ -1,26 +1,49 @@
 package services
 
+import _root_.java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
-import repositories.UserCredentialRepository
-import models.UserCredential
+import repositories.{UserRoleRepository, UserCredentialRepository}
+import models.{UserRole, UserCredential}
 import securesocial.core._
+import scala.collection.JavaConverters._
 import scala.Some
 import scala.Some
 import securesocial.core.OAuth2Info
 import securesocial.core.OAuth1Info
 import securesocial.core.IdentityId
 import scala.Some
+import org.springframework.transaction.annotation.Transactional
+import enums.RoleEnums.RoleEnums
+
+//@Service
+//object UserCredentialService {
+//
+//  @Autowired
+//  var template: Neo4jTemplate = _
+//
+//  @Autowired
+//  var userCredentialRepository: UserCredentialRepository = _
+//
+//  @Autowired
+//  var userRoleRepository: UserRoleRepository = _
+//
+//
+//}
 
 @Service
-object UserCredentialService {
+class UserCredentialService {
 
   @Autowired
   var template: Neo4jTemplate = _
 
   @Autowired
   var userCredentialRepository: UserCredentialRepository = _
+
+  @Autowired
+  var userRoleRepository: UserRoleRepository = _
+
 
   // Från databasen till SecureSocial
   // IdentityId = userId + providerId
@@ -132,17 +155,55 @@ object UserCredentialService {
     userCredential
   }
 
-}
 
-@Service
-class UserCredentialService {
-
-    @Autowired
-    var template: Neo4jTemplate = _
-
-    @Autowired
-    var userCredentialRepository: UserCredentialRepository = _
+  @Transactional(readOnly = true)
+  def findById(objectId: UUID): UserCredential = {
+    userCredentialRepository.findByobjectId(objectId)
+  }
 
 
+  @Transactional(readOnly = false)
+  def addRole(user: UserCredential, role: RoleEnums): UserCredential = {
+
+    // Get the correct instance
+    val retItem = userRoleRepository.findByname(role.toString)
+    var checkedRole: Option[UserRole] = None
+
+    if(retItem.isInstanceOf[UserRole])
+      checkedRole = Some(retItem)
+
+
+    val hasRole = user.roles.iterator.asScala.find((r: UserRole) => r.name.equalsIgnoreCase(role.toString)) match {
+      case Some(foundRole) => true
+      case None => false
+    }
+
+    // Add
+    if(!hasRole)
+    {
+      checkedRole match {
+        case Some(r) => user.roles.add(r)
+        case None => None
+      }
+    }
+    user
+  }
+
+  @Transactional(readOnly = false)
+  def removeRole(user: UserCredential, role: RoleEnums): UserCredential = {
+
+    // Get the correct instance
+    val removeThisRole = user.roles.iterator.asScala.find((r: UserRole) => r.name.equalsIgnoreCase(role.toString)) match {
+      case Some(foundRole) => Some(foundRole)
+      case None => None
+    }
+
+    // Remove
+    removeThisRole match {
+      case Some(r) => user.roles.remove(r)
+      case None => None
+    }
+    user
+  }
 
 }

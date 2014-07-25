@@ -1,0 +1,13 @@
+@()(implicit flash: Flash)
+
+@mainedit(Messages("edit.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("edit.release.index.header")</h1>
+            <p><a href="@routes.ReleaseController.releaseRun()" class="btn-primary">@Messages("edit.release.actions.releaserun")</a></p>
+            <p><a href="@routes.ReleaseController.deleteAllFromDB()" class="btn-primary btn-danger">@Messages("edit.release.actions.deleteall")</a></p>
+        </div>
+    </div>
+
+}

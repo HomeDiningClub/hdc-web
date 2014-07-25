@@ -170,10 +170,13 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
 
 
+
+
+
   // Edit - Listing
-  def listContentPages = SecuredAction { implicit request =>
+  def list = SecuredAction { implicit request =>
     val listOfPage: List[ContentPage] = contentService.getListOfAllContentPages
-    Ok(views.html.edit.content.listContentPages(listOfPage))
+    Ok(views.html.edit.content.list(listOfPage))
   }
 
   // Edit - Add Content
@@ -188,20 +191,20 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
     )(AddContentForm.apply _)(AddContentForm.unapply _)
   )
 
-  def indexContentPages() = SecuredAction { implicit request =>
-    Ok(views.html.edit.content.indexContentPages())
+  def index() = SecuredAction { implicit request =>
+    Ok(views.html.edit.content.index())
   }
 
-  def addContentPage() = SecuredAction { implicit request =>
-    Ok(views.html.edit.content.addContentPage(contentForm))
+  def add() = SecuredAction { implicit request =>
+    Ok(views.html.edit.content.add(contentForm))
   }
 
-  def addContentPageSubmit() = SecuredAction { implicit request =>
+  def addSubmit() = SecuredAction { implicit request =>
 
     contentForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.content.add.error")
-        BadRequest(views.html.edit.content.addContentPage(contentForm)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.edit.content.add(contentForm)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
         var newContent = new ContentPage(contentData.name,contentData.route)
@@ -219,7 +222,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
         }
         val savedContentPage = contentService.addContentPage(newContent)
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", savedContentPage.name, savedContentPage.objectId.toString)
-        Redirect(controllers.routes.ContentController.indexContentPages()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.ContentController.index()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -227,21 +230,21 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
 
   // Edit - Edit content
-  def editContentPage(objectId: java.util.UUID) = SecuredAction { implicit request =>
-    Ok(views.html.edit.content.indexContentPages())
+  def edit(objectId: java.util.UUID) = SecuredAction { implicit request =>
+    Ok(views.html.edit.content.index())
   }
 
   // Edit - Delete content
-  def deleteContentPage(objectId: java.util.UUID) = SecuredAction { implicit request =>
+  def delete(objectId: java.util.UUID) = SecuredAction { implicit request =>
     val result: Boolean = contentService.deleteContentPageById(objectId)
 
     result match {
       case true =>
         val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
-        Redirect(controllers.routes.ContentController.indexContentPages()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.ContentController.index()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
-        Redirect(controllers.routes.ContentController.indexContentPages()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.routes.ContentController.index()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

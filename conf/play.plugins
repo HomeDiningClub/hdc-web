@@ -12,7 +12,7 @@
 #10003:securesocial.core.providers.LinkedInProvider
 10004:securesocial.core.providers.UsernamePasswordProvider
 #10005:securesocial.core.providers.GitHubProvider
-10006:services.MyEventListener
+10006:services.LoginEventListener
 #10007:securesocial.core.providers.XingProvider
 #10008:securesocial.core.providers.VkProvider
 #10009:securesocial.core.providers.InstagramProvider

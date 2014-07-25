@@ -28,6 +28,18 @@ class CountyService {
   }
 
   @Transactional(readOnly = true)
+  def createCounty(name: String, order: Int = 0, persist: Boolean): County = {
+    val newCounty = new County(name, order)
+
+    if (persist) {
+     val savedCounty = add(newCounty)
+      savedCounty
+    }
+    else
+      newCounty
+  }
+
+  @Transactional(readOnly = true)
   def getListOfAll: Option[List[County]] = {
     val listOfAll: List[County] = template.findAll(classOf[County]).iterator.asScala.toList
 

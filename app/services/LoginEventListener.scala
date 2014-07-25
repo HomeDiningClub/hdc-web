@@ -23,7 +23,7 @@ import play.api.{Application, Logger}
 /**
  * A sample event listener
  */
-class MyEventListener(app: Application) extends EventListener {
+class LoginEventListener(app: Application) extends EventListener {
   override def id: String = "my_event_listener"
 
   def onEvent(event: Event, request: RequestHeader, session: Session): Option[Session] = {

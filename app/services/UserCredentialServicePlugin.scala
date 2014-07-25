@@ -38,6 +38,7 @@ import play.api.{Logger, Application}
 import securesocial.core._
 import securesocial.core.providers.Token
 import securesocial.core.IdentityId
+import enums.RoleEnums
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import repositories.UserProfileRepository
@@ -57,9 +58,6 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
   private var tokens = Map[String, Token]()
   var users = Map[String, Identity]()
-
-
-
 
 
   /** *
@@ -118,12 +116,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     */
   def save(user: Identity): Identity = {
 
-    // UserProfileService object
-    var service = new services.UserProfileService()
-
     // Look up UserProfile
-    var userProfile : Option[UserProfile] = service.findUserProfileByUserId(user)
-
+    val userProfile : Option[UserProfile] = InstancedServices.userProfileService.findUserProfileByUserId(user)
 
     if(userProfile == None) {
 
@@ -136,12 +130,12 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       up.keyIdentity = user.identityId.userId + "_" + user.identityId.providerId
       up.email = user.email.getOrElse("")
 
-      service.saveUserProfile(up)
+      InstancedServices.userProfileService.saveUserProfile(up)
     } else {
       // UserProfile allready exits do notthing
     }
 
-    val userCredential : UserCredential = UserCredentialService.socialUser2UserCredential(user)
+    val userCredential : UserCredential = InstancedServices.userCredentialService.socialUser2UserCredential(user)
     val userCredential2 = createOrUpdateUser(userCredential)
     userCredential2
   }
@@ -220,7 +214,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     val list : ListBuffer[UserCredential] = new ListBuffer[UserCredential]()
 
-    var userCredentialIndex: Index[Node] = UserCredentialService.template.getIndex(classOf[UserCredential],"userId")
+    var userCredentialIndex: Index[Node] = InstancedServices.userCredentialService.template.getIndex(classOf[UserCredential],"userId")
     var hits = userCredentialIndex.query("userId", userId)
 
     var nods = hits.iterator()
@@ -230,7 +224,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
             id = nods.next().getId
             var node : UserCredential = new UserCredential()
             // Fetch by id
-            node = UserCredentialService.userCredentialRepository.findOne(id)
+            node = InstancedServices.userCredentialService.userCredentialRepository.findOne(id)
             list += node
       }
 
@@ -273,7 +267,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     //UserCredentialService.userCredentialRepository.findByuserIdAndproviderId(userId, providerId)
     //var user = UserCredentialService.userCredentialRepository.findByuserId(userId)
     //var user = UserCredentialService.userCredentialRepository.findByuserId(userId,providerId)
-    var user = UserCredentialService.userCredentialRepository.findByuserIdAndProviderId(userId,providerId)
+    var user = InstancedServices.userCredentialService.userCredentialRepository.findByuserIdAndProviderId(userId,providerId)
      return user
   }
 
@@ -293,7 +287,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   @Transactional(readOnly = true)
   def getUser(emailAddress: String) :  List[UserCredential] =  {
     val list : ListBuffer[UserCredential] = new ListBuffer[UserCredential]()
-    var userCredentialIndex: Index[Node] = UserCredentialService.template.getIndex(classOf[UserCredential], "emailAddress")
+    var userCredentialIndex: Index[Node] = InstancedServices.userCredentialService.template.getIndex(classOf[UserCredential], "emailAddress")
     var hits = userCredentialIndex.query("emailAddress", emailAddress)
 
     var nods = hits.iterator()
@@ -301,7 +295,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     while(nods.hasNext) {
       id = nods.next().getId
       var node : UserCredential = new UserCredential()
-      node = UserCredentialService.userCredentialRepository.findOne(id)
+      node = InstancedServices.userCredentialService.userCredentialRepository.findOne(id)
 
       list += node
     }
@@ -312,10 +306,10 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   @Transactional(readOnly = true)
   def getUsers() :  List[UserCredential] =  {
     val list : ListBuffer[UserCredential] = new ListBuffer[UserCredential]()
-    var userCredentialIndex: Index[Node] = UserCredentialService.template.getIndex(classOf[UserCredential], "emailAddress")
+    var userCredentialIndex: Index[Node] = InstancedServices.userCredentialService.template.getIndex(classOf[UserCredential], "emailAddress")
 
 
-    IteratorUtil.asCollection(UserCredentialService.userCredentialRepository.findAll()).asScala.toList
+    IteratorUtil.asCollection(InstancedServices.userCredentialService.userCredentialRepository.findAll()).asScala.toList
 
    }
 
@@ -352,6 +346,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     } else {
 
         println("create, email : " + userCredential.emailAddress)
+        // Add default group
+        InstancedServices.userCredentialService.addRole(userCredential, RoleEnums.USER)
         modUserCredential = saveUser(userCredential)
     }
 
@@ -372,7 +368,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    */
   @Transactional(readOnly = false)
   private def saveUser(userCredential: UserCredential): UserCredential = {
-    val modUser = UserCredentialService.userCredentialRepository.save(userCredential)
+    val modUser = InstancedServices.userCredentialService.userCredentialRepository.save(userCredential)
     modUser
   }
 

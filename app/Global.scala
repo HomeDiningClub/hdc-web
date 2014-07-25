@@ -28,11 +28,8 @@ class Global extends GlobalSettings {
    * @param app
    */
   override def onStart(app: Application) {
-    ctx.start()
-
-    //var foo : models.UserProfileData =  new models.UserProfileData()
-    //ctx.getAutowireCapableBeanFactory().autowireBean(foo)
-    //ctx.getAutowireCapableBeanFactory.autowireBeanProperties()
+    // Needed for embedded DB
+    //ctx.start()
   }
 
   /**
@@ -40,9 +37,11 @@ class Global extends GlobalSettings {
    * @param app
    */
   override def onStop(app: Application) {
-    val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate])
-    neoTemplate.getGraphDatabaseService.shutdown()
-    ctx.stop()
+    // Needed for embedded DB
+    //val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate])
+    //neoTemplate.getGraphDatabaseService.shutdown()
+    //ctx.stop()
+
     //ctx.close() - May or may not be needed
   }
 

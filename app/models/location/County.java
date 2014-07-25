@@ -16,11 +16,16 @@ import java.util.Set;
 @NodeEntity
 public class County extends ContentBase {
 
-    public String countyName;
+    public String name;
+    public int order;
 
-    public County(String countyName){
-        this.countyName = countyName;
+    public County(String name, Integer order){
+        this.name = name;
+        this.order = order;
     }
-
+    public County(String name){
+        this.name = name;
+        this.order = 0;
+    }
     private County(){}
 }

@@ -1,0 +1,22 @@
+@(countyForm: Form[models.viewmodels.CountyForm])(implicit flash: Flash)
+@import helper.twitterBootstrap._
+
+@mainedit(Messages("edit.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("edit.county.add.header")</h1>
+            @helper.form(action=routes.CountyController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
+                <fieldset>
+                    @helper.inputText(countyForm("name"), '_label -> Messages("edit.county.add.name"), '_help -> Messages("edit.county.add.name.validation"))
+                    @helper.inputText(countyForm("order"), '_label -> Messages("edit.county.add.order"), '_help -> Messages("edit.county.add.order.validation"))
+                </fieldset>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>
+                    <a class="btn" href="@routes.CountyController.index()">@Messages("edit.add.abort")</a>
+                </div>
+            }
+        </div>
+    </div>
+
+}

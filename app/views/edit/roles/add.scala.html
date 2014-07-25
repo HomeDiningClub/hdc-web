@@ -1,0 +1,21 @@
+@(userRoleForm: Form[models.viewmodels.UserRoleForm])(implicit flash: Flash)
+@import helper.twitterBootstrap._
+
+@mainedit(Messages("edit.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("edit.roles.add.header")</h1>
+            @helper.form(action=routes.UserRoleController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
+                <fieldset>
+                    @helper.inputText(userRoleForm("name"), '_label -> Messages("edit.roles.add.name"), '_help -> Messages("edit.roles.add.name.validation"))
+                </fieldset>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>
+                    <a class="btn" href="@routes.UserRoleController.index()">@Messages("edit.add.abort")</a>
+                </div>
+            }
+        </div>
+    </div>
+
+}

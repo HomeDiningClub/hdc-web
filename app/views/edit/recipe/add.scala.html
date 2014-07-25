@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-xs-12">
             <h1 class="page-header">@Messages("edit.recipe.add.header")</h1>
-            @helper.form(action=routes.RecipeController.addRecipeSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
+            @helper.form(action=routes.RecipeController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
                 <fieldset>
                     @helper.inputText(recipeForm("recipename"), '_label -> Messages("edit.recipe.add.name"), '_help -> Messages("edit.recipe.add.name.validation"))
                     @helper.inputFile(recipeForm("recipemainimage"), '_label -> Messages("edit.recipe.add.mainimage"))
@@ -18,7 +18,7 @@
                 </fieldset>
                 <div class="form-actions">
                     <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>
-                    <a class="btn" href="@routes.ContentController.indexContentPages()">@Messages("edit.add.abort")</a>
+                    <a class="btn" href="@routes.ContentController.index()">@Messages("edit.add.abort")</a>
                 </div>
             }
         </div>

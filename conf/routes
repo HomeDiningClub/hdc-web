@@ -23,38 +23,56 @@ GET         /contact                                   @controllers.ContentContr
 # Campaign
 GET         /newsletter                                @controllers.CampaignController.index
 
-# EDIT - Content
+# EDIT
 GET         /edit                                      @controllers.EditController.index
-GET         /edit/content                              @controllers.ContentController.indexContentPages
-GET         /edit/content/list                         @controllers.ContentController.listContentPages
-GET         /edit/content/add                          @controllers.ContentController.addContentPage
-POST        /edit/content/add                          @controllers.ContentController.addContentPageSubmit
-GET         /edit/content/edit/:objectId               @controllers.ContentController.editContentPage(objectId: java.util.UUID)
-GET         /edit/content/delete/:objectId             @controllers.ContentController.deleteContentPage(objectId: java.util.UUID)
+
+# EDIT - Content
+GET         /edit/content                              @controllers.ContentController.index
+GET         /edit/content/list                         @controllers.ContentController.list
+GET         /edit/content/add                          @controllers.ContentController.add
+POST        /edit/content/add                          @controllers.ContentController.addSubmit
+GET         /edit/content/edit/:objectId               @controllers.ContentController.edit(objectId: java.util.UUID)
+GET         /edit/content/delete/:objectId             @controllers.ContentController.delete(objectId: java.util.UUID)
 
 # EDIT - Recipe
-GET         /edit/recipe                               @controllers.RecipeController.indexRecipe
-GET         /edit/recipe/list                          @controllers.RecipeController.listRecipes
-GET         /edit/recipe/add                           @controllers.RecipeController.addRecipe
-POST        /edit/recipe/add                           @controllers.RecipeController.addRecipeSubmit
+GET         /edit/recipe                               @controllers.RecipeController.index
+GET         /edit/recipe/list                          @controllers.RecipeController.list
+GET         /edit/recipe/add                           @controllers.RecipeController.add
+POST        /edit/recipe/add                           @controllers.RecipeController.addSubmit
 GET         /edit/recipe/edit/:objectId                @controllers.RecipeController.edit(objectId: java.util.UUID)
 GET         /edit/recipe/delete/:objectId              @controllers.RecipeController.delete(objectId: java.util.UUID)
 
 # EDIT - County
-GET         /edit/county                               @controllers.CountyController.indexCounty
-GET         /edit/county/list                          @controllers.CountyController.listCounty
-GET         /edit/county/add                           @controllers.CountyController.addCounty
-POST        /edit/county/add                           @controllers.CountyController.addCountySubmit
+GET         /edit/county                               @controllers.CountyController.index
+GET         /edit/county/list                          @controllers.CountyController.list
+GET         /edit/county/add                           @controllers.CountyController.add
+POST        /edit/county/add                           @controllers.CountyController.addSubmit
 GET         /edit/county/edit/:objectId                @controllers.CountyController.edit(objectId: java.util.UUID)
 GET         /edit/county/delete/:objectId              @controllers.CountyController.delete(objectId: java.util.UUID)
 
+# EDIT - Roles
+GET         /edit/roles                                @controllers.UserRoleController.index
+GET         /edit/roles/list                           @controllers.UserRoleController.list
+GET         /edit/roles/add                            @controllers.UserRoleController.add
+POST        /edit/roles/add                            @controllers.UserRoleController.addSubmit
+GET         /edit/roles/edit/:objectId                 @controllers.UserRoleController.edit(objectId: java.util.UUID)
+GET         /edit/roles/delete/:objectId               @controllers.UserRoleController.delete(objectId: java.util.UUID)
+GET         /edit/roles/addUserToRole                  @controllers.UserRoleController.addUserToRole
+POST        /edit/roles/addUserToRole                  @controllers.UserRoleController.addUserToRoleSubmit
+
+
 # EDIT - TagWords
-GET         /edit/tagword                               @controllers.TagWordController.index
-GET         /edit/tagword/list                          @controllers.TagWordController.list
-GET         /edit/tagword/add                           @controllers.TagWordController.add
-POST        /edit/tagword/add                           @controllers.TagWordController.addSubmit
-GET         /edit/tagword/edit/:objectId                @controllers.TagWordController.edit(objectId: java.util.UUID)
-GET         /edit/tagword/delete/:objectId              @controllers.TagWordController.delete(objectId: java.util.UUID)
+GET         /edit/tagword                              @controllers.TagWordController.index
+GET         /edit/tagword/list                         @controllers.TagWordController.list
+GET         /edit/tagword/add                          @controllers.TagWordController.add
+POST        /edit/tagword/add                          @controllers.TagWordController.addSubmit
+GET         /edit/tagword/edit/:objectId               @controllers.TagWordController.edit(objectId: java.util.UUID)
+GET         /edit/tagword/delete/:objectId             @controllers.TagWordController.delete(objectId: java.util.UUID)
+
+# EDIT - Release & Batch
+GET        /edit/release                               @controllers.ReleaseController.index
+GET        /edit/release/run                           @controllers.ReleaseController.releaseRun
+GET        /edit/release/deleteall                     @controllers.ReleaseController.deleteAllFromDB
 
 
 
