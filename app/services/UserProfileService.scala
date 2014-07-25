@@ -16,49 +16,8 @@ import org.neo4j.graphdb.index.Index
 import org.springframework.context.annotation.Lazy
 
 
-//@Service
-//object UserProfileService {
-//
-//  @Autowired
-//  private var template: Neo4jTemplate = _
-//
-//  @Autowired
-//  private var userProfileRepository: UserProfileRepository = _
-//
-
- /*
-  def findUserProfileByUserId(id: Identity) : Option[UserProfile] =
-  {
-
-    println("metod ...")
-
-    var key : String = id.identityId.userId + "_" + id.identityId.providerId
-
-
-    var up = userProfileRepository.findAll()
-
-    var vv = up.iterator()
-
-    while(vv.hasNext) {
-     var up2 = Some(vv.next())
-    println("provider Id: " + up2.getOrElse(new UserProfile).aboutMe)
-
-    }
-
-
-    None
-  }
-
-*/
-
-
-
-//}
-
-
 @Service
 class UserProfileService {
-
 
   // http://books.google.se/books?id=DeTO4xbC-eoC&pg=PT158&lpg=PT158&dq=:+Neo4jTemplate+%3D+_&source=bl&ots=kTYWRxqdkm&sig=nNZ8mMMFgx4CmCFw13zWeQdnzFA&hl=en&sa=X&ei=RK9eU7v-KI7jO5m9gegO&ved=0CCwQ6AEwATgK#v=onepage&q=%3A%20Neo4jTemplate%20%3D%20_&f=false
 
@@ -120,7 +79,7 @@ class UserProfileService {
 
   @Transactional(readOnly = true)
   def findByProfileLinkName(profileLinkName : String) : UserProfile = {
-    var userProfile : models.UserProfile = UserProfileService.userProfileRepository.findByProfileLinkName(profileLinkName)
+    val userProfile : models.UserProfile = userProfileRepository.findByProfileLinkName(profileLinkName)
     userProfile
   }
 

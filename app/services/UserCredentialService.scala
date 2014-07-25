@@ -17,21 +17,6 @@ import scala.Some
 import org.springframework.transaction.annotation.Transactional
 import enums.RoleEnums.RoleEnums
 
-//@Service
-//object UserCredentialService {
-//
-//  @Autowired
-//  var template: Neo4jTemplate = _
-//
-//  @Autowired
-//  var userCredentialRepository: UserCredentialRepository = _
-//
-//  @Autowired
-//  var userRoleRepository: UserRoleRepository = _
-//
-//
-//}
-
 @Service
 class UserCredentialService {
 
