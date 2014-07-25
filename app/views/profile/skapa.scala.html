@@ -2,7 +2,8 @@
 
 @helper.form(action = routes.UserProfileController.taemot) {
 
-
+<BR>
+Profil
 
 @for(t <- element) {
 <br>
@@ -13,12 +14,27 @@
 </input>
 }
 
+ <br>
+
+
+
+
+    @helper.textarea(EnvDataForm("aboutme"),
+        args = 'rows -> 10, 'cols -> 100,
+        'id -> "aboutme",
+        '_showErrors -> true,
+        '_label -> "Beskrivning",
+        '_help -> "Bskriv dig själv"
+    )
+
+
+
 
 @helper.inputText(EnvDataForm("name"),
 'id -> "name",
 '_showErrors -> true,
-'_label -> "Name",
-'_help -> "e-post"
+'_label -> "Profilnamn",
+'_help -> "Namn på profilen"
 )
 
 @helper.inputText(EnvDataForm("emails[0]"),

@@ -55,7 +55,8 @@ class UserProfileController  extends Controller  with SecureSocial {
       mapping(
         "name" -> text,
         "emails" -> list(text),
-        "quality" -> list(text)
+        "quality" -> list(text),
+        "aboutme" -> text
       )
       (EnvData.apply) (EnvData.unapply)
     )
@@ -121,6 +122,7 @@ def createTags = Action { implicit request =>
 
 
 
+// display profile
 def skapavy = SecuredAction { implicit request =>
 
   println("=============================================================")
@@ -197,6 +199,7 @@ if(userTags != null) {
   // Fetch all tags
   var d = tagWordService.listByGroupOption("profile")
 
+
   var l : Long = 0
   var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
   if(d.isDefined){
@@ -209,27 +212,20 @@ if(userTags != null) {
   }
 
 
+  // member
+  var memberList = tagWordService.listByGroupOption("member")
 
-  //var u : models.UserProfile = new models.UserProfile
-  //u.aboutMe = "test"
-
- // println("start ....")
-  //userProfileService.saveUserProfile(u)
-
-
-    //println("About Me: " + theUser.aboutMe +", id : "+ theUser.id )
-
-    // tag alla profiles
-  /*
-    for(vv <- d ) {
-      println(vv.tagGroupName)
-      theUser.tag(vv)
+  if(memberList.isDefined) {
+    for(theMemberStatus <- memberList.get) {
+      println("Member status" + theMemberStatus.orderId + ", " + theMemberStatus.tagName + ", " + theMemberStatus.tagId)
     }
-    userProfileService.saveUserProfile(theUser)
-*/
-  // remove all tags
-  //  theUser.removeAllTags()
-  //userProfileService.saveUserProfile(theUser)
+
+
+  }
+
+
+
+
 
 
 
@@ -238,7 +234,9 @@ if(userTags != null) {
 
   //Ok("OK")
 
-  val eData : EnvData = new EnvData("user", List("adam","bertil", "cesar"), List("adam", "bertil"))
+  println("theuser and aboutme : " + theUser.get.aboutMe)
+
+  val eData : EnvData = new EnvData(theUser.get.profileLinkName ,List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.get.aboutMe)
   val nyForm =  AnvandareForm.fill(eData)
   Ok(views.html.profile.skapa(nyForm, tagList.toList, typ))
 
@@ -246,9 +244,15 @@ if(userTags != null) {
 }
 
 
+
+
+// Save profile
 def taemot = SecuredAction { implicit request =>
 
   println("************************ save profile *********************************************")
+
+
+  var service = new services.UserProfileService()
 
       // Fetch user
 
@@ -259,6 +263,8 @@ def taemot = SecuredAction { implicit request =>
       // add all new tags
 
       var map:Map[String,String] = Map()
+      var aboutMeText : String = ""
+      var profileLinkName : String = ""
 
       AnvandareForm.bindFromRequest.fold(
         errors => {
@@ -274,6 +280,30 @@ def taemot = SecuredAction { implicit request =>
         anvadare => {
             // test
             println(anvadare.name)
+
+            println("About Me: " + anvadare.aboutme)
+          aboutMeText = anvadare.aboutme
+          profileLinkName= anvadare.name
+
+          var linkedUser = service.findByProfileLinkName(profileLinkName)
+          if(profileLinkName == None || profileLinkName == null) {
+            profileLinkName = ""
+          }
+
+          profileLinkName = profileLinkName.trim()
+
+          if(profileLinkName.equalsIgnoreCase("")) {
+            println("No value")
+          }else if(linkedUser == None || linkedUser == null) {
+            println("No user with linked name")
+          }
+          else
+          {
+            println("+++++++++++++++++++++++++++++++++++++++++++")
+            println("KeyId : " + linkedUser.keyIdentity)
+          }
+
+
             for(v <- anvadare.emails) {
                 println("v : " + v)
             }
@@ -293,7 +323,7 @@ def taemot = SecuredAction { implicit request =>
 //      var up = userProfileService.getAllUserProfile
 //      var theUser : models.UserProfile = up.iterator.next()
 
-  var service = new services.UserProfileService()
+
 
   println("userId : " + request.user.identityId.userId)
   println("ProviderId : " + request.user.identityId.providerId)
@@ -302,6 +332,8 @@ def taemot = SecuredAction { implicit request =>
   var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
 
 
+     theUser.get.aboutMe = aboutMeText
+     theUser.get.profileLinkName = profileLinkName
 
       theUser.get.removeAllTags()
 
@@ -324,9 +356,10 @@ def taemot = SecuredAction { implicit request =>
 
       }
 
-      //userProfileService.saveUserProfile(theUser)
+      userProfileService.saveUserProfile(theUser.get)
 
-    Ok("OK")
+    //Ok("Sparad")
+     Redirect("/prodata/visa")
 }
 
 
