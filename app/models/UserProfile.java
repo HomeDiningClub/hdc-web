@@ -16,6 +16,9 @@ import java.util.Set;
 @NodeEntity
 public class UserProfile extends AbstractEntity {
 
+  public String lan = "";
+
+
 /*
     @Fetch
     @RelatedTo(type = RelationshipTypesJava.PROFILE_CREDENTIAL.Constant, direction = Direction.BOTH)
@@ -46,6 +49,10 @@ public class UserProfile extends AbstractEntity {
     public String providerIdentity = "";
 
     public String email = "";
+
+    // profile look up name
+    @Indexed(unique=true)
+    public String profileLinkName = "";
 
 
     // Userid + "_" + providerId

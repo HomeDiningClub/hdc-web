@@ -119,7 +119,11 @@ class UserProfileService {
   }
 */
 
-
+  @Transactional(readOnly = true)
+  def findByProfileLinkName(profileLinkName : String) : UserProfile = {
+    var userProfile : models.UserProfile = UserProfileService.userProfileRepository.findByProfileLinkName(profileLinkName)
+    userProfile
+  }
 
   @Transactional(readOnly = true)
   def getAllUserProfiles: List[models.UserProfile] = {

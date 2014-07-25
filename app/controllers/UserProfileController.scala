@@ -217,7 +217,7 @@ if(userTags != null) {
 
   if(memberList.isDefined) {
     for(theMemberStatus <- memberList.get) {
-      println("Member status" + theMemberStatus.orderId + ", " + theMemberStatus.tagName)
+      println("Member status" + theMemberStatus.orderId + ", " + theMemberStatus.tagName + ", " + theMemberStatus.tagId)
     }
 
 
@@ -225,26 +225,7 @@ if(userTags != null) {
 
 
 
-  //var u : models.UserProfile = new models.UserProfile
-  //u.aboutMe = "test"
 
- // println("start ....")
-  //userProfileService.saveUserProfile(u)
-
-
-    //println("About Me: " + theUser.aboutMe +", id : "+ theUser.id )
-
-    // tag alla profiles
-  /*
-    for(vv <- d ) {
-      println(vv.tagGroupName)
-      theUser.tag(vv)
-    }
-    userProfileService.saveUserProfile(theUser)
-*/
-  // remove all tags
-  //  theUser.removeAllTags()
-  //userProfileService.saveUserProfile(theUser)
 
 
 
@@ -255,7 +236,7 @@ if(userTags != null) {
 
   println("theuser and aboutme : " + theUser.get.aboutMe)
 
-  val eData : EnvData = new EnvData("user",List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.get.aboutMe)
+  val eData : EnvData = new EnvData(theUser.get.profileLinkName ,List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.get.aboutMe)
   val nyForm =  AnvandareForm.fill(eData)
   Ok(views.html.profile.skapa(nyForm, tagList.toList, typ))
 
@@ -270,6 +251,9 @@ def taemot = SecuredAction { implicit request =>
 
   println("************************ save profile *********************************************")
 
+
+  var service = new services.UserProfileService()
+
       // Fetch user
 
       // Fetch usersprofile
@@ -280,6 +264,7 @@ def taemot = SecuredAction { implicit request =>
 
       var map:Map[String,String] = Map()
       var aboutMeText : String = ""
+      var profileLinkName : String = ""
 
       AnvandareForm.bindFromRequest.fold(
         errors => {
@@ -298,6 +283,16 @@ def taemot = SecuredAction { implicit request =>
 
             println("About Me: " + anvadare.aboutme)
           aboutMeText = anvadare.aboutme
+          profileLinkName= anvadare.name
+
+          var linkedUser = service.findByProfileLinkName(profileLinkName)
+          if(linkedUser == None) {
+            println("No user with linked name")
+          }
+          else
+          {
+            println("KeyId : " + linkedUser.keyIdentity)
+          }
 
 
             for(v <- anvadare.emails) {
@@ -319,7 +314,7 @@ def taemot = SecuredAction { implicit request =>
 //      var up = userProfileService.getAllUserProfile
 //      var theUser : models.UserProfile = up.iterator.next()
 
-  var service = new services.UserProfileService()
+
 
   println("userId : " + request.user.identityId.userId)
   println("ProviderId : " + request.user.identityId.providerId)
@@ -329,7 +324,7 @@ def taemot = SecuredAction { implicit request =>
 
 
      theUser.get.aboutMe = aboutMeText
-
+     theUser.get.profileLinkName = profileLinkName
 
       theUser.get.removeAllTags()
 

@@ -18,4 +18,6 @@ trait  UserProfileRepository extends GraphRepository[UserProfile] {
 
   def findByKeyIdentity(keyIdentity : String) : UserProfile
 
+  def findByProfileLinkName(profileLinkName : String) : UserProfile
+
 }
