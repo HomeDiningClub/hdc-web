@@ -286,11 +286,20 @@ def taemot = SecuredAction { implicit request =>
           profileLinkName= anvadare.name
 
           var linkedUser = service.findByProfileLinkName(profileLinkName)
-          if(linkedUser == None) {
+          if(profileLinkName == None || profileLinkName == null) {
+            profileLinkName = ""
+          }
+
+          profileLinkName = profileLinkName.trim()
+
+          if(profileLinkName.equalsIgnoreCase("")) {
+            println("No value")
+          }else if(linkedUser == None || linkedUser == null) {
             println("No user with linked name")
           }
           else
           {
+            println("+++++++++++++++++++++++++++++++++++++++++++")
             println("KeyId : " + linkedUser.keyIdentity)
           }
 
