@@ -16,8 +16,10 @@ trait  UserProfileRepository extends GraphRepository[UserProfile] {
   def getUserProfilesByIdentityId(identityId: IdentityId ): UserProfile
 */
 
-  def findByKeyIdentity(keyIdentity : String) : UserProfile
+ // def findByKeyIdentity(keyIdentity : String) : UserProfile
 
-  def findByProfileLinkName(profileLinkName : String) : UserProfile
+ def findByUserIdentityAndProviderIdentity(userIdentity: String, providerIdentity: String) :  UserProfile
+
+ // def findByProfileLinkName(profileLinkName : String) : UserProfile
 
 }

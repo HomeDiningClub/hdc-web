@@ -285,7 +285,8 @@ def taemot = SecuredAction { implicit request =>
           aboutMeText = anvadare.aboutme
           profileLinkName= anvadare.name
 
-          var linkedUser = service.findByProfileLinkName(profileLinkName)
+         // var linkedUser = service.findByProfileLinkName(profileLinkName)
+          /*
           if(profileLinkName == None || profileLinkName == null) {
             profileLinkName = ""
           }
@@ -302,7 +303,7 @@ def taemot = SecuredAction { implicit request =>
             println("+++++++++++++++++++++++++++++++++++++++++++")
             println("KeyId : " + linkedUser.keyIdentity)
           }
-
+*/
 
             for(v <- anvadare.emails) {
                 println("v : " + v)
