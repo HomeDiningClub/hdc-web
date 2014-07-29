@@ -7,9 +7,7 @@ import org.springframework.data.neo4j.support.index.IndexType;
 @NodeEntity
 public class ContentPage extends ContentBase {
 
-    @Indexed(indexType = IndexType.LABEL)
     public String name;
-    @Indexed(indexType = IndexType.LABEL)
     public String route;
     public String title;
     public String preamble;

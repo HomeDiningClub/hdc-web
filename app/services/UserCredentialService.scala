@@ -146,6 +146,17 @@ class UserCredentialService {
     userCredentialRepository.findByobjectId(objectId)
   }
 
+  @Transactional(readOnly = true)
+  def getListOfAll: Option[List[UserCredential]] = {
+    val listOfAll: List[UserCredential] = userCredentialRepository.findAll().iterator.asScala.toList
+
+    if(listOfAll.isEmpty)
+      None
+    else
+      Some(listOfAll)
+  }
+
+
 
   @Transactional(readOnly = false)
   def addRole(user: UserCredential, role: RoleEnums): UserCredential = {

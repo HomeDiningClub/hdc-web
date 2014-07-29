@@ -37,7 +37,7 @@ public class ContentFile extends AbstractEntity {
 
     @Fetch
     @RelatedTo(type = RelationshipTypesJava.FILE_TRANSFORMATION.Constant, direction = Direction.OUTGOING)
-    public Set<FileTransformation> fileTransformations = new HashSet<>();
+    public Set<FileTransformation> fileTransformations;
 
     @Transient
     public String url;
@@ -58,17 +58,18 @@ public class ContentFile extends AbstractEntity {
 
     // Constructors
     public ContentFile(String name, String extension, String contentType, String baseContentType, UserCredential ownerUser, Set<FileTransformation> fileTransforms) {
-        if (fileTransforms.size() > 0) {
-            this.fileTransformations = fileTransforms;
-        }
+        this.fileTransformations = fileTransforms;
         populateBaseData(name, extension, contentType, baseContentType, ownerUser);
     }
 
     public ContentFile(String name, String extension, String contentType, String baseContentType, UserCredential ownerUser) {
+        this.fileTransformations = new HashSet<>();
         populateBaseData(name, extension, contentType, baseContentType, ownerUser);
     }
 
-    protected ContentFile() { }
+    protected ContentFile() {
+        this.fileTransformations = new HashSet<>();
+    }
 
     // Helpers
     private void populateBaseData(String name, String extension, String contentType, String baseContentType, UserCredential ownerUser) {

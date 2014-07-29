@@ -4,7 +4,7 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.{RequestHeader, Action, Controller}
 import securesocial.core.SecureSocial
 import org.springframework.beans.factory.annotation.Autowired
-import services.{UserRoleService, Neo4jDatabaseCleanerService, TagWordService, CountyService}
+import services._
 import play.api.i18n.Messages
 import constants.FlashMsgConstants
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.neo4j.rest.graphdb.RestGraphDatabase
 import enums.RoleEnums
 import utils.authorization.WithRole
+import utils.authorization.WithRole
+import models.UserCredential
 
 @SpringController
 class ReleaseController extends Controller with SecureSocial {
@@ -23,6 +25,8 @@ class ReleaseController extends Controller with SecureSocial {
   @Autowired
   private var userRoleService: UserRoleService = _
   @Autowired
+  private var userCredentialService: UserCredentialService = _
+  @Autowired
   private var neo4jDatabaseCleanerService: Neo4jDatabaseCleanerService = _
 
 
@@ -31,7 +35,7 @@ class ReleaseController extends Controller with SecureSocial {
   }
 
   // Create default data in this method
-  def releaseRun = Action { implicit request =>
+  def releaseRun = UserAwareAction { implicit request =>
 
     // Create default Tags
     val groupName = "profile"
@@ -78,9 +82,15 @@ class ReleaseController extends Controller with SecureSocial {
     countyService.createCounty("Örebro", 19, true)
     countyService.createCounty("Östergötland", 20, true)
 
-    userRoleService.createRole(RoleEnums.ADMIN)
+    val adminRole = userRoleService.createRole(RoleEnums.ADMIN)
     userRoleService.createRole(RoleEnums.POWERUSER)
     userRoleService.createRole(RoleEnums.USER)
+
+    // Add running user to admin group
+    val currentUser = userCredentialService.findById(request.user.asInstanceOf[UserCredential].objectId)
+    if(currentUser != null) {
+      userCredentialService.addRole(currentUser, RoleEnums.ADMIN)
+    }
 
     val successMessage = Messages("edit.success")
     Redirect(controllers.routes.ReleaseController.index()).flashing(FlashMsgConstants.Success -> successMessage)
@@ -91,7 +101,7 @@ class ReleaseController extends Controller with SecureSocial {
 
     val results = neo4jDatabaseCleanerService.cleanDb
     val successMessage = Messages("edit.success")
-    Redirect(controllers.routes.ReleaseController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+    Redirect(securesocial.controllers.routes.LoginPage.logout()).flashing(FlashMsgConstants.Success -> successMessage)
   }
 
 }

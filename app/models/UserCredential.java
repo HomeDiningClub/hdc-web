@@ -76,7 +76,7 @@ public class UserCredential extends AbstractEntity implements Identity {
     // Authorization
     @Fetch
     @RelatedTo(type = RelationshipTypesJava.IN_ROLE.Constant, direction = Direction.OUTGOING)
-    public Set<UserRole> roles =  new HashSet<>();
+    public Set<UserRole> roles;
 
     // Rating embryo,
     // Move to services
@@ -100,7 +100,8 @@ public class UserCredential extends AbstractEntity implements Identity {
     }
 
     public UserCredential() {
-
+        this.roles = new HashSet<>();
+        this.ratings = new HashSet<>();
     }
 
     public UserCredential(String email, String providerId, Set<UserRole> roles) {
@@ -119,7 +120,8 @@ public class UserCredential extends AbstractEntity implements Identity {
     }
 
     public UserCredential(String email, String providerId) {
-
+        this.roles = new HashSet<>();
+        this.ratings = new HashSet<>();
         this.providerId     = providerId;
         this.emailAddress   = email;
     }

@@ -7,17 +7,20 @@ import play.api.data.Form
 import play.api.data.Forms._
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
-import models.UserRole
-import services.UserRoleService
+import models.{UserCredential, UserRole}
+import services.{UserCredentialService, UserRoleService}
 import models.viewmodels.{AddUserToRoleForm, UserRoleForm}
 import play.api.i18n.Messages
 import constants.FlashMsgConstants
+import scala.collection.mutable
 
 @SpringController
 class UserRoleController extends Controller with SecureSocial {
 
   @Autowired
   private var userRoleService: UserRoleService = _
+  @Autowired
+  private var userCredentialService: UserCredentialService = _
 
 
   // Edit - Listing
@@ -61,12 +64,13 @@ class UserRoleController extends Controller with SecureSocial {
   val userAddToRoleForm = Form(
     mapping(
       "userObjectId" -> nonEmptyText,
-      "roleObjectId" -> nonEmptyText
+      "roleObjectId" -> nonEmptyText,
+      "addOrRemove" -> boolean
     )(AddUserToRoleForm.apply _)(AddUserToRoleForm.unapply _)
   )
 
   def addUserToRole() = SecuredAction { implicit request =>
-    Ok(views.html.edit.roles.addUserToRole(userAddToRoleForm))
+    Ok(views.html.edit.roles.addUserToRole(userAddToRoleForm,getUsersAsDropDown,getRolesAsDropDown))
   }
 
   def addUserToRoleSubmit() = SecuredAction(parse.multipartFormData) { implicit request =>
@@ -74,15 +78,53 @@ class UserRoleController extends Controller with SecureSocial {
     userAddToRoleForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
-        BadRequest(views.html.edit.roles.addUserToRole(userAddToRoleForm)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.edit.roles.addUserToRole(userAddToRoleForm,getUsersAsDropDown,getRolesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
-        val saved = userRoleService.addRoleToUser(UUID.fromString(contentData.roleObjectId), UUID.fromString(contentData.userObjectId))
+        val saved = contentData.addOrRemoveRole match {
+          case true => userRoleService.addRoleToUser(UUID.fromString(contentData.roleObjectId), UUID.fromString(contentData.userObjectId))
+          case false => userRoleService.removeRoleFromUser(UUID.fromString(contentData.roleObjectId), UUID.fromString(contentData.userObjectId))
+        }
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.fullName(), saved.objectId.toString)
         Redirect(controllers.routes.UserRoleController.index()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
+  }
+
+
+  private def getRolesAsDropDown: Option[Seq[(String,String)]] = {
+    val returnItems: Option[Seq[(String,String)]] = userRoleService.getListOfAll match {
+      case Some(items) =>
+        var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
+
+        // Map and add the rest
+        items.sortBy(tw => tw.name).toBuffer.map {
+          item: UserRole =>
+            bufferList += ((item.objectId.toString, item.name))
+        }
+        Some(bufferList.toSeq)
+      case None =>
+        None
+    }
+    returnItems
+  }
+
+  private def getUsersAsDropDown: Option[Seq[(String,String)]] = {
+    val returnItems: Option[Seq[(String,String)]] = userCredentialService.getListOfAll match {
+      case Some(items) =>
+        var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
+
+        // Map and add the rest
+        items.sortBy(tw => tw.fullName()).toBuffer.map {
+          item: UserCredential =>
+            bufferList += ((item.objectId.toString, item.fullName() + " - (" + item.email.getOrElse("") + " , " + item.providerId + ")"))
+        }
+        Some(bufferList.toSeq)
+      case None =>
+        None
+    }
+    returnItems
   }
 
 

@@ -24,21 +24,24 @@ public class World extends AbstractEntity {
     public String spokenLanguage;
 
     @Fetch
-    @RelatedTo(type = RelationshipTypesJava.REACHABLE_BY_ROCKET.Constant, direction = Direction.OUTGOING) // TODO - Improve enum
-    public Set<World> reachableByRocket = new HashSet<>();
+    @RelatedTo(type = RelationshipTypesJava.REACHABLE_BY_ROCKET.Constant, direction = Direction.OUTGOING)
+    public Set<World> reachableByRocket;
 
     // Constructors
     public World(String name, int moons, String spokenLanguage) {
+        this.reachableByRocket = new HashSet<>();
         this.name = name;
         this.moons = moons;
         this.spokenLanguage = spokenLanguage;
     }
 
     public World(String name, int moons) {
+        this.reachableByRocket = new HashSet<>();
         this.name = name;
         this.moons = moons;
     }
 
     private World() {
+        this.reachableByRocket = new HashSet<>();
     }
 }

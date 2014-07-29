@@ -77,6 +77,15 @@ class UserRoleService {
   }
 
   @Transactional(readOnly = false)
+  def removeRoleFromUser(roleObjectId: UUID, userObjectId: UUID): UserCredential = {
+    val role = findById(roleObjectId)
+    val user = userCredentialService.findById(userObjectId)
+    user.roles.remove(role)
+    val modUser = userCredentialService.userCredentialRepository.save(user)
+    modUser
+  }
+
+  @Transactional(readOnly = false)
   def add(newContent: UserRole): UserRole = {
     // Don't add if already exists, just return the existing instance
     val role = findByName(newContent.name) match {

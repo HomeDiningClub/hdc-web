@@ -25,7 +25,7 @@ public class Recipe extends ContentBase {
 
     @Fetch
     @RelatedTo(type = RelationshipTypesJava.USED_BY.Constant, direction = Direction.OUTGOING)
-    public Set<ContentFile> recipeImages = new HashSet<>();
+    public Set<ContentFile> recipeImages;
 
     public Recipe(String name, String mainBody, ContentFile mainImage, Set<ContentFile> recipeImages){
         this.mainImage = mainImage;
@@ -37,11 +37,15 @@ public class Recipe extends ContentBase {
     public Recipe(String name, String mainBody){
         this.name = name;
         this.mainBody = mainBody;
+        this.recipeImages = new HashSet<>();
     }
 
     public Recipe(String name){
+        this.recipeImages = new HashSet<>();
         this.name = name;
     }
 
-    protected Recipe(){ }
+    protected Recipe(){
+        this.recipeImages = new HashSet<>();
+    }
 }

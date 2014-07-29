@@ -60,7 +60,7 @@ public class UserProfile extends AbstractEntity {
     public String keyIdentity = "";
 
     @RelatedToVia(type = "TAGGED_ON")
-    private Set<TaggedUserProfile> userProfileTag = new HashSet<>();
+    private Set<TaggedUserProfile> userProfileTag;
 
     public TaggedUserProfile tag(TagWord tagWord) {
         TaggedUserProfile taggedProfile = new TaggedUserProfile(this, tagWord);

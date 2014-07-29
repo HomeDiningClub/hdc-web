@@ -20,8 +20,9 @@ public abstract class ContentBase extends AbstractEntity {
 
     @Fetch
     @RelatedTo(type = RelationshipTypesJava.CONTENT_STATE.Constant, direction = Direction.OUTGOING)
-    public Set<ContentState> contentState = new HashSet<>();
+    public Set<ContentState> contentState;
 
     protected ContentBase() {
+        this.contentState = new HashSet<>();
     }
 }
