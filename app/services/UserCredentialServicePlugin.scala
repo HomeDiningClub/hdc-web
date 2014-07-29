@@ -16,6 +16,8 @@ package services
 // MATCH (tom) DELETE tom
 
 import _root_.java.util.UUID
+import enums.RoleEnums
+import enums.RoleEnums.RoleEnums
 import models.{UserCredential, UserProfileData}
 import models.UserProfile
 import org.neo4j.helpers.collection.IteratorUtil
@@ -115,26 +117,6 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     * @return
     */
   def save(user: Identity): Identity = {
-
-    // Look up UserProfile
-    val userProfile : Option[UserProfile] = InstancedServices.userProfileService.findUserProfileByUserId(user)
-
-    if(userProfile == None) {
-
-      // if not UserProfile exits create one
-      var up: UserProfile = new UserProfile()
-      up.providerIdentity = user.identityId.providerId
-      up.fistName = user.firstName
-      up.lastName = user.lastName
-      up.userIdentity = user.identityId.userId
-      up.keyIdentity = user.identityId.userId + "_" + user.identityId.providerId
-      up.email = user.email.getOrElse("")
-
-      InstancedServices.userProfileService.saveUserProfile(up)
-    } else {
-      // UserProfile allready exits do notthing
-    }
-
     val userCredential : UserCredential = InstancedServices.userCredentialService.socialUser2UserCredential(user)
     val userCredential2 = createOrUpdateUser(userCredential)
     userCredential2
@@ -288,25 +270,104 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     val exitsUser = exists(userCredential.userId, userCredential.providerId)
 
     // creates the return type
-    var modUserCredential: UserCredential = new UserCredential()
+    var modUserCredential: UserCredential = findByUserIdAndProviderId(userCredential.userId, userCredential.providerId)
 
     if(exitsUser._2 == true) {
         // User is already stored in the database, when update
         println("update id: " + userCredential.objectId + "email : " + userCredential.emailAddress)
 
-        // set the correct id
-        userCredential.objectId = exitsUser._1
-        userCredential.graphId = exitsUser._3
-        modUserCredential = saveUser(userCredential)
+      println("objectId = " + modUserCredential.objectId)
+      println("graphId = " + modUserCredential.graphId)
+
+      println("reles : ")
+      var itRoles = modUserCredential.roles.iterator()
+      while(itRoles.hasNext) {
+        var rol = itRoles.next()
+        println("Role : " + rol.name)
+      }
+
+
+      modUserCredential.oAuth1InfoToken         = userCredential.oAuth1InfoToken
+      modUserCredential.oAuth1InfoSecret        = userCredential.oAuth1InfoSecret
+      modUserCredential.oAuth2InfoAccessToken   = userCredential.oAuth2InfoAccessToken
+      modUserCredential.oAuth2InfoExpiresIn     = userCredential.oAuth2InfoExpiresIn
+      modUserCredential.oAuth2InfoRefreshToken  = userCredential.oAuth2InfoRefreshToken
+      modUserCredential.oAuth2InfoTokenType     = userCredential.oAuth2InfoTokenType
+      modUserCredential.password                = userCredential.password
+      modUserCredential.authMethod              = userCredential.authMethod
+      modUserCredential.firstName               = userCredential.firstName
+      modUserCredential.lastName                =  userCredential.lastName
+      modUserCredential.fullName                = userCredential.fullName
+      modUserCredential.salt                    = userCredential.salt
+      modUserCredential.hasher                  = userCredential.hasher
+        var newUserCredential                   = saveUser(modUserCredential)
+        return newUserCredential
+
     } else {
 
-        println("create, email : " + userCredential.emailAddress)
+        println("create userCredential, UserId : " + userCredential.userId)
         // Add default group
         InstancedServices.userCredentialService.addRole(userCredential, RoleEnums.USER)
-        modUserCredential = saveUser(userCredential)
+        var newUserCredential = saveUser(userCredential)
+       return newUserCredential
     }
 
-    modUserCredential
+
+  }
+
+  @Transactional(readOnly = false)
+  def addRole(userCredential: UserCredential, role: RoleEnums): UserCredential = {
+
+    // check if the same userId and providerId is already stored in the database
+    val exitsUser = exists(userCredential.userId, userCredential.providerId)
+
+    // creates the return type
+    var modUserCredential: UserCredential = findByUserIdAndProviderId(userCredential.userId, userCredential.providerId)
+
+    if(exitsUser._2 == true) {
+      // User is already stored in the database, when update
+      println("update id: " + userCredential.objectId + "email : " + userCredential.emailAddress)
+
+      println("objectId = " + modUserCredential.objectId)
+      println("graphId = " + modUserCredential.graphId)
+
+      println("reles : ")
+      var itRoles = modUserCredential.roles.iterator()
+      while(itRoles.hasNext) {
+        var rol = itRoles.next()
+        println("Role : " + rol.name)
+      }
+
+
+      modUserCredential.oAuth1InfoToken         = userCredential.oAuth1InfoToken
+      modUserCredential.oAuth1InfoSecret        = userCredential.oAuth1InfoSecret
+      modUserCredential.oAuth2InfoAccessToken   = userCredential.oAuth2InfoAccessToken
+      modUserCredential.oAuth2InfoExpiresIn     = userCredential.oAuth2InfoExpiresIn
+      modUserCredential.oAuth2InfoRefreshToken  = userCredential.oAuth2InfoRefreshToken
+      modUserCredential.oAuth2InfoTokenType     = userCredential.oAuth2InfoTokenType
+      modUserCredential.password                = userCredential.password
+      modUserCredential.authMethod              = userCredential.authMethod
+      modUserCredential.firstName               = userCredential.firstName
+      modUserCredential.lastName                =  userCredential.lastName
+      modUserCredential.fullName                = userCredential.fullName
+      modUserCredential.salt                    = userCredential.salt
+      modUserCredential.hasher                  = userCredential.hasher
+
+      InstancedServices.userCredentialService.addRole(userCredential, role)
+
+      var newUserCredential                   = saveUser(modUserCredential)
+      return newUserCredential
+
+    } else {
+
+      println("create userCredential, UserId : " + userCredential.userId)
+      // Add default group
+      InstancedServices.userCredentialService.addRole(userCredential, role)
+      var newUserCredential = saveUser(userCredential)
+      return newUserCredential
+    }
+
+
   }
 
 
