@@ -78,6 +78,11 @@ public class UserCredential extends AbstractEntity implements Identity {
     @RelatedTo(type = RelationshipTypesJava.IN_ROLE.Constant, direction = Direction.OUTGOING)
     public Set<UserRole> roles;
 
+    // Profile information
+    @Fetch
+    @RelatedTo(type = "IN_PROFILE", direction = Direction.OUTGOING)
+    public Set<UserProfile> profiles;
+
     // Rating embryo,
     // Move to services
     @RelatedToVia(type = RelationshipTypesJava.RATED.Constant)
@@ -102,6 +107,7 @@ public class UserCredential extends AbstractEntity implements Identity {
     public UserCredential() {
         this.roles = new HashSet<>();
         this.ratings = new HashSet<>();
+        this.profiles = new HashSet<>();
     }
 
     public UserCredential(String email, String providerId, Set<UserRole> roles) {
