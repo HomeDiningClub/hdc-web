@@ -29,9 +29,23 @@ class ContentService {
   }
 
   @Transactional(readOnly = true)
-  def getListOfAllContentPages: List[ContentPage] = {
-    val listOfContentPages: List[ContentPage] = template.findAll(classOf[ContentPage]).iterator.asScala.toList
-    listOfContentPages
+  def getListOfAll(fetchAll: Boolean = false): Option[List[ContentPage]] = {
+    val listOfAll: List[ContentPage] = contentPageRepository.findAll().iterator.asScala.toList
+
+    if (listOfAll.isEmpty){
+      None
+    }else {
+
+      // Lazy fetching
+      if(fetchAll){
+        val fetchedList = listOfAll.par.foreach { p =>
+          if(p.parentPage != null)
+            template.fetch(p.parentPage)
+        }
+        Some(fetchedList)
+      }
+      Some(listOfAll)
+    }
   }
 
   @Transactional(readOnly = false)

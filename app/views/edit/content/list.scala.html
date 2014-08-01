@@ -1,4 +1,4 @@
-@(contentList: List[models.content.ContentPage])
+@(contentList: Option[List[models.content.ContentPage]])
 
 @mainedit(Messages("edit.title")){
 
@@ -13,22 +13,29 @@
                     <th>@Messages("edit.content.list.created_date")</th>
                     <th>@Messages("edit.content.list.route")</th>
                     <th>@Messages("edit.content.list.name")</th>
+                    <th>@Messages("edit.content.list.parent")</th>
+                    <th>@Messages("edit.content.list.visibility")</th>
                     <th>@Messages("edit.content.list.action")</th>
                 </tr>
             </thead>
 
             <tbody>
-            @for(contentPage <- contentList) {
-                <tr>
-                    <td>@contentPage.route</td>
-                    <td>@contentPage.name</td>
-                    <td>
-                        <ul class="nav nav-pills">
-                            <li><a href="@routes.ContentController.edit(contentPage.objectId)"><span class="glyphicon glyphicon-edit"></span>&nbsp;@Messages("edit.actions.edit")</a></li>
-                            <li><a href="@routes.ContentController.delete(contentPage.objectId)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("edit.actions.delete")</a></li>
-                        </ul>
-                    </td>
-                </tr>
+            @if(contentList.nonEmpty) {
+                @for(contentPage <- contentList.get) {
+                    <tr>
+                        <td>@contentPage.createdDate</td>
+                        <td>@contentPage.route</td>
+                        <td>@contentPage.name</td>
+                        <td>@if(contentPage.parentPage != null){ @contentPage.parentPage.name }</td>
+                        <td>@contentPage.visible.booleanValue().toString</td>
+                        <td>
+                            <ul class="nav nav-pills">
+                                <li><a href="@routes.ContentController.edit(contentPage.objectId)"><span class="glyphicon glyphicon-edit"></span>&nbsp;@Messages("edit.actions.edit")</a></li>
+                                <li><a href="@routes.ContentController.delete(contentPage.objectId)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("edit.actions.delete")</a></li>
+                            </ul>
+                        </td>
+                    </tr>
+                }
             }
             </tbody>
         </table>

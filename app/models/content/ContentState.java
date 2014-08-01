@@ -1,19 +1,17 @@
 package models.content;
 
+import enums.ContentStateEnums;
 import models.base.AbstractEntity;
-import models.modelenums.ContentStateEnums;
-import org.springframework.data.neo4j.annotation.NodeEntity;
+//import org.springframework.data.neo4j.annotation.NodeEntity;
 
-@NodeEntity
-public class ContentState extends AbstractEntity {
+//@NodeEntity
+public class ContentState {//extends AbstractEntity {
 
     public String state;
 
-    protected ContentState() {
-        this.state = ContentStateEnums.PUBLISHED.name();
-    }
+    protected ContentState() { this.state = ContentStateEnums.PUBLISHED().toString(); }
 
     public ContentState(ContentStateEnums currentState) {
-        this.state = currentState.name();
+        this.state = currentState.toString();
     }
 }

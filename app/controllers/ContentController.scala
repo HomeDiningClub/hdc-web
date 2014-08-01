@@ -11,13 +11,14 @@ import play.api.data._
 import play.api.data.Forms._
 import constants.FlashMsgConstants
 import models.viewmodels.AddContentForm
+import java.util.UUID
+import scala.collection.mutable
 
 @SpringController
 class ContentController extends Controller with securesocial.core.SecureSocial {
 
   @Autowired
   private var contentService: ContentService = _
-
 
 
   // About us, Press and UserTerms
@@ -175,7 +176,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
   // Edit - Listing
   def list = SecuredAction { implicit request =>
-    val listOfPage: List[ContentPage] = contentService.getListOfAllContentPages
+    val listOfPage: Option[List[ContentPage]] = contentService.getListOfAll(true)
     Ok(views.html.edit.content.list(listOfPage))
   }
 
@@ -183,11 +184,13 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
   val contentForm = Form(
     mapping(
       "pageid" -> optional(number),
+      "pageparentid" -> optional(text),
       "pagename" -> nonEmptyText(minLength = 1, maxLength = 255),
       "pageroute" -> nonEmptyText(minLength = 1, maxLength = 255),
       "pagepreamble" -> optional(text),
       "pagetitle" -> optional(text),
-      "pagebody" -> optional(text)
+      "pagebody" -> optional(text),
+      "pagevisible" -> boolean
     )(AddContentForm.apply _)(AddContentForm.unapply _)
   )
 
@@ -196,7 +199,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
   }
 
   def add() = SecuredAction { implicit request =>
-    Ok(views.html.edit.content.add(contentForm))
+    Ok(views.html.edit.content.add(contentForm, getPagesAsDropDown))
   }
 
   def addSubmit() = SecuredAction { implicit request =>
@@ -204,10 +207,10 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
     contentForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.content.add.error")
-        BadRequest(views.html.edit.content.add(contentForm)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.edit.content.add(contentForm, getPagesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
-        var newContent = new ContentPage(contentData.name,contentData.route)
+        var newContent = new ContentPage(contentData.name,contentData.route, contentData.visible)
         contentData.title match {
           case Some(title) => newContent.title = title
           case None =>
@@ -220,6 +223,11 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
           case Some(content) => newContent.mainBody = content
           case None =>
         }
+        contentData.parentId match {
+          case Some(id) => newContent.parentPage = contentService.findContentById(UUID.fromString(id))
+          case None =>
+        }
+
         val savedContentPage = contentService.addContentPage(newContent)
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", savedContentPage.name, savedContentPage.objectId.toString)
         Redirect(controllers.routes.ContentController.index()).flashing(FlashMsgConstants.Success -> successMessage)
@@ -227,6 +235,28 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
     )
 
   }
+
+  private def getPagesAsDropDown: Option[Seq[(String,String)]] = {
+    val returnItems: Option[Seq[(String,String)]] = contentService.getListOfAll() match {
+      case Some(items) =>
+        var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
+
+        // Prepend the first selection (empty)
+        bufferList += (("", ""))
+
+        // Map and add the rest
+        items.sortBy(tw => tw.name).toBuffer.map {
+          item: ContentPage =>
+            bufferList += ((item.objectId.toString, item.name + " - (" + item.route + ")"))
+        }
+        Some(bufferList.toSeq)
+      case None =>
+        None
+    }
+    returnItems
+  }
+
+
 
 
   // Edit - Edit content

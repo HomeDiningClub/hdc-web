@@ -13,38 +13,54 @@ public class ContentPage extends ContentBase {
     public String preamble;
     public String mainBody;
 
+    public ContentPage parentPage;
+    public Boolean visible;
+
     protected ContentPage() {
     }
 
     public ContentPage(String name) {
         this.route = cleanRoute(name);
         this.name = name;
+        this.visible = true;
     }
 
-    public ContentPage(String name, String route) {
+    public ContentPage(String name, Boolean visible) {
+        this.route = cleanRoute(name);
+        this.name = name;
+        this.visible = visible;
+    }
+
+    public ContentPage(String name, String route, Boolean visible) {
         this.route = cleanRoute(route);
         this.name = name;
+        this.visible = visible;
     }
 
-    public ContentPage(String name, String route, String title) {
+    public ContentPage(String name, String route, String title, ContentPage parentPage, Boolean visible) {
         this.route = cleanRoute(route);
         this.name = name;
         this.title = title;
+        this.visible = visible;
     }
 
-    public ContentPage(String name, String route, String title, String preamble) {
+    public ContentPage(String name, String route, String title, String preamble, ContentPage parentPage, Boolean visible) {
         this.route = cleanRoute(route);
+        this.parentPage = parentPage;
         this.name = name;
         this.preamble = preamble;
         this.title = title;
+        this.visible = visible;
     }
 
-    public ContentPage(String name, String route, String title, String preamble, String mainBody) {
+    public ContentPage(String name, String route, String title, String preamble, String mainBody, ContentPage parentPage, Boolean visible) {
         this.route = cleanRoute(route);
+        this.parentPage = parentPage;
         this.name = name;
         this.preamble = preamble;
         this.title = title;
         this.mainBody = mainBody;
+        this.visible = visible;
     }
 
     private String cleanRoute(String input) {

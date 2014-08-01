@@ -18,8 +18,8 @@ public abstract class ContentBase extends AbstractEntity {
     @LastModifiedDate
     public Long lastModifiedDate;
 
-    @Fetch
-    @RelatedTo(type = RelationshipTypesJava.CONTENT_STATE.Constant, direction = Direction.OUTGOING)
+    //@Fetch
+    //@RelatedTo(type = RelationshipTypesJava.CONTENT_STATE.Constant, direction = Direction.OUTGOING)
     public Set<ContentState> contentState;
 
     protected ContentBase() {
