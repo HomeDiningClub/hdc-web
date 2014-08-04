@@ -22,7 +22,7 @@ class CountyController extends Controller with SecureSocial {
 
 
   // Edit - Listing
-  def list = SecuredAction { implicit request =>
+  def listAll = SecuredAction { implicit request =>
     val list: Option[List[County]] = countyService.getListOfAll
     Ok(views.html.edit.county.list(list))
   }
@@ -48,7 +48,7 @@ class CountyController extends Controller with SecureSocial {
     countyForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
-        BadRequest(views.html.edit.county.add(countyForm)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.edit.county.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
         val newRec = contentData.order match {

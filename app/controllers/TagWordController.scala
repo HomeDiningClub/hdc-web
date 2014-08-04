@@ -21,7 +21,7 @@ class TagWordController extends Controller with SecureSocial {
 
 
   // Edit - Listing
-  def list = SecuredAction { implicit request =>
+  def listAll = SecuredAction { implicit request =>
     val list: Option[List[TagWord]] = tagwordService.listAll()
     Ok(views.html.edit.tagword.list(list))
   }
@@ -47,7 +47,7 @@ class TagWordController extends Controller with SecureSocial {
     tagwordForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
-        BadRequest(views.html.edit.tagword.add(tagwordForm)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.edit.tagword.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
         val saved = tagwordService.createTag(contentData.tagwordName,"","",contentData.tagwordGroupName.toLowerCase)

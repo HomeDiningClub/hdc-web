@@ -3,6 +3,11 @@ MATCH (n)
 OPTIONAL MATCH (n)-[r]-()
 DELETE n,r
 
+This is the same as above, just for a specific node type
+MATCH (n:`ContentPage`)
+OPTIONAL MATCH (n)-[r]-()
+DELETE r,n
+
 Create index on a label:
 CREATE INDEX ON :Person(name)
 

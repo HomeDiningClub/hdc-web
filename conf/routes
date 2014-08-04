@@ -28,7 +28,7 @@ GET         /edit                                      @controllers.EditControll
 
 # EDIT - Content
 GET         /edit/content                              @controllers.ContentController.index
-GET         /edit/content/list                         @controllers.ContentController.list
+GET         /edit/content/listall                      @controllers.ContentController.listAll
 GET         /edit/content/add                          @controllers.ContentController.add
 POST        /edit/content/add                          @controllers.ContentController.addSubmit
 GET         /edit/content/edit/:objectId               @controllers.ContentController.edit(objectId: java.util.UUID)
@@ -36,7 +36,7 @@ GET         /edit/content/delete/:objectId             @controllers.ContentContr
 
 # EDIT - Recipe
 GET         /edit/recipe                               @controllers.RecipeController.index
-GET         /edit/recipe/list                          @controllers.RecipeController.list
+GET         /edit/recipe/listall                       @controllers.RecipeController.listAll
 GET         /edit/recipe/add                           @controllers.RecipeController.add
 POST        /edit/recipe/add                           @controllers.RecipeController.addSubmit
 GET         /edit/recipe/edit/:objectId                @controllers.RecipeController.edit(objectId: java.util.UUID)
@@ -44,7 +44,7 @@ GET         /edit/recipe/delete/:objectId              @controllers.RecipeContro
 
 # EDIT - County
 GET         /edit/county                               @controllers.CountyController.index
-GET         /edit/county/list                          @controllers.CountyController.list
+GET         /edit/county/listall                       @controllers.CountyController.listAll
 GET         /edit/county/add                           @controllers.CountyController.add
 POST        /edit/county/add                           @controllers.CountyController.addSubmit
 GET         /edit/county/edit/:objectId                @controllers.CountyController.edit(objectId: java.util.UUID)
@@ -52,7 +52,7 @@ GET         /edit/county/delete/:objectId              @controllers.CountyContro
 
 # EDIT - Roles
 GET         /edit/roles                                @controllers.UserRoleController.index
-GET         /edit/roles/list                           @controllers.UserRoleController.list
+GET         /edit/roles/listall                        @controllers.UserRoleController.listAll
 GET         /edit/roles/add                            @controllers.UserRoleController.add
 POST        /edit/roles/add                            @controllers.UserRoleController.addSubmit
 GET         /edit/roles/edit/:objectId                 @controllers.UserRoleController.edit(objectId: java.util.UUID)
@@ -63,7 +63,7 @@ POST        /edit/roles/addUserToRole                  @controllers.UserRoleCont
 
 # EDIT - TagWords
 GET         /edit/tagword                              @controllers.TagWordController.index
-GET         /edit/tagword/list                         @controllers.TagWordController.list
+GET         /edit/tagword/listall                      @controllers.TagWordController.listAll
 GET         /edit/tagword/add                          @controllers.TagWordController.add
 POST        /edit/tagword/add                          @controllers.TagWordController.addSubmit
 GET         /edit/tagword/edit/:objectId               @controllers.TagWordController.edit(objectId: java.util.UUID)

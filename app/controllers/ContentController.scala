@@ -13,6 +13,8 @@ import constants.FlashMsgConstants
 import models.viewmodels.AddContentForm
 import java.util.UUID
 import scala.collection.mutable
+import enums.{ContentCategoryEnums, ContentStateEnums}
+import enums.ContentStateEnums.ContentStateEnums
 
 @SpringController
 class ContentController extends Controller with securesocial.core.SecureSocial {
@@ -175,22 +177,24 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
 
   // Edit - Listing
-  def list = SecuredAction { implicit request =>
-    val listOfPage: Option[List[ContentPage]] = contentService.getListOfAll(true)
+  def listAll = SecuredAction { implicit request =>
+    val listOfPage: Option[List[ContentPage]] = contentService.getListOfAll(fetchAll = true)
     Ok(views.html.edit.content.list(listOfPage))
   }
 
   // Edit - Add Content
   val contentForm = Form(
     mapping(
-      "pageid" -> optional(number),
+      "pageid" -> optional(text),
       "pageparentid" -> optional(text),
       "pagename" -> nonEmptyText(minLength = 1, maxLength = 255),
       "pageroute" -> nonEmptyText(minLength = 1, maxLength = 255),
-      "pagepreamble" -> optional(text),
       "pagetitle" -> optional(text),
+      "pagepreamble" -> optional(text),
       "pagebody" -> optional(text),
-      "pagevisible" -> boolean
+      "contentstate" -> nonEmptyText,
+      "contentcategories" -> optional(list(text)),
+      "pagevisibleinmenus" -> boolean
     )(AddContentForm.apply _)(AddContentForm.unapply _)
   )
 
@@ -199,33 +203,86 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
   }
 
   def add() = SecuredAction { implicit request =>
-    Ok(views.html.edit.content.add(contentForm, getPagesAsDropDown))
+    // Default values for new item
+    val defaultContent = AddContentForm(None,None,"","",None,None,None,ContentStateEnums.UNPUBLISHED.toString,None,visibleInMenus = false)
+    Ok(views.html.edit.content.add(contentForm.fill(defaultContent), getPagesAsDropDown, getContentStatesAsDropDown, getCategoriesAsDropDown))
   }
 
   def addSubmit() = SecuredAction { implicit request =>
 
     contentForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.content.add.error")
-        BadRequest(views.html.edit.content.add(contentForm, getPagesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
+        val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
+        BadRequest(views.html.edit.content.add(errors, getPagesAsDropDown, getContentStatesAsDropDown, getCategoriesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
-        var newContent = new ContentPage(contentData.name,contentData.route, contentData.visible)
+
+        val newContent = contentData.id match {
+          case Some(id) =>
+            val page = contentService.findContentById(UUID.fromString(id))
+            page.name = contentData.name
+            page.route = contentData.route
+            page.visibleInMenus = contentData.visibleInMenus
+            page
+          case None =>
+            new ContentPage(contentData.name,contentData.route, contentData.visibleInMenus)
+        }
+
+        // If this occurs, user has sent an invalid UUID to edit and save
+        if(newContent == null){
+          val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
+          BadRequest(views.html.edit.content.add(contentForm, getPagesAsDropDown, getContentStatesAsDropDown, getCategoriesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
+
+        }
+
         contentData.title match {
           case Some(title) => newContent.title = title
-          case None =>
+          case None => newContent.title = ""
         }
         contentData.preamble match {
           case Some(preamble) => newContent.preamble = preamble
-          case None =>
+          case None => newContent.preamble = ""
         }
         contentData.mainBody match {
           case Some(content) => newContent.mainBody = content
-          case None =>
+          case None => newContent.mainBody = ""
         }
         contentData.parentId match {
-          case Some(id) => newContent.parentPage = contentService.findContentById(UUID.fromString(id))
+          case Some(id) =>
+            val settingParentPage = contentService.findContentById(UUID.fromString(id))
+
+            // Cannot set itself as a parent
+            if(settingParentPage.objectId == newContent.objectId)
+              newContent.parentPage = null
+            else
+              newContent.parentPage = contentService.findContentById(UUID.fromString(id))
+
           case None =>
+            if(newContent.parentPage != null)
+              newContent.parentPage = null
+        }
+
+        // get request value from submitted form
+//        val map: Option[Map[String, Seq[String]]] = request.body.asFormUrlEncoded match {
+//          case Some(content) => content.map.get("contentcategories")
+//        }
+//        val checkedVal: Array[String] = map.get("contentcategories") // get selected categories
+//
+//        // Assign checked value to model
+//        newContent.contentCategories = checkedVal
+
+
+        contentData.contentCategories match {
+          case Some(listOfCategories) =>
+            newContent.contentCategories = listOfCategories.toArray
+          case None =>
+            newContent.contentCategories = null
+        }
+
+        if(contentData.contentState == ContentStateEnums.PUBLISHED.toString)
+          newContent.publish()
+        else if(contentData.contentState == ContentStateEnums.UNPUBLISHED.toString){
+          newContent.unPublish()
         }
 
         val savedContentPage = contentService.addContentPage(newContent)
@@ -241,9 +298,6 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
       case Some(items) =>
         var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
 
-        // Prepend the first selection (empty)
-        bufferList += (("", ""))
-
         // Map and add the rest
         items.sortBy(tw => tw.name).toBuffer.map {
           item: ContentPage =>
@@ -257,11 +311,55 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
   }
 
 
+  private def getContentStatesAsDropDown: Seq[(String,String)] = {
+    val returnItems: Seq[(String,String)] = Seq(
+      (ContentStateEnums.PUBLISHED.toString,ContentStateEnums.PUBLISHED.toString),
+      (ContentStateEnums.UNPUBLISHED.toString,ContentStateEnums.UNPUBLISHED.toString)
+    )
+    returnItems
+  }
+
+  private def getCategoriesAsDropDown: Option[Seq[(String,String)]] = {
+    val returnItems: Seq[(String,String)] = List(
+      (ContentCategoryEnums.MAINMENU.toString,ContentCategoryEnums.MAINMENU.toString),
+      (ContentCategoryEnums.NEWS.toString,ContentCategoryEnums.NEWS.toString),
+      (ContentCategoryEnums.QUICKLINKS.toString,ContentCategoryEnums.QUICKLINKS.toString)
+    )
+    Some(returnItems)
+  }
+
 
 
   // Edit - Edit content
   def edit(objectId: java.util.UUID) = SecuredAction { implicit request =>
-    Ok(views.html.edit.content.index())
+    val item = contentService.findContentById(objectId, fetchAll = true)
+    item match {
+      case null =>
+        Ok(views.html.edit.content.index())
+      case _ =>
+        val form = AddContentForm.apply(
+        Some(item.objectId.toString),
+        item.parentPage match {
+          case null => None
+          case page => Some(page.objectId.toString)
+        },
+        item.name,
+        item.route,
+        Some(item.title),
+        Some(item.preamble),
+        Some(item.mainBody),
+        item.contentState match {
+          case null => ContentStateEnums.UNPUBLISHED.toString
+          case state => state
+        },
+        item.contentCategories match {
+          case null => None
+          case categories => Some(item.contentCategories.toList)
+        },
+        item.visibleInMenus)
+
+      Ok(views.html.edit.content.add(contentForm.fill(form), getPagesAsDropDown, getContentStatesAsDropDown, getCategoriesAsDropDown))
+    }
   }
 
   // Edit - Delete content

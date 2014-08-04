@@ -23,9 +23,18 @@ class ContentService {
   }
 
   @Transactional(readOnly = true)
-  def findContentById(objectId: java.util.UUID): ContentPage = {
-    contentPageRepository.findByobjectId(objectId)
-    //contentPageRepository.findOne(objectId)
+  def findContentById(objectId: java.util.UUID, fetchAll: Boolean = false): ContentPage = {
+    val item = contentPageRepository.findByobjectId(objectId)
+
+    item match {
+      case null => null
+      case page =>
+        if(fetchAll){
+          if(page.parentPage != null)
+            template.fetch(page.parentPage)
+        }
+        page
+    }
   }
 
   @Transactional(readOnly = true)

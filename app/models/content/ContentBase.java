@@ -1,14 +1,9 @@
 package models.content;
 
+import enums.ContentStateEnums;
 import models.base.AbstractEntity;
-import models.modelconstants.RelationshipTypesJava;
-import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.neo4j.annotation.Fetch;
-import org.springframework.data.neo4j.annotation.RelatedTo;
-import java.util.HashSet;
-import java.util.Set;
 
 public abstract class ContentBase extends AbstractEntity {
 
@@ -18,11 +13,17 @@ public abstract class ContentBase extends AbstractEntity {
     @LastModifiedDate
     public Long lastModifiedDate;
 
-    //@Fetch
-    //@RelatedTo(type = RelationshipTypesJava.CONTENT_STATE.Constant, direction = Direction.OUTGOING)
-    public Set<ContentState> contentState;
+    public String contentState;
+
+    public void publish() {
+        this.contentState = ContentStateEnums.PUBLISHED().toString();
+    }
+
+    public void unPublish() {
+        this.contentState = ContentStateEnums.UNPUBLISHED().toString();
+    }
 
     protected ContentBase() {
-        this.contentState = new HashSet<>();
+        unPublish();
     }
 }

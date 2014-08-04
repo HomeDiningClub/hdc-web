@@ -11,6 +11,7 @@
             <thead>
                 <tr>
                     <th>@Messages("edit.content.list.created_date")</th>
+                    <th>@Messages("edit.content.list.contentstate")</th>
                     <th>@Messages("edit.content.list.route")</th>
                     <th>@Messages("edit.content.list.name")</th>
                     <th>@Messages("edit.content.list.parent")</th>
@@ -24,10 +25,11 @@
                 @for(contentPage <- contentList.get) {
                     <tr>
                         <td>@contentPage.createdDate</td>
+                        <td>@contentPage.contentState</td>
                         <td>@contentPage.route</td>
                         <td>@contentPage.name</td>
                         <td>@if(contentPage.parentPage != null){ @contentPage.parentPage.name }</td>
-                        <td>@contentPage.visible.booleanValue().toString</td>
+                        <td>@contentPage.visibleInMenus.booleanValue().toString</td>
                         <td>
                             <ul class="nav nav-pills">
                                 <li><a href="@routes.ContentController.edit(contentPage.objectId)"><span class="glyphicon glyphicon-edit"></span>&nbsp;@Messages("edit.actions.edit")</a></li>

@@ -1,8 +1,6 @@
 package models.content;
 
-import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.support.index.IndexType;
 
 @NodeEntity
 public class ContentPage extends ContentBase {
@@ -13,8 +11,9 @@ public class ContentPage extends ContentBase {
     public String preamble;
     public String mainBody;
 
+    public String[] contentCategories;
     public ContentPage parentPage;
-    public Boolean visible;
+    public Boolean visibleInMenus;
 
     protected ContentPage() {
     }
@@ -22,26 +21,27 @@ public class ContentPage extends ContentBase {
     public ContentPage(String name) {
         this.route = cleanRoute(name);
         this.name = name;
-        this.visible = true;
+        this.visibleInMenus = true;
     }
 
     public ContentPage(String name, Boolean visible) {
         this.route = cleanRoute(name);
         this.name = name;
-        this.visible = visible;
+        this.visibleInMenus = visible;
     }
 
     public ContentPage(String name, String route, Boolean visible) {
         this.route = cleanRoute(route);
         this.name = name;
-        this.visible = visible;
+        this.visibleInMenus = visible;
     }
 
     public ContentPage(String name, String route, String title, ContentPage parentPage, Boolean visible) {
         this.route = cleanRoute(route);
+        this.parentPage = parentPage;
         this.name = name;
         this.title = title;
-        this.visible = visible;
+        this.visibleInMenus = visible;
     }
 
     public ContentPage(String name, String route, String title, String preamble, ContentPage parentPage, Boolean visible) {
@@ -50,7 +50,7 @@ public class ContentPage extends ContentBase {
         this.name = name;
         this.preamble = preamble;
         this.title = title;
-        this.visible = visible;
+        this.visibleInMenus = visible;
     }
 
     public ContentPage(String name, String route, String title, String preamble, String mainBody, ContentPage parentPage, Boolean visible) {
@@ -60,7 +60,7 @@ public class ContentPage extends ContentBase {
         this.preamble = preamble;
         this.title = title;
         this.mainBody = mainBody;
-        this.visible = visible;
+        this.visibleInMenus = visible;
     }
 
     private String cleanRoute(String input) {

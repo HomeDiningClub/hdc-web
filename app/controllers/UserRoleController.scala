@@ -24,7 +24,7 @@ class UserRoleController extends Controller with SecureSocial {
 
 
   // Edit - Listing
-  def list = SecuredAction { implicit request =>
+  def listAll = SecuredAction { implicit request =>
     val list: Option[List[UserRole]] = userRoleService.getListOfAll
     Ok(views.html.edit.roles.list(list))
   }
@@ -49,7 +49,7 @@ class UserRoleController extends Controller with SecureSocial {
     userRoleForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
-        BadRequest(views.html.edit.roles.add(userRoleForm)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.edit.roles.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
         val newRec = userRoleService.createRole(contentData.name)
@@ -78,7 +78,7 @@ class UserRoleController extends Controller with SecureSocial {
     userAddToRoleForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
-        BadRequest(views.html.edit.roles.addUserToRole(userAddToRoleForm,getUsersAsDropDown,getRolesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.edit.roles.addUserToRole(errors,getUsersAsDropDown,getRolesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
         val saved = contentData.addOrRemoveRole match {

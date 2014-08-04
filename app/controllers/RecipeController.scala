@@ -29,7 +29,7 @@ class RecipeController extends Controller with SecureSocial {
 
 
   // Edit - Listing
-  def list = SecuredAction { implicit request =>
+  def listAll = SecuredAction { implicit request =>
     val listOfPage: List[Recipe] = recipeService.getListOfAll
     Ok(views.html.edit.recipe.list(listOfPage))
   }
@@ -56,7 +56,7 @@ class RecipeController extends Controller with SecureSocial {
     contentForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
-        BadRequest(views.html.edit.recipe.add(contentForm)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.edit.recipe.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
         var newRec = new Recipe(contentData.name)
