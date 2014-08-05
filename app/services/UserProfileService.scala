@@ -18,11 +18,13 @@ import org.springframework.context.annotation.Lazy
 
 @Service
 object  UserProfileService {
+  /*
   @Autowired
   private var template: Neo4jTemplate = _
 
   @Autowired
   private var userProfileRepository: UserProfileRepository = _
+  */
 }
 
 
@@ -31,6 +33,11 @@ class UserProfileService {
 
   // http://books.google.se/books?id=DeTO4xbC-eoC&pg=PT158&lpg=PT158&dq=:+Neo4jTemplate+%3D+_&source=bl&ots=kTYWRxqdkm&sig=nNZ8mMMFgx4CmCFw13zWeQdnzFA&hl=en&sa=X&ei=RK9eU7v-KI7jO5m9gegO&ved=0CCwQ6AEwATgK#v=onepage&q=%3A%20Neo4jTemplate%20%3D%20_&f=false
 
+  @Autowired
+  private var template: Neo4jTemplate = _
+
+  @Autowired
+  private var userProfileRepository: UserProfileRepository = _
 
 
   @Transactional(readOnly = false)
@@ -39,7 +46,7 @@ class UserProfileService {
     println("save id: " + userProfile.userIdentity )
     println("save provider id  " + userProfile.providerIdentity)
 
-    var modUserProfile = UserProfileService.userProfileRepository.save(userProfile)
+    var modUserProfile = userProfileRepository.save(userProfile)
 
     modUserProfile
   }
@@ -50,7 +57,7 @@ class UserProfileService {
 //    var key : String = id.identityId.userId + "_" + id.identityId.providerId
 //    var up = UserProfileService.userProfileRepository.findByUserIdentityAndProviderIdentity(id.identityId.userId, id.identityId.providerId)
 
-    var lista = UserProfileService.userProfileRepository.findAll().iterator()
+    var lista = userProfileRepository.findAll().iterator()
 
     while(lista.hasNext) {
       var v = lista.next()
@@ -91,7 +98,7 @@ class UserProfileService {
 
   @Transactional(readOnly = true)
   def getAllUserProfiles: List[models.UserProfile] = {
-    val listOfUserProfiles: List[models.UserProfile] = IteratorUtil.asCollection(UserProfileService.userProfileRepository.findAll()).asScala.toList
+    val listOfUserProfiles: List[models.UserProfile] = IteratorUtil.asCollection(userProfileRepository.findAll()).asScala.toList
     listOfUserProfiles
   }
 
@@ -104,14 +111,14 @@ class UserProfileService {
 
   print("getUserProfile : " + userName)
 
-  if(UserProfileService.template == null){
+  if(template == null){
     println("template is null ********************************")
   } else {
     println("template is not null*****************************")
   }
 
 
-    var userProfileDataIndex: Index[Node] = UserProfileService.template.getIndex(classOf[models.UserProfile], "userName")
+    var userProfileDataIndex: Index[Node] = template.getIndex(classOf[models.UserProfile], "userName")
     //val node: Node = userProfileDataIndex.query("userName", userName).getSingle()
 
   if(userProfileDataIndex == null){
@@ -139,7 +146,7 @@ class UserProfileService {
 
     // node != null
     if (id != 0) {
-      currNode = UserProfileService.userProfileRepository.findOne(id)
+      currNode = userProfileRepository.findOne(id)
     }
 
     currNode
@@ -148,7 +155,7 @@ class UserProfileService {
 
     @Transactional(readOnly = true)
   def getAllUserProfile: List[models.UserProfile] = {
-      UserProfileService.userProfileRepository.findAll().asScala.toList
+      userProfileRepository.findAll().asScala.toList
   }
 
 

@@ -308,8 +308,30 @@ class UserCredentialServicePlugin (application: Application) extends UserService
         println("create userCredential, UserId : " + userCredential.userId)
         // Add default group
         InstancedServices.userCredentialService.addRole(userCredential, RoleEnums.USER)
+
+        var userProfile : UserProfile = new UserProfile()
+
+
+      println("#####################################")
+      println("UserProfile graphId : " + userProfile.graphId )
+      println("UserProfile objectId: " + userProfile.objectId)
+      println("#####################################")
+
+      userProfile.userIdentity = userCredential.userId
+      userProfile.providerIdentity = userCredential.providerId
+      userProfile.fistName = userCredential.firstName
+      userProfile.lastName = userCredential.lastName
+      userProfile.keyIdentity = userProfile.userIdentity + "_" + userProfile.providerIdentity
+      var storedUserProfile = InstancedServices.userProfileService.saveUserProfile(userProfile)
+      InstancedServices.userCredentialService.addUserProfile(userCredential, storedUserProfile)
+
         var newUserCredential = saveUser(userCredential)
-       return newUserCredential
+
+
+
+
+
+        return newUserCredential
     }
 
 

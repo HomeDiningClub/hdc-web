@@ -51,7 +51,7 @@ public class UserProfile extends AbstractEntity {
     public String email = "";
 
     // profile look up name
-    @Indexed(unique=true)
+    //@Indexed(unique=true)
     public String profileLinkName = "";
 
 

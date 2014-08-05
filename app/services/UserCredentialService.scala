@@ -157,6 +157,20 @@ class UserCredentialService {
   }
 
 
+  @Transactional(readOnly = false)
+  def addUserProfile(user: UserCredential, profile: models.UserProfile): UserCredential = {
+
+
+    // Add
+    if(user.profiles.isEmpty) {
+      user.profiles.add(profile)
+    }
+    user
+  }
+
+
+
+
 
   @Transactional(readOnly = false)
   def addRole(user: UserCredential, role: RoleEnums): UserCredential = {
