@@ -10,6 +10,7 @@
                 <fieldset>
                     @helper.inputText(countyForm("name"), '_label -> Messages("edit.county.add.name"), '_help -> Messages("edit.county.add.name.validation"))
                     @helper.inputText(countyForm("order"), '_label -> Messages("edit.county.add.order"), '_help -> Messages("edit.county.add.order.validation"))
+                    @helper.inputHidden(countyForm("id"))
                 </fieldset>
                 <div class="form-actions">
                     <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>

@@ -1,13 +1,11 @@
-import models.UserProfileData
 import play.api.mvc.Handler
-import play.Application
-import play.GlobalSettings
-import play.Logger
+import play.api.Application
+import play.api.GlobalSettings
+import play.api.Logger
 import org.springframework.context.support.ClassPathXmlApplicationContext
-import org.springframework.data.neo4j.support.Neo4jTemplate
-import play.api._
 import play.api.mvc._
-import play.mvc.Http
+import play.api.mvc.Results._
+import scala.concurrent.Future
 
 // Java2Scala
 // http://javatoscala.com/
@@ -16,7 +14,7 @@ import play.mvc.Http
 //  private var init: Boolean = false
 //}
 
-class Global extends GlobalSettings {
+object Global extends GlobalSettings {
   /**
    * Declare the application context to be used.
    */
@@ -28,6 +26,7 @@ class Global extends GlobalSettings {
    * @param app
    */
   override def onStart(app: Application) {
+    Logger.info("Application has started")
     // Needed for embedded DB
     //ctx.start()
   }
@@ -37,6 +36,8 @@ class Global extends GlobalSettings {
    * @param app
    */
   override def onStop(app: Application) {
+    Logger.info("Application shutdown...")
+
     // Needed for embedded DB
     //val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate])
     //neoTemplate.getGraphDatabaseService.shutdown()
@@ -48,6 +49,18 @@ class Global extends GlobalSettings {
 //  override def onRouteRequest(request: play.mvc.Http.RequestHeader): Option[Handler] = {
 //    Some(super.onRouteRequest(NormalizedRequest(request)))
 //  }
+
+  override def onError(request: RequestHeader, ex: Throwable) = {
+    Future.successful(InternalServerError(views.html.error.error(ex = ex)(request)))
+  }
+
+  override def onHandlerNotFound(request: RequestHeader) = {
+    Future.successful(NotFound(views.html.error.notfound(refUrl = request.path)(request)))
+  }
+
+  override def onBadRequest(request: RequestHeader, error: String) = {
+    Future.successful(InternalServerError(views.html.error.error(errorString = error)(request)))
+  }
 
   /**
    * Controllers must be resolved through the application context. There is a special method of GlobalSettings

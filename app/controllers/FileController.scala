@@ -7,11 +7,12 @@ import models.files._
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.libs.Files.TemporaryFile
 import java.util.UUID
-import securesocial.core.SecureSocial
-import constants.{FlashMsgConstants, FileTransformationConstants}
-import enums.FileTypeEnums
+import securesocial.core.{SecuredRequest, SecureSocial}
+import constants.FlashMsgConstants
+import enums.{RoleEnums, FileTypeEnums}
 import presets.ImagePreSets
 import models.UserCredential
+import utils.authorization.WithRole
 
 @SpringController
 class FileController extends Controller with SecureSocial {
@@ -19,11 +20,12 @@ class FileController extends Controller with SecureSocial {
   @Autowired
   private var fileService: ContentFileService = _
 
-  def index = SecuredAction { request =>
+  def index = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.file.index())
   }
 
-  def add = SecuredAction(parse.multipartFormData) { request =>
+  def add = SecuredAction(parse.multipartFormData) { implicit request =>
+
       request.body.file("file").map {
         file =>
           val tempFile: MultipartFormData.FilePart[TemporaryFile] = file
@@ -38,7 +40,7 @@ class FileController extends Controller with SecureSocial {
       //Redirect(routes.FileController.index)
   }
 
-  def deleteImage(id: UUID) = SecuredAction {
+  def deleteImage(id: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val result = fileService.deleteFile(id)
     if(result)
       Redirect(routes.FileController.index()).flashing(FlashMsgConstants.Success -> "File deleted")
@@ -47,7 +49,7 @@ class FileController extends Controller with SecureSocial {
   }
 
 
-//  def listS3Files(prefix: String = "") = Action{
+//  def listS3Files(prefix: String = "") = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
 //    val futList: Option[List[String]] = Some(fileService.listFilesRawFromS3(prefix))
 //    Ok(views.html.file.index(futList))
 //  }

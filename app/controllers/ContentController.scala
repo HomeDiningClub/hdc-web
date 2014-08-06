@@ -13,8 +13,9 @@ import constants.FlashMsgConstants
 import models.viewmodels.AddContentForm
 import java.util.UUID
 import scala.collection.mutable
-import enums.{ContentCategoryEnums, ContentStateEnums}
-import enums.ContentStateEnums.ContentStateEnums
+import enums.{RoleEnums, ContentCategoryEnums, ContentStateEnums}
+import securesocial.core.SecureSocial._
+import utils.authorization.WithRole
 
 @SpringController
 class ContentController extends Controller with securesocial.core.SecureSocial {
@@ -177,7 +178,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
 
   // Edit - Listing
-  def listAll = SecuredAction { implicit request =>
+  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val listOfPage: Option[List[ContentPage]] = contentService.getListOfAll(fetchAll = true)
     Ok(views.html.edit.content.list(listOfPage))
   }
@@ -198,17 +199,17 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
     )(AddContentForm.apply _)(AddContentForm.unapply _)
   )
 
-  def index() = SecuredAction { implicit request =>
+  def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.content.index())
   }
 
-  def add() = SecuredAction { implicit request =>
+  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     // Default values for new item
     val defaultContent = AddContentForm(None,None,"","",None,None,None,ContentStateEnums.UNPUBLISHED.toString,None,visibleInMenus = false)
     Ok(views.html.edit.content.add(contentForm.fill(defaultContent), getPagesAsDropDown, getContentStatesAsDropDown, getCategoriesAsDropDown))
   }
 
-  def addSubmit() = SecuredAction { implicit request =>
+  def addSubmit() = SecuredAction(WithRole(RoleEnums.ADMIN)) { implicit request =>
 
     contentForm.bindFromRequest.fold(
       errors => {
@@ -331,7 +332,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
 
   // Edit - Edit content
-  def edit(objectId: java.util.UUID) = SecuredAction { implicit request =>
+  def edit(objectId: java.util.UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val item = contentService.findContentById(objectId, fetchAll = true)
     item match {
       case null =>
@@ -363,7 +364,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
   }
 
   // Edit - Delete content
-  def delete(objectId: java.util.UUID) = SecuredAction { implicit request =>
+  def delete(objectId: java.util.UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val result: Boolean = contentService.deleteContentPageById(objectId)
 
     result match {

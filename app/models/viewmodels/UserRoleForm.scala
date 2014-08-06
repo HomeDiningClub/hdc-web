@@ -1,6 +1,7 @@
 package models.viewmodels
 
 case class UserRoleForm(
-                       name: String
+                        id: Option[String],
+                        name: String
                        )
 { }

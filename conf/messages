@@ -2,6 +2,16 @@
 main.title=Home Dining Club
 main.language=sv
 
+# Error
+error.title=Oj, ett fel inträffade
+error.header=Odjå! Någonting gick väldigt fel!
+error.body=Du kanske kan försöka lite senare, eller gå tillbaka till {0}
+error.linkhome=startsidan
+notfound.title=Sidan kan inte hittas
+notfound.header=Sidan kunde inte hittas (404)
+notfound.body=Vi är ledsna vi kunde inte hitta sidan du letade efter ({0}).<br>Du kan alltid gå tillbaka till {1}
+notfound.linkhome=startsidan
+
 # Header
 header.link.campaign=Nyhetsbrev
 header.link.host-profile=Gå till {0} profilsida
@@ -247,13 +257,13 @@ securesocial.appName=Home
 
 # Login page
 securesocial.login.title=Logga in
-securesocial.login.instructions=Använd ett existerande konto från en av följande tjänster för att logga in.
+securesocial.login.instructions=Eller, använd ett existerande konto från en av följande tjänster för att logga in.
 securesocial.login.accessDenied=Du tillät inte åtkomst till ditt konto. Vänligen tillåt åtkomst för att logga in.
 securesocial.login.errorLoggingIn=Ett fel inträffade vid inloggning. Vänligen försök igen.
 securesocial.login.useEmailAndPassword=Logga in genom att använda användarnamn och lösenord.
 securesocial.login.useEmailAndPasswordOnly=Logga in med användarnamn och lösenord.
-securesocial.login.signUp=Om du inte har ett konto, kan du registrera dig
-securesocial.login.here=här
+securesocial.login.signUp=Om du inte har ett konto, kan du skapa ett konto genom att:
+securesocial.login.here=Registrera dig
 securesocial.login.invalidCredentials=Inloggningsuppgifterna du angav är felaktiga.
 securesocial.login.forgotPassword=Glömt lösenord?
 
@@ -290,6 +300,7 @@ securesocial.passwordChange.changeButton=Ändra
 securesocial.passwordChange.invalidPassword=Ogiltigt lösenord
 securesocial.passwordChange.ok=Ditt lösenord har ändrats
 securesocial.passwordChange.okButton=Ok
+securesocial.passwordChange.currentPassword.help=*(epost)
 
 # Not authorized page
 securesocial.notAuthorized.title=Behörighet saknas

@@ -87,5 +87,10 @@ class TagWordService {
     false
   }
 
+  @Transactional(readOnly = false)
+  def save(item: TagWord): TagWord = {
+    val result = tagWordRepository.save(item)
+    result
+  }
 
 }

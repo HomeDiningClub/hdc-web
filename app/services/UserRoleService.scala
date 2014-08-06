@@ -28,11 +28,11 @@ class UserRoleService {
   }
 
   def createRole(name: String): UserRole = {
-    add(new UserRole(name.toUpperCase))
+    save(new UserRole(name.toUpperCase))
   }
 
   def createRole(name: RoleEnums): UserRole = {
-    add(new UserRole(name.toString))
+    save(new UserRole(name.toString))
   }
 
 
@@ -86,7 +86,7 @@ class UserRoleService {
   }
 
   @Transactional(readOnly = false)
-  def add(newContent: UserRole): UserRole = {
+  def save(newContent: UserRole): UserRole = {
     // Don't add if already exists, just return the existing instance
     val role = findByName(newContent.name) match {
       case Some(role) => role

@@ -9,6 +9,7 @@
             @helper.form(action=routes.UserRoleController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
                 <fieldset>
                     @helper.inputText(userRoleForm("name"), '_label -> Messages("edit.roles.add.name"), '_help -> Messages("edit.roles.add.name.validation"))
+                    @helper.inputHidden(userRoleForm("id"))
                 </fieldset>
                 <div class="form-actions">
                     <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>

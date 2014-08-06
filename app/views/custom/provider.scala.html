@@ -26,6 +26,7 @@
                                 loginForm.get("username"),
                                 '_label -> Messages("securesocial.signup.username"),
                                 'class -> "input-xlarge",
+                                '_help -> "*",
                                 'autofocus -> "autofocus"
                             )
                         } else {
@@ -33,6 +34,7 @@
                                 loginForm.get("username"),
                                 '_label -> Messages("securesocial.signup.email1"),
                                 'class -> "input-xlarge",
+                                '_help -> "*",
                                 'autofocus -> "autofocus"
                             )
                         }
@@ -40,15 +42,17 @@
                         @helper.inputPassword(
                             loginForm.get("password"),
                             '_label -> Messages("securesocial.signup.password1"),
+                            '_help -> "*",
                             'class -> "input-xlarge"
                         )
 
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">@Messages("securesocial.login.title")</button>
+                        <div class="form-actions clearfix">
+                            <button type="submit" class="btn btn-primary pull-left">@Messages("securesocial.login.title")</button>
+                            <a class="btn pull-left" href="@securesocial.core.providers.utils.RoutesHelper.startResetPassword()">@Messages("securesocial.login.forgotPassword")</a>
                         </div>
                         <div class="clearfix margin-top">
-                            <p><a href="@securesocial.core.providers.utils.RoutesHelper.startResetPassword()">@Messages("securesocial.login.forgotPassword")</a><br>
-                            @Messages("securesocial.login.signUp") <a href="@securesocial.core.providers.utils.RoutesHelper.startSignUp()">@Messages("securesocial.login.here")</a></p>
+                            <p>@Messages("securesocial.login.signUp")<br>
+                            <p><a class="btn btn-primary" href="@securesocial.core.providers.utils.RoutesHelper.startSignUp()">@Messages("securesocial.login.here")</a></p>
                         </div>
                     </fieldset>
                 </form>

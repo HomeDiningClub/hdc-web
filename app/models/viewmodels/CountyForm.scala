@@ -1,7 +1,8 @@
 package models.viewmodels
 
 case class CountyForm(
-                       name: String,
-                       order: Option[Int]
+                        id: Option[String],
+                        name: String,
+                        order: Option[Int]
                        )
 { }

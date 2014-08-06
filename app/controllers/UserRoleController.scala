@@ -1,7 +1,7 @@
 package controllers
 
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.mvc.Controller
+import play.api.mvc._
 import securesocial.core.SecureSocial
 import play.api.data.Form
 import play.api.data.Forms._
@@ -13,6 +13,12 @@ import models.viewmodels.{AddUserToRoleForm, UserRoleForm}
 import play.api.i18n.Messages
 import constants.FlashMsgConstants
 import scala.collection.mutable
+import utils.authorization.WithRole
+import enums.RoleEnums
+import utils.authorization.WithRole
+import scala.Some
+import models.viewmodels.AddUserToRoleForm
+import models.viewmodels.UserRoleForm
 
 @SpringController
 class UserRoleController extends Controller with SecureSocial {
@@ -24,7 +30,7 @@ class UserRoleController extends Controller with SecureSocial {
 
 
   // Edit - Listing
-  def listAll = SecuredAction { implicit request =>
+  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val list: Option[List[UserRole]] = userRoleService.getListOfAll
     Ok(views.html.edit.roles.list(list))
   }
@@ -32,19 +38,20 @@ class UserRoleController extends Controller with SecureSocial {
   // Edit - Add
   val userRoleForm = Form(
     mapping(
+      "id" -> optional(text),
       "name" -> nonEmptyText(minLength = 1, maxLength = 255)
     )(UserRoleForm.apply _)(UserRoleForm.unapply _)
   )
 
-  def index() = SecuredAction { implicit request =>
+  def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.roles.index())
   }
 
-  def add() = SecuredAction { implicit request =>
+  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.roles.add(userRoleForm))
   }
 
-  def addSubmit() = SecuredAction(parse.multipartFormData) { implicit request =>
+  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
 
     userRoleForm.bindFromRequest.fold(
       errors => {
@@ -52,8 +59,16 @@ class UserRoleController extends Controller with SecureSocial {
         BadRequest(views.html.edit.roles.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
-        val newRec = userRoleService.createRole(contentData.name)
-        val saved = userRoleService.add(newRec)
+
+        val saved = contentData.id match {
+          case Some(id) =>
+            val item = userRoleService.findById(UUID.fromString(id))
+            item.name = contentData.name
+            userRoleService.save(item)
+          case None =>
+            userRoleService.createRole(contentData.name)
+        }
+
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
         Redirect(controllers.routes.UserRoleController.index()).flashing(FlashMsgConstants.Success -> successMessage)
       }
@@ -69,11 +84,11 @@ class UserRoleController extends Controller with SecureSocial {
     )(AddUserToRoleForm.apply _)(AddUserToRoleForm.unapply _)
   )
 
-  def addUserToRole() = SecuredAction { implicit request =>
+  def addUserToRole() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.roles.addUserToRole(userAddToRoleForm,getUsersAsDropDown,getRolesAsDropDown))
   }
 
-  def addUserToRoleSubmit() = SecuredAction(parse.multipartFormData) { implicit request =>
+  def addUserToRoleSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
 
     userAddToRoleForm.bindFromRequest.fold(
       errors => {
@@ -130,12 +145,24 @@ class UserRoleController extends Controller with SecureSocial {
 
 
   // Edit - Edit content
-  def edit(objectId: UUID) = SecuredAction { implicit request =>
-    Ok(views.html.edit.roles.index())
+  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+    val item = userRoleService.findById(objectId)
+
+    item match {
+      case null =>
+        Ok(views.html.edit.roles.index())
+      case _ =>
+        val form = UserRoleForm.apply(
+          Some(item.objectId.toString),
+          item.name
+        )
+
+        Ok(views.html.edit.roles.add(userRoleForm.fill(form)))
+    }
   }
 
   // Edit - Delete content
-  def delete(objectId: UUID) = SecuredAction { implicit request =>
+  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val result: Boolean = userRoleService.deleteById(objectId)
 
     result match {

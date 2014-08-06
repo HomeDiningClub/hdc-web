@@ -196,7 +196,10 @@ class UserCredentialService {
         case None => None
       }
     }
-    user
+
+    // Save
+    val savedUser = userCredentialRepository.save(user)
+    savedUser
   }
 
   @Transactional(readOnly = false)
@@ -213,7 +216,10 @@ class UserCredentialService {
       case Some(r) => user.roles.remove(r)
       case None => None
     }
-    user
+
+    // Save
+    val savedUser = userCredentialRepository.save(user)
+    savedUser
   }
 
 }

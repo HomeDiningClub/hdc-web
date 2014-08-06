@@ -1,7 +1,7 @@
 package controllers
 
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.mvc.{MultipartFormData, Action, Controller}
+import play.api.mvc._
 import securesocial.core.SecureSocial
 import models.{UserCredential, Recipe}
 import play.api.data.Form
@@ -13,8 +13,14 @@ import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
 import services.{UserCredentialService, ContentFileService, RecipeService}
 import play.api.libs.Files.TemporaryFile
-import enums.FileTypeEnums
+import enums.{RoleEnums, FileTypeEnums}
 import java.util.UUID
+import presets.ImagePreSets
+import utils.authorization.WithRole
+import utils.authorization.WithRole
+import scala.Some
+import models.viewmodels.RecipeForm
+import play.api.mvc.Security.AuthenticatedRequest
 
 @SpringController
 class RecipeController extends Controller with SecureSocial {
@@ -29,7 +35,7 @@ class RecipeController extends Controller with SecureSocial {
 
 
   // Edit - Listing
-  def listAll = SecuredAction { implicit request =>
+  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val listOfPage: List[Recipe] = recipeService.getListOfAll
     Ok(views.html.edit.recipe.list(listOfPage))
   }
@@ -37,17 +43,17 @@ class RecipeController extends Controller with SecureSocial {
   // Edit - Add Content
   val contentForm = Form(
     mapping(
-      "receipeid" -> optional(number),
+      "receipeid" -> optional(text),
       "recipename" -> nonEmptyText(minLength = 1, maxLength = 255),
       "recipebody" -> optional(text)
     )(RecipeForm.apply _)(RecipeForm.unapply _)
   )
 
-  def index() = SecuredAction { implicit request =>
+  def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.recipe.index())
   }
 
-  def add() = SecuredAction { implicit request =>
+  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.recipe.add(contentForm))
   }
 
@@ -59,22 +65,29 @@ class RecipeController extends Controller with SecureSocial {
         BadRequest(views.html.edit.recipe.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
-        var newRec = new Recipe(contentData.name)
+
+        val newRec = contentData.id match {
+          case Some(id) =>
+            val item = recipeService.findById(UUID.fromString(id))
+            item.name = contentData.name
+            item
+          case None =>
+            new Recipe(contentData.name)
+        }
 
         request.body.file("recipemainimage").map {
           file =>
             val filePerm: MultipartFormData.FilePart[TemporaryFile] = file
-            val imageFile = fileService.uploadFile(filePerm, request.user.asInstanceOf[UserCredential].objectId, FileTypeEnums.IMAGE)
-              imageFile match {
-                case Some(imageFile) => newRec.mainImage = imageFile
-                case None => None
+            val imageFile = fileService.uploadFile(filePerm, request.user.asInstanceOf[UserCredential].objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages)
+            imageFile match {
+              case Some(item) =>
+                newRec.mainImage = item
+              case None => None
             }
         }
 
-        contentData.mainBody match {
-          case Some(content) => newRec.mainBody = content
-          case None =>
-        }
+        newRec.mainBody = contentData.mainBody.getOrElse("")
+
         val saved = recipeService.add(newRec)
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
         Redirect(controllers.routes.RecipeController.index()).flashing(FlashMsgConstants.Success -> successMessage)
@@ -85,12 +98,25 @@ class RecipeController extends Controller with SecureSocial {
 
 
   // Edit - Edit content
-  def edit(objectId: UUID) = SecuredAction { implicit request =>
-    Ok(views.html.edit.recipe.index())
+  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+    val item = recipeService.findById(objectId)
+
+    item match {
+      case null =>
+        Ok(views.html.edit.recipe.index())
+      case _ =>
+        val form = RecipeForm.apply(
+          Some(item.objectId.toString),
+          item.name,
+          Some(item.mainBody)
+        )
+
+        Ok(views.html.edit.recipe.add(contentForm.fill(form)))
+    }
   }
 
   // Edit - Delete content
-  def delete(objectId: UUID) = SecuredAction { implicit request =>
+  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val result: Boolean = recipeService.deleteById(objectId)
 
     result match {

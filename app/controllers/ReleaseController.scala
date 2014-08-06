@@ -1,19 +1,15 @@
 package controllers
 
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.mvc.{RequestHeader, Action, Controller}
+import play.api.mvc._
 import securesocial.core.SecureSocial
 import org.springframework.beans.factory.annotation.Autowired
 import services._
 import play.api.i18n.Messages
 import constants.FlashMsgConstants
-import org.springframework.data.neo4j.support.Neo4jTemplate
-import org.springframework.transaction.annotation.Transactional
-import org.neo4j.rest.graphdb.RestGraphDatabase
 import enums.RoleEnums
-import utils.authorization.WithRole
-import utils.authorization.WithRole
 import models.UserCredential
+import utils.authorization.WithRole
 
 @SpringController
 class ReleaseController extends Controller with SecureSocial {
@@ -30,7 +26,7 @@ class ReleaseController extends Controller with SecureSocial {
   private var neo4jDatabaseCleanerService: Neo4jDatabaseCleanerService = _
 
 
-  def index() = SecuredAction { implicit request =>
+  def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.release.index())
   }
 
@@ -87,9 +83,13 @@ class ReleaseController extends Controller with SecureSocial {
     userRoleService.createRole(RoleEnums.USER)
 
     // Add running user to admin group
-    val currentUser = userCredentialService.findById(request.user.asInstanceOf[UserCredential].objectId)
-    if(currentUser != null) {
-      userCredentialService.addRole(currentUser, RoleEnums.ADMIN)
+    request.user match {
+      case Some(reqUser) =>
+        val currentUser = userCredentialService.findById(reqUser.asInstanceOf[UserCredential].objectId)
+        if(currentUser != null) {
+          userCredentialService.addRole(currentUser, RoleEnums.ADMIN)
+        }
+      case None =>
     }
 
     val successMessage = Messages("edit.success")
@@ -97,11 +97,12 @@ class ReleaseController extends Controller with SecureSocial {
   }
 
   // Clean up the whole database, use with extreme caution
-  def deleteAllFromDB = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
+  def deleteAllFromDB = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
 
     val results = neo4jDatabaseCleanerService.cleanDb
     val successMessage = Messages("edit.success")
-    Redirect(securesocial.controllers.routes.LoginPage.logout()).flashing(FlashMsgConstants.Success -> successMessage)
+    Ok(successMessage)
+    //Redirect(securesocial.controllers.routes.LoginPage.logout()).flashing(FlashMsgConstants.Success -> successMessage)
   }
 
 }

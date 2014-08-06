@@ -15,6 +15,7 @@
                     @helper.inputFile(recipeForm("recipeimage03"), '_label -> Messages("edit.recipe.add.image"))
                     @helper.inputFile(recipeForm("recipeimage04"), '_label -> Messages("edit.recipe.add.image"))
                     @helper.textarea(recipeForm("recipebody"), '_label -> Messages("edit.recipe.add.body"), 'class -> "richtext")
+                    @helper.inputHidden(recipeForm("receipeid"))
                 </fieldset>
                 <div class="form-actions">
                     <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>

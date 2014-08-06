@@ -38,7 +38,7 @@ class Neo4jDatabaseCleanerService {
   }
 
   private def removeNodes(result: Map[String, Any]) {
-    val refNode = getReferenceNodeOrNull
+    //val refNode = getReferenceNodeOrNull
     var nodes = 0
     var relationships = 0
     for (node: Node <- graph.getAllNodes.asScala) {
@@ -46,10 +46,10 @@ class Neo4jDatabaseCleanerService {
         rel.delete()
         relationships += 1
       }
-      if(node != refNode) {
+      //if(node != refNode) {
         node.delete()
         nodes += 1
-      }
+      //}
     }
     result.put("nodes", nodes)
     result.put("relationships", relationships)
@@ -65,10 +65,11 @@ class Neo4jDatabaseCleanerService {
 
   private def clearIndex(result: Map[String, Any]) {
     val indexManager = graph.index()
-    result.put("node-indexes", Arrays.asList(indexManager.nodeIndexNames():_*))
-    result.put("relationship-indexes", Arrays.asList(indexManager.relationshipIndexNames():_*))
+    result.put("node_index", Arrays.asList(indexManager.nodeIndexNames():_*))
+    result.put("relationship_index", Arrays.asList(indexManager.relationshipIndexNames():_*))
     for (ix <- indexManager.nodeIndexNames()) {
       deleteIndex(indexManager.forNodes(ix))
+      //deleteRestIndex(indexManager.forNodes(ix))
     }
     for (ix <- indexManager.relationshipIndexNames()) {
       deleteRelIndex(indexManager.forRelationships(ix))

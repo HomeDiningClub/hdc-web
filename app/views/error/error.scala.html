@@ -1,0 +1,21 @@
+@(errorString: String = "", ex: Throwable = null)(implicit request: RequestHeader)
+@theLink = { <a href="@routes.StartPageController.index()">@Messages("error.linkhome")</a> }
+
+@main(Messages("error.title")) {
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-9">
+                <div class="page-header">
+                    <h1>@Messages("error.header")</h1>
+                </div>
+                <p>@Html(Messages("error.body", theLink))</p>
+            </div>
+
+            <!-- Banner -->
+            <div class="col-xs-12 col-md-3 col-banner">
+            @shared.banner("images/banners/banner-0001.png","http://www.bannertarget.se","Senaste nyheterna","Senaste nyheterna")
+            </div>
+        </div>
+    </div>
+}
