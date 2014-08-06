@@ -286,6 +286,14 @@ class UserCredentialServicePlugin (application: Application) extends UserService
         println("Role : " + rol.name)
       }
 
+       var profileItter = modUserCredential.profiles.iterator()
+      if(profileItter.hasNext)
+      {
+        var theProfile = profileItter.next()
+        println("UserProfile=UserId : " + theProfile.userIdentity)
+        println("UserProfile=firstname :" + theProfile.fistName)
+      }
+
 
       modUserCredential.oAuth1InfoToken         = userCredential.oAuth1InfoToken
       modUserCredential.oAuth1InfoSecret        = userCredential.oAuth1InfoSecret

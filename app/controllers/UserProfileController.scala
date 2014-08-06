@@ -131,6 +131,12 @@ def skapavy = SecuredAction { implicit request =>
  // println("UserId: " + request.user.asInstanceOf[UserCredential].userId)
  // println("ProviderId: " + request.user.asInstanceOf[UserCredential].providerId)
   println("objectId: " + request.user.asInstanceOf[UserCredential].objectId)
+  println("firstname UserProfile ...: " + request.user.asInstanceOf[UserCredential].profiles.iterator().next().fistName)
+
+
+  var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+
+
  // println("Email : " + request.user.email)
   println("=============================================================")
   println("##### skapa vy #######")
@@ -165,7 +171,7 @@ def skapavy = SecuredAction { implicit request =>
   println("userId : " + request.user.identityId.userId)
   println("ProviderId : " + request.user.identityId.providerId)
 
-  var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
+  //var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
 
 /*
   for(theUser <- up) {
@@ -178,7 +184,7 @@ def skapavy = SecuredAction { implicit request =>
   // Pre selected
   val typ = new models.Types
 
-if(theUser.getOrElse("tom") == "tom"){
+if(false){
   println("tom")
   println("skriv : " + request.user.authMethod.method)
   Ok("tom : " + request.request.headers.keys + ", Agent :  " + request.headers.get("User-Agent") )
@@ -186,7 +192,8 @@ if(theUser.getOrElse("tom") == "tom"){
 else {
 
 
-var userTags = theUser.get.getTags
+
+var userTags = theUser.getTags
 
 if(userTags != null) {
   var itterTags = userTags.iterator()
@@ -234,9 +241,9 @@ if(userTags != null) {
 
   //Ok("OK")
 
-  println("theuser and aboutme : " + theUser.get.aboutMe)
+  println("theuser and aboutme : " + theUser.aboutMe)
 
-  val eData : EnvData = new EnvData(theUser.get.profileLinkName ,List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.get.aboutMe)
+  val eData : EnvData = new EnvData(theUser.profileLinkName ,List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.aboutMe)
   val nyForm =  AnvandareForm.fill(eData)
   Ok(views.html.profile.skapa(nyForm, tagList.toList, typ))
 
@@ -323,6 +330,7 @@ def taemot = SecuredAction { implicit request =>
 
 //      var up = userProfileService.getAllUserProfile
 //      var theUser : models.UserProfile = up.iterator.next()
+        var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
 
 
@@ -330,13 +338,13 @@ def taemot = SecuredAction { implicit request =>
   println("ProviderId : " + request.user.identityId.providerId)
 
   // Fetch the user by userid and providerid
-  var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
+ // var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
 
 
-     theUser.get.aboutMe = aboutMeText
-     theUser.get.profileLinkName = profileLinkName
+     theUser.aboutMe = aboutMeText
+     theUser.profileLinkName = profileLinkName
 
-      theUser.get.removeAllTags()
+      theUser.removeAllTags()
 
       // Fetch all tags
       var d = tagWordService.listByGroupOption("profile")
@@ -350,14 +358,14 @@ def taemot = SecuredAction { implicit request =>
           if(!value.equals("empty")) {
 
             // If the the user have tagged the particial chooice tag it
-            theUser.get.tag(theTag)
+            theUser.tag(theTag)
           }
 
         } // end loop
 
       }
 
-      userProfileService.saveUserProfile(theUser.get)
+      userProfileService.saveUserProfile(theUser)
 
     //Ok("Sparad")
      Redirect("/prodata/visa")
