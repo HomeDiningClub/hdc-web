@@ -40,7 +40,7 @@ class UserRoleController extends Controller with SecureSocial {
     mapping(
       "id" -> optional(text),
       "name" -> nonEmptyText(minLength = 1, maxLength = 255)
-    )(UserRoleForm.apply _)(UserRoleForm.unapply _)
+    )(UserRoleForm.apply)(UserRoleForm.unapply)
   )
 
   def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
@@ -81,7 +81,7 @@ class UserRoleController extends Controller with SecureSocial {
       "userObjectId" -> nonEmptyText,
       "roleObjectId" -> nonEmptyText,
       "addOrRemove" -> boolean
-    )(AddUserToRoleForm.apply _)(AddUserToRoleForm.unapply _)
+    )(AddUserToRoleForm.apply)(AddUserToRoleForm.unapply)
   )
 
   def addUserToRole() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>

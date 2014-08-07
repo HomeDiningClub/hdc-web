@@ -7,7 +7,7 @@ import models.files._
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.libs.Files.TemporaryFile
 import java.util.UUID
-import securesocial.core.{SecuredRequest, SecureSocial}
+import securesocial.core.{RequestWithUser, SecuredRequest, SecureSocial}
 import constants.FlashMsgConstants
 import enums.{RoleEnums, FileTypeEnums}
 import presets.ImagePreSets
@@ -24,7 +24,8 @@ class FileController extends Controller with SecureSocial {
     Ok(views.html.edit.file.index())
   }
 
-  def add = SecuredAction(parse.multipartFormData) { implicit request =>
+  def add = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
+      //val body: MultipartFormData = ()
 
       request.body.file("file").map {
         file =>

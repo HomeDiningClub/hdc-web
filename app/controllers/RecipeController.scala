@@ -2,7 +2,7 @@ package controllers
 
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc._
-import securesocial.core.SecureSocial
+import securesocial.core.{SecuredRequest, SecureSocial}
 import models.{UserCredential, Recipe}
 import play.api.data.Form
 import play.api.data.Forms._
@@ -21,6 +21,7 @@ import utils.authorization.WithRole
 import scala.Some
 import models.viewmodels.RecipeForm
 import play.api.mvc.Security.AuthenticatedRequest
+import play.api.libs.Files
 
 @SpringController
 class RecipeController extends Controller with SecureSocial {
@@ -46,7 +47,7 @@ class RecipeController extends Controller with SecureSocial {
       "receipeid" -> optional(text),
       "recipename" -> nonEmptyText(minLength = 1, maxLength = 255),
       "recipebody" -> optional(text)
-    )(RecipeForm.apply _)(RecipeForm.unapply _)
+    )(RecipeForm.apply)(RecipeForm.unapply)
   )
 
   def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
@@ -57,7 +58,7 @@ class RecipeController extends Controller with SecureSocial {
     Ok(views.html.edit.recipe.add(contentForm))
   }
 
-  def addSubmit() = SecuredAction(parse.multipartFormData) { implicit request =>
+  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
 
     contentForm.bindFromRequest.fold(
       errors => {

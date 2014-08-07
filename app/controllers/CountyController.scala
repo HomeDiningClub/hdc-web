@@ -35,7 +35,7 @@ class CountyController extends Controller with SecureSocial {
       "id" -> optional(text),
       "name" -> nonEmptyText(minLength = 1, maxLength = 255),
       "order" -> optional(number)
-    )(CountyForm.apply _)(CountyForm.unapply _)
+    )(CountyForm.apply)(CountyForm.unapply)
   )
 
   def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>

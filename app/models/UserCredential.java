@@ -6,13 +6,11 @@ import models.rating.RatingUserCredential;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
-import org.springframework.data.neo4j.template.Neo4jOperations;
 import play.libs.Scala;
 import scala.Option;
 import securesocial.core.*;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 
@@ -83,17 +81,10 @@ public class UserCredential extends AbstractEntity implements Identity {
     @RelatedTo(type = "IN_PROFILE", direction = Direction.OUTGOING)
     public Set<UserProfile> profiles;
 
-    // Rating embryo,
-    // Move to services
+    // Rating
     @RelatedToVia(type = RelationshipTypesJava.RATED.Constant)
     @Fetch
     Set<RatingUserCredential> ratings;
-
-    public RatingUserCredential rate(Neo4jOperations template, UserCredential userCredential, int ratingValue, String userIP, String comment) {
-        final RatingUserCredential rating = template.createRelationshipBetween(this, userCredential, RatingUserCredential.class, RelationshipTypesJava.RATED.Constant, false);
-        rating.rate(ratingValue, comment, userIP);
-        return template.save(rating);
-    }
 
     public int getAverageRating() {
         int sumOfRatingValues = 0, count = 0;

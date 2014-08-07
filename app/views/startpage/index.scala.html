@@ -1,7 +1,8 @@
 @(searchForm: Form[models.viewmodels.SearchStartPageForm],
         optionsFoodAreas: Option[Seq[(String,String)]],
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
-        startPageBoxes: Option[List[models.viewmodels.StartPageBox]])(implicit request: RequestHeader)
+        startPageBoxes: Option[List[models.viewmodels.StartPageBox]],
+        reviewBoxes: Option[List[models.viewmodels.ReviewBox]])(implicit request: RequestHeader)
 @import helper.twitterBootstrap._
 
 @main(Messages("startpage.title")) {
@@ -71,26 +72,6 @@
                 <div class="row">
                     <!-- Filtering push -->
                     <div class="col-xs-10 col-xs-offset-1 col-sm-12 col-sm-offset-0 form-startpage-filter animated fadeInDownBig">
-                    @* Search filter form *@
-                        @*<form class="form-horizontal">*@
-                            @*<select>*@
-                                @*<option>Välj län</option>*@
-                                @*<option>Stockholm</option>*@
-                                @*<option>Göteborg</option>*@
-                                @*<option>Malmö</option>*@
-                                @*<option>Malmö</option>*@
-                                @*<option>Malmö</option>*@
-                            @*</select>*@
-
-                            @*<select>*@
-                                @*<option>Välj typ av mat</option>*@
-                                @*<option>Asiatiskt</option>*@
-                                @*<option>Franskt</option>*@
-                                @*<option>Amerikanskt</option>*@
-                            @*</select>*@
-                                @*<button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button>*@
-                        @*</form>*@
-
                     @helper.form(action=routes.StartPageController.filterProfiles(), 'class -> "form-horizontal"){
                         <div class="form-group">
                             @* @helper.inputText(searchForm("freeText"), '_label -> Messages("startpage.filterform.freetext")) *@
@@ -101,6 +82,7 @@
                         }
                     </div>
                 </div>
+                <!-- Boxes -->
                 <div class="row margin-top">
                     @if(!startPageBoxes.isEmpty){
                         @for( a <- 1 to 10){
@@ -121,38 +103,11 @@
 
                 <!-- Reviews -->
                 <div class="row row-border-bottom">
-                    <div class="col-xs-12 big-margin-top">
-                        <ul class="media-list reviews-list">
-                            <li class="media col-lg-6">
-                                @shared.hostImageCircle(cssClass = "media-object pull-left")
-                                <div class="media-body">
-                                    <h4 class="media-heading">Utmärkt!</h4>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
-                                </div>
-                            </li>
-                            <li class="media col-lg-6">
-                                @shared.hostImageCircle(cssClass = "media-object pull-left")
-                                <div class="media-body">
-                                    <h4 class="media-heading">Utmärkt!</h4>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
-                                </div>
-                            </li>
-                            <li class="media col-lg-6">
-                                @shared.hostImageCircle(cssClass = "media-object pull-left")
-                                <div class="media-body">
-                                    <h4 class="media-heading">Utmärkt!</h4>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
-                                </div>
-                            </li>
-                            <li class="media col-lg-6">
-                                @shared.hostImageCircle(cssClass = "media-object pull-left")
-                                <div class="media-body">
-                                    <h4 class="media-heading">Utmärkt!</h4>
-                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec libero. Suspendisse bibendum. Cras id urna. Morbi tincidunt, orci ac convallis aliquam, lectus turpis varius lorem, eu posuere nunc justo tempus leo.
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                    @if(!reviewBoxes.isEmpty){
+                        @for( a <- 1 to 10){
+                            @startpage.reviewBox(reviewBoxes.get)
+                        }
+                    }
                 </div>
 
 

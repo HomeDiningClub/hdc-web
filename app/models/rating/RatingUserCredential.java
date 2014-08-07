@@ -10,14 +10,14 @@ import org.springframework.data.neo4j.annotation.*;
 public class RatingUserCredential extends AbstractEntity {
 
     @StartNode
-    private UserCredential userWhoIsRating;
+    public UserCredential userWhoIsRating;
 
     @EndNode
-    private UserCredential userRates;
+    public UserCredential userRates;
 
     public int ratingValue;
     public String userRaterIP;
-    String ratingComment;
+    public String ratingComment;
 
     @CreatedDate
     public Long createdDate;

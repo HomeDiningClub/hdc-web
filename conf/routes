@@ -50,6 +50,13 @@ POST        /edit/county/add                           @controllers.CountyContro
 GET         /edit/county/edit/:objectId                @controllers.CountyController.edit(objectId: java.util.UUID)
 GET         /edit/county/delete/:objectId              @controllers.CountyController.delete(objectId: java.util.UUID)
 
+# EDIT - UserCredential
+GET         /edit/user                                 @controllers.UserCredentialController.index
+GET         /edit/user/listall                         @controllers.UserCredentialController.listAll
+POST        /edit/user/edit                            @controllers.UserCredentialController.editSubmit
+GET         /edit/user/edit/:objectId                  @controllers.UserCredentialController.edit(objectId: java.util.UUID)
+GET         /edit/user/delete/:objectId                @controllers.UserCredentialController.delete(objectId: java.util.UUID)
+
 # EDIT - Roles
 GET         /edit/roles                                @controllers.UserRoleController.index
 GET         /edit/roles/listall                        @controllers.UserRoleController.listAll

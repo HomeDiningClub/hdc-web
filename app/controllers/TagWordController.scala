@@ -34,7 +34,7 @@ class TagWordController extends Controller with SecureSocial {
       "id" -> optional(text),
       "tagwordname" -> nonEmptyText(minLength = 1, maxLength = 255),
       "tagwordgroupname" -> nonEmptyText(minLength = 1, maxLength = 255)
-    )(TagWordForm.apply _)(TagWordForm.unapply _)
+    )(TagWordForm.apply)(TagWordForm.unapply)
   )
 
   def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
