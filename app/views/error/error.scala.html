@@ -10,6 +10,56 @@
                     <h1>@Messages("error.header")</h1>
                 </div>
                 <p>@Html(Messages("error.body", theLink))</p>
+                <hr>
+
+                @if(ex != null) {
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Show exception message</a>
+                                </h4>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    @ex.getMessage
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Show stack trace</a>
+                                </h4>
+                            </div>
+                            <div id="collapseTwo" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                @ex.getStackTraceString
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+
+                @if(!errorString.isEmpty) {
+                    <div class="panel-group" id="accordionString">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordionString" href="#collapseStringOne">Show error message</a>
+                                </h4>
+                            </div>
+                            <div id="collapseStringOne" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    @errorString
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
             </div>
 
             <!-- Banner -->
