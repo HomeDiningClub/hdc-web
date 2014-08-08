@@ -5,13 +5,12 @@ package controllers
 import models.profile.{TagWord, TaggedUserProfile}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
+import play.api.i18n.Messages
 import securesocial.core.SecureSocial
 
-import services.UserProfileService
+import services.{CountyService, UserProfileService, TagWordService}
 import models.{UserProfile, UserCredential}
 import models.formdata.UserProfile
-
-import services.TagWordService
 
 import play.api.data._
 import play.api.data.Forms._
@@ -21,6 +20,7 @@ import play.api.mvc._
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import models.location.County
 
 
 @SpringController
@@ -33,6 +33,8 @@ class UserProfileController  extends Controller  with SecureSocial {
   var tagWordService : TagWordService = _
 
 
+  @Autowired
+  var countyService : CountyService = _
 
 
 
@@ -44,6 +46,7 @@ class UserProfileController  extends Controller  with SecureSocial {
       "lastName" -> text,
       "aboutme" -> text,
       "quality" -> list(boolean),
+      "county" -> text,
       "idno" -> longNumber
     )(models.formdata.UserProfile.apply)(models.formdata.UserProfile.unapply)
   )
@@ -56,7 +59,8 @@ class UserProfileController  extends Controller  with SecureSocial {
         "name" -> text,
         "emails" -> list(text),
         "quality" -> list(text),
-        "aboutme" -> text
+        "aboutme" -> text,
+        "county" -> text
       )
       (EnvData.apply) (EnvData.unapply)
     )
@@ -121,6 +125,29 @@ def createTags = Action { implicit request =>
 }
 
 
+  private def getCounties: Option[Seq[(String,String)]] = {
+    val counties: Option[Seq[(String,String)]] = countyService.getListOfAll match {
+      case Some(counties) =>
+        var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
+
+        // Prepend the first selection
+        bufferList += (("", Messages("startpage.filterform.counties")))
+
+        // Map and add the rest
+        counties.sortBy(tw => tw.name).toBuffer.map {
+          item: County =>
+            bufferList += ((item.objectId.toString, item.name))
+        }
+
+        Some(bufferList.toSeq)
+      case None =>
+        None
+    }
+
+    counties
+  }
+
+
 
 // display profile
 def skapavy = SecuredAction { implicit request =>
@@ -135,6 +162,16 @@ def skapavy = SecuredAction { implicit request =>
 
 
   var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+
+
+  var lan = getCounties
+
+  var cItteror = lan.iterator
+  while(cItteror.hasNext) {
+    var nextCo = cItteror.next()
+    println("value : " + nextCo.toString())
+  }
+
 
 
  // println("Email : " + request.user.email)
@@ -243,9 +280,10 @@ if(userTags != null) {
 
   println("theuser and aboutme : " + theUser.aboutMe)
 
-  val eData : EnvData = new EnvData(theUser.profileLinkName ,List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.aboutMe)
+  // File with stored values
+  val eData : EnvData = new EnvData(theUser.profileLinkName ,List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.aboutMe, "")
   val nyForm =  AnvandareForm.fill(eData)
-  Ok(views.html.profile.skapa(nyForm, tagList.toList, typ))
+  Ok(views.html.profile.skapa(nyForm, tagList.toList, typ, optionsLocationAreas = getCounties))
 
 }
 }
@@ -442,6 +480,7 @@ def taemot = SecuredAction { implicit request =>
       "lastName" -> text,
       "aboutme" -> text,
       "quality" -> list(boolean),
+      "county" -> text,
       "idno" -> longNumber
     )(models.formdata.UserProfile.apply)(models.formdata.UserProfile.unapply)
   )
@@ -517,7 +556,7 @@ def taemot = SecuredAction { implicit request =>
  *
  */
   def skapaNyProfil = Action { implicit request =>
-     var userProfile = models.formdata.UserProfile("","","","","",List(true, true), 0)
+     var userProfile = models.formdata.UserProfile("","","","","",List(true, true),"", 0) // @todo län/county
      val dufulatValueForm =  userProfileForm.fill(userProfile)
      val typ = new models.Types
     Ok(views.html.profile.createUserProfile(dufulatValueForm, typ.findAll))

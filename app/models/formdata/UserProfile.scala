@@ -14,6 +14,7 @@ case class UserProfile
   lastName     : String,
   aboutMe      : String,
   quality: List[Boolean],
+  county       : String,
   idNo         : Long
 ) {
   var id:Int = UserProfile.nextId

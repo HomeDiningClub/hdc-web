@@ -1,4 +1,8 @@
-@(EnvDataForm: Form[controllers.EnvData], element : List[Type], klass : Types)(implicit request: RequestHeader)
+@(EnvDataForm: Form[controllers.EnvData],
+  element : List[Type],
+        klass : Types,
+        optionsLocationAreas: Option[Seq[(String,String)]] = None)
+(implicit request: RequestHeader)
 
 @helper.form(action = routes.UserProfileController.taemot) {
 
@@ -16,6 +20,10 @@ Profil
 
  <br>
 
+    @helper.select(EnvDataForm("county"),
+        optionsLocationAreas.get,
+        '_label -> Messages("startpage.filterform.area"),
+        'class -> "form-control")
 
 
 
