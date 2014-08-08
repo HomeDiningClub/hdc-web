@@ -462,7 +462,7 @@ input[type="reset"]:hover
 }
 .nav-main-menu
 {
-  height:37px;
+  height:100%;
   line-height:18px;
 }
 .nav-main-menu > li
@@ -897,10 +897,14 @@ input[type="reset"]:hover
 }
 /* Small devices (tablets, 768px and up) */
 @media screen and (min-width:768px) {
-  /*.collapse
+  .nav-main-menu
   {
-    display: inherit;
-  }*/
+    height: auto;
+  }
+  .nav-main-menu.collapse
+  {
+    display:block;
+  }
 }
 /* Small devices (tablets, 768px and down) */
 @media screen and (max-width: 768px) {
@@ -971,10 +975,6 @@ input[type="reset"]:hover
     overflow: hidden;
     /*margin-top:15px;*/
     background-image: none;
-  }
-  .collapse
-  {
-    display: none;
   }
   .logo-img
   {
