@@ -330,6 +330,9 @@ def taemot = SecuredAction { implicit request =>
           aboutMeText = anvadare.aboutme
           profileLinkName= anvadare.name
 
+          println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+          println("county = " + anvadare.county)
+
          // var linkedUser = service.findByProfileLinkName(profileLinkName)
           /*
           if(profileLinkName == None || profileLinkName == null) {
