@@ -10,6 +10,30 @@
                     <h1>@Messages("error.header")</h1>
                 </div>
                 <p>@Html(Messages("error.body", theLink))</p>
+
+                @if(ex != null || !errorString.isEmpty) {
+                    <div class="panel-group big-margin-top" id="accordion">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Error message details</a>
+                                </h4>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    @if(!errorString.isEmpty) {
+                                        @errorString
+                                    }
+                                    @if(ex != null){
+                                        @ex.getMessage
+                                        <hr>
+                                        @ex.getStackTraceString
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
 
             <!-- Banner -->

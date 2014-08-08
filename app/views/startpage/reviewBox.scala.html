@@ -1,0 +1,18 @@
+@(boxes: List[models.viewmodels.ReviewBox] = Nil)
+
+@if(!boxes.isEmpty) {
+    <div class="col-xs-12 big-margin-top">
+        <ul class="media-list reviews-list">
+        @for(box: models.viewmodels.ReviewBox <- boxes){
+                <li class="media col-lg-6">
+                    <a href="@box.linkToProfile" title="@Messages("reviewbox.linktoprofile", box.fullName)">@shared.hostImageCircle(box.userImage, cssClass = "media-object pull-left")</a>
+                    <div class="media-body">
+                        <h4 class="media-heading">Utmärkt!</h4>
+                        @shared.grade(inputId = "host-grade", initialValue = box.rating, disabled = true, size = "xxs")
+                        <p>@box.reviewText</p>
+                    </div>
+                </li>
+        }
+        </ul>
+    </div>
+}

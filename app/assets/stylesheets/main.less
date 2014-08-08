@@ -185,6 +185,7 @@ input[type="password"]
   margin-bottom:1em;
   border:1px solid @input-border-color;
 }
+
 select {
   padding:5px 10px 5px 10px;
   margin-bottom:1em;
@@ -461,7 +462,7 @@ input[type="reset"]:hover
 }
 .nav-main-menu
 {
-  height:37px;
+  height:100%;
   line-height:18px;
 }
 .nav-main-menu > li
@@ -896,9 +897,13 @@ input[type="reset"]:hover
 }
 /* Small devices (tablets, 768px and up) */
 @media screen and (min-width:768px) {
-  .collapse
+  .nav-main-menu
   {
-    display: inherit;
+    height: auto;
+  }
+  .nav-main-menu.collapse
+  {
+    display:block;
   }
 }
 /* Small devices (tablets, 768px and down) */
@@ -970,10 +975,6 @@ input[type="reset"]:hover
     overflow: hidden;
     /*margin-top:15px;*/
     background-image: none;
-  }
-  .collapse
-  {
-    display: none;
   }
   .logo-img
   {

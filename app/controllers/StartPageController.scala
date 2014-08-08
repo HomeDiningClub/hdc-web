@@ -5,11 +5,11 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
 import play.api.data._
 import play.api.data.Forms._
-import models.viewmodels.{StartPageBox, SearchStartPageForm}
+import models.viewmodels.{ReviewBox, StartPageBox, SearchStartPageForm}
 import securesocial.core.SecureSocial
 import org.springframework.beans.factory.annotation.Autowired
-import services.{CountyService, TagWordService, UserProfileService}
-import models.UserProfile
+import services.{RatingService, CountyService, TagWordService, UserProfileService}
+import models.{UserCredential, UserProfile}
 import models.rating.RatingUserCredential
 import views.html.helper.{select, options}
 import models.profile.TagWord
@@ -30,6 +30,8 @@ class StartPageController extends Controller with SecureSocial {
   @Autowired
   var countyService : CountyService = _
 
+  @Autowired
+  var ratingService: RatingService = _
 
   // Search startpage form
   val searchStartPageForm = Form(
@@ -37,7 +39,7 @@ class StartPageController extends Controller with SecureSocial {
       //"freeText" -> optional(text),
       "area" -> optional(text),
       "foodArea" -> optional(text)
-    )(SearchStartPageForm.apply _)(SearchStartPageForm.unapply _)
+    )(SearchStartPageForm.apply)(SearchStartPageForm.unapply)
   )
 
   def filterProfiles = Action { implicit request =>
@@ -45,7 +47,9 @@ class StartPageController extends Controller with SecureSocial {
       searchForm = searchStartPageForm,
       optionsFoodAreas = getFoodAreas,
       optionsLocationAreas = getCounties,
-      startPageBoxes = getStartPageBoxes))
+      startPageBoxes = getStartPageBoxes,
+      reviewBoxes = getReviewBoxes
+    ))
   }
 
   def index = UserAwareAction { implicit request =>
@@ -53,7 +57,9 @@ class StartPageController extends Controller with SecureSocial {
       searchForm = searchStartPageForm,
       optionsFoodAreas = getFoodAreas,
       optionsLocationAreas = getCounties,
-      startPageBoxes = getStartPageBoxes))
+      startPageBoxes = getStartPageBoxes,
+      reviewBoxes = getReviewBoxes
+    ))
   }
 
 
@@ -122,4 +128,24 @@ class StartPageController extends Controller with SecureSocial {
     else
       Some(startPageBoxes)
   }
+
+  private def getReviewBoxes: Option[List[ReviewBox]] = {
+    ratingService.findRatingByRatingValue(4) match {
+      case None => None
+      case Some(items) =>
+        Some{ items.take(4).map { ratingItem: RatingUserCredential =>
+          ReviewBox(
+            objectId = Some(ratingItem.objectId),
+            linkToProfile = routes.HostController.indexHost(ratingItem.userWhoIsRating.objectId).url,
+            fullName = ratingItem.userWhoIsRating.fullName,
+            reviewText = Some(ratingItem.ratingComment),
+            userImage = routes.Assets.at("images/host/host-head-example-100x100.jpg").url, //ratingItem.userWhoIsRating.userImage.getTransformByName("thumbnail").url
+            rating = ratingItem.ratingValue)}
+        }
+    }
+  }
+
+
 }
+
+

@@ -1,0 +1,40 @@
+@(itemList: Option[List[models.UserCredential]])
+
+@mainedit(Messages("edit.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+        <h1 class="page-header">@Messages("edit.usercredential.list.header")</h1>
+
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>@Messages("edit.usercredential.list.firstname")</th>
+                    <th>@Messages("edit.usercredential.list.lastname")</th>
+                    <th>@Messages("edit.usercredential.list.emailaddress")</th>
+                    <th>@Messages("edit.usercredential.list.action")</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if(itemList.isDefined){
+                    @for(item: models.UserCredential <- itemList.get) {
+                        <tr>
+                            <td>@item.firstName</td>
+                            <td>@item.lastName</td>
+                            <td>@item.emailAddress</td>
+                            <td>
+                                <ul class="nav nav-pills">
+                                    <li><a href="@routes.UserCredentialController.edit(item.objectId)"><span class="glyphicon glyphicon-edit"></span> &nbsp; @Messages("edit.actions.edit")</a></li>
+                                    <li><a href="@routes.UserCredentialController.delete(item.objectId)"><span class="glyphicon glyphicon-trash"></span> &nbsp; @Messages("edit.actions.delete")</a></li>
+                                </ul>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+}

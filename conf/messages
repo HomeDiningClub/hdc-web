@@ -35,10 +35,14 @@ footer.link.mail.text=info@homediningclub.se
 # Banner
 banner.header=Annons:
 
+# Reviews
+reviewbox.linktoprofile=Gå till {0} profilsida
+
 # Content
 person.formular=Personliga inställningar (svenska)
 person.lista=Lista personer (svenska)
 
+# Startpage
 startpage.title=Sveriges första riktiga klubb för alla riktigt matintresserade!
 startpage.main-aside.header=Introduktionsvideo
 startpage.main-aside.body=
@@ -136,6 +140,7 @@ edit.add.save=Spara
 edit.add.abort=Avbryt
 edit.add.success=Sparad: {0} (id:{1})
 edit.add.error=Kunde inte spara.
+edit.add.error.parametersmissing=Saknar vissa parametrar
 edit.delete.success=Borttagen (id:{0})
 edit.delete.error=Kunde inte ta bort, något gick fel.
 
@@ -182,6 +187,21 @@ edit.county.list.header=Lista av län
 edit.county.list.order=Sortering
 edit.county.list.name=Namn
 edit.county.list.action=Funktioner
+
+edit.usercredential.index.header=Användare
+edit.usercredential.add.header=Redigera användare
+edit.usercredential.add.firstname=Förnamn
+edit.usercredential.add.firstname.validation=(Tvingande, max längd 255)
+edit.usercredential.add.lastname=Efternamn
+edit.usercredential.add.lastname.validation=(Tvingande, max längd 255)
+edit.usercredential.add.emailaddress=E-post
+edit.usercredential.add.emailaddress.validation=(E-post, Tvingande)
+edit.usercredential.list.header=Lista av användare
+edit.usercredential.list.firstname=Förnamn
+edit.usercredential.list.lastname=Efternamn
+edit.usercredential.list.emailaddress=Efternamn
+edit.usercredential.list.action=Funktioner
+
 
 edit.roles.index.header=Roller
 edit.roles.add.header=Lägg till / Redgiera grupp/roll
@@ -310,7 +330,6 @@ securesocial.notAuthorized.message=Du är inte behörig att se den sidan
 securesocial.loginRequired=Du måste logga in för att komma åt sidan.
 
 # Mails
-#
 mails.sendAlreadyRegisteredEmail.subject=Instruktioner för registrering
 mails.sendAlreadyRegisteredEmail.body.part1=Hej {0},
 mails.sendAlreadyRegisteredEmail.body.part2=Du har redan ett konto hos oss. Om du inte kommer ihåg ditt lösenord så {0} för att ändra ditt lösenord.

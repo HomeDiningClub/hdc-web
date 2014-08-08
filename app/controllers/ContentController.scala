@@ -196,7 +196,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
       "contentstate" -> nonEmptyText,
       "contentcategories" -> optional(list(text)),
       "pagevisibleinmenus" -> boolean
-    )(AddContentForm.apply _)(AddContentForm.unapply _)
+    )(AddContentForm.apply)(AddContentForm.unapply)
   )
 
   def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>

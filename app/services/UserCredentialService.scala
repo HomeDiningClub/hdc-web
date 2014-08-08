@@ -8,8 +8,6 @@ import repositories.{UserRoleRepository, UserCredentialRepository}
 import models.{UserRole, UserCredential}
 import securesocial.core._
 import scala.collection.JavaConverters._
-import scala.Some
-import scala.Some
 import securesocial.core.OAuth2Info
 import securesocial.core.OAuth1Info
 import securesocial.core.IdentityId
@@ -221,5 +219,24 @@ class UserCredentialService {
     val savedUser = userCredentialRepository.save(user)
     savedUser
   }
+
+  @Transactional(readOnly = false)
+  def add(newItem: UserCredential): UserCredential = {
+    val newResult = userCredentialRepository.save(newItem)
+    newResult
+  }
+
+  @Transactional(readOnly = false)
+  def deleteById(objectId: UUID): Boolean = {
+    val item = this.findById(objectId)
+    if(item != null)
+    {
+      userCredentialRepository.delete(item)
+      return true
+    }
+    false
+  }
+
+
 
 }

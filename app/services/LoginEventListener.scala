@@ -24,7 +24,7 @@ import play.api.{Application, Logger}
  * A sample event listener
  */
 class LoginEventListener(app: Application) extends EventListener {
-  override def id: String = "my_event_listener"
+  override def id: String = "LoginEventListener"
 
   def onEvent(event: Event, request: RequestHeader, session: Session): Option[Session] = {
     val eventName = event match {
