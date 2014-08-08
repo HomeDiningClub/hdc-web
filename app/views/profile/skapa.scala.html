@@ -1,73 +1,84 @@
 @(EnvDataForm: Form[controllers.EnvData],
-  element : List[Type],
+        element : List[Type],
         klass : Types,
-        optionsLocationAreas: Option[Seq[(String,String)]] = None)
-(implicit request: RequestHeader)
+        optionsLocationAreas: Option[Seq[(String,String)]] = None)(implicit request: RequestHeader)
 
-@helper.form(action = routes.UserProfileController.taemot) {
+@main(Messages("profile.title")){
 
-<BR>
-Profil
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
 
-@for(t <- element) {
-<br>
+                <div class="page-header">
+                    <h1>@Messages("profile.create.title")</h1>
+                </div>
+                <p>@Messages("profile.create.text")</p>
 
-    <!-- checkbox -->
-<input type="checkbox" id="@t.name" name="@t.v" value="@t.name" @klass.getString(t.name)>
-@t.name
-</input>
-}
+                @helper.form(action = routes.UserProfileController.taemot) {
+                <div class="panel panel-default">
+                    <div class="panel-heading">@Messages("profile.create.header.user")</div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                @helper.inputText(EnvDataForm("name"),
+                                    'id -> "name",
+                                    '_showErrors -> true,
+                                    '_label -> Messages("profile.create.form.profilename"),
+                                    '_help -> Messages("profile.create.form.profilename.help")
+                                )
+                            </li>
+                            <li class="list-group-item">
+                                @helper.textarea(EnvDataForm("aboutme"),
+                                    'id -> "aboutme",
+                                    '_showErrors -> true,
+                                    'class -> "richtextuser",
+                                    '_label -> Messages("profile.create.form.aboutme"),
+                                    '_help -> Messages("profile.create.form.aboutme.help")
+                                )
 
- <br>
+                                @helper.select(EnvDataForm("county"),
+                                    optionsLocationAreas.get,
+                                    '_label -> Messages("profile.create.form.area")
+                                )
 
-    @helper.select(EnvDataForm("county"),
-        optionsLocationAreas.get,
-        '_label -> Messages("startpage.filterform.area"),
-        'class -> "form-control")
+                                @helper.inputText(EnvDataForm("emails[0]"),
+                                    'id -> "idno",
+                                    '_showErrors -> true,
+                                    '_label -> "E-post",
+                                    '_help -> "e-post"
+                                )
 
+                                @helper.inputText(EnvDataForm("emails[1]"),
+                                    'id -> "idno",
+                                    '_showErrors -> true,
+                                    '_label -> "E-post",
+                                    '_help -> "e-post"
+                                )
 
+                                @helper.inputText(EnvDataForm("emails[2]"),
+                                    'id -> "idno",
+                                    '_showErrors -> true,
+                                    '_label -> "E-post",
+                                    '_help -> "e-post"
+                                )
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
-    @helper.textarea(EnvDataForm("aboutme"),
-        args = 'rows -> 10, 'cols -> 100,
-        'id -> "aboutme",
-        '_showErrors -> true,
-        '_label -> "Beskrivning",
-        '_help -> "Bskriv dig själv"
-    )
+                    <div class="panel panel-default">
+                    <div class="panel-heading">@Messages("profile.create.header.food")</div>
+                    <div class="panel-body">
+                        <label>@Messages("profile.create.form.tagwords")</label><br>
+                        @for(t <- element) {
+                            <input type="checkbox" id="@t.name" name="@t.v" value="@t.name" @klass.getString(t.name)>&nbsp;<label for="@t.name" class="notbold">@t.name</label><br>
+                        }
+                    </div>
+                </div>
 
-
-
-
-@helper.inputText(EnvDataForm("name"),
-'id -> "name",
-'_showErrors -> true,
-'_label -> "Profilnamn",
-'_help -> "Namn på profilen"
-)
-
-@helper.inputText(EnvDataForm("emails[0]"),
-'id -> "idno",
-'_showErrors -> true,
-'_label -> "E-post",
-'_help -> "e-post"
-)
-
-@helper.inputText(EnvDataForm("emails[1]"),
-'id -> "idno",
-'_showErrors -> true,
-'_label -> "E-post",
-'_help -> "e-post"
-)
-
-@helper.inputText(EnvDataForm("emails[2]"),
-'id -> "idno",
-'_showErrors -> true,
-'_label -> "E-post",
-'_help -> "e-post"
-)
-
-
-<input type="submit" value="Spara">
-
-
+                <input class="btn btn-primary" type="submit" value="@Messages("profile.create.save")">
+                }
+            </div>
+        </div>
+    </div>
 }

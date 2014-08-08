@@ -108,6 +108,21 @@ contact.body2=body
 # Like
 like.text=Jag tycker om
 
+
+# Profile
+profile.title=Profil
+profile.create.title=Din profil
+profile.create.text=Här skapar du din profil, den kommer andra medlemmar att se. Om du råkar missa att fylla i viss information så går det bra att redigera din profil senare, om du vill komplettera med mer information.
+profile.create.header.user=Beskriv dig själv
+profile.create.header.food=Beskriv din mat
+profile.create.form.profilename=Profilnamn
+profile.create.form.profilename.help=Namn på din profil
+profile.create.form.aboutme=Beskriv dig själv och din mat
+profile.create.form.aboutme.help=En kortare beskrivning av dig som är synlig på din profil
+profile.create.form.area=Län
+profile.create.form.tagwords=Vad för typ av mat beskriver din matlagning bäst?
+profile.create.save=Spara
+
 # Content - Edit
 edit.content.title=Home Dining Club - Admin mode
 edit.title=Administration
