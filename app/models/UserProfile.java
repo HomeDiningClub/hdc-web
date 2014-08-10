@@ -3,6 +3,8 @@ package models;
 import models.base.AbstractEntity;
 import models.modelconstants.RelationshipTypesJava;
 import models.profile.TagWord;
+import models.location.County;
+import models.profile.TaggedLocationUserProfile;
 import models.profile.TaggedUserProfile;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
@@ -62,11 +64,21 @@ public class UserProfile extends AbstractEntity {
     @RelatedToVia(type = "TAGGED_ON")
     private Set<TaggedUserProfile> userProfileTag;
 
+    @RelatedToVia(type = "LOCATION_AT")
+    private Set<TaggedLocationUserProfile> userLocationProfileTag;
+
     public TaggedUserProfile tag(TagWord tagWord) {
         TaggedUserProfile taggedProfile = new TaggedUserProfile(this, tagWord);
         userProfileTag.add(taggedProfile);
         return taggedProfile;
     }
+
+    public TaggedLocationUserProfile locate(County county) {
+        TaggedLocationUserProfile taggedLocationProfile = new TaggedLocationUserProfile(this, county);
+        userLocationProfileTag.add(taggedLocationProfile);
+        return taggedLocationProfile;
+    }
+
 
     public void removeAllTags() {
 
@@ -92,12 +104,8 @@ public class UserProfile extends AbstractEntity {
 
     public Iterable<TaggedUserProfile> getTags() { return userProfileTag; }
 
+    public Iterable<TaggedLocationUserProfile> getLocations() { return userLocationProfileTag; }
 
-    // Platinum premim
-    // Gold
-    // Silver
-    // Admin
- //   public Integer memberStatus = 0;
 
    // public boolean isHost = false;
 
