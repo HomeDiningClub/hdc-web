@@ -214,6 +214,7 @@ edit.usercredential.add.emailaddress.validation=(E-post, Tvingande)
 edit.usercredential.list.header=Lista av användare
 edit.usercredential.list.firstname=Förnamn
 edit.usercredential.list.lastname=Efternamn
+edit.usercredential.list.emailaddress=E-post
 edit.usercredential.list.inrole=Roller
 edit.usercredential.list.action=Funktioner
 
