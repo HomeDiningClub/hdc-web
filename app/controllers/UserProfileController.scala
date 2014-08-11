@@ -330,8 +330,17 @@ def taemot = SecuredAction { implicit request =>
           aboutMeText = anvadare.aboutme
           profileLinkName= anvadare.name
 
-          println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-          println("county = " + anvadare.county)
+
+          println("????? county = " + anvadare.county)
+          var c   = countyService.getListOfAll.get
+
+          for(d <- c) {
+            println("NAME: " + d.name)
+            println("OBJECTID: " + d.objectId + " - " + anvadare.county + " - " + d.objectId.eq(anvadare.county))
+          }
+
+          println("Size :::: " + c.size)
+
 
          // var linkedUser = service.findByProfileLinkName(profileLinkName)
           /*
@@ -356,6 +365,8 @@ def taemot = SecuredAction { implicit request =>
             for(v <- anvadare.emails) {
                 println("v : " + v)
             }
+
+
 
 
 
