@@ -147,7 +147,7 @@ edit.index.title=Det här är redigeringsläget
 edit.index.body=Redigera loss, men ta det försiktigt, då det inte finns några säkerhetsspärrar, och ingen "ångra".
 
 edit.actions.add=Lägg till
-edit.actions.addusertorole=Lägg till användare i roll
+edit.actions.addusertorole=Lägg till / Ta bort användare i roll
 edit.actions.list=Visa alla
 edit.actions.edit=Redigera
 edit.actions.delete=Ta bort
@@ -214,7 +214,7 @@ edit.usercredential.add.emailaddress.validation=(E-post, Tvingande)
 edit.usercredential.list.header=Lista av användare
 edit.usercredential.list.firstname=Förnamn
 edit.usercredential.list.lastname=Efternamn
-edit.usercredential.list.emailaddress=Efternamn
+edit.usercredential.list.inrole=Roller
 edit.usercredential.list.action=Funktioner
 
 
@@ -228,6 +228,7 @@ edit.roles.addusertorole.user.validation=*
 edit.roles.addusertorole.role=Roll
 edit.roles.addusertorole.role.validation=*
 edit.roles.addusertorole.nocontent=Saknar antigen roller eller användare
+edit.roles.addusertorole.addorremove=Lägg till roll (markerad) / Ta bort roll (ej markerad)
 edit.roles.list.header=Lista av roller
 edit.roles.list.name=Namn
 edit.roles.list.action=Funktioner

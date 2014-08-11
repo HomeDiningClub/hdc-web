@@ -20,7 +20,7 @@ class FileController extends Controller with SecureSocial {
   @Autowired
   private var fileService: ContentFileService = _
 
-  def index = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.file.index())
   }
 
@@ -32,7 +32,7 @@ class FileController extends Controller with SecureSocial {
           val tempFile: MultipartFormData.FilePart[TemporaryFile] = file
 
           fileService.uploadFile(tempFile, request.user.asInstanceOf[UserCredential].objectId, FileTypeEnums.IMAGE, ImagePreSets.testImages) match {
-            case Some(value) => Redirect(routes.FileController.index()).flashing(FlashMsgConstants.Success -> {"File uploaded successfully:" + value.name})
+            case Some(value) => Redirect(routes.FileController.editIndex()).flashing(FlashMsgConstants.Success -> {"File uploaded successfully:" + value.name})
             case None => BadRequest(views.html.edit.file.index()).flashing(FlashMsgConstants.Error -> "Something went wrong during upload, make sure it is a valid file (jpg,png,gif) and is less than 2MB.")
           }
       }.getOrElse {
@@ -44,7 +44,7 @@ class FileController extends Controller with SecureSocial {
   def deleteImage(id: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val result = fileService.deleteFile(id)
     if(result)
-      Redirect(routes.FileController.index()).flashing(FlashMsgConstants.Success -> "File deleted")
+      Redirect(routes.FileController.editIndex()).flashing(FlashMsgConstants.Success -> "File deleted")
     else
       BadRequest(views.html.edit.file.index()).flashing(FlashMsgConstants.Error -> "Cannot delete file an error occurred")
   }

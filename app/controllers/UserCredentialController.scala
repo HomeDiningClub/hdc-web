@@ -40,7 +40,7 @@ class UserCredentialController extends Controller with SecureSocial {
     )(UserCredentialForm.apply)(UserCredentialForm.unapply)
   )
 
-  def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.usercredential.index())
   }
 
@@ -69,7 +69,7 @@ class UserCredentialController extends Controller with SecureSocial {
 
         val saved = userCredentialService.add(newRec)
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.emailAddress, saved.objectId.toString)
-        Redirect(controllers.routes.UserCredentialController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.UserCredentialController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -103,10 +103,10 @@ class UserCredentialController extends Controller with SecureSocial {
     result match {
       case true =>
         val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
-        Redirect(controllers.routes.UserCredentialController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.UserCredentialController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
-        Redirect(controllers.routes.UserCredentialController.index()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.routes.UserCredentialController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

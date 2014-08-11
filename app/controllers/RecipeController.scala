@@ -33,6 +33,11 @@ class RecipeController extends Controller with SecureSocial {
   private var fileService: ContentFileService = _
 
 
+  def index() = UserAwareAction { implicit request =>
+    Ok(views.html.recipe.recipe())
+  }
+
+
 
 
   // Edit - Listing
@@ -50,7 +55,9 @@ class RecipeController extends Controller with SecureSocial {
     )(RecipeForm.apply)(RecipeForm.unapply)
   )
 
-  def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+
+
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.recipe.index())
   }
 
@@ -91,7 +98,7 @@ class RecipeController extends Controller with SecureSocial {
 
         val saved = recipeService.add(newRec)
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
-        Redirect(controllers.routes.RecipeController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.RecipeController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -123,10 +130,10 @@ class RecipeController extends Controller with SecureSocial {
     result match {
       case true =>
         val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
-        Redirect(controllers.routes.RecipeController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.RecipeController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
-        Redirect(controllers.routes.RecipeController.index()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.routes.RecipeController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

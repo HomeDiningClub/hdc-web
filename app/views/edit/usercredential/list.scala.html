@@ -12,6 +12,7 @@
                     <th>@Messages("edit.usercredential.list.firstname")</th>
                     <th>@Messages("edit.usercredential.list.lastname")</th>
                     <th>@Messages("edit.usercredential.list.emailaddress")</th>
+                    <th>@Messages("edit.usercredential.list.inrole")</th>
                     <th>@Messages("edit.usercredential.list.action")</th>
                 </tr>
             </thead>
@@ -23,6 +24,12 @@
                             <td>@item.firstName</td>
                             <td>@item.lastName</td>
                             <td>@item.emailAddress</td>
+                            <td>@if(item.roles.nonEmpty) {
+                                @for(role <- item.roles) {
+                                    @role.name<br>
+                                }
+                            }
+                            </td>
                             <td>
                                 <ul class="nav nav-pills">
                                     <li><a href="@routes.UserCredentialController.edit(item.objectId)"><span class="glyphicon glyphicon-edit"></span> &nbsp; @Messages("edit.actions.edit")</a></li>

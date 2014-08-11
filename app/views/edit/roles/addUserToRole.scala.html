@@ -14,11 +14,11 @@
                     <fieldset>
                         @helper.select(userAddToRoleForm("userObjectId"), optionUsers.get, '_label -> Messages("edit.roles.addusertorole.user"), '_help -> Messages("edit.roles.addusertorole.user.validation"))
                         @helper.select(userAddToRoleForm("roleObjectId"), optionRoles.get, '_label -> Messages("edit.roles.addusertorole.role"), '_help -> Messages("edit.roles.addusertorole.role.validation"))
-                        @helper.checkbox(userAddToRoleForm("addOrRemoveRole"), '_label -> Messages("edit.roles.addusertorole.addorremove"))
+                        @helper.checkbox(userAddToRoleForm("addOrRemoveRole"), '_label -> Messages("edit.roles.addusertorole.addorremove"), '_showConstraints -> false)
                     </fieldset>
                     <div class="form-actions">
                         <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>
-                        <a class="btn" href="@routes.UserRoleController.index()">@Messages("edit.add.abort")</a>
+                        <a class="btn" href="@routes.UserRoleController.editIndex()">@Messages("edit.add.abort")</a>
                     </div>
                 }
             } else {

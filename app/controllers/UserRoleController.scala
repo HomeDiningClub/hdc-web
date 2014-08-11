@@ -43,7 +43,7 @@ class UserRoleController extends Controller with SecureSocial {
     )(UserRoleForm.apply)(UserRoleForm.unapply)
   )
 
-  def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.roles.index())
   }
 
@@ -70,7 +70,7 @@ class UserRoleController extends Controller with SecureSocial {
         }
 
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
-        Redirect(controllers.routes.UserRoleController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.UserRoleController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -80,7 +80,7 @@ class UserRoleController extends Controller with SecureSocial {
     mapping(
       "userObjectId" -> nonEmptyText,
       "roleObjectId" -> nonEmptyText,
-      "addOrRemove" -> boolean
+      "addOrRemoveRole" -> boolean
     )(AddUserToRoleForm.apply)(AddUserToRoleForm.unapply)
   )
 
@@ -101,7 +101,7 @@ class UserRoleController extends Controller with SecureSocial {
           case false => userRoleService.removeRoleFromUser(UUID.fromString(contentData.roleObjectId), UUID.fromString(contentData.userObjectId))
         }
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.fullName(), saved.objectId.toString)
-        Redirect(controllers.routes.UserRoleController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.UserRoleController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -168,10 +168,10 @@ class UserRoleController extends Controller with SecureSocial {
     result match {
       case true =>
         val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
-        Redirect(controllers.routes.UserRoleController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.UserRoleController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
-        Redirect(controllers.routes.UserRoleController.index()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.routes.UserRoleController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

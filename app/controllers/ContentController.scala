@@ -199,7 +199,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
     )(AddContentForm.apply)(AddContentForm.unapply)
   )
 
-  def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.content.index())
   }
 
@@ -288,7 +288,7 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
 
         val savedContentPage = contentService.addContentPage(newContent)
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", savedContentPage.name, savedContentPage.objectId.toString)
-        Redirect(controllers.routes.ContentController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.ContentController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -370,10 +370,10 @@ class ContentController extends Controller with securesocial.core.SecureSocial {
     result match {
       case true =>
         val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
-        Redirect(controllers.routes.ContentController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.ContentController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
-        Redirect(controllers.routes.ContentController.index()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.routes.ContentController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

@@ -26,7 +26,7 @@ class ReleaseController extends Controller with SecureSocial {
   private var neo4jDatabaseCleanerService: Neo4jDatabaseCleanerService = _
 
 
-  def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.release.index())
   }
 
@@ -93,7 +93,7 @@ class ReleaseController extends Controller with SecureSocial {
     }
 
     val successMessage = Messages("edit.success")
-    Redirect(controllers.routes.ReleaseController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+    Redirect(controllers.routes.ReleaseController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
   }
 
   // Clean up the whole database, use with extreme caution

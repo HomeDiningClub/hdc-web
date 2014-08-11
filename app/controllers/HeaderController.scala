@@ -13,10 +13,11 @@ object HeaderController extends Controller with SecureSocial {
   // Name, Title, Href, Class
   val menuItemsList = Seq[(String,String,Call,String)](
     ("Start page", "Start page title", routes.StartPageController.index, ""),
-    ("Files", "Files title", routes.FileController.index, ""),
-    ("About us", "About us", routes.ContentController.aboutUs, ""),
+    ("Edit mode", "Edit", routes.EditController.index(), ""),
     ("Profile", "Profle", routes.HostController.index, ""),
+    ("Recipe", "Recipe", routes.RecipeController.index(), ""),
     ("Login", "Login", securesocial.controllers.routes.LoginPage.login, ""),
+    ("About us", "About us", routes.ContentController.aboutUs, ""),
     ("Campaign page", "Campaign title", routes.CampaignController.index, "")
   )
 

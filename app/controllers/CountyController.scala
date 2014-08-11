@@ -38,7 +38,7 @@ class CountyController extends Controller with SecureSocial {
     )(CountyForm.apply)(CountyForm.unapply)
   )
 
-  def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.county.index())
   }
 
@@ -72,7 +72,7 @@ class CountyController extends Controller with SecureSocial {
 
         val saved = countyService.add(newRec)
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
-        Redirect(controllers.routes.CountyController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.CountyController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -105,10 +105,10 @@ class CountyController extends Controller with SecureSocial {
     result match {
       case true =>
         val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
-        Redirect(controllers.routes.CountyController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.CountyController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
-        Redirect(controllers.routes.CountyController.index()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.routes.CountyController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

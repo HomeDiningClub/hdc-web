@@ -10,7 +10,7 @@
                         <div class="host-header">
                             <header>
                                 <h2>Alexandra</h2>
-                                <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-medium.jpg")')"></div>
+                                <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-example-100x100.jpg")')"></div>
                             </header>
                         </div>
                     </div>
@@ -59,10 +59,10 @@
                         <div class="col-xs-12 big-margin-top">
                             <ul class="nav navbar-link recipe-like">
                                 <li>
-                                    @shared.hdcShare(url = "http://hdc-web.hewrokuapp.com/")
+                                    @shared.hdcShare(url = request.uri)
                                 </li>
                                 <li>
-                                    @shared.fbShare(url = "http://hdc-web.hewrokuapp.com/")
+                                    @shared.fbShare(url = request.uri)
                                 </li>
                             </ul>
                         </div>

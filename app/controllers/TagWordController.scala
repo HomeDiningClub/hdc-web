@@ -37,7 +37,7 @@ class TagWordController extends Controller with SecureSocial {
     )(TagWordForm.apply)(TagWordForm.unapply)
   )
 
-  def index() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.edit.tagword.index())
   }
 
@@ -65,7 +65,7 @@ class TagWordController extends Controller with SecureSocial {
         }
 
         val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.tagName, saved.objectId.toString)
-        Redirect(controllers.routes.TagWordController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.TagWordController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -98,10 +98,10 @@ class TagWordController extends Controller with SecureSocial {
     result match {
       case true =>
         val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
-        Redirect(controllers.routes.TagWordController.index()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.TagWordController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
-        Redirect(controllers.routes.TagWordController.index()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.routes.TagWordController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

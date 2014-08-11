@@ -27,7 +27,7 @@ GET         /newsletter                                @controllers.CampaignCont
 GET         /edit                                      @controllers.EditController.index
 
 # EDIT - Content
-GET         /edit/content                              @controllers.ContentController.index
+GET         /edit/content                              @controllers.ContentController.editIndex
 GET         /edit/content/listall                      @controllers.ContentController.listAll
 GET         /edit/content/add                          @controllers.ContentController.add
 POST        /edit/content/add                          @controllers.ContentController.addSubmit
@@ -35,7 +35,7 @@ GET         /edit/content/edit/:objectId               @controllers.ContentContr
 GET         /edit/content/delete/:objectId             @controllers.ContentController.delete(objectId: java.util.UUID)
 
 # EDIT - Recipe
-GET         /edit/recipe                               @controllers.RecipeController.index
+GET         /edit/recipe                               @controllers.RecipeController.editIndex
 GET         /edit/recipe/listall                       @controllers.RecipeController.listAll
 GET         /edit/recipe/add                           @controllers.RecipeController.add
 POST        /edit/recipe/add                           @controllers.RecipeController.addSubmit
@@ -43,7 +43,7 @@ GET         /edit/recipe/edit/:objectId                @controllers.RecipeContro
 GET         /edit/recipe/delete/:objectId              @controllers.RecipeController.delete(objectId: java.util.UUID)
 
 # EDIT - County
-GET         /edit/county                               @controllers.CountyController.index
+GET         /edit/county                               @controllers.CountyController.editIndex
 GET         /edit/county/listall                       @controllers.CountyController.listAll
 GET         /edit/county/add                           @controllers.CountyController.add
 POST        /edit/county/add                           @controllers.CountyController.addSubmit
@@ -51,14 +51,14 @@ GET         /edit/county/edit/:objectId                @controllers.CountyContro
 GET         /edit/county/delete/:objectId              @controllers.CountyController.delete(objectId: java.util.UUID)
 
 # EDIT - UserCredential
-GET         /edit/user                                 @controllers.UserCredentialController.index
+GET         /edit/user                                 @controllers.UserCredentialController.editIndex
 GET         /edit/user/listall                         @controllers.UserCredentialController.listAll
 POST        /edit/user/edit                            @controllers.UserCredentialController.editSubmit
 GET         /edit/user/edit/:objectId                  @controllers.UserCredentialController.edit(objectId: java.util.UUID)
 GET         /edit/user/delete/:objectId                @controllers.UserCredentialController.delete(objectId: java.util.UUID)
 
 # EDIT - Roles
-GET         /edit/roles                                @controllers.UserRoleController.index
+GET         /edit/roles                                @controllers.UserRoleController.editIndex
 GET         /edit/roles/listall                        @controllers.UserRoleController.listAll
 GET         /edit/roles/add                            @controllers.UserRoleController.add
 POST        /edit/roles/add                            @controllers.UserRoleController.addSubmit
@@ -69,7 +69,7 @@ POST        /edit/roles/addUserToRole                  @controllers.UserRoleCont
 
 
 # EDIT - TagWords
-GET         /edit/tagword                              @controllers.TagWordController.index
+GET         /edit/tagword                              @controllers.TagWordController.editIndex
 GET         /edit/tagword/listall                      @controllers.TagWordController.listAll
 GET         /edit/tagword/add                          @controllers.TagWordController.add
 POST        /edit/tagword/add                          @controllers.TagWordController.addSubmit
@@ -77,11 +77,14 @@ GET         /edit/tagword/edit/:objectId               @controllers.TagWordContr
 GET         /edit/tagword/delete/:objectId             @controllers.TagWordController.delete(objectId: java.util.UUID)
 
 # EDIT - Release & Batch
-GET        /edit/release                               @controllers.ReleaseController.index
+GET        /edit/release                               @controllers.ReleaseController.editIndex
 GET        /edit/release/run                           @controllers.ReleaseController.releaseRun
 GET        /edit/release/deleteall                     @controllers.ReleaseController.deleteAllFromDB
 
-
+# EDIT - Files
+GET         /edit/file                                 @controllers.FileController.editIndex
+POST        /edit/file/add                             @controllers.FileController.add
+GET         /edit/file/delete/:objectId                @controllers.FileController.deleteImage(objectId: java.util.UUID)
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                              controllers.Assets.at(path="/public", file)
@@ -100,17 +103,13 @@ GET         /host                                      @controllers.HostControll
 GET         /host/:objectId                            @controllers.HostController.indexHost(objectId: java.util.UUID)
 
 # Recipe
-GET         /host/recipes                              @controllers.RecipeController.index
+GET         /recipe                                    @controllers.RecipeController.index
 
 
 # Worlds example
 GET         /worlds                                    @controllers.WorldController.index
 
 
-# Files
-GET         /edit/file                                 @controllers.FileController.index
-POST        /edit/file/add                             @controllers.FileController.add
-GET         /edit/file/delete/:objectId                @controllers.FileController.deleteImage(objectId: java.util.UUID)
 
 
 # Login page
