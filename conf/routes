@@ -91,11 +91,11 @@ GET         /assets/*file                              controllers.Assets.at(pat
 
 
 # UserProfile
-GET         /profile                                   @controllers.UserProfileController.index
+#GET         /profile                                   @controllers.UserProfileController.index
 POST        /profile/skapa                             @controllers.UserProfileController.save
 POST        /profile/spara                             @controllers.UserProfileController.saveUserProfile
-GET         /profile/ny                                @controllers.UserProfileController.skapaNyProfil
-GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
+#GET         /profile/ny                                @controllers.UserProfileController.skapaNyProfil
+#GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
 
 
 # Host
@@ -134,11 +134,11 @@ POST        /authenticate/:provider                    securesocial.controllers.
 GET         /not-authorized                            securesocial.controllers.ProviderController.notAuthorized
 
 # TEST
-GET         /profile/loggain                           @controllers.UserProfileController.login
+#GET         /profile/loggain                           @controllers.UserProfileController.login
 
 
 # New profile
 GET         /prodata/visa                              @controllers.UserProfileController.skapavy
 POST        /prodata/skicka                            @controllers.UserProfileController.taemot
-GET         /prodata/skapa                             @controllers.UserProfileController.createTags
-GET         /prodata/test                              @controllers.UserProfileController.test
+#GET         /prodata/skapa                             @controllers.UserProfileController.createTags
+#GET         /prodata/test                              @controllers.UserProfileController.test

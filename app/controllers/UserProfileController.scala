@@ -26,6 +26,8 @@ import models.location.County
 @SpringController
 class UserProfileController  extends Controller  with SecureSocial {
 
+  // Services
+
   @Autowired
   var userProfileService: UserProfileService = _
 
@@ -37,6 +39,7 @@ class UserProfileController  extends Controller  with SecureSocial {
   var countyService : CountyService = _
 
 
+  // Form
 
   val userProfileForm : play.api.data.Form[models.formdata.UserProfile]  = play.api.data.Form(
     mapping(
@@ -67,7 +70,7 @@ class UserProfileController  extends Controller  with SecureSocial {
 
 
 
-
+/*
 def createTags = Action { implicit request =>
 
   // MATCH (b:TagWord) RETURN b
@@ -123,7 +126,7 @@ def createTags = Action { implicit request =>
 
  Ok(v.toString())
 }
-
+*/
 
   private def getCounties: Option[Seq[(String,String)]] = {
     val counties: Option[Seq[(String,String)]] = countyService.getListOfAll match {
@@ -208,15 +211,6 @@ def skapavy = SecuredAction { implicit request =>
   println("userId : " + request.user.identityId.userId)
   println("ProviderId : " + request.user.identityId.providerId)
 
-  //var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
-
-/*
-  for(theUser <- up) {
-    println("ID : " + theUser.id)
-  }
-*/
- //println("theuser : " + theUser.objectId + ", about = "+ theUser.aboutMe)
-
 
   // Pre selected
   val typ = new models.Types
@@ -267,18 +261,6 @@ if(userTags != null) {
 
   }
 
-
-
-
-
-
-
-
-  //println("start ....")
-
-  //Ok("OK")
-
-  println("theuser and aboutme : " + theUser.aboutMe)
 
   // File with stored values
   val eData : EnvData = new EnvData(theUser.profileLinkName ,List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.aboutMe, "")
@@ -336,38 +318,13 @@ def taemot = SecuredAction { implicit request =>
 
           for(d <- c) {
             println("NAME: " + d.name)
-            println("OBJECTID: " + d.objectId + " - " + anvadare.county + " - " + d.objectId.eq(anvadare.county))
+            println("OBJECTID: " + d.objectId + " - " + anvadare.county + " - " + d.objectId.equals(anvadare.county))
           }
 
           println("Size :::: " + c.size)
 
 
          // var linkedUser = service.findByProfileLinkName(profileLinkName)
-          /*
-          if(profileLinkName == None || profileLinkName == null) {
-            profileLinkName = ""
-          }
-
-          profileLinkName = profileLinkName.trim()
-
-          if(profileLinkName.equalsIgnoreCase("")) {
-            println("No value")
-          }else if(linkedUser == None || linkedUser == null) {
-            println("No user with linked name")
-          }
-          else
-          {
-            println("+++++++++++++++++++++++++++++++++++++++++++")
-            println("KeyId : " + linkedUser.keyIdentity)
-          }
-*/
-
-            for(v <- anvadare.emails) {
-                println("v : " + v)
-            }
-
-
-
 
 
             println("Do, antal : " + anvadare.quality.size)
@@ -424,33 +381,6 @@ def taemot = SecuredAction { implicit request =>
 }
 
 
-
-  def login = Action { implicit request =>
-    //Redirect(routes.Application.hello("Bob"))
-    // Redirect(routes.securesocial.controllers.LoginPage.login)
-    Redirect("/login",301)
-    //routes.securesocial.controllers.LoginPage.login
-    // securesocial.controllers.LoginPage.login
-    //Ok("OK")
-  }
-
-
-  def index = Action { implicit request =>
-    val userProfilesList = userProfileService.getAllUserProfiles
-    //Ok(views.html.profile.listofProfiles(userProfilesList))
-    Ok("OK")
-  }
-
-
-  /*
-  def form2Data(userProfile: UserProfile) : UserProfileData {
-
-
-    userProfileData
-  }
-*/
-
-
   def saveUserProfile = Action { implicit request =>
       userProfileForm.bindFromRequest.fold(
         errors => {
@@ -481,6 +411,8 @@ def taemot = SecuredAction { implicit request =>
         }
       )
   }
+
+
 
 
 
@@ -541,27 +473,9 @@ def taemot = SecuredAction { implicit request =>
     Ok("TEST")
   }
 
-  def hamtaProfil(userName : String) = Action { implicit request =>
-    println("userName : " + userName)
-/*
-    var up = userProfileService.getUserProfile(userName)
-    val enProfileForm
-      =  userProfileForm.fill(
-        models.formdata.UserProfile(
-          up.userName,
-          up.emailAddress,
-          up.firstName,
-          up.lastName,
-          up.aboutMe,
-          up.id)
-    )
 
-)
-*/
-     val enProfileForm = models.formdata.UserProfile
-   //Ok(views.html.profile.updateUserProfile(enProfileForm))
-   Ok("testbild")
-  }
+
+
 
 
 
