@@ -1,2 +1,2 @@
-@(imagePath: String = "", cssClass: String = "")
-<div class="img-circle grayscale grayscale-fade host-image @cssClass" style="background-image:url('@imagePath')"></div>
+@(imagePath: String = routes.Assets.at("images/host/host-head-example-100x100.jpg").url, cssClass: String = "")
+<img src="@imagePath" class="img-circle grayscale grayscale-fade host-image @cssClass">
