@@ -114,7 +114,10 @@ class StartPageController extends Controller with SecureSocial {
       userProfile: UserProfile =>
         StartPageBox(
           objectId = Some(userProfile.objectId),
-          linkToProfile = routes.UserProfileController.viewProfileByName(userProfile.profileLinkName).url,
+          linkToProfile = userProfile.profileLinkName match {
+            case null => ""
+            case pfName => routes.UserProfileController.viewProfileByName(pfName).url
+          },
           fullName = userProfile.getOwner.fullName,
           location = userProfile.lan,
           mainBody = None,
@@ -136,7 +139,10 @@ class StartPageController extends Controller with SecureSocial {
         Some{ items.take(4).map { ratingItem: RatingUserCredential =>
           ReviewBox(
             objectId = Some(ratingItem.objectId),
-            linkToProfile = routes.UserProfileController.viewProfileByName(ratingItem.userWhoIsRating.profiles.iterator().next().profileLinkName).url, // TODO: Review-boxes links quite ugly
+            linkToProfile = ratingItem.userWhoIsRating.profiles.iterator().next().profileLinkName match { // TODO: Review-boxes links quite ugly
+              case null => ""
+              case pfName => routes.UserProfileController.viewProfileByName(pfName).url
+            },
             fullName = ratingItem.userWhoIsRating.fullName,
             reviewText = Some(ratingItem.ratingComment),
             userImage = routes.Assets.at("images/host/host-head-example-100x100.jpg").url, //ratingItem.userWhoIsRating.userImage.getTransformByName("thumbnail").url

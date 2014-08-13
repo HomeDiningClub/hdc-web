@@ -25,9 +25,10 @@
                                         @errorString
                                     }
                                     @if(ex != null){
-                                        @ex.getMessage
+                                        <strong>Error Message:</strong> @ex.getMessage<br>
+                                        <strong>Request Uri:</strong> @request.uri
                                         <hr>
-                                        @ex.getStackTraceString
+                                        @ex.getCause.getStackTraceString
                                     }
                                 </div>
                             </div>
