@@ -114,13 +114,13 @@ class StartPageController extends Controller with SecureSocial {
       userProfile: UserProfile =>
         StartPageBox(
           objectId = Some(userProfile.objectId),
-          linkToProfile = routes.HostController.indexHost(userProfile.objectId).url,
-          fullName = "Full name", // userProfile.userCredential.fullName
-          location = "User location",
+          linkToProfile = routes.UserProfileController.viewProfileByName(userProfile.profileLinkName).url,
+          fullName = userProfile.getOwner.fullName,
+          location = userProfile.lan,
           mainBody = None,
           mainImage = routes.Assets.at("images/startpage/Box2.png").url, //mainImage = userProfile.mainImage.getTransformByName("box").url,
           userImage = routes.Assets.at("images/host/host-head-example-100x100.jpg").url, //userImage = //mainImage = userProfile.userImage.getTransformByName("thumbnail").url,
-          userRating = 5)
+          userRating = userProfile.getOwner.getAverageRating)
     }
 
     if(startPageBoxes.isEmpty)
@@ -136,7 +136,7 @@ class StartPageController extends Controller with SecureSocial {
         Some{ items.take(4).map { ratingItem: RatingUserCredential =>
           ReviewBox(
             objectId = Some(ratingItem.objectId),
-            linkToProfile = routes.HostController.indexHost(ratingItem.userWhoIsRating.objectId).url,
+            linkToProfile = routes.UserProfileController.viewProfileByName(ratingItem.userWhoIsRating.profiles.iterator().next().profileLinkName).url, // TODO: Review-boxes links quite ugly
             fullName = ratingItem.userWhoIsRating.fullName,
             reviewText = Some(ratingItem.ratingComment),
             userImage = routes.Assets.at("images/host/host-head-example-100x100.jpg").url, //ratingItem.userWhoIsRating.userImage.getTransformByName("thumbnail").url

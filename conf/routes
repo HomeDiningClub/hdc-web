@@ -91,7 +91,10 @@ GET         /assets/*file                              controllers.Assets.at(pat
 
 
 # UserProfile
-#GET         /profile                                   @controllers.UserProfileController.index
+GET         /profile/view/:profileName                 @controllers.UserProfileController.viewProfileByName(profileName: String)
+GET         /profile/view-my-profile                   @controllers.UserProfileController.viewProfileByLoggedInUser
+GET         /profile/edit                              @controllers.UserProfileController.edit
+POST        /profile/skicka                            @controllers.UserProfileController.editSubmit
 POST        /profile/skapa                             @controllers.UserProfileController.save
 POST        /profile/spara                             @controllers.UserProfileController.saveUserProfile
 #GET         /profile/ny                                @controllers.UserProfileController.skapaNyProfil
@@ -99,8 +102,8 @@ POST        /profile/spara                             @controllers.UserProfileC
 
 
 # Host
-GET         /host                                      @controllers.HostController.index
-GET         /host/:objectId                            @controllers.HostController.indexHost(objectId: java.util.UUID)
+#GET         /host                                      @controllers.HostController.index
+#GET         /host/:objectId                            @controllers.HostController.indexHost(objectId: java.util.UUID)
 
 # Recipe
 GET         /recipe                                    @controllers.RecipeController.index
@@ -138,7 +141,5 @@ GET         /not-authorized                            securesocial.controllers.
 
 
 # New profile
-GET         /prodata/visa                              @controllers.UserProfileController.skapavy
-POST        /prodata/skicka                            @controllers.UserProfileController.taemot
 #GET         /prodata/skapa                             @controllers.UserProfileController.createTags
 #GET         /prodata/test                              @controllers.UserProfileController.test

@@ -14,7 +14,9 @@ notfound.linkhome=startsidan
 
 # Header
 header.link.campaign=Nyhetsbrev
-header.link.host-profile=Gå till {0} profilsida
+header.link.host-profile-header={0}
+header.link.host-profile=Gå till min sida
+header.link.host-profile-edit=Redigera profil
 header.link.inbox=Inkorg
 header.link.become-member=Bli medlem
 header.link.login=Logga in
@@ -116,12 +118,16 @@ profile.create.text=Här skapar du din profil, den kommer andra medlemmar att se
 profile.create.header.user=Beskriv dig själv
 profile.create.header.food=Beskriv din mat
 profile.create.form.profilename=Profilnamn
-profile.create.form.profilename.help=Namn på din profil
+profile.create.form.profilename.help=Detta namn ommer användas för att identifiera din profilsida: http://www.homediningclub.se/profile/view/<strong>(ProfilNamn)</strong><br>Denna måste vara unik, små bokstäver, inga ÅÄÖ, punkter, / eller andra tecken.
+profile.create.form.aboutmeheadline=En rubrik om dig och din mat
+profile.create.form.aboutmeheadline.help=
 profile.create.form.aboutme=Beskriv dig själv och din mat
 profile.create.form.aboutme.help=En kortare beskrivning av dig som är synlig på din profil
 profile.create.form.area=Län
 profile.create.form.tagwords=Vad för typ av mat beskriver din matlagning bäst?
 profile.create.save=Spara
+profile.profilelinkname.isempty=Ett profilnamn måste vara valt!
+profile.memberid.text=MedlemsID:
 
 # Content - Edit
 edit.content.title=Home Dining Club - Admin mode

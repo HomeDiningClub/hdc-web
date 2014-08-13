@@ -67,6 +67,10 @@ public class UserProfile extends AbstractEntity {
     @RelatedToVia(type = "LOCATION_AT")
     private Set<TaggedLocationUserProfile> userLocationProfileTag;
 
+    @Fetch
+    @RelatedTo(type = "IN_PROFILE", direction = Direction.INCOMING)
+    private UserCredential owner;
+
     public TaggedUserProfile tag(TagWord tagWord) {
         TaggedUserProfile taggedProfile = new TaggedUserProfile(this, tagWord);
         userProfileTag.add(taggedProfile);
@@ -101,18 +105,14 @@ public class UserProfile extends AbstractEntity {
         }
     }
 
-
+    public UserCredential getOwner() { return owner; }
     public Iterable<TaggedUserProfile> getTags() { return userProfileTag; }
-
     public Iterable<TaggedLocationUserProfile> getLocations() { return userLocationProfileTag; }
 
-
    // public boolean isHost = false;
-
     public String aboutMe = "";
-
+    public String aboutMeHeadline = "";
     public String profilePicture = "";
-
     public String backgroundImage = "";
 
     // food pictures

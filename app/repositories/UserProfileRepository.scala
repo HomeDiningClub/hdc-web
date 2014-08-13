@@ -2,7 +2,7 @@ package repositories
 
 import org.springframework.data.neo4j.repository.GraphRepository
 
-import models.UserProfile
+import models.{UserCredential, UserProfile}
 import org.springframework.data.neo4j.annotation.Query
 
 
@@ -18,8 +18,8 @@ trait  UserProfileRepository extends GraphRepository[UserProfile] {
 
  // def findByKeyIdentity(keyIdentity : String) : UserProfile
 
- def findByUserIdentityAndProviderIdentity(userIdentity: String, providerIdentity: String) :  UserProfile
-
- // def findByProfileLinkName(profileLinkName : String) : UserProfile
+  def findByUserIdentityAndProviderIdentity(userIdentity: String, providerIdentity: String) :  UserProfile
+  def findByprofileLinkName(profileLinkName : String) : UserProfile
+  def findByowner(owner : UserCredential) : UserProfile
 
 }

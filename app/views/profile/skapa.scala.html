@@ -1,7 +1,7 @@
 @(EnvDataForm: Form[controllers.EnvData],
-        element : List[Type],
-        klass : Types,
-        optionsLocationAreas: Option[Seq[(String,String)]] = None)(implicit request: RequestHeader)
+        element: List[Type],
+        klass: Types,
+        optionsLocationAreas: Option[Seq[(String,String)]] = None)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
 
 @main(Messages("profile.title")){
 
@@ -14,7 +14,9 @@
                 </div>
                 <p>@Messages("profile.create.text")</p>
 
-                @helper.form(action = routes.UserProfileController.taemot) {
+                @shared.flashmsg(flash)
+
+                @helper.form(action = routes.UserProfileController.editSubmit()) {
                 <div class="panel panel-default">
                     <div class="panel-heading">@Messages("profile.create.header.user")</div>
                     <div class="panel-body">
@@ -24,10 +26,17 @@
                                     'id -> "name",
                                     '_showErrors -> true,
                                     '_label -> Messages("profile.create.form.profilename"),
-                                    '_help -> Messages("profile.create.form.profilename.help")
+                                    '_help -> Html(Messages("profile.create.form.profilename.help"))
                                 )
                             </li>
                             <li class="list-group-item">
+                                @helper.inputText(EnvDataForm("aboutmeheadline"),
+                                    'id -> "aboutmeheadline",
+                                    '_showErrors -> true,
+                                    '_label -> Messages("profile.create.form.aboutmeheadline"),
+                                    '_help -> Messages("profile.create.form.aboutmeheadline.help")
+                                )
+
                                 @helper.textarea(EnvDataForm("aboutme"),
                                     'id -> "aboutme",
                                     '_showErrors -> true,

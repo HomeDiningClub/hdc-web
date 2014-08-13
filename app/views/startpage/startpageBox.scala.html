@@ -10,7 +10,7 @@
                         @shared.hostImageCircle(box.userImage)
                         <h2>@box.fullName</h2>
                         <hr>
-                        <p class="location">@box.location</p>
+                        <p class="location">@box.location<br></p>
                         @shared.grade(inputId = "host-grade", initialValue = box.userRating, disabled = true, size = "xxs")
                         <div class="host-level-icon level-guest01" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>
                     </div>

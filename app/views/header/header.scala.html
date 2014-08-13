@@ -1,53 +1,67 @@
-@(menuItems: Seq[(String, String, Call, String)], quicklinkItems: Seq[(String, String, Call, String, String)])
+@(menuItems: Seq[(String, String, Call, String)], quickLinkTitle: String = "", quicklinkItems: Seq[(String, String, Call, String, String)])
 <header>
     <div class="navbar-fixed-top header-navbar">
         <div class="container">
             <div class="row no-gutter header-container">
                 <div class="col-xs-12">
-                    <a href="@routes.StartPageController.index()">@shared.img("images/general/logo-horizontal.png", alt = Messages("header.logo.alt"), cssClass = "logo-img img-responsive")</a>
-                    <div class="quicklinks">
-                        <ul class="nav nav-pills">
-                            @for(nav <- quicklinkItems) {
-                                <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1 @Html(nav._5)</a></li>
-                            }
-
-                            @{/* Disabled for now
-
-                            <li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    @Messages("header.link.login")<span class="caret"></span>
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right header-login-form">
-                                    <div class="col-xs-12">
-                                        <form class="form-inline" role="form">
-                                            <div class="form-group">
-                                                <label class="sr-only" for="quickemail">@Messages("header.login-form.email")</label>
-                                                <input type="email" class="form-control" id="quickemail" placeholder="@Messages("header.login-form.email")">
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="sr-only" for="quickpassword">@Messages("header.login-form.password")</label>
-                                                <input type="password" class="form-control" id="quickpassword" placeholder="@Messages("header.login-form.password")">
-                                            </div>
-                                            <a href="@securesocial.core.providers.utils.RoutesHelper.handleStartResetPassword()" title="@Messages("header.login-form.forgot-password")">@Messages("header.login-form.forgot-password")</a>
-                                            <button type="submit" class="btn btn-primary">@Messages("header.login-form.submit")</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </li>
-                            */}
-
-                            <li class="visible-xs">
-                                <button class="navbar-toggle navbar-toggle-custom" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse" title="@Messages("header.mobile-menu.title")">
-                                    <span class="sr-only">@Messages("header.mobile-menu.title")</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                            </li>
-                        </ul>
+                    <div class="row">
+                    <div class="col-xs-3 visible-xs">
+                        <button class="navbar-toggle navbar-toggle-mobile-menu pull-left" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse" title="@Messages("header.mobile-menu.title")">
+                            <span class="sr-only">@Messages("header.mobile-menu.title")</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
                     </div>
 
+                    <div class="col-xs-6 col-sm-9">
+                        <a href="@routes.StartPageController.index()">@shared.img("images/general/logo-horizontal.png", alt = Messages("header.logo.alt"), cssClass = "logo-img img-responsive")</a>
+                    </div>
+
+                    <div class="col-xs-3">
+                        <div class="quicklinks">
+                            <ul class="nav nav-pills">
+                                @if(!quickLinkTitle.isEmpty){
+                                    <li class="dropdown">
+                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">@Html(quickLinkTitle) <span class="glyphicon glyphicon-user"></span> <span class="caret"></span></a>
+                                        <ul class="dropdown-menu pull-right">
+                                }
+                                @for(nav <- quicklinkItems) {
+                                    <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1 @Html(nav._5)</a></li>
+                                }
+                                @if(!quickLinkTitle.isEmpty){
+                                        </ul>
+                                    </li>
+                                }
+                                @{/* Disabled for now
+o
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        @Messages("header.link.login")<span class="caret"></span>
+                                    </a>
+
+                                    <div class="dropdown-menu dropdown-menu-right header-login-form">
+                                        <div class="col-xs-12">
+                                            <form class="form-inline" role="form">
+                                                <div class="form-group">
+                                                    <label class="sr-only" for="quickemail">@Messages("header.login-form.email")</label>
+                                                    <input type="email" class="form-control" id="quickemail" placeholder="@Messages("header.login-form.email")">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="sr-only" for="quickpassword">@Messages("header.login-form.password")</label>
+                                                    <input type="password" class="form-control" id="quickpassword" placeholder="@Messages("header.login-form.password")">
+                                                </div>
+                                                <a href="@securesocial.core.providers.utils.RoutesHelper.handleStartResetPassword()" title="@Messages("header.login-form.forgot-password")">@Messages("header.login-form.forgot-password")</a>
+                                                <button type="submit" class="btn btn-primary">@Messages("header.login-form.submit")</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </li>
+                                */}
+                            </ul>
+                        </div>
+                    </div>
+                    </div>
 
                 </div>
             </div>
@@ -59,9 +73,9 @@
                     <nav>
                         <div class="col-xs-12">
                             <ul class="nav nav-pills nav-main-menu collapse bs-navbar-collapse">
-                            @for(nav <- menuItems) {
-                                <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
-                            }
+                                @for(nav <- menuItems) {
+                                    <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
+                                }
                             </ul>
                         </div>
                     </nav>

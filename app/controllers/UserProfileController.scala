@@ -6,11 +6,11 @@ import models.profile.{TagWord, TaggedUserProfile}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.i18n.Messages
-import securesocial.core.SecureSocial
+import securesocial.core.{SecuredRequest, SecureSocial}
 
 import services.{CountyService, UserProfileService, TagWordService}
 import models.{UserProfile, UserCredential}
-import models.formdata.UserProfile
+import models.formdata.UserProfileForm
 
 import play.api.data._
 import play.api.data.Forms._
@@ -21,6 +21,10 @@ import play.api.mvc._
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import models.location.County
+import java.util.UUID
+import enums.RoleEnums
+import utils.authorization.WithRole
+import constants.FlashMsgConstants
 
 
 @SpringController
@@ -41,7 +45,7 @@ class UserProfileController  extends Controller  with SecureSocial {
 
   // Form
 
-  val userProfileForm : play.api.data.Form[models.formdata.UserProfile]  = play.api.data.Form(
+  val userProfileForm : play.api.data.Form[models.formdata.UserProfileForm]  = play.api.data.Form(
     mapping(
       "userName" -> nonEmptyText,
       "emailAddress" -> email,
@@ -51,7 +55,7 @@ class UserProfileController  extends Controller  with SecureSocial {
       "quality" -> list(boolean),
       "county" -> text,
       "idno" -> longNumber
-    )(models.formdata.UserProfile.apply)(models.formdata.UserProfile.unapply)
+    )(models.formdata.UserProfileForm.apply)(models.formdata.UserProfileForm.unapply)
   )
 
 
@@ -62,6 +66,7 @@ class UserProfileController  extends Controller  with SecureSocial {
         "name" -> text,
         "emails" -> list(text),
         "quality" -> list(text),
+        "aboutmeheadline" -> text,
         "aboutme" -> text,
         "county" -> text
       )
@@ -69,6 +74,77 @@ class UserProfileController  extends Controller  with SecureSocial {
     )
 
 
+
+  // Constants
+  val FOODANDBEVERAGE = "foodandbeverage-tab"
+  val BLOG = "blog-tab"
+  val REVIEWS = "reviews-tab"
+  val INBOX = "inbox-tab"
+
+  // Link-name, title, link-href, class-name, active
+  val menuItemsList = Seq[(String,String,String,String)](
+    ("Mat & Dryck", "Mat & Dryck", FOODANDBEVERAGE, "active"),
+    ("Blogg", "Blogg", BLOG, ""),
+    ("Omdömen", "Omdömen", REVIEWS, ""),
+    ("Inbox", "Inbox", INBOX, "")
+  )
+
+//  def index = Action { implicit request =>
+//    Ok(views.html.host.index(menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX))
+//  }
+//
+//  def indexWithID(objectId: UUID) = Action { implicit request =>
+//    Ok(views.html.host.index(menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX))
+//  }
+
+//  def viewProfile(profile: UserProfile) = Results { implicit request =>
+//
+//    // Try getting the profile from name, if failure show 404
+//    profile match {
+//      case Some(profile) =>
+//        Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX))
+//      case None =>
+//        NotFound("Cannot find user profile")
+//    }
+//  }
+
+  def viewProfileByName(profileName: String) = UserAwareAction { implicit request =>
+
+    // Try getting the profile from name, if failure show 404
+    userProfileService.findByprofileLinkName(profileName) match {
+      case Some(profile) =>
+        Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX))
+      case None =>
+        val errMess = "Cannot find user profile using name:" + profileName
+        Logger.debug(errMess)
+        NotFound(errMess)
+    }
+  }
+
+
+  def viewProfileByLoggedInUser = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: RequestHeader =>
+
+    SecureSocial.currentUser match {
+      case Some(reqUser) =>
+        userProfileService.findByowner(reqUser.asInstanceOf[UserCredential]) match {
+          case Some(profile) =>
+            if(profile.profileLinkName.isEmpty){
+              Logger.debug("Profilelinkname is empty!")
+              Redirect(routes.UserProfileController.edit()).flashing(FlashMsgConstants.Error -> Messages("profile.profilelinkname.isempty"))
+            }else{
+              Redirect(routes.UserProfileController.viewProfileByName(profile.profileLinkName)) // TODO: This causes double lookup, improve later
+            }
+          case None =>
+            val errMess = "Cannot find user profile using current user:" + reqUser.asInstanceOf[UserCredential].objectId
+            Logger.debug(errMess)
+            NotFound(errMess)
+        }
+      case None =>
+        val errMess = "Cannot find any user to fetch profile for"
+        Logger.debug(errMess)
+        NotFound(errMess)
+    }
+  }
 
 /*
 def createTags = Action { implicit request =>
@@ -152,8 +228,8 @@ def createTags = Action { implicit request =>
 
 
 
-// display profile
-def skapavy = SecuredAction { implicit request =>
+// Edit Profile
+def edit = SecuredAction { implicit request =>
 
   println("=============================================================")
   println("calling : skapavy ")
@@ -206,7 +282,7 @@ def skapavy = SecuredAction { implicit request =>
  //var theUser : models.UserProfile  = up.iterator.next()
 
 
-  var service = new services.UserProfileService()
+  //var service = new services.UserProfileService()
 
   println("userId : " + request.user.identityId.userId)
   println("ProviderId : " + request.user.identityId.providerId)
@@ -249,6 +325,8 @@ if(userTags != null) {
     }
   }
 
+  // Sort & List
+  val retTagList = tagList.toList.sortBy(tw => tw.name)
 
   // member
   var memberList = tagWordService.listByGroupOption("member")
@@ -263,9 +341,9 @@ if(userTags != null) {
 
 
   // File with stored values
-  val eData : EnvData = new EnvData(theUser.profileLinkName ,List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.aboutMe, "")
+  val eData : EnvData = new EnvData(theUser.profileLinkName,List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.aboutMeHeadline, theUser.aboutMe, "")
   val nyForm =  AnvandareForm.fill(eData)
-  Ok(views.html.profile.skapa(nyForm, tagList.toList, typ, optionsLocationAreas = getCounties))
+  Ok(views.html.profile.skapa(nyForm, retTagList, typ, optionsLocationAreas = getCounties))
 
 }
 }
@@ -274,12 +352,12 @@ if(userTags != null) {
 
 
 // Save profile
-def taemot = SecuredAction { implicit request =>
+def editSubmit = SecuredAction { implicit request =>
 
   println("************************ save profile *********************************************")
 
 
-  var service = new services.UserProfileService()
+  //var service = new services.UserProfileService()
 
       // Fetch user
 
@@ -290,6 +368,7 @@ def taemot = SecuredAction { implicit request =>
       // add all new tags
 
       var map:Map[String,String] = Map()
+      var aboutMeHeadlineText : String = ""
       var aboutMeText : String = ""
       var profileLinkName : String = ""
 
@@ -309,6 +388,7 @@ def taemot = SecuredAction { implicit request =>
             println(anvadare.name)
 
             println("About Me: " + anvadare.aboutme)
+          aboutMeHeadlineText = anvadare.aboutmeheadline
           aboutMeText = anvadare.aboutme
           profileLinkName= anvadare.name
 
@@ -349,7 +429,7 @@ def taemot = SecuredAction { implicit request =>
   // Fetch the user by userid and providerid
  // var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
 
-
+     theUser.aboutMeHeadline = aboutMeHeadlineText
      theUser.aboutMe = aboutMeText
      theUser.profileLinkName = profileLinkName
 
@@ -377,7 +457,7 @@ def taemot = SecuredAction { implicit request =>
       userProfileService.saveUserProfile(theUser)
 
     //Ok("Sparad")
-     Redirect("/prodata/visa")
+     Redirect(routes.UserProfileController.edit())
 }
 
 
@@ -428,7 +508,7 @@ def taemot = SecuredAction { implicit request =>
       "quality" -> list(boolean),
       "county" -> text,
       "idno" -> longNumber
-    )(models.formdata.UserProfile.apply)(models.formdata.UserProfile.unapply)
+    )(models.formdata.UserProfileForm.apply)(models.formdata.UserProfileForm.unapply)
   )
 
 
@@ -484,7 +564,7 @@ def taemot = SecuredAction { implicit request =>
  *
  */
   def skapaNyProfil = Action { implicit request =>
-     var userProfile = models.formdata.UserProfile("","","","","",List(true, true),"", 0) // @todo län/county
+     var userProfile = models.formdata.UserProfileForm("","","","","",List(true, true),"", 0) // @todo län/county
      val dufulatValueForm =  userProfileForm.fill(userProfile)
      val typ = new models.Types
     Ok(views.html.profile.createUserProfile(dufulatValueForm, typ.findAll))

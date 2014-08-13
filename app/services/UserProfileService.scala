@@ -1,6 +1,6 @@
 package services
 
-import models.UserProfile
+import models.{UserCredential, UserProfile}
 import org.neo4j.graphdb._
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +14,7 @@ import scala.language.implicitConversions
 import org.springframework.transaction.annotation.Transactional
 import org.neo4j.graphdb.index.Index
 import org.springframework.context.annotation.Lazy
+import play.api.mvc.Results._
 
 
 @Service
@@ -51,6 +52,28 @@ class UserProfileService {
     modUserProfile
   }
 
+
+  def findByprofileLinkName(profileName: String): Option[UserProfile] =
+  {
+    var returnObject: Option[UserProfile] = None
+    if(profileName.nonEmpty)
+    {
+      returnObject = userProfileRepository.findByprofileLinkName(profileName) match {
+        case null => None
+        case profile => Some(profile)
+      }
+    }
+    returnObject
+  }
+
+
+  def findByowner(userCred: UserCredential): Option[UserProfile] =
+  {
+    userProfileRepository.findByowner(userCred) match {
+      case null => None
+      case profile => Some(profile)
+    }
+  }
 
   def findUserProfileByUserId(id: Identity) : Option[UserProfile] =
   {

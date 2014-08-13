@@ -1,4 +1,4 @@
-@(menuItems: Seq[(String, String, String, String)], tab1: String, tab2: String, tab3: String, tab4: String)(implicit request: RequestHeader)
+@(userProfile: models.UserProfile, menuItems: Seq[(String, String, String, String)], tab1: String, tab2: String, tab3: String, tab4: String)(implicit request: RequestHeader)
 
 @main(Messages("host.title")) {
 
@@ -9,8 +9,8 @@
                     <div class="col-xs-12 col-md-12 big-margin-top">
                         <div class="host-header">
                             <header>
-                            <h2>/denunderbaramaten-hdc2/</h2>
-                            <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("images/host/host-head-example-100x100.jpg")')"></div>
+                            <h2>@userProfile.profileLinkName</h2>
+                            <div class="img-circle grayscale grayscale-fade host-image" style="background-image:url('@routes.Assets.at("../../../public/images/host/host-head-example-100x100.jpg")')"></div>
                         </header>
                         </div>
                     </div>
@@ -19,13 +19,12 @@
                     <div class="col-xs-12 col-md-6 big-margin-top">
                         <section>
                             <article>
-                                <h1 class="page-header">Alexandra</h1>
-                                <h3>Art Director och entreprenör</h3>
-                                @shared.grade(inputId = "host-grade", initialValue = 1, size = "xs", showCaption = true)
-                                <div class="memberid"><p>MedlemsID: HDC2</p></div>
+                                <h1 class="page-header">@userProfile.getOwner.fullName</h1>
+                                <h3>@userProfile.aboutMeHeadline</h3>
+                                @shared.grade(inputId = "host-grade", initialValue = userProfile.getOwner.getAverageRating, size = "xs", showCaption = true)
+                                <div class="memberid"><p>@Messages("profile.memberid.text")&nbsp;@userProfile.getOwner.objectId</p></div>
                                 <div class="breadtext">
-                                    Lagat mat sedan 5-årsåldern, sida vid sida med min duktiga (och tålmodiga) hobby-kock-mamma - vilket gjorde att jag som tonåring kunde laga många klassiska husmansrätter (kåldolmar, kroppkakor, porterstek) och gärna experimenterade med egna skapelser.
-                                    Tankar fanns på en kockkarriär, men det blev annat kreativt yrke istället - men står gärna i köket med/för nära och kära.
+                                    @Html(userProfile.aboutMe)
                                 </div>
                             </article>
                         </section>
@@ -35,11 +34,11 @@
                         <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide">
                             <!-- Slider carousel items -->
                             <div class="carousel-inner">
-                                <div class="active item" data-slide-number="0">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="4">@shared.img("images/host/image5.jpg", cssClass = "img-responsive")</div>
+                                <div class="active item" data-slide-number="0">@shared.img("../../../public/images/host/image1.jpg", cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="1">@shared.img("../../../public/images/host/image2.jpg", cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="2">@shared.img("../../../public/images/host/image3.jpg", cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="3">@shared.img("../../../public/images/host/image4.jpg", cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="4">@shared.img("../../../public/images/host/image5.jpg", cssClass = "img-responsive")</div>
                             </div>
                             <!-- Carousel nav controls -->
                             <a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
@@ -47,11 +46,11 @@
                         </div>
                         <!-- Thumbnails, don't show responsive -->
                         <ul class="host-main-carousel-thumbs list-inline hidden-xs hidden-sm">
-                            <li class="col-md-3"><a id="carousel-selector-0" class="selected">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-4">@shared.img("images/host/image5.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-0" class="selected">@shared.img("../../../public/images/host/image1.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-1">@shared.img("../../../public/images/host/image2.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-2">@shared.img("../../../public/images/host/image3.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-3">@shared.img("../../../public/images/host/image4.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-4">@shared.img("../../../public/images/host/image5.jpg", cssClass = "img-responsive")</a></li>
                         </ul>
                     </div>
                 </div>
@@ -86,7 +85,7 @@
 
             <!-- Banner -->
             <div class="col-xs-12 col-md-3 col-banner">
-                @shared.banner("images/banners/banner-0001.png","http://www.bannertarget.se","Senaste nyheterna","Senaste nyheterna")
+                @shared.banner("../../../public/images/banners/banner-0001.png","http://www.bannertarget.se","Senaste nyheterna","Senaste nyheterna")
             </div>
         </div>
     </div>

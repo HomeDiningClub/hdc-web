@@ -6,7 +6,7 @@ import play.data.validation.Constraints.Required
 /**
  * 2014-04-12, 16:57
  */
-case class UserProfile
+case class UserProfileForm
 (
   userName     : String,
   emailAddress : String,
