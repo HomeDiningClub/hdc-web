@@ -45,10 +45,34 @@
                                     '_help -> Messages("profile.create.form.aboutme.help")
                                 )
 
+                                @helper.textarea(EnvDataForm("streetAddress"),
+                                    'id -> "streetAddress",
+                                    '_showErrors -> true,
+                                    '_label -> Messages("profile.create.form.streetAddress"),
+                                    '_help -> Messages("profile.create.form.streetAddress.help")
+                                )
+
+                                @helper.textarea(EnvDataForm("zipCode"),
+                                    'id -> "zipCode",
+                                    '_showErrors -> true,
+                                    '_label -> Messages("profile.create.form.zipCode"),
+                                    '_help -> Messages("profile.create.form.zipCode.help")
+                                )
+
+                                @helper.textarea(EnvDataForm("city"),
+                                    'id -> "city",
+                                    '_showErrors -> true,
+                                    '_label -> Messages("profile.create.form.city"),
+                                    '_help -> Messages("profile.create.form.city.help")
+                                )
+
+
                                 @helper.select(EnvDataForm("county"),
                                     optionsLocationAreas.get,
                                     '_label -> Messages("profile.create.form.area")
                                 )
+
+
 
                                 @helper.inputText(EnvDataForm("emails[0]"),
                                     'id -> "idno",

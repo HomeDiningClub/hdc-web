@@ -125,6 +125,16 @@ profile.create.form.aboutme=Beskriv dig själv och din mat
 profile.create.form.aboutme.help=En kortare beskrivning av dig som är synlig på din profil
 profile.create.form.area=Län
 profile.create.form.tagwords=Vad för typ av mat beskriver din matlagning bäst?
+
+
+profile.create.form.streetAddress=Gatuadress
+profile.create.form.streetAddress.help=Gatuadress måste inte anges
+profile.create.form.zipCode=Postnummer
+profile.create.form.zipCode.help=Postnummer
+profile.create.form.city=Stad
+profile.create.form.city.help=Stad
+
+
 profile.create.save=Spara
 profile.profilelinkname.isempty=Ett profilnamn måste vara valt!
 profile.memberid.text=MedlemsID:

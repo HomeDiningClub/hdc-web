@@ -119,7 +119,7 @@ class StartPageController extends Controller with SecureSocial {
             case pfName => routes.UserProfileController.viewProfileByName(pfName).url
           },
           fullName = userProfile.getOwner.fullName,
-          location = userProfile.lan,
+          location = userProfile.county,
           mainBody = None,
           mainImage = routes.Assets.at("images/startpage/Box2.png").url, //mainImage = userProfile.mainImage.getTransformByName("box").url,
           userImage = routes.Assets.at("images/host/host-head-example-100x100.jpg").url, //userImage = //mainImage = userProfile.userImage.getTransformByName("thumbnail").url,

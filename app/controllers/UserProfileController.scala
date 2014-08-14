@@ -54,6 +54,9 @@ class UserProfileController  extends Controller  with SecureSocial {
       "aboutme" -> text,
       "quality" -> list(boolean),
       "county" -> text,
+      "streetAddress" -> nonEmptyText,
+      "zipCode" -> nonEmptyText,
+      "city" -> nonEmptyText,
       "idno" -> longNumber
     )(models.formdata.UserProfileForm.apply)(models.formdata.UserProfileForm.unapply)
   )
@@ -68,7 +71,10 @@ class UserProfileController  extends Controller  with SecureSocial {
         "quality" -> list(text),
         "aboutmeheadline" -> text,
         "aboutme" -> text,
-        "county" -> text
+        "county" -> text,
+        "streetAddress" -> nonEmptyText,
+        "zipCode" -> nonEmptyText,
+        "city" -> nonEmptyText
       )
       (EnvData.apply) (EnvData.unapply)
     )
@@ -228,46 +234,27 @@ def createTags = Action { implicit request =>
 
 
 
+
+
+
 // Edit Profile
 def edit = SecuredAction { implicit request =>
 
-  println("=============================================================")
-  println("calling : skapavy ")
-  println("=============================================================")
- // println("UserId: " + request.user.asInstanceOf[UserCredential].userId)
- // println("ProviderId: " + request.user.asInstanceOf[UserCredential].providerId)
-  println("objectId: " + request.user.asInstanceOf[UserCredential].objectId)
-  println("firstname UserProfile ...: " + request.user.asInstanceOf[UserCredential].profiles.iterator().next().fistName)
 
-
+  // Fetch UserProfile from UserCredentials
   var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
+  var countiesList = getCounties
 
-  var lan = getCounties
-
-  var cItteror = lan.iterator
-  while(cItteror.hasNext) {
-    var nextCo = cItteror.next()
-    println("value : " + nextCo.toString())
+  var countyItter = countiesList.iterator
+  while(countyItter.hasNext) {
+    var nextCo = countyItter.next()
   }
 
-
-
- // println("Email : " + request.user.email)
-  println("=============================================================")
-  println("##### skapa vy #######")
 
   val provider = request.user.identityId.providerId
   val user = request.user.identityId.userId
 
- println("session: " + session.toString())
-
-
-  println("*****************************************")
-  if(user.length > 0) {
-    println("UserName : " + user + "_" + provider)
-  }
-  println("*****************************************")
 
   // show profile
 
@@ -276,29 +263,8 @@ def edit = SecuredAction { implicit request =>
   // 2. Load the tags
 
 
-
-
-  // var up = userProfileService.getAllUserProfile
- //var theUser : models.UserProfile  = up.iterator.next()
-
-
-  //var service = new services.UserProfileService()
-
-  println("userId : " + request.user.identityId.userId)
-  println("ProviderId : " + request.user.identityId.providerId)
-
-
   // Pre selected
   val typ = new models.Types
-
-if(false){
-  println("tom")
-  println("skriv : " + request.user.authMethod.method)
-  Ok("tom : " + request.request.headers.keys + ", Agent :  " + request.headers.get("User-Agent") )
-}
-else {
-
-
 
 var userTags = theUser.getTags
 
@@ -341,11 +307,21 @@ if(userTags != null) {
 
 
   // File with stored values
-  val eData : EnvData = new EnvData(theUser.profileLinkName,List("adam","bertil", "cesar"), List("adam", "bertil"), theUser.aboutMeHeadline, theUser.aboutMe, "")
+  val eData : EnvData = new EnvData(
+    theUser.profileLinkName,
+    List("adam","bertil", "cesar"),
+    List("adam", "bertil"),
+    theUser.aboutMeHeadline,
+    theUser.aboutMe,
+    theUser.county,
+    "", //theUser.streetAddress,
+    "theUser.zipCode",
+    "theUser.city"
+  )
   val nyForm =  AnvandareForm.fill(eData)
   Ok(views.html.profile.skapa(nyForm, retTagList, typ, optionsLocationAreas = getCounties))
 
-}
+
 }
 
 
@@ -432,6 +408,9 @@ def editSubmit = SecuredAction { implicit request =>
      theUser.aboutMeHeadline = aboutMeHeadlineText
      theUser.aboutMe = aboutMeText
      theUser.profileLinkName = profileLinkName
+     theUser.city  = ""
+     theUser.streetAddress = ""
+     theUser.zipCode = ""
 
       theUser.removeAllTags()
 
@@ -507,6 +486,9 @@ def editSubmit = SecuredAction { implicit request =>
       "aboutme" -> text,
       "quality" -> list(boolean),
       "county" -> text,
+      "streetAddress" -> nonEmptyText,
+      "zipCode" -> nonEmptyText,
+      "city" -> nonEmptyText,
       "idno" -> longNumber
     )(models.formdata.UserProfileForm.apply)(models.formdata.UserProfileForm.unapply)
   )
@@ -564,7 +546,7 @@ def editSubmit = SecuredAction { implicit request =>
  *
  */
   def skapaNyProfil = Action { implicit request =>
-     var userProfile = models.formdata.UserProfileForm("","","","","",List(true, true),"", 0) // @todo län/county
+     var userProfile = models.formdata.UserProfileForm("","","","","",List(true, true),"", "", "", "", 0) // @todo län/county
      val dufulatValueForm =  userProfileForm.fill(userProfile)
      val typ = new models.Types
     Ok(views.html.profile.createUserProfile(dufulatValueForm, typ.findAll))

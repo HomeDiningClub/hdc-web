@@ -18,7 +18,7 @@ import java.util.Set;
 @NodeEntity
 public class UserProfile extends AbstractEntity {
 
-  public String lan = "";
+  public String county = "";
 
 
 /*
@@ -51,6 +51,16 @@ public class UserProfile extends AbstractEntity {
     public String providerIdentity = "";
 
     public String email = "";
+
+    // Street address
+    public String streetAddress = "";
+
+    // Postcode or Zip-code
+    public String zipCode       = "";
+
+    // City
+    public String city          = "";
+
 
     // profile look up name
     //@Indexed(unique=true)
