@@ -61,6 +61,9 @@ public class UserProfile extends AbstractEntity {
     // City
     public String city          = "";
 
+    // Phonenumber
+    public String phoneNumber = "";
+
 
     // profile look up name
     //@Indexed(unique=true)
