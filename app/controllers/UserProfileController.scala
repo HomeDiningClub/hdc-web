@@ -57,6 +57,7 @@ class UserProfileController  extends Controller  with SecureSocial {
       "streetAddress" -> nonEmptyText,
       "zipCode" -> nonEmptyText,
       "city" -> nonEmptyText,
+      "phoneNumber" -> text,
       "idno" -> longNumber
     )(models.formdata.UserProfileForm.apply)(models.formdata.UserProfileForm.unapply)
   )
@@ -67,14 +68,14 @@ class UserProfileController  extends Controller  with SecureSocial {
     val AnvandareForm = Form(
       mapping(
         "name" -> text,
-        "emails" -> list(text),
         "quality" -> list(text),
         "aboutmeheadline" -> text,
         "aboutme" -> text,
         "county" -> text,
         "streetAddress" -> nonEmptyText,
         "zipCode" -> nonEmptyText,
-        "city" -> nonEmptyText
+        "city" -> nonEmptyText,
+        "phoneNumber" -> text
       )
       (EnvData.apply) (EnvData.unapply)
     )
@@ -152,7 +153,7 @@ class UserProfileController  extends Controller  with SecureSocial {
     }
   }
 
-/*
+
 def createTags = Action { implicit request =>
 
   // MATCH (b:TagWord) RETURN b
@@ -208,7 +209,7 @@ def createTags = Action { implicit request =>
 
  Ok(v.toString())
 }
-*/
+
 
   private def getCounties: Option[Seq[(String,String)]] = {
     val counties: Option[Seq[(String,String)]] = countyService.getListOfAll match {
@@ -282,6 +283,9 @@ if(userTags != null) {
 
   var l : Long = 0
   var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
+
+
+
   if(d.isDefined){
     for(theTag <- d.get) {
       var newType : models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l+"]" )
@@ -295,29 +299,34 @@ if(userTags != null) {
   val retTagList = tagList.toList.sortBy(tw => tw.name)
 
   // member
+
+  /*
   var memberList = tagWordService.listByGroupOption("member")
 
   if(memberList.isDefined) {
     for(theMemberStatus <- memberList.get) {
       println("Member status" + theMemberStatus.orderId + ", " + theMemberStatus.tagName + ", " + theMemberStatus.tagId)
     }
-
-
   }
 
+*/
+
+  println("DEBUG::::: 1111 ")
 
   // File with stored values
   val eData : EnvData = new EnvData(
     theUser.profileLinkName,
-    List("adam","bertil", "cesar"),
     List("adam", "bertil"),
     theUser.aboutMeHeadline,
     theUser.aboutMe,
     theUser.county,
     "", //theUser.streetAddress,
     "theUser.zipCode",
-    "theUser.city"
+    "theUser.city",
+    ""
   )
+
+  println("DEBUG::::: 222 ")
   val nyForm =  AnvandareForm.fill(eData)
   Ok(views.html.profile.skapa(nyForm, retTagList, typ, optionsLocationAreas = getCounties))
 
@@ -383,7 +392,7 @@ def editSubmit = SecuredAction { implicit request =>
          // var linkedUser = service.findByProfileLinkName(profileLinkName)
 
 
-            println("Do, antal : " + anvadare.quality.size)
+
             for(d <- anvadare.quality) {
                 println("VALD  : " + d)
                 map += (d->d)
@@ -393,17 +402,7 @@ def editSubmit = SecuredAction { implicit request =>
 
         })
 
-//      var up = userProfileService.getAllUserProfile
-//      var theUser : models.UserProfile = up.iterator.next()
         var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
-
-
-
-  println("userId : " + request.user.identityId.userId)
-  println("ProviderId : " + request.user.identityId.providerId)
-
-  // Fetch the user by userid and providerid
- // var theUser : Option[models.UserProfile] = service.findUserProfileByUserId(request.user)
 
      theUser.aboutMeHeadline = aboutMeHeadlineText
      theUser.aboutMe = aboutMeText
@@ -435,9 +434,9 @@ def editSubmit = SecuredAction { implicit request =>
 
       userProfileService.saveUserProfile(theUser)
 
-    //Ok("Sparad")
      Redirect(routes.UserProfileController.edit())
 }
+
 
 
   def saveUserProfile = Action { implicit request =>
@@ -469,146 +468,6 @@ def editSubmit = SecuredAction { implicit request =>
           Ok("TEST")
         }
       )
-  }
-
-
-
-
-
-  def save = Action { implicit request =>
-
-  val form1   = Form(
-    mapping(
-      "userName" -> nonEmptyText,
-      "emailAddress" -> email,
-      "firstName" -> text,
-      "lastName" -> text,
-      "aboutme" -> text,
-      "quality" -> list(boolean),
-      "county" -> text,
-      "streetAddress" -> nonEmptyText,
-      "zipCode" -> nonEmptyText,
-      "city" -> nonEmptyText,
-      "idno" -> longNumber
-    )(models.formdata.UserProfileForm.apply)(models.formdata.UserProfileForm.unapply)
-  )
-
-
-
-
-    System.out.println("SVAR: " +form1)
-
-  /*
-    implicit request =>
-    userProfileForm.bindFromRequest.fold(
-      errors => {
-        // Felaktigt ifyllt formulär
-
-           System.out.println("TEST ... TEST... ERROR ")
-
-        val typ = new models.Types
-        Ok(views.html.profile.createUserProfile(errors, typ.findAll))
-      },
-      userProfile => {
-
-
-
-        // Spara UserProfile
-        /*
-        userProfileService.saveUserProfile(
-          userProfile.userName,
-          userProfile.emailAddress)
-        */
-        // Hämta värden
-        val savedForm  =  userProfileForm.fill(userProfile)
-
-       System.out.println("TEST ... TEST ")
-
-
-
-        val typ = new models.Types
-        //Ok(views.html.profile.createUserProfile(savedForm, typ.findAll))
-        Ok("TEST")
-      }
-    )
-    */
-    Ok("TEST")
-  }
-
-
-
-
-
-
-
-/******************************************************************************************
- *  Skapa en profil
- *
- */
-  def skapaNyProfil = Action { implicit request =>
-     var userProfile = models.formdata.UserProfileForm("","","","","",List(true, true),"", "", "", "", 0) // @todo län/county
-     val dufulatValueForm =  userProfileForm.fill(userProfile)
-     val typ = new models.Types
-    Ok(views.html.profile.createUserProfile(dufulatValueForm, typ.findAll))
-  }
-
-
-  def test = Action { implicit request =>
-    var user: models.UserProfile = new models.UserProfile()
-   // user.userId = "test"
-   //user.providerId = "test"
-
-    var userList = userProfileService.getAllUserProfiles
-    //var tagList = tagWordService.listAll()
-
-    if (userList.size > 0) {
-
-      println("Users : " +  userList.size)
-
-
-      var up = userList.tail.tail.head
-
-      var antal: Int = 0
-      /*
-      var tagItter = up.getUserProfileTags.iterator()
-
-
-      var list: ListBuffer[TaggedUserProfile] = new ListBuffer[TaggedUserProfile]()
-
-      while (tagItter.hasNext) {
-        var d = tagItter.next()
-        println("TAG NAME: " + d.tagWord.tagName + ", " + d.tagWord.tagId + ", " + d.tagWord.orderId)
-        list += d
-      }
-*/
-      // remove all tagwords to profile
-      /*
-      for (vx <- list) {
-        println("\ntest :" + vx.tagWord.orderId)
-        up.remove(vx)
-      }
-      userProfileService.saveUserProfile(up)
-      */
-
-
-    // add tagwords to profile
-    /*
-    up.aboutMe = "vinter"
-    up.isHost = true
-      println("Key: " + up.key)
-
-    for( tag <- tagList) {
-      up.memberOf(tag)
-    }
-    userProfileService.saveUserProfile(up)
-    */
-
-      // userProfileService.saveUserProfile("","")
-
-
-    }
-
-    Ok("OK")
   }
 
 }

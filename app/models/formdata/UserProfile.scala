@@ -18,6 +18,7 @@ case class UserProfileForm
   streetAddress : String,
  zipCode        : String,
  city           : String,
+ phoneNumber    : String,
   idNo         : Long
 ) {
   var id:Int = UserProfile.nextId

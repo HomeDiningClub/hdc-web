@@ -95,7 +95,7 @@ GET         /profile/view/:profileName                 @controllers.UserProfileC
 GET         /profile/view-my-profile                   @controllers.UserProfileController.viewProfileByLoggedInUser
 GET         /profile/edit                              @controllers.UserProfileController.edit
 POST        /profile/skicka                            @controllers.UserProfileController.editSubmit
-POST        /profile/skapa                             @controllers.UserProfileController.save
+#POST        /profile/skapa                             @controllers.UserProfileController.save
 POST        /profile/spara                             @controllers.UserProfileController.saveUserProfile
 #GET         /profile/ny                                @controllers.UserProfileController.skapaNyProfil
 #GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
@@ -141,5 +141,5 @@ GET         /not-authorized                            securesocial.controllers.
 
 
 # New profile
-#GET         /prodata/skapa                             @controllers.UserProfileController.createTags
+GET         /prodata/skapa                             @controllers.UserProfileController.createTags
 #GET         /prodata/test                              @controllers.UserProfileController.test

@@ -45,27 +45,33 @@
                                     '_help -> Messages("profile.create.form.aboutme.help")
                                 )
 
-                                @helper.textarea(EnvDataForm("streetAddress"),
+                                @helper.inputText(EnvDataForm("streetAddress"),
                                     'id -> "streetAddress",
                                     '_showErrors -> true,
                                     '_label -> Messages("profile.create.form.streetAddress"),
                                     '_help -> Messages("profile.create.form.streetAddress.help")
                                 )
 
-                                @helper.textarea(EnvDataForm("zipCode"),
+                                @helper.inputText(EnvDataForm("zipCode"),
                                     'id -> "zipCode",
                                     '_showErrors -> true,
                                     '_label -> Messages("profile.create.form.zipCode"),
                                     '_help -> Messages("profile.create.form.zipCode.help")
                                 )
 
-                                @helper.textarea(EnvDataForm("city"),
+                                @helper.inputText(EnvDataForm("city"),
                                     'id -> "city",
                                     '_showErrors -> true,
                                     '_label -> Messages("profile.create.form.city"),
                                     '_help -> Messages("profile.create.form.city.help")
                                 )
 
+                                @helper.inputText(EnvDataForm("phoneNumber"),
+                                    'id -> "city",
+                                    '_showErrors -> true,
+                                    '_label -> Messages("profile.create.form.phoneNumber"),
+                                    '_help -> Messages("profile.create.form.phoneNumber.help")
+                                )
 
                                 @helper.select(EnvDataForm("county"),
                                     optionsLocationAreas.get,
@@ -74,26 +80,6 @@
 
 
 
-                                @helper.inputText(EnvDataForm("emails[0]"),
-                                    'id -> "idno",
-                                    '_showErrors -> true,
-                                    '_label -> "E-post",
-                                    '_help -> "e-post"
-                                )
-
-                                @helper.inputText(EnvDataForm("emails[1]"),
-                                    'id -> "idno",
-                                    '_showErrors -> true,
-                                    '_label -> "E-post",
-                                    '_help -> "e-post"
-                                )
-
-                                @helper.inputText(EnvDataForm("emails[2]"),
-                                    'id -> "idno",
-                                    '_showErrors -> true,
-                                    '_label -> "E-post",
-                                    '_help -> "e-post"
-                                )
                             </li>
                         </ul>
                     </div>
