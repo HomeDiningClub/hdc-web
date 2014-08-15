@@ -48,16 +48,16 @@ class UserProfileController  extends Controller  with SecureSocial {
 
   val userProfileForm : play.api.data.Form[models.formdata.UserProfileForm]  = play.api.data.Form(
     mapping(
-      "userName" -> nonEmptyText,
+      "userName" -> text,
       "emailAddress" -> email,
       "firstName" -> text,
       "lastName" -> text,
       "aboutme" -> text,
       "quality" -> list(boolean),
       "county" -> text,
-      "streetAddress" -> nonEmptyText,
-      "zipCode" -> nonEmptyText,
-      "city" -> nonEmptyText,
+      "streetAddress" -> text,
+      "zipCode" -> text,
+      "city" -> text,
       "phoneNumber" -> text,
       "idno" -> longNumber
     )(models.formdata.UserProfileForm.apply)(models.formdata.UserProfileForm.unapply)
@@ -73,9 +73,9 @@ class UserProfileController  extends Controller  with SecureSocial {
         "aboutmeheadline" -> text,
         "aboutme" -> text,
         "county" -> text,
-        "streetAddress" -> nonEmptyText,
-        "zipCode" -> nonEmptyText,
-        "city" -> nonEmptyText,
+        "streetAddress" -> text,
+        "zipCode" -> text,
+        "city" -> text,
         "phoneNumber" -> text
       )
       (EnvData.apply) (EnvData.unapply)
@@ -305,8 +305,8 @@ if(userTags != null) {
     theUser.aboutMe,
     theUser.county,
     "", // street Address,
-    "", // zip code
-    "", // city
+    theUser.zipCode, // zip code
+    theUser.city, // city
     ""
   )
 
@@ -336,10 +336,13 @@ def editSubmit = SecuredAction { implicit request =>
       // add all new tags
 
       var map:Map[String,String] = Map()
-      var aboutMeHeadlineText : String = ""
-      var aboutMeText : String = ""
-      var profileLinkName : String = ""
-
+      var aboutMeHeadlineText   : String = ""
+      var aboutMeText           : String = ""
+      var profileLinkName       : String = ""
+      var zipCode               : String = ""
+      var streetAddress         : String = ""
+      var city                  : String = ""
+      var phoneNumber           : String = ""
       AnvandareForm.bindFromRequest.fold(
         errors => {
           if(errors.hasErrors) {
@@ -351,22 +354,25 @@ def editSubmit = SecuredAction { implicit request =>
           // Felaktigt ifyllt formulär
 
         },
-        anvadare => {
+        reqUserProfile => {
             // test
-            println(anvadare.name)
+            println(reqUserProfile.name)
 
-            println("About Me: " + anvadare.aboutme)
-          aboutMeHeadlineText = anvadare.aboutmeheadline
-          aboutMeText = anvadare.aboutme
-          profileLinkName= anvadare.name
+            println("About Me: " + reqUserProfile.aboutme)
+          aboutMeHeadlineText   = reqUserProfile.aboutmeheadline
+          aboutMeText           = reqUserProfile.aboutme
+          profileLinkName       = reqUserProfile.name
+          zipCode               = reqUserProfile.zipCode
+          streetAddress         = reqUserProfile.streetAddress
+          city                  = reqUserProfile.city
+          phoneNumber           = reqUserProfile.phoneNumber
 
-
-          println("????? county = " + anvadare.county)
+          println("????? county = " + reqUserProfile.county)
           var c   = countyService.getListOfAll.get
 
           for(d <- c) {
             println("NAME: " + d.name)
-            println("OBJECTID: " + d.objectId + " - " + anvadare.county + " - " + d.objectId.equals(anvadare.county))
+            println("OBJECTID: " + d.objectId + " - " + reqUserProfile.county + " - " + d.objectId.equals(reqUserProfile.county))
           }
 
           println("Size :::: " + c.size)
@@ -376,7 +382,7 @@ def editSubmit = SecuredAction { implicit request =>
 
 
 
-            for(d <- anvadare.quality) {
+            for(d <- reqUserProfile.quality) {
                 println("VALD  : " + d)
                 map += (d->d)
 
@@ -392,7 +398,9 @@ def editSubmit = SecuredAction { implicit request =>
      theUser.profileLinkName = profileLinkName
      theUser.city  = ""
      theUser.streetAddress = ""
-     theUser.zipCode = ""
+     theUser.zipCode = zipCode
+     theUser.streetAddress = streetAddress
+     theUser.phoneNumber = phoneNumber
 
       theUser.removeAllTags()
 
