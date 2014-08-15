@@ -80,7 +80,7 @@ public class UserProfile extends AbstractEntity {
     @RelatedToVia(type = "LOCATION_AT")
     private Set<TaggedLocationUserProfile> userLocationProfileTag;
 
-    @RelatedToVia(type = RelationshipTypesJava.HAS_RECIPES.Constant, direction = Direction.OUTGOING)
+    @RelatedTo(type = RelationshipTypesJava.HAS_RECIPES.Constant, direction = Direction.OUTGOING)
     private Set<Recipe> recipes;
 
     @Fetch
