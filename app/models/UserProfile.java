@@ -9,7 +9,7 @@ import models.profile.TaggedUserProfile;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
-
+import models.modelconstants.RelationshipTypesJava;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -80,6 +80,9 @@ public class UserProfile extends AbstractEntity {
     @RelatedToVia(type = "LOCATION_AT")
     private Set<TaggedLocationUserProfile> userLocationProfileTag;
 
+    @RelatedToVia(type = RelationshipTypesJava.HAS_RECIPES.Constant, direction = Direction.OUTGOING)
+    private Set<Recipe> recipes;
+
     @Fetch
     @RelatedTo(type = "IN_PROFILE", direction = Direction.INCOMING)
     private UserCredential owner;
@@ -119,6 +122,7 @@ public class UserProfile extends AbstractEntity {
     }
 
     public UserCredential getOwner() { return owner; }
+    public Iterable<Recipe> getRecipes() { return recipes; }
     public Iterable<TaggedUserProfile> getTags() { return userProfileTag; }
     public Iterable<TaggedLocationUserProfile> getLocations() { return userLocationProfileTag; }
 
