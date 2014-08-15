@@ -132,8 +132,9 @@ profile.create.form.streetAddress.help=Gatuadress måste inte anges
 profile.create.form.zipCode=Postnummer
 profile.create.form.zipCode.help=Postnummer
 profile.create.form.city=Stad
-profile.create.form.city.help=Stad
-
+profile.create.form.city.help=Kommun eller stad
+profile.create.form.phoneNumber=Telefonnummer
+profile.create.form.phoneNumber.help=Mobilnummer eller telefonnummer
 
 profile.create.save=Spara
 profile.profilelinkname.isempty=Ett profilnamn måste vara valt!

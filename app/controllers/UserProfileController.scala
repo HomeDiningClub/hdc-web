@@ -25,6 +25,7 @@ import java.util.UUID
 import enums.RoleEnums
 import utils.authorization.WithRole
 import constants.FlashMsgConstants
+import controllers._
 
 
 @SpringController
@@ -96,24 +97,7 @@ class UserProfileController  extends Controller  with SecureSocial {
     ("Inbox", "Inbox", INBOX, "")
   )
 
-//  def index = Action { implicit request =>
-//    Ok(views.html.host.index(menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX))
-//  }
-//
-//  def indexWithID(objectId: UUID) = Action { implicit request =>
-//    Ok(views.html.host.index(menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX))
-//  }
 
-//  def viewProfile(profile: UserProfile) = Results { implicit request =>
-//
-//    // Try getting the profile from name, if failure show 404
-//    profile match {
-//      case Some(profile) =>
-//        Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX))
-//      case None =>
-//        NotFound("Cannot find user profile")
-//    }
-//  }
 
   def viewProfileByName(profileName: String) = UserAwareAction { implicit request =>
 
@@ -320,13 +304,12 @@ if(userTags != null) {
     theUser.aboutMeHeadline,
     theUser.aboutMe,
     theUser.county,
-    "", //theUser.streetAddress,
-    "theUser.zipCode",
-    "theUser.city",
+    "", // street Address,
+    "", // zip code
+    "", // city
     ""
   )
 
-  println("DEBUG::::: 222 ")
   val nyForm =  AnvandareForm.fill(eData)
   Ok(views.html.profile.skapa(nyForm, retTagList, typ, optionsLocationAreas = getCounties))
 
