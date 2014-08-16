@@ -7,6 +7,7 @@ import play.api.Logger
 import models.UserCredential
 import securesocial.core.java.SecureSocial.UserAwareAction
 import play.api.templates.Html
+import utils.Helpers
 
 object HeaderController extends Controller with SecureSocial {
 
@@ -21,24 +22,12 @@ object HeaderController extends Controller with SecureSocial {
     ("Campaign page", "Campaign title", routes.CampaignController.index(), "")
   )
 
-  implicit def getUserFromRequest(implicit request: RequestHeader): Option[UserCredential] = {
-    val user = SecureSocial.currentUser.map {
-      u =>
-        Logger.debug("Debug:" + u.fullName)
-        u.asInstanceOf[UserCredential]
-    }
-
-    if(user.isDefined)
-      user
-    else
-      None
-  }
 
   def index(request: RequestHeader) = {
 
     var quickLinkTitle: String = ""
     // Name, Title, Href, Class, Extra HTML
-    val quickLinkList: Seq[(String,String,Call,String,String)] = getUserFromRequest(request) match {
+    val quickLinkList: Seq[(String,String,Call,String,String)] = Helpers.getUserFromRequest(request) match {
       case Some(user) =>
         quickLinkTitle = Messages("header.link.host-profile-header", "<span class=\"hidden-xs\">" + user.fullName() + "</span>")
         Seq[(String,String,Call,String,String)](

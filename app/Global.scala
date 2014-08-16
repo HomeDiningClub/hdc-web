@@ -1,3 +1,4 @@
+import enums.RoleEnums
 import play.api.mvc.Handler
 import play.api.Application
 import play.api.GlobalSettings
@@ -6,6 +7,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext
 import play.api.mvc._
 import play.api.mvc.Results._
 import scala.concurrent.Future
+import utils.authorization.WithRole
+import utils.Helpers
 
 // Java2Scala
 // http://javatoscala.com/
@@ -51,7 +54,31 @@ object Global extends GlobalSettings {
 //  }
 
   override def onError(request: RequestHeader, ex: Throwable) = {
-    Future.successful(InternalServerError(views.html.error.error(ex = ex)(request)))
+    var currentEx = ex
+
+    val isAdmin: Boolean = Helpers.getUserFromRequest(request) match {
+      case Some(user) =>
+        new WithRole(RoleEnums.ADMIN).isAuthorized(user) match {
+        case true => true
+        case false => false
+        }
+      case None => false
+    }
+
+    if(isAdmin){
+      var foundRootCause: Boolean = false
+      var loopStopper = 100
+      do {
+        if (currentEx.getCause != null) {
+          currentEx = currentEx.getCause
+          loopStopper -= 1
+        } else {
+          foundRootCause = true
+        }
+      } while (!foundRootCause || loopStopper == 0)
+    }
+
+    Future.successful(InternalServerError(views.html.error.error(ex = currentEx, isAdmin = isAdmin)(request)))
   }
 
   override def onHandlerNotFound(request: RequestHeader) = {

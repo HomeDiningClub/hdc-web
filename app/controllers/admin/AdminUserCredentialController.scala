@@ -12,7 +12,6 @@ import services.UserCredentialService
 import utils.authorization.WithRole
 import enums.RoleEnums
 import models.UserCredential
-import controllers.routes
 import play.api.i18n.Messages
 import java.util.UUID
 

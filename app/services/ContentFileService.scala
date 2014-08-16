@@ -271,7 +271,7 @@ class ContentFileService {
           None
       }
 
-      val uploadResult = Await.result(futureResult, 10 seconds)
+      val uploadResult = Await.result(futureResult, 20 seconds)
 
       if(!uploadResult.isEmpty)
       {
@@ -365,7 +365,7 @@ class ContentFileService {
               None
         }
 
-        uploadResult = Await.result(futureResult, 10 seconds)
+        uploadResult = Await.result(futureResult, 20 seconds)
 
         // Clean up local file
         transformedFile.delete()
