@@ -303,11 +303,11 @@ if(userTags != null) {
     List("adam", "bertil"),
     theUser.aboutMeHeadline,
     theUser.aboutMe,
-    theUser.county,
-    "", // street Address,
+    theUser.county,         // county
+    theUser.streetAddress, // street Address,
     theUser.zipCode, // zip code
     theUser.city, // city
-    ""
+    theUser.phoneNumber // phone number
   )
 
   val nyForm =  AnvandareForm.fill(eData)
@@ -393,18 +393,18 @@ def editSubmit = SecuredAction { implicit request =>
 
         var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
-     theUser.aboutMeHeadline = aboutMeHeadlineText
-     theUser.aboutMe = aboutMeText
-     theUser.profileLinkName = profileLinkName
-     theUser.city  = ""
-     theUser.streetAddress = ""
-     theUser.zipCode = zipCode
-     theUser.streetAddress = streetAddress
-     theUser.phoneNumber = phoneNumber
+     theUser.aboutMeHeadline      = aboutMeHeadlineText
+     theUser.aboutMe              = aboutMeText
+     theUser.profileLinkName      = profileLinkName
+     theUser.city                 = city
+     theUser.zipCode              = zipCode
+     theUser.streetAddress        = streetAddress
+     theUser.phoneNumber          = phoneNumber
+
 
       theUser.removeAllTags()
 
-      // Fetch all tags
+      // Fetch all tags available to choose
       var d = tagWordService.listByGroupOption("profile")
 
       if(d.isDefined){
@@ -422,7 +422,7 @@ def editSubmit = SecuredAction { implicit request =>
         } // end loop
 
       }
-
+      // save the new UserProfiel
       userProfileService.saveUserProfile(theUser)
 
      Redirect(routes.UserProfileController.edit())
@@ -435,13 +435,9 @@ def editSubmit = SecuredAction { implicit request =>
         errors => {
 
           if(errors.hasErrors) {
-            println("Fel data!")
-
-            println("Fel lista: "  + errors.toString)
-
-
+            println("Error in Form : "  + errors.toString)
           }
-
+          println("#error#")
           // Felaktigt ifyllt formulär
           Ok(views.html.profile.updateUserProfile(errors))
         },
