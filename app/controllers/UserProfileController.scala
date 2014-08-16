@@ -303,11 +303,11 @@ if(userTags != null) {
     List("adam", "bertil"),
     theUser.aboutMeHeadline,
     theUser.aboutMe,
-    theUser.county,
-    "", // street Address,
+    theUser.county,         // county
+    theUser.streetAddress, // street Address,
     theUser.zipCode, // zip code
     theUser.city, // city
-    ""
+    theUser.phoneNumber // phone number
   )
 
   val nyForm =  AnvandareForm.fill(eData)
