@@ -8,6 +8,7 @@ import scala.List
 import org.springframework.transaction.annotation.Transactional
 import repositories._
 import models.location.County
+import java.util.UUID
 
 @Service
 class CountyService {
@@ -23,8 +24,11 @@ class CountyService {
   }
 
   @Transactional(readOnly = true)
-  def findById(objectId: java.util.UUID): County = {
-    countyRepository.findByobjectId(objectId)
+  def findById(objectId: UUID): Option[County] = {
+    countyRepository.findByobjectId(objectId) match {
+      case null => None
+      case item => Some(item)
+    }
   }
 
   @Transactional(readOnly = true)
@@ -50,14 +54,13 @@ class CountyService {
   }
 
   @Transactional(readOnly = false)
-  def deleteById(objectId: java.util.UUID): Boolean = {
-    val item = this.findById(objectId)
-    if(item != null)
-    {
-      countyRepository.delete(item)
-      return true
+  def deleteById(objectId: UUID): Boolean = {
+    this.findById(objectId) match {
+      case None => false
+      case Some(item) =>
+        countyRepository.delete(item)
+        true
     }
-    false
   }
 
   @Transactional(readOnly = false)

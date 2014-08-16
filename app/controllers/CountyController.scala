@@ -82,16 +82,14 @@ class CountyController extends Controller with SecureSocial {
 
   // Edit - Edit content
   def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    val item = countyService.findById(objectId)
-
-    item match {
-      case null =>
+    val item = countyService.findById(objectId) match {
+      case None =>
         Ok(views.html.edit.county.index())
-      case _ =>
+      case Some(county) =>
         val form = CountyForm.apply(
-          Some(item.objectId.toString),
-          item.name,
-          Some(item.order)
+          Some(county.objectId.toString),
+          county.name,
+          Some(county.order)
         )
 
         Ok(views.html.edit.county.add(countyForm.fill(form)))
