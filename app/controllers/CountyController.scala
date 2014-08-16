@@ -55,24 +55,35 @@ class CountyController extends Controller with SecureSocial {
       },
       contentData => {
 
-        val newRec = contentData.id match {
+        val newRec: Option[County] = contentData.id match {
           case Some(id) =>
-            val item = countyService.findById(UUID.fromString(id))
-            item.name = contentData.name
-            item.order = contentData.order.getOrElse(0)
+            val item: Option[County] = countyService.findById(UUID.fromString(id)) match {
+              case None => None
+              case Some(cnt) =>
+                cnt.name = contentData.name
+                cnt.order = contentData.order.getOrElse(0)
+                Some(cnt)
+            }
             item
           case None =>
             contentData.order match {
               case None =>
-                new County(contentData.name)
+                Some(new County(contentData.name))
               case Some(ordering) =>
-                new County(contentData.name, ordering)
+                Some(new County(contentData.name, ordering))
             }
         }
 
-        val saved = countyService.add(newRec)
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
-        Redirect(controllers.routes.CountyController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+        val result = newRec match {
+          case None =>
+            val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error.wrongid")
+            BadRequest(views.html.edit.county.add(countyForm)).flashing(FlashMsgConstants.Error -> errorMessage)
+          case Some(county) =>
+            val saved = countyService.add(county)
+            val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
+            Redirect(controllers.routes.CountyController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+        }
+        result
       }
     )
 
@@ -82,7 +93,7 @@ class CountyController extends Controller with SecureSocial {
 
   // Edit - Edit content
   def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    val item = countyService.findById(objectId) match {
+    countyService.findById(objectId) match {
       case None =>
         Ok(views.html.edit.county.index())
       case Some(county) =>

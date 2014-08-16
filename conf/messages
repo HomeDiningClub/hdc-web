@@ -173,6 +173,7 @@ edit.add.abort=Avbryt
 edit.add.success=Sparad: {0} (id:{1})
 edit.add.error=Kunde inte spara.
 edit.add.error.parametersmissing=Saknar vissa parametrar
+edit.add.error.wrongid=Går inte att hitta objektet via ID
 edit.delete.success=Borttagen (id:{0})
 edit.delete.error=Kunde inte ta bort, något gick fel.
 
