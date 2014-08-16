@@ -99,6 +99,10 @@ public class UserProfile extends AbstractEntity {
         return taggedLocationProfile;
     }
 
+    public void removeLocation() {
+        userLocationProfileTag.clear();
+    }
+
 
     public void removeAllTags() {
 

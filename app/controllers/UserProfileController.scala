@@ -297,6 +297,16 @@ if(userTags != null) {
 
   println("DEBUG::::: 1111 ")
 
+
+  println("county stored : [" +  theUser.county + "]")
+
+  try {
+    println("county name: " + theUser.getLocations.iterator().next().county.name)
+  } catch
+    {
+      case e : Exception => println("COUNTY EXCEPTION : " + e.getMessage)
+    }
+
   // File with stored values
   val eData : EnvData = new EnvData(
     theUser.profileLinkName,
@@ -343,6 +353,9 @@ def editSubmit = SecuredAction { implicit request =>
       var streetAddress         : String = ""
       var city                  : String = ""
       var phoneNumber           : String = ""
+      var countyId              : String = ""
+
+
       AnvandareForm.bindFromRequest.fold(
         errors => {
           if(errors.hasErrors) {
@@ -366,30 +379,9 @@ def editSubmit = SecuredAction { implicit request =>
           streetAddress         = reqUserProfile.streetAddress
           city                  = reqUserProfile.city
           phoneNumber           = reqUserProfile.phoneNumber
-
+          countyId              = reqUserProfile.county
           println("????? county = " + reqUserProfile.county)
 
-
-          countyService.findById(UUID.fromString(reqUserProfile.county))
-
-          /*
-          countyService.findById( ) match {
-            case None => // Do something when nothing found
-              println("county name: NONE value ")
-            case Some(item) =>
-              println("county name: " + item.name)
-
-          }
-*/
-
-          var c   = countyService.getListOfAll.get
-
-          for(d <- c) {
-            println("NAME: " + d.name)
-            println("OBJECTID: " + d.objectId + " - " + reqUserProfile.county + " - " + d.objectId.equals(reqUserProfile.county))
-          }
-
-          println("Size :::: " + c.size)
 
 
          // var linkedUser = service.findByProfileLinkName(profileLinkName)
@@ -422,7 +414,6 @@ def editSubmit = SecuredAction { implicit request =>
       var d = tagWordService.listByGroupOption("profile")
 
       if(d.isDefined){
-
         // Loop all available tags
         for(theTag <- d.get) {
           var value = map.getOrElse(theTag.tagName, "empty")
@@ -436,7 +427,27 @@ def editSubmit = SecuredAction { implicit request =>
         } // end loop
 
       }
-      // save the new UserProfiel
+
+    if(countyId == None || countyId == null || countyId.trim().size < 2) {
+      theUser.removeLocation()
+    } else {
+      countyService.findById(UUID.fromString(countyId)) match {
+        case None => // Do something when nothing found
+          println("county name: NONE value ")
+          theUser.removeLocation()
+        case Some(item) =>
+          theUser.removeLocation()
+          theUser.locate(item)
+          println("county name: " + item.name)
+          println("OBJECTID: " + item.objectId + " def :  " + item.toString)
+
+      }
+    }
+
+
+
+
+  // save the new UserProfiel
       userProfileService.saveUserProfile(theUser)
 
      Redirect(routes.UserProfileController.edit())
