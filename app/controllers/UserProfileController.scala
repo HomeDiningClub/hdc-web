@@ -368,6 +368,20 @@ def editSubmit = SecuredAction { implicit request =>
           phoneNumber           = reqUserProfile.phoneNumber
 
           println("????? county = " + reqUserProfile.county)
+
+
+          countyService.findById(UUID.fromString(reqUserProfile.county))
+
+          /*
+          countyService.findById( ) match {
+            case None => // Do something when nothing found
+              println("county name: NONE value ")
+            case Some(item) =>
+              println("county name: " + item.name)
+
+          }
+*/
+
           var c   = countyService.getListOfAll.get
 
           for(d <- c) {
