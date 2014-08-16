@@ -2,95 +2,32 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+
 # Start page
 GET         /                                          @controllers.StartPageController.index
 POST        /                                          @controllers.StartPageController.filterProfiles
 
 # Home page
-GET         /how-does-it-work                          @controllers.ContentController.howDoesItWork
-GET         /become-a-member                           @controllers.ContentController.becomeAMember
-GET         /become-a-member/the-perfect-guest         @controllers.ContentController.thePerfectGuest
-GET         /become-a-host                             @controllers.ContentController.becomeAHost
-GET         /become-a-host/practical-info              @controllers.ContentController.practicalInfo
-GET         /become-a-host/example-host-text           @controllers.ContentController.exampleHostText
-GET         /references                                @controllers.ContentController.references
-GET         /about-us                                  @controllers.ContentController.aboutUs
-GET         /about-us/press                            @controllers.ContentController.press
-GET         /about-us/user-terms-and-conditions        @controllers.ContentController.userTermsAndConditions
-GET         /faq                                       @controllers.ContentController.faq
-GET         /contact                                   @controllers.ContentController.contact
+GET         /how-does-it-work                          @controllers.ContentPageController.howDoesItWork
+GET         /become-a-member                           @controllers.ContentPageController.becomeAMember
+GET         /become-a-member/the-perfect-guest         @controllers.ContentPageController.thePerfectGuest
+GET         /become-a-host                             @controllers.ContentPageController.becomeAHost
+GET         /become-a-host/practical-info              @controllers.ContentPageController.practicalInfo
+GET         /become-a-host/example-host-text           @controllers.ContentPageController.exampleHostText
+GET         /references                                @controllers.ContentPageController.references
+GET         /about-us                                  @controllers.ContentPageController.aboutUs
+GET         /about-us/press                            @controllers.ContentPageController.press
+GET         /about-us/user-terms-and-conditions        @controllers.ContentPageController.userTermsAndConditions
+GET         /faq                                       @controllers.ContentPageController.faq
+GET         /contact                                   @controllers.ContentPageController.contact
 
 # Campaign
 GET         /newsletter                                @controllers.CampaignController.index
 
-# EDIT
-GET         /edit                                      @controllers.EditController.index
-
-# EDIT - Content
-GET         /edit/content                              @controllers.ContentController.editIndex
-GET         /edit/content/listall                      @controllers.ContentController.listAll
-GET         /edit/content/add                          @controllers.ContentController.add
-POST        /edit/content/add                          @controllers.ContentController.addSubmit
-GET         /edit/content/edit/:objectId               @controllers.ContentController.edit(objectId: java.util.UUID)
-GET         /edit/content/delete/:objectId             @controllers.ContentController.delete(objectId: java.util.UUID)
-
-# EDIT - Recipe
-GET         /edit/recipe                               @controllers.RecipeController.editIndex
-GET         /edit/recipe/listall                       @controllers.RecipeController.listAll
-GET         /edit/recipe/add                           @controllers.RecipeController.add
-POST        /edit/recipe/add                           @controllers.RecipeController.addSubmit
-GET         /edit/recipe/edit/:objectId                @controllers.RecipeController.edit(objectId: java.util.UUID)
-GET         /edit/recipe/delete/:objectId              @controllers.RecipeController.delete(objectId: java.util.UUID)
-
-# EDIT - County
-GET         /edit/county                               @controllers.CountyController.editIndex
-GET         /edit/county/listall                       @controllers.CountyController.listAll
-GET         /edit/county/add                           @controllers.CountyController.add
-POST        /edit/county/add                           @controllers.CountyController.addSubmit
-GET         /edit/county/edit/:objectId                @controllers.CountyController.edit(objectId: java.util.UUID)
-GET         /edit/county/delete/:objectId              @controllers.CountyController.delete(objectId: java.util.UUID)
-
-# EDIT - UserCredential
-GET         /edit/user                                 @controllers.UserCredentialController.editIndex
-GET         /edit/user/listall                         @controllers.UserCredentialController.listAll
-POST        /edit/user/edit                            @controllers.UserCredentialController.editSubmit
-GET         /edit/user/edit/:objectId                  @controllers.UserCredentialController.edit(objectId: java.util.UUID)
-GET         /edit/user/delete/:objectId                @controllers.UserCredentialController.delete(objectId: java.util.UUID)
-
-# EDIT - Roles
-GET         /edit/roles                                @controllers.UserRoleController.editIndex
-GET         /edit/roles/listall                        @controllers.UserRoleController.listAll
-GET         /edit/roles/add                            @controllers.UserRoleController.add
-POST        /edit/roles/add                            @controllers.UserRoleController.addSubmit
-GET         /edit/roles/edit/:objectId                 @controllers.UserRoleController.edit(objectId: java.util.UUID)
-GET         /edit/roles/delete/:objectId               @controllers.UserRoleController.delete(objectId: java.util.UUID)
-GET         /edit/roles/addUserToRole                  @controllers.UserRoleController.addUserToRole
-POST        /edit/roles/addUserToRole                  @controllers.UserRoleController.addUserToRoleSubmit
 
 
-# EDIT - TagWords
-GET         /edit/tagword                              @controllers.TagWordController.editIndex
-GET         /edit/tagword/listall                      @controllers.TagWordController.listAll
-GET         /edit/tagword/add                          @controllers.TagWordController.add
-POST        /edit/tagword/add                          @controllers.TagWordController.addSubmit
-GET         /edit/tagword/edit/:objectId               @controllers.TagWordController.edit(objectId: java.util.UUID)
-GET         /edit/tagword/delete/:objectId             @controllers.TagWordController.delete(objectId: java.util.UUID)
 
-# EDIT - Release & Batch
-GET        /edit/release                               @controllers.ReleaseController.editIndex
-GET        /edit/release/run                           @controllers.ReleaseController.releaseRun
-GET        /edit/release/deleteall                     @controllers.ReleaseController.deleteAllFromDB
-
-# EDIT - Files
-GET         /edit/file                                 @controllers.FileController.editIndex
-POST        /edit/file/add                             @controllers.FileController.add
-GET         /edit/file/delete/:objectId                @controllers.FileController.deleteImage(objectId: java.util.UUID)
-
-# Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                              controllers.Assets.at(path="/public", file)
-
-
-# UserProfile
+# Profile
 GET         /profile/view/:profileName                 @controllers.UserProfileController.viewProfileByName(profileName: String)
 GET         /profile/view-my-profile                   @controllers.UserProfileController.viewProfileByLoggedInUser
 GET         /profile/edit                              @controllers.UserProfileController.edit
@@ -100,20 +37,12 @@ POST        /profile/spara                             @controllers.UserProfileC
 #GET         /profile/ny                                @controllers.UserProfileController.skapaNyProfil
 #GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
 
-
-# Host
-#GET         /host                                      @controllers.HostController.index
-#GET         /host/:objectId                            @controllers.HostController.indexHost(objectId: java.util.UUID)
+# New profile
+GET         /prodata/skapa                             @controllers.UserProfileController.createTags
+#GET         /prodata/test                              @controllers.UserProfileController.test
 
 # Recipe
-GET         /recipe                                    @controllers.RecipeController.index
-
-
-# Worlds example
-GET         /worlds                                    @controllers.WorldController.index
-
-
-
+GET         /recipe                                    @controllers.RecipePageController.index
 
 # Login page
 GET         /login                                     securesocial.controllers.LoginPage.login
@@ -136,10 +65,87 @@ GET         /authenticate/:provider                    securesocial.controllers.
 POST        /authenticate/:provider                    securesocial.controllers.ProviderController.authenticateByPost(provider)
 GET         /not-authorized                            securesocial.controllers.ProviderController.notAuthorized
 
+
+
+
+
+
 # TEST
 #GET         /profile/loggain                           @controllers.UserProfileController.login
+#GET         /worlds                                    @controllers.test.WorldController.index
+
+# Map static resources from the /public folder to the /assets URL path
+GET         /assets/*file                              controllers.Assets.at(path="/public", file)
 
 
-# New profile
-GET         /prodata/skapa                             @controllers.UserProfileController.createTags
-#GET         /prodata/test                              @controllers.UserProfileController.test
+
+
+
+# ADMIN - Index
+GET         /admin                                      @controllers.admin.AdminController.index
+
+# ADMIN - Content
+GET         /admin/content                              @controllers.admin.AdminContentController.editIndex
+GET         /admin/content/listall                      @controllers.admin.AdminContentController.listAll
+GET         /admin/content/add                          @controllers.admin.AdminContentController.add
+POST        /admin/content/add                          @controllers.admin.AdminContentController.addSubmit
+GET         /admin/content/edit/:objectId               @controllers.admin.AdminContentController.edit(objectId: java.util.UUID)
+GET         /admin/content/delete/:objectId             @controllers.admin.AdminContentController.delete(objectId: java.util.UUID)
+
+# ADMIN - Recipe
+GET         /admin/recipe                               @controllers.admin.AdminRecipeController.editIndex
+GET         /admin/recipe/listall                       @controllers.admin.AdminRecipeController.listAll
+GET         /admin/recipe/add                           @controllers.admin.AdminRecipeController.add
+POST        /admin/recipe/add                           @controllers.admin.AdminRecipeController.addSubmit
+GET         /admin/recipe/edit/:objectId                @controllers.admin.AdminRecipeController.edit(objectId: java.util.UUID)
+GET         /admin/recipe/delete/:objectId              @controllers.admin.AdminRecipeController.delete(objectId: java.util.UUID)
+
+# ADMIN - County
+GET         /admin/county                               @controllers.admin.AdminCountyController.editIndex
+GET         /admin/county/listall                       @controllers.admin.AdminCountyController.listAll
+GET         /admin/county/add                           @controllers.admin.AdminCountyController.add
+POST        /admin/county/add                           @controllers.admin.AdminCountyController.addSubmit
+GET         /admin/county/edit/:objectId                @controllers.admin.AdminCountyController.edit(objectId: java.util.UUID)
+GET         /admin/county/delete/:objectId              @controllers.admin.AdminCountyController.delete(objectId: java.util.UUID)
+
+# ADMIN - UserCredential
+GET         /admin/user                                 @controllers.admin.AdminUserCredentialController.editIndex
+GET         /admin/user/listall                         @controllers.admin.AdminUserCredentialController.listAll
+POST        /admin/user/edit                            @controllers.admin.AdminUserCredentialController.editSubmit
+GET         /admin/user/edit/:objectId                  @controllers.admin.AdminUserCredentialController.edit(objectId: java.util.UUID)
+GET         /admin/user/delete/:objectId                @controllers.admin.AdminUserCredentialController.delete(objectId: java.util.UUID)
+
+# ADMIN - Roles
+GET         /admin/roles                                @controllers.admin.AdminUserRoleController.editIndex
+GET         /admin/roles/listall                        @controllers.admin.AdminUserRoleController.listAll
+GET         /admin/roles/add                            @controllers.admin.AdminUserRoleController.add
+POST        /admin/roles/add                            @controllers.admin.AdminUserRoleController.addSubmit
+GET         /admin/roles/edit/:objectId                 @controllers.admin.AdminUserRoleController.edit(objectId: java.util.UUID)
+GET         /admin/roles/delete/:objectId               @controllers.admin.AdminUserRoleController.delete(objectId: java.util.UUID)
+GET         /admin/roles/addUserToRole                  @controllers.admin.AdminUserRoleController.addUserToRole
+POST        /admin/roles/addUserToRole                  @controllers.admin.AdminUserRoleController.addUserToRoleSubmit
+
+# ADMIN - TagWords
+GET         /admin/tagword                              @controllers.admin.AdminTagWordController.editIndex
+GET         /admin/tagword/listall                      @controllers.admin.AdminTagWordController.listAll
+GET         /admin/tagword/add                          @controllers.admin.AdminTagWordController.add
+POST        /admin/tagword/add                          @controllers.admin.AdminTagWordController.addSubmit
+GET         /admin/tagword/edit/:objectId               @controllers.admin.AdminTagWordController.edit(objectId: java.util.UUID)
+GET         /admin/tagword/delete/:objectId             @controllers.admin.AdminTagWordController.delete(objectId: java.util.UUID)
+
+# ADMIN - Release & Batch
+GET         /admin/release                              @controllers.admin.AdminReleaseController.editIndex
+GET         /admin/release/run                          @controllers.admin.AdminReleaseController.releaseRun
+GET         /admin/release/deleteall                    @controllers.admin.AdminReleaseController.deleteAllFromDB
+
+# ADMIN - Files
+GET         /admin/file                                 @controllers.admin.AdminFileController.editIndex
+POST        /admin/file/add                             @controllers.admin.AdminFileController.add
+GET         /admin/file/delete/:objectId                @controllers.admin.AdminFileController.deleteImage(objectId: java.util.UUID)
+
+
+
+
+
+
+

@@ -1,0 +1,13 @@
+@()(implicit flash: Flash)
+
+@mainedit(Messages("edit.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("edit.recipe.index.header")</h1>
+            <p><a href="@controllers.admin.routes.AdminRecipeController.add()" class="btn-primary">@Messages("edit.actions.add")</a></p>
+            <p><a href="@controllers.admin.routes.AdminRecipeController.listAll()" class="btn-primary">@Messages("edit.actions.list")</a></p>
+        </div>
+    </div>
+
+}

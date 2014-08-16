@@ -1,0 +1,47 @@
+@(contentList: Option[List[models.content.ContentPage]])
+
+@mainedit(Messages("edit.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+        <h1 class="page-header">@Messages("edit.content.list.header")</h1>
+        <p><a href="@controllers.admin.routes.AdminContentController.add()" class="btn-primary">@Messages("edit.actions.add")</a></p>
+
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>@Messages("edit.content.list.created_date")</th>
+                    <th>@Messages("edit.content.list.contentstate")</th>
+                    <th>@Messages("edit.content.list.route")</th>
+                    <th>@Messages("edit.content.list.name")</th>
+                    <th>@Messages("edit.content.list.parent")</th>
+                    <th>@Messages("edit.content.list.visibility")</th>
+                    <th>@Messages("edit.content.list.action")</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            @if(contentList.nonEmpty) {
+                @for(contentPage <- contentList.get) {
+                    <tr>
+                        <td>@contentPage.createdDate</td>
+                        <td>@contentPage.contentState</td>
+                        <td>@contentPage.route</td>
+                        <td>@contentPage.name</td>
+                        <td>@if(contentPage.parentPage != null){ @contentPage.parentPage.name }</td>
+                        <td>@contentPage.visibleInMenus.booleanValue().toString</td>
+                        <td>
+                            <ul class="nav nav-pills">
+                                <li><a href="@controllers.admin.routes.AdminContentController.edit(contentPage.objectId)"><span class="glyphicon glyphicon-edit"></span>&nbsp;@Messages("edit.actions.edit")</a></li>
+                                <li><a href="@controllers.admin.routes.AdminContentController.delete(contentPage.objectId)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("edit.actions.delete")</a></li>
+                            </ul>
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+}

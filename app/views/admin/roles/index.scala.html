@@ -1,0 +1,14 @@
+@()(implicit flash: Flash)
+
+@mainedit(Messages("edit.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("edit.roles.index.header")</h1>
+            <p><a href="@controllers.admin.routes.AdminUserRoleController.add()" class="btn-primary">@Messages("edit.actions.add")</a></p>
+            <p><a href="@controllers.admin.routes.AdminUserRoleController.addUserToRole()" class="btn-primary">@Messages("edit.actions.addusertorole")</a></p>
+            <p><a href="@controllers.admin.routes.AdminUserRoleController.listAll()" class="btn-primary">@Messages("edit.actions.list")</a></p>
+        </div>
+    </div>
+
+}

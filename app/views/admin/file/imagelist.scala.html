@@ -1,0 +1,43 @@
+@(images: List[models.files.ContentFile] = Nil)
+
+@if(!images.isEmpty){
+    <table class="table table-striped table-hover table-bordered">
+        <thead>
+        <tr>
+            <th>Created date</th>
+            <th>Thumbnail</th>
+            <th>Name</th>
+            <th>Owner</th>
+            <th>Original</th>
+            <th>Transforms</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for(image <- images) {
+            <tr>
+                <td>@image.createdDate</td>
+                <td>
+                @Option(image.getTransformByName("thumbnail")) match {
+                    case Some(transform) => { <img src="@transform.url"> }
+                    case None => { }
+                }
+                </td>
+                <td>@image.name</td>
+                <td>@image.owner.fullName<br>@image.owner.emailAddress</td>
+                <td><a href="@image.url" target="_blank">Open original</a></td>
+                <td>
+                @if(!image.fileTransformations.isEmpty) {
+                    <ul>
+                        @for(transformedImage <- image.fileTransformations){
+                            <li><a href="@transformedImage.url" target="_blank">@transformedImage.name</a> (@transformedImage.transformationType)</li>
+                        }
+                    </ul>
+                }
+                </td>
+                <td><a href="@controllers.admin.routes.AdminFileController.deleteImage(image.objectId)">@Messages("file.list.delete")</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

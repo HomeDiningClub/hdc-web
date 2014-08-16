@@ -1,0 +1,39 @@
+@(countyList: Option[List[models.location.County]])
+
+@mainedit(Messages("edit.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+        <h1 class="page-header">@Messages("edit.county.list.header")</h1>
+        <p><a href="@controllers.admin.routes.AdminCountyController.add()" class="btn-primary">@Messages("edit.actions.add")</a></p>
+
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>@Messages("edit.county.list.order")</th>
+                    <th>@Messages("edit.county.list.name")</th>
+                    <th>@Messages("edit.county.list.action")</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if(countyList.isDefined){
+                    @for(item: models.location.County <- countyList.get) {
+                        <tr>
+                            <td>@item.order</td>
+                            <td>@item.name</td>
+                            <td>
+                                <ul class="nav nav-pills">
+                                    <li><a href="@controllers.admin.routes.AdminCountyController.edit(item.objectId)"><span class="glyphicon glyphicon-edit"></span> &nbsp; @Messages("edit.actions.edit")</a></li>
+                                    <li><a href="@controllers.admin.routes.AdminCountyController.delete(item.objectId)"><span class="glyphicon glyphicon-trash"></span> &nbsp; @Messages("edit.actions.delete")</a></li>
+                                </ul>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+}

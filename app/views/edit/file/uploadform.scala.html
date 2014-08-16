@@ -1,6 +1,0 @@
-@(uploadResult: Option[String] = None)
-
-@helper.form(action = routes.FileController.add(), 'enctype -> "multipart/form-data") {
-    <input type="file" name="file">
-    <input type="submit" value="@Messages("file.button.upload")">
-}
