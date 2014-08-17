@@ -247,6 +247,8 @@ def edit = SecuredAction { implicit request =>
 
   // 2. Load the tags
 
+  var locationId : String = ""
+
 
   // Pre selected
   val typ = new models.Types
@@ -302,6 +304,8 @@ if(userTags != null) {
 
   try {
     println("county name: " + theUser.getLocations.iterator().next().county.name)
+    locationId = theUser.getLocations.iterator().next().county.objectId.toString
+    //locationId = "0ec35cae-495c-43b8-b99c-bc14755288f2"
   } catch
     {
       case e : Exception => println("COUNTY EXCEPTION : " + e.getMessage)
@@ -313,7 +317,7 @@ if(userTags != null) {
     List("adam", "bertil"),
     theUser.aboutMeHeadline,
     theUser.aboutMe,
-    theUser.county,         // county
+    locationId,         // county
     theUser.streetAddress, // street Address,
     theUser.zipCode, // zip code
     theUser.city, // city
