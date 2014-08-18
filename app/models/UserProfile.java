@@ -99,6 +99,14 @@ public class UserProfile extends AbstractEntity {
         return taggedLocationProfile;
     }
 
+    public UserProfile addRecipe(Recipe recipeToAdd) {
+        if(this.recipes == null)
+            this.recipes = new HashSet<Recipe>();
+
+        this.recipes.add(recipeToAdd);
+        return this;
+    }
+
     public void removeLocation() {
         userLocationProfileTag.clear();
     }

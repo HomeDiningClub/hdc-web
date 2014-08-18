@@ -49,7 +49,7 @@ class AdminCountyController extends Controller with SecureSocial {
 
     countyForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
+        val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
         BadRequest(views.html.admin.county.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
@@ -75,11 +75,11 @@ class AdminCountyController extends Controller with SecureSocial {
 
         val result = newRec match {
           case None =>
-            val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error.wrongid")
+            val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error.wrongid")
             BadRequest(views.html.admin.county.add(countyForm)).flashing(FlashMsgConstants.Error -> errorMessage)
           case Some(county) =>
             val saved = countyService.add(county)
-            val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
+            val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.name, saved.objectId.toString)
             Redirect(controllers.admin.routes.AdminCountyController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
         }
         result
@@ -112,10 +112,10 @@ class AdminCountyController extends Controller with SecureSocial {
 
     result match {
       case true =>
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.delete.success", objectId.toString)
         Redirect(controllers.admin.routes.AdminCountyController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
+        val errorMessage = Messages("admin.error") + " - " + Messages("admin.delete.error")
         Redirect(controllers.admin.routes.AdminCountyController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 

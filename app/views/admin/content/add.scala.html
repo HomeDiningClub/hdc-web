@@ -5,29 +5,29 @@
         )(implicit flash: Flash)
 @import helper.twitterBootstrap._
 
-@mainedit(Messages("edit.title")){
+@mainedit(Messages("admin.title")){
 
     <div class="row">
         <div class="col-xs-12">
-            <h1 class="page-header">@Messages("edit.content.add.header")</h1>
+            <h1 class="page-header">@Messages("admin.content.add.header")</h1>
             @helper.form(action=controllers.admin.routes.AdminContentController.addSubmit(), 'class -> "form-horizontal"){
                 <fieldset>
-                    @helper.inputText(contentForm("pagename"), '_label -> Messages("edit.content.add.name"), '_help -> Messages("edit.content.add.name.validation"))
-                    @if(optionPages.nonEmpty){ @helper.select(contentForm("pageparentid"), optionPages.get, '_default -> "", '_label -> Messages("edit.content.add.parent")) }
-                    @helper.inputText(contentForm("pageroute"), '_label -> Messages("edit.content.add.route"), '_help -> Messages("edit.content.add.route.validation"))
-                    @helper.inputText(contentForm("pagetitle"), '_label -> Messages("edit.content.add.title"))
-                    @helper.textarea(contentForm("pagepreamble"), '_label -> Messages("edit.content.add.preamble"), 'class -> "richtext")
-                    @helper.textarea(contentForm("pagebody"), '_label -> Messages("edit.content.add.body"), 'class -> "richtext")
-                    @helper.checkbox(contentForm("pagevisibleinmenus"), '_label -> Messages("edit.content.add.visibility"), '_showConstraints -> false)
-                    @helper.select(contentForm("contentstate"), contentStates, '_label -> Messages("edit.content.add.contentstate"), '_showConstraints -> false)
+                    @helper.inputText(contentForm("pagename"), '_label -> Messages("admin.content.add.name"), '_help -> Messages("admin.content.add.name.validation"))
+                    @if(optionPages.nonEmpty){ @helper.select(contentForm("pageparentid"), optionPages.get, '_default -> "", '_label -> Messages("admin.content.add.parent")) }
+                    @helper.inputText(contentForm("pageroute"), '_label -> Messages("admin.content.add.route"), '_help -> Messages("admin.content.add.route.validation"))
+                    @helper.inputText(contentForm("pagetitle"), '_label -> Messages("admin.content.add.title"))
+                    @helper.textarea(contentForm("pagepreamble"), '_label -> Messages("admin.content.add.preamble"), 'class -> "richtext")
+                    @helper.textarea(contentForm("pagebody"), '_label -> Messages("admin.content.add.body"), 'class -> "richtext")
+                    @helper.checkbox(contentForm("pagevisibleinmenus"), '_label -> Messages("admin.content.add.visibility"), '_showConstraints -> false)
+                    @helper.select(contentForm("contentstate"), contentStates, '_label -> Messages("admin.content.add.contentstate"), '_showConstraints -> false)
                     @if(contentCategories.nonEmpty) {
-                        @helper.inputCheckboxGroup(contentForm("contentcategories"), contentCategories.get, '_label -> Messages("edit.content.add.contentcategories"))
+                        @helper.inputCheckboxGroup(contentForm("contentcategories"), contentCategories.get, '_label -> Messages("admin.content.add.contentcategories"))
                     }
                     @helper.inputHidden(contentForm("pageid"))
                 </fieldset>
                 <div class="form-actions">
-                    <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>
-                    <a class="btn" href="@controllers.admin.routes.AdminContentController.editIndex()">@Messages("edit.add.abort")</a>
+                    <button class="btn btn-primary" type="submit">@Messages("admin.add.save")</button>
+                    <a class="btn" href="@controllers.admin.routes.AdminContentController.editIndex()">@Messages("admin.add.abort")</a>
                 </div>
             }
 

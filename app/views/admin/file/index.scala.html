@@ -1,17 +1,17 @@
 @(nameOfConfig: String = null)
 @import controllers.admin.AdminFileListController
 
-@mainedit(Messages("file.title")) {
+@mainedit(Messages("admin.file.title")) {
     <div class="row">
         <div class="col-xs-12">
-            <h1>@Messages("file.upload.header")</h1>
+            <h1>@Messages("admin.file.upload.header")</h1>
             @views.html.admin.file.uploadform()
         </div>
     </div>
 
     <div class="row">
         <div class="col-xs-12">
-            <h2>@Messages("file.filelist.header")</h2>
+            <h2>@Messages("admin.file.filelist.header")</h2>
             @AdminFileListController.listAllImages
         </div>
     </div>

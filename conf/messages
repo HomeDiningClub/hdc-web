@@ -113,6 +113,8 @@ like.text=Jag tycker om
 
 # Profile
 profile.title=Profil
+profile.button.recipe.add=Lägg till recept
+
 profile.create.title=Din profil
 profile.create.text=Här skapar du din profil, den kommer andra medlemmar att se. Om du råkar missa att fylla i viss information så går det bra att redigera din profil senare, om du vill komplettera med mer information.
 profile.create.header.user=Beskriv dig själv
@@ -140,134 +142,158 @@ profile.create.save=Spara
 profile.profilelinkname.isempty=Ett profilnamn måste vara valt!
 profile.memberid.text=MedlemsID:
 
-# Content - Edit
-edit.content.title=Home Dining Club - Admin mode
-edit.title=Administration
-
-edit.success=Lyckades!
-edit.error=Fel!
-edit.warning=Varning!
-edit.info=Information!
-
-edit.menu.title=HDC - Admin
-edit.menu.pages=Sidor
-edit.menu.recipe=Recept
-edit.menu.users=Användare
-edit.menu.files=Filer
-edit.menu.county=Län
-edit.menu.tagword=Taggar
-edit.menu.roles=Roller
-edit.menu.release=Release & Batch
-edit.menu.backtosite=Tillbaka till hemsidan
-
-edit.index.title=Det här är redigeringsläget
-edit.index.body=Redigera loss, men ta det försiktigt, då det inte finns några säkerhetsspärrar, och ingen "ångra".
-
-edit.actions.add=Lägg till
-edit.actions.addusertorole=Lägg till / Ta bort användare i roll
-edit.actions.list=Visa alla
-edit.actions.edit=Redigera
-edit.actions.delete=Ta bort
-edit.add.save=Spara
-edit.add.abort=Avbryt
-edit.add.success=Sparad: {0} (id:{1})
-edit.add.error=Kunde inte spara.
-edit.add.error.parametersmissing=Saknar vissa parametrar
-edit.add.error.wrongid=Går inte att hitta objektet via ID
-edit.delete.success=Borttagen (id:{0})
-edit.delete.error=Kunde inte ta bort, något gick fel.
-
-edit.content.index.header=Sidfunktioner
-edit.content.list.header=Lista av sidor
-edit.content.list.created_date=Skapades datum
-edit.content.list.contentstate=Status
-edit.content.list.name=Namn
-edit.content.list.parent=Förälder
-edit.content.list.visibility=Synlig i menyer
-edit.content.list.route=Sökväg
-edit.content.list.action=Funktioner
-edit.content.add.header=Lägg till / Redigera sida
-edit.content.add.name=Namn
-edit.content.add.parent=Förälder
-edit.content.add.name.validation=(Tvingande, max längd 255)
-edit.content.add.route=Sökväg (exempel: my-page)
-edit.content.add.route.validation=(Tvingande, max längd 255)
-edit.content.add.title=Titel
-edit.content.add.preamble=Ingress
-edit.content.add.body=Huvudtext
-edit.content.add.contentstate=Status
-edit.content.add.contentcategories=Kategorier
-edit.content.add.visibility=Synlig i menyer
-
-edit.recipe.index.header=Recept
-edit.recipe.add.header=Lägg till / Redigera recept
-edit.recipe.add.name=Namn
-edit.recipe.add.mainimage=Huvudbild
-edit.recipe.add.image=Bild
-edit.recipe.add.body=Huvudtext
-edit.recipe.add.name.validation=(Tvingande, max längd 255)
-edit.recipe.list.header=Lista av recept
-edit.recipe.list.name=Namn
-edit.recipe.list.action=Funktioner
-
-edit.county.index.header=Län
-edit.county.add.header=Lägg till / Redigera län
-edit.county.add.order=Sorteringsordning
-edit.county.add.name=Namn
-edit.county.add.name.validation=(Tvingande, max längd 255)
-edit.county.add.order.validation=(nummer)
-edit.county.list.header=Lista av län
-edit.county.list.order=Sortering
-edit.county.list.name=Namn
-edit.county.list.action=Funktioner
-
-edit.usercredential.index.header=Användare
-edit.usercredential.add.header=Redigera användare
-edit.usercredential.add.firstname=Förnamn
-edit.usercredential.add.firstname.validation=(Tvingande, max längd 255)
-edit.usercredential.add.lastname=Efternamn
-edit.usercredential.add.lastname.validation=(Tvingande, max längd 255)
-edit.usercredential.add.emailaddress=E-post
-edit.usercredential.add.emailaddress.validation=(E-post, Tvingande)
-edit.usercredential.list.header=Lista av användare
-edit.usercredential.list.firstname=Förnamn
-edit.usercredential.list.lastname=Efternamn
-edit.usercredential.list.emailaddress=E-post
-edit.usercredential.list.inrole=Roller
-edit.usercredential.list.action=Funktioner
+# Recipe
+recipe.title=Recept
+recipe.edit.index.header=Recept
+recipe.edit.add.header=Lägg till / Redigera recept
+recipe.edit.add.name=Namn
+recipe.edit.add.main-image=Huvudbild
+recipe.edit.add.image=Bild
+recipe.edit.add.body=Huvudtext
+recipe.edit.add.name.validation=(Tvingande, max längd 255)
+recipe.add.success=Recept sparat: {0}
+recipe.add.error=Formuläret innehåller något fel, vad god korrigera innan vi kan spara.
+recipe.delete.success=Recept borttaget
+recipe.delete.error=Kunde inte ta bort recept
+recipe.edit.save=Spara
+recipe.edit.abort=Avbryt
 
 
-edit.roles.index.header=Roller
-edit.roles.add.header=Lägg till / Redgiera grupp/roll
-edit.roles.add.name=Namn
-edit.roles.add.name.validation=(Tvingande, max längd 255)
-edit.roles.addusertorole.header=Lägg användare i grupp
-edit.roles.addusertorole.user=Användare
-edit.roles.addusertorole.user.validation=*
-edit.roles.addusertorole.role=Roll
-edit.roles.addusertorole.role.validation=*
-edit.roles.addusertorole.nocontent=Saknar antigen roller eller användare
-edit.roles.addusertorole.addorremove=Lägg till roll (markerad) / Ta bort roll (ej markerad)
-edit.roles.list.header=Lista av roller
-edit.roles.list.name=Namn
-edit.roles.list.action=Funktioner
+# Admin - Start
+admin.title=Administration
 
-edit.tagword.index.header=Taggar
-edit.tagword.add.header=Lägg till / Redigera tagg
-edit.tagword.add.name=Namn
-edit.tagword.add.name.validation=(Tvingande, max längd 255)
-edit.tagword.add.groupname=Tagg-grupp
-edit.tagword.add.groupname.validation=(Tvingande, max längd 255, små bokstäver)
-edit.tagword.list.header=Lista av taggar
-edit.tagword.list.name=Namn
-edit.tagword.list.groupname=Tagg-grupp
-edit.tagword.list.action=Funktioner
+admin.success=Lyckades!
+admin.error=Fel!
+admin.warning=Varning!
+admin.info=Information!
 
-edit.release.index.header=Release och batchjobb
-edit.release.actions.releaserun=Kör release rutin
-edit.release.actions.deleteall=Ta bort allt i hela databasen
+admin.menu.title=HDC - Admin
+admin.menu.pages=Sidor
+admin.menu.recipe=Recept
+admin.menu.users=Användare
+admin.menu.files=Filer
+admin.menu.county=Län
+admin.menu.tagword=Taggar
+admin.menu.roles=Roller
+admin.menu.release=Release & Batch
+admin.menu.backtosite=Tillbaka till hemsidan
+
+admin.index.title=Det här är redigeringsläget
+admin.index.body=Redigera loss, men ta det försiktigt, då det inte finns några säkerhetsspärrar, och ingen "ångra".
+
+admin.actions.add=Lägg till
+admin.actions.addusertorole=Lägg till / Ta bort användare i roll
+admin.actions.list=Visa alla
+admin.actions.edit=Redigera
+admin.actions.delete=Ta bort
+admin.add.save=Spara
+admin.add.abort=Avbryt
+admin.add.success=Sparad: {0} (id:{1})
+admin.add.error=Kunde inte spara.
+admin.add.error.parametersmissing=Saknar vissa parametrar
+admin.add.error.wrongid=Går inte att hitta objektet via ID
+admin.delete.success=Borttagen (id:{0})
+admin.delete.error=Kunde inte ta bort, något gick fel.
+
+admin.content.index.header=Sidfunktioner
+admin.content.list.header=Lista av sidor
+admin.content.list.created_date=Skapades datum
+admin.content.list.contentstate=Status
+admin.content.list.name=Namn
+admin.content.list.parent=Förälder
+admin.content.list.visibility=Synlig i menyer
+admin.content.list.route=Sökväg
+admin.content.list.action=Funktioner
+admin.content.add.header=Lägg till / Redigera sida
+admin.content.add.name=Namn
+admin.content.add.parent=Förälder
+admin.content.add.name.validation=(Tvingande, max längd 255)
+admin.content.add.route=Sökväg (exempel: my-page)
+admin.content.add.route.validation=(Tvingande, max längd 255)
+admin.content.add.title=Titel
+admin.content.add.preamble=Ingress
+admin.content.add.body=Huvudtext
+admin.content.add.contentstate=Status
+admin.content.add.contentcategories=Kategorier
+admin.content.add.visibility=Synlig i menyer
+
+admin.recipe.index.header=Recept
+admin.recipe.add.header=Lägg till / Redigera recept
+admin.recipe.add.name=Namn
+admin.recipe.add.mainimage=Huvudbild
+admin.recipe.add.image=Bild
+admin.recipe.add.body=Huvudtext
+admin.recipe.add.name.validation=(Tvingande, max längd 255)
+admin.recipe.list.header=Lista av recept
+admin.recipe.list.name=Namn
+admin.recipe.list.action=Funktioner
+
+admin.county.index.header=Län
+admin.county.add.header=Lägg till / Redigera län
+admin.county.add.order=Sorteringsordning
+admin.county.add.name=Namn
+admin.county.add.name.validation=(Tvingande, max längd 255)
+admin.county.add.order.validation=(nummer)
+admin.county.list.header=Lista av län
+admin.county.list.order=Sortering
+admin.county.list.name=Namn
+admin.county.list.action=Funktioner
+
+admin.usercredential.index.header=Användare
+admin.usercredential.add.header=Redigera användare
+admin.usercredential.add.firstname=Förnamn
+admin.usercredential.add.firstname.validation=(Tvingande, max längd 255)
+admin.usercredential.add.lastname=Efternamn
+admin.usercredential.add.lastname.validation=(Tvingande, max längd 255)
+admin.usercredential.add.emailaddress=E-post
+admin.usercredential.add.emailaddress.validation=(E-post, Tvingande)
+admin.usercredential.list.header=Lista av användare
+admin.usercredential.list.firstname=Förnamn
+admin.usercredential.list.lastname=Efternamn
+admin.usercredential.list.emailaddress=E-post
+admin.usercredential.list.inrole=Roller
+admin.usercredential.list.action=Funktioner
 
 
+admin.roles.index.header=Roller
+admin.roles.add.header=Lägg till / Redgiera grupp/roll
+admin.roles.add.name=Namn
+admin.roles.add.name.validation=(Tvingande, max längd 255)
+admin.roles.addusertorole.header=Lägg användare i grupp
+admin.roles.addusertorole.user=Användare
+admin.roles.addusertorole.user.validation=*
+admin.roles.addusertorole.role=Roll
+admin.roles.addusertorole.role.validation=*
+admin.roles.addusertorole.nocontent=Saknar antigen roller eller användare
+admin.roles.addusertorole.addorremove=Lägg till roll (markerad) / Ta bort roll (ej markerad)
+admin.roles.list.header=Lista av roller
+admin.roles.list.name=Namn
+admin.roles.list.action=Funktioner
+
+admin.tagword.index.header=Taggar
+admin.tagword.add.header=Lägg till / Redigera tagg
+admin.tagword.add.name=Namn
+admin.tagword.add.name.validation=(Tvingande, max längd 255)
+admin.tagword.add.groupname=Tagg-grupp
+admin.tagword.add.groupname.validation=(Tvingande, max längd 255, små bokstäver)
+admin.tagword.list.header=Lista av taggar
+admin.tagword.list.name=Namn
+admin.tagword.list.groupname=Tagg-grupp
+admin.tagword.list.action=Funktioner
+
+admin.release.index.header=Release och batchjobb
+admin.release.actions.releaserun=Kör release rutin
+admin.release.actions.deleteall=Ta bort allt i hela databasen
+
+admin.file.title=Ladda upp filer
+admin.file.upload.header=Ladda upp dina bilder
+admin.file.filelist.header=Alla filer
+admin.file.button.upload=Ladda upp
+admin.file.list.delete=Ta bort
+
+# Admin - End
+
+# Campaign
 campaign.title=Anmäl dig till vår maillista
 campaign.header=Välkommen till Home Dining Club!
 campaign.preamble=I sommar öppnar Sveriges första riktiga klubb för alla riktigt matintresserade! Bjud hem nya vänner på middag och få betyg och omdömen på din kokkonst. Håll arrangemang för små och stora grupper. Ta betalt eller bjud! Det är upp till dig. Du kanske har den bästa Paellan i hela Stockholm. Varför inte låta folk få komma hem till dig och prova den? Eller så är du bara intresserad av att läsa recept, eller äta hos andra. Upptäcka nya kulinariska höjder och lära känna andra lika matintresserade. Det här är tjänsten för dig!
@@ -278,7 +304,7 @@ campaign.newsletterform.emaillabel=E-post
 campaign.newsletterform.emailplaceholder=e-post address
 campaign.newsletterform.button.send=Skicka
 
-
+# Grade
 grade.rating.1=Undermåligt
 grade.rating.2=Skäligt
 grade.rating.3=Bra
@@ -286,29 +312,24 @@ grade.rating.4=Utmärkt
 grade.rating.5=Superbt
 grade.submit=Betygsätt
 grade.rating-text=stjärna(or)
+grade.nr-of-ratings=(av {0} betyg)
 
+# Level
 level.guest.header=Gäst
 level.guest.description=Gäst, att vara en gäst innebär...
 level.host.header=Värd
 level.host.description=Värd, kan bjuda...
 
-
 validation.required.se = Ett värde för %s måste anges
 
-file.title=Ladda upp filer
-file.upload.header=Ladda upp dina bilder
-file.filelist.header=Dina filer
-file.button.upload=Ladda upp
-file.list.delete=Ta bort
 
 
 
-host.title=Profil
 
 
 
 # App name
-securesocial.appName=Home
+securesocial.appName=Home dining club
 
 # Login page
 securesocial.login.title=Logga in
@@ -361,7 +382,7 @@ securesocial.passwordChange.currentPassword.help=*(epost)
 securesocial.notAuthorized.title=Behörighet saknas
 securesocial.notAuthorized.message=Du är inte behörig att se den sidan
 
-#
+# Login required page
 securesocial.loginRequired=Du måste logga in för att komma åt sidan.
 
 # Mails

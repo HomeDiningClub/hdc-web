@@ -337,6 +337,7 @@ input[type="reset"]:hover
 }
 .hdc-grade .rating-xxs
 {
+  vertical-align: text-bottom;
   font-size:1.6em;
 }
 .hdc-grade .rating-container .rating-stars
@@ -351,7 +352,17 @@ input[type="reset"]:hover
 {
   text-shadow:none;
 }
-
+.hdc-grade-pull-left .star-rating
+{
+  float:left;
+}
+.hdc-grade .nr-of-ratings
+{
+  display:inline-block;
+  position: relative;
+  margin-left:10px;
+  line-height:3.3em;
+}
 // Likes
 .hdc-like
 {
@@ -822,7 +833,7 @@ input[type="reset"]:hover
   background-color: @hdc-green;
   padding:5px 15px 5px 15px;
 }
-.host-container h2
+.host-container .host-header h2
 {
   color: #fff;
   margin-bottom:0px;
@@ -833,6 +844,19 @@ input[type="reset"]:hover
 {
   margin-top:0px;
 }
+.host-container h2
+{
+  color:@hdc-gray;
+}
+.host-container .memberid
+{
+  font-size:11px;
+}
+.host-container .breadtext
+{
+  margin-top:20px;
+}
+
 #host-main-carousel
 {
   border-bottom:1px solid white;

@@ -1,6 +1,6 @@
 package services
 
-import models.{UserCredential, UserProfile}
+import models.{Recipe, UserCredential, UserProfile}
 import org.neo4j.graphdb._
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,26 +52,49 @@ class UserProfileService {
     modUserProfile
   }
 
+  @Transactional(readOnly = false)
+  def addRecipeToProfile(user: UserCredential, recipeToAdd: Recipe): UserProfile = {
+    val userProfile = user.profiles.iterator().next()
+    var modUserProfile = this.addRecipeToProfile(userProfile,recipeToAdd)
+    modUserProfile = userProfileRepository.save(userProfile)
+    modUserProfile
+  }
 
-  def findByprofileLinkName(profileName: String): Option[UserProfile] =
+  @Transactional(readOnly = false)
+  def addRecipeToProfile(userProfile: UserProfile, recipeToAdd: Recipe): UserProfile =
+  {
+    userProfile.addRecipe(recipeToAdd)
+  }
+
+  def findByprofileLinkName(profileName: String, fetchAll: Boolean = false): Option[UserProfile] =
   {
     var returnObject: Option[UserProfile] = None
     if(profileName.nonEmpty)
     {
       returnObject = userProfileRepository.findByprofileLinkName(profileName) match {
         case null => None
-        case profile => Some(profile)
+        case profile =>
+          // Lazy fetching
+          if(fetchAll){
+            template.fetch(profile.getRecipes)
+          }
+          Some(profile)
       }
     }
     returnObject
   }
 
 
-  def findByowner(userCred: UserCredential): Option[UserProfile] =
+  def findByowner(userCred: UserCredential, fetchAll: Boolean = false): Option[UserProfile] =
   {
     userProfileRepository.findByowner(userCred) match {
       case null => None
-      case profile => Some(profile)
+      case profile =>
+        // Lazy fetching
+        if(fetchAll){
+          template.fetch(profile.getRecipes)
+        }
+        Some(profile)
     }
   }
 

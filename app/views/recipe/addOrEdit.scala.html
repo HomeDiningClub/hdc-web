@@ -1,0 +1,39 @@
+@(recipeForm: Form[models.viewmodels.RecipeForm])(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
+
+@main(Messages("admin.title")){
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-9">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h1 class="page-header">@Messages("recipe.edit.add.header")</h1>
+                        @shared.flashmsg(flash)
+
+                        @helper.form(action=controllers.routes.RecipePageController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
+                            <fieldset>
+                                @helper.inputText(recipeForm("recipename"), '_label -> Messages("recipe.edit.add.name"), '_help -> Messages("admin.recipe.add.name.validation"))
+                                @helper.inputFile(recipeForm("recipemainimage"), '_label -> Messages("recipe.edit.add.main-image"))
+                                @helper.inputFile(recipeForm("recipeimage01"), '_label -> Messages("recipe.edit.add.image"))
+                                @helper.inputFile(recipeForm("recipeimage02"), '_label -> Messages("recipe.edit.add.image"))
+                                @helper.inputFile(recipeForm("recipeimage03"), '_label -> Messages("recipe.edit.add.image"))
+                                @helper.inputFile(recipeForm("recipeimage04"), '_label -> Messages("recipe.edit.add.image"))
+                                @helper.textarea(recipeForm("recipebody"), '_label -> Messages("recipe.edit.add.body"), 'class -> "richtextrecipe")
+                                @helper.inputHidden(recipeForm("receipeid"))
+                            </fieldset>
+                            <div class="form-actions">
+                                <button class="btn btn-primary" type="submit">@Messages("recipe.edit.save")</button>
+                                <a class="btn" href="@controllers.routes.RecipePageController.index()">@Messages("recipe.edit.abort")</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banner -->
+            <div class="col-xs-12 col-md-3 col-banner">
+            @shared.banner()
+            </div>
+        </div>
+    </div>
+}

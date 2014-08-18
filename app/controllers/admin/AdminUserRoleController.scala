@@ -54,7 +54,7 @@ class AdminUserRoleController extends Controller with SecureSocial {
 
     userRoleForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
+        val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
         BadRequest(views.html.admin.roles.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
@@ -68,7 +68,7 @@ class AdminUserRoleController extends Controller with SecureSocial {
             userRoleService.createRole(contentData.name)
         }
 
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.name, saved.objectId.toString)
         Redirect(controllers.admin.routes.AdminUserRoleController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
@@ -91,7 +91,7 @@ class AdminUserRoleController extends Controller with SecureSocial {
 
     userAddToRoleForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
+        val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
         BadRequest(views.html.admin.roles.addUserToRole(errors,getUsersAsDropDown,getRolesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
@@ -99,7 +99,7 @@ class AdminUserRoleController extends Controller with SecureSocial {
           case true => userRoleService.addRoleToUser(UUID.fromString(contentData.roleObjectId), UUID.fromString(contentData.userObjectId))
           case false => userRoleService.removeRoleFromUser(UUID.fromString(contentData.roleObjectId), UUID.fromString(contentData.userObjectId))
         }
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.fullName(), saved.objectId.toString)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.fullName(), saved.objectId.toString)
         Redirect(controllers.admin.routes.AdminUserRoleController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
@@ -166,10 +166,10 @@ class AdminUserRoleController extends Controller with SecureSocial {
 
     result match {
       case true =>
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.delete.success", objectId.toString)
         Redirect(controllers.admin.routes.AdminUserRoleController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
+        val errorMessage = Messages("admin.error") + " - " + Messages("admin.delete.error")
         Redirect(controllers.admin.routes.AdminUserRoleController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 

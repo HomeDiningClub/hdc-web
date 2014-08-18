@@ -67,7 +67,7 @@ $(document).ready(function () {
         theme : "modern",
         skin: "lightgray",
         statusbar : true,
-        height: 300,
+        height: 200,
         content_css : "/assets/stylesheets/richtext.min.css",
         plugins: [
             "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
@@ -91,5 +91,19 @@ $(document).ready(function () {
         toolbar: "bold italic"
     });
 
+    tinymce.init({
+        mode : "specific_textareas",
+        editor_selector : "richtextrecipe",
+        theme : "modern",
+        skin: "light",
+        height: 200,
+        content_css : "/assets/stylesheets/richtext.min.css",
+        menubar: false,
+        plugins: [ "paste" ],
+        paste_as_text: true,
+        extended_valid_elements: "b,i,em,strong,li,ul,ol",
+        statusbar : false,
+        toolbar: "bullist numlist | bold italic | undo redo"
+    });
 
 });

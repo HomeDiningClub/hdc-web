@@ -94,7 +94,14 @@ public class UserCredential extends AbstractEntity implements Identity {
         }
         return count == 0 ? 0 : sumOfRatingValues / count;
     }
+    public int getNrOfRatings() {
+        int count = 0;
 
+        if(this.ratings != null)
+            count = this.ratings.size();
+
+        return count;
+    }
     public UserCredential() {
         this.roles = new HashSet<>();
         this.ratings = new HashSet<>();

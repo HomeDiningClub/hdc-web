@@ -92,7 +92,7 @@ class AdminReleaseController extends Controller with SecureSocial {
       case None =>
     }
 
-    val successMessage = Messages("edit.success")
+    val successMessage = Messages("admin.success")
     Redirect(controllers.admin.routes.AdminReleaseController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
   }
 
@@ -100,7 +100,7 @@ class AdminReleaseController extends Controller with SecureSocial {
   def deleteAllFromDB = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
 
     val results = neo4jDatabaseCleanerService.cleanDb
-    val successMessage = Messages("edit.success")
+    val successMessage = Messages("admin.success")
     Ok(successMessage)
     //Redirect(securesocial.controllers.routes.LoginPage.logout()).flashing(FlashMsgConstants.Success -> successMessage)
   }

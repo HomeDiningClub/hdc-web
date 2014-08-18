@@ -49,7 +49,7 @@ class AdminTagWordController extends Controller with SecureSocial {
 
     tagwordForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
+        val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
         BadRequest(views.html.admin.tagword.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
@@ -64,7 +64,7 @@ class AdminTagWordController extends Controller with SecureSocial {
             tagwordService.createTag(contentData.tagwordName,"","",contentData.tagwordGroupName.toLowerCase)
         }
 
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.tagName, saved.objectId.toString)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.tagName, saved.objectId.toString)
         Redirect(controllers.admin.routes.AdminTagWordController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
@@ -97,10 +97,10 @@ class AdminTagWordController extends Controller with SecureSocial {
 
     result match {
       case true =>
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.delete.success", objectId.toString)
         Redirect(controllers.admin.routes.AdminTagWordController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
+        val errorMessage = Messages("admin.error") + " - " + Messages("admin.delete.error")
         Redirect(controllers.admin.routes.AdminTagWordController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 

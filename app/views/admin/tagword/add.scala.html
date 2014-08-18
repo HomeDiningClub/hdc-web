@@ -1,20 +1,20 @@
 @(tagForm: Form[models.viewmodels.TagWordForm])(implicit flash: Flash)
 @import helper.twitterBootstrap._
 
-@mainedit(Messages("edit.title")){
+@mainedit(Messages("admin.title")){
 
     <div class="row">
         <div class="col-xs-12">
-            <h1 class="page-header">@Messages("edit.tagword.add.header")</h1>
+            <h1 class="page-header">@Messages("admin.tagword.add.header")</h1>
             @helper.form(action=controllers.admin.routes.AdminTagWordController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
                 <fieldset>
-                    @helper.inputText(tagForm("tagwordname"), '_label -> Messages("edit.tagword.add.name"), '_help -> Messages("edit.tagword.add.name.validation"))
-                    @helper.inputText(tagForm("tagwordgroupname"), '_label -> Messages("edit.tagword.add.groupname"), '_help -> Messages("edit.tagword.add.groupname.validation"))
+                    @helper.inputText(tagForm("tagwordname"), '_label -> Messages("admin.tagword.add.name"), '_help -> Messages("admin.tagword.add.name.validation"))
+                    @helper.inputText(tagForm("tagwordgroupname"), '_label -> Messages("admin.tagword.add.groupname"), '_help -> Messages("admin.tagword.add.groupname.validation"))
                     @helper.inputHidden(tagForm("id"))
                 </fieldset>
                 <div class="form-actions">
-                    <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>
-                    <a class="btn" href="@controllers.admin.routes.AdminTagWordController.editIndex()">@Messages("edit.add.abort")</a>
+                    <button class="btn btn-primary" type="submit">@Messages("admin.add.save")</button>
+                    <a class="btn" href="@controllers.admin.routes.AdminTagWordController.editIndex()">@Messages("admin.add.abort")</a>
                 </div>
             }
         </div>

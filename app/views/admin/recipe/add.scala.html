@@ -1,25 +1,25 @@
 @(recipeForm: Form[models.viewmodels.RecipeForm])(implicit flash: Flash)
 @import helper.twitterBootstrap._
 
-@mainedit(Messages("edit.title")){
+@mainedit(Messages("admin.title")){
 
     <div class="row">
         <div class="col-xs-12">
-            <h1 class="page-header">@Messages("edit.recipe.add.header")</h1>
+            <h1 class="page-header">@Messages("admin.recipe.add.header")</h1>
             @helper.form(action=controllers.admin.routes.AdminRecipeController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
                 <fieldset>
-                    @helper.inputText(recipeForm("recipename"), '_label -> Messages("edit.recipe.add.name"), '_help -> Messages("edit.recipe.add.name.validation"))
-                    @helper.inputFile(recipeForm("recipemainimage"), '_label -> Messages("edit.recipe.add.mainimage"))
-                    @helper.inputFile(recipeForm("recipeimage01"), '_label -> Messages("edit.recipe.add.image"))
-                    @helper.inputFile(recipeForm("recipeimage02"), '_label -> Messages("edit.recipe.add.image"))
-                    @helper.inputFile(recipeForm("recipeimage03"), '_label -> Messages("edit.recipe.add.image"))
-                    @helper.inputFile(recipeForm("recipeimage04"), '_label -> Messages("edit.recipe.add.image"))
-                    @helper.textarea(recipeForm("recipebody"), '_label -> Messages("edit.recipe.add.body"), 'class -> "richtext")
+                    @helper.inputText(recipeForm("recipename"), '_label -> Messages("admin.recipe.add.name"), '_help -> Messages("admin.recipe.add.name.validation"))
+                    @helper.inputFile(recipeForm("recipemainimage"), '_label -> Messages("admin.recipe.add.mainimage"))
+                    @helper.inputFile(recipeForm("recipeimage01"), '_label -> Messages("admin.recipe.add.image"))
+                    @helper.inputFile(recipeForm("recipeimage02"), '_label -> Messages("admin.recipe.add.image"))
+                    @helper.inputFile(recipeForm("recipeimage03"), '_label -> Messages("admin.recipe.add.image"))
+                    @helper.inputFile(recipeForm("recipeimage04"), '_label -> Messages("admin.recipe.add.image"))
+                    @helper.textarea(recipeForm("recipebody"), '_label -> Messages("admin.recipe.add.body"), 'class -> "richtext")
                     @helper.inputHidden(recipeForm("receipeid"))
                 </fieldset>
                 <div class="form-actions">
-                    <button class="btn btn-primary" type="submit">@Messages("edit.add.save")</button>
-                    <a class="btn" href="@controllers.admin.routes.AdminContentController.editIndex()">@Messages("edit.add.abort")</a>
+                    <button class="btn btn-primary" type="submit">@Messages("admin.add.save")</button>
+                    <a class="btn" href="@controllers.admin.routes.AdminContentController.editIndex()">@Messages("admin.add.abort")</a>
                 </div>
             }
         </div>

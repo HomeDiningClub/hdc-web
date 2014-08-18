@@ -1,11 +1,11 @@
 @()(implicit flash: Flash)
 
-@mainedit(Messages("edit.title")){
+@mainedit(Messages("admin.title")){
 
     <div class="row">
         <div class="col-xs-12">
-            <h1 class="page-header">@Messages("edit.usercredential.index.header")</h1>
-            <p><a href="@controllers.admin.routes.AdminUserCredentialController.listAll()" class="btn-primary">@Messages("edit.actions.list")</a></p>
+            <h1 class="page-header">@Messages("admin.usercredential.index.header")</h1>
+            <p><a href="@controllers.admin.routes.AdminUserCredentialController.listAll()" class="btn-primary">@Messages("admin.actions.list")</a></p>
         </div>
     </div>
 

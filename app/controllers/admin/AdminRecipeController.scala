@@ -57,7 +57,7 @@ class AdminRecipeController extends Controller with SecureSocial {
 
     contentForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
+        val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
         BadRequest(views.html.admin.recipe.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
@@ -85,7 +85,7 @@ class AdminRecipeController extends Controller with SecureSocial {
         newRec.mainBody = contentData.mainBody.getOrElse("")
 
         val saved = recipeService.add(newRec)
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", saved.name, saved.objectId.toString)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.name, saved.objectId.toString)
         Redirect(controllers.admin.routes.AdminRecipeController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
@@ -117,10 +117,10 @@ class AdminRecipeController extends Controller with SecureSocial {
 
     result match {
       case true =>
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.delete.success", objectId.toString)
         Redirect(controllers.admin.routes.AdminRecipeController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
+        val errorMessage = Messages("admin.error") + " - " + Messages("admin.delete.error")
         Redirect(controllers.admin.routes.AdminRecipeController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 

@@ -1,19 +1,19 @@
 @(itemList: Option[List[models.UserCredential]])
 
-@mainedit(Messages("edit.title")){
+@mainedit(Messages("admin.title")){
 
     <div class="row">
         <div class="col-xs-12">
-        <h1 class="page-header">@Messages("edit.usercredential.list.header")</h1>
+        <h1 class="page-header">@Messages("admin.usercredential.list.header")</h1>
 
         <table class="table table-striped table-hover table-bordered">
             <thead>
                 <tr>
-                    <th>@Messages("edit.usercredential.list.firstname")</th>
-                    <th>@Messages("edit.usercredential.list.lastname")</th>
-                    <th>@Messages("edit.usercredential.list.emailaddress")</th>
-                    <th>@Messages("edit.usercredential.list.inrole")</th>
-                    <th>@Messages("edit.usercredential.list.action")</th>
+                    <th>@Messages("admin.usercredential.list.firstname")</th>
+                    <th>@Messages("admin.usercredential.list.lastname")</th>
+                    <th>@Messages("admin.usercredential.list.emailaddress")</th>
+                    <th>@Messages("admin.usercredential.list.inrole")</th>
+                    <th>@Messages("admin.usercredential.list.action")</th>
                 </tr>
             </thead>
 
@@ -32,8 +32,8 @@
                             </td>
                             <td>
                                 <ul class="nav nav-pills">
-                                    <li><a href="@controllers.admin.routes.AdminUserCredentialController.edit(item.objectId)"><span class="glyphicon glyphicon-edit"></span> &nbsp; @Messages("edit.actions.edit")</a></li>
-                                    <li><a href="@controllers.admin.routes.AdminUserCredentialController.delete(item.objectId)"><span class="glyphicon glyphicon-trash"></span> &nbsp; @Messages("edit.actions.delete")</a></li>
+                                    <li><a href="@controllers.admin.routes.AdminUserCredentialController.edit(item.objectId)"><span class="glyphicon glyphicon-edit"></span> &nbsp; @Messages("admin.actions.edit")</a></li>
+                                    <li><a href="@controllers.admin.routes.AdminUserCredentialController.delete(item.objectId)"><span class="glyphicon glyphicon-trash"></span> &nbsp; @Messages("admin.actions.delete")</a></li>
                                 </ul>
                             </td>
                         </tr>

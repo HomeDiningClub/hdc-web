@@ -42,7 +42,11 @@ GET         /prodata/skapa                             @controllers.UserProfileC
 #GET         /prodata/test                              @controllers.UserProfileController.test
 
 # Recipe
-GET         /recipe                                    @controllers.RecipePageController.index
+GET         /profile/recipe                            @controllers.RecipePageController.index
+GET         /profile/recipe/add                        @controllers.RecipePageController.add
+POST        /profile/recipe/add                        @controllers.RecipePageController.addSubmit
+GET         /profile/recipe/edit/:objectId             @controllers.RecipePageController.edit(objectId: java.util.UUID)
+GET         /profile/recipe/delete/:objectId           @controllers.RecipePageController.delete(objectId: java.util.UUID)
 
 # Login page
 GET         /login                                     securesocial.controllers.LoginPage.login

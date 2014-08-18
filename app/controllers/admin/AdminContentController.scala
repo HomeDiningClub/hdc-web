@@ -60,7 +60,7 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
 
     contentForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
+        val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
         BadRequest(views.html.admin.content.add(errors, getPagesAsDropDown, getContentStatesAsDropDown, getCategoriesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
@@ -78,7 +78,7 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
 
         // If this occurs, user has sent an invalid UUID to edit and save
         if(newContent == null){
-          val errorMessage = Messages("edit.error") + " - " + Messages("edit.add.error")
+          val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
           BadRequest(views.html.admin.content.add(contentForm, getPagesAsDropDown, getContentStatesAsDropDown, getCategoriesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
 
         }
@@ -134,7 +134,7 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
         }
 
         val savedContentPage = contentService.addContentPage(newContent)
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.add.success", savedContentPage.name, savedContentPage.objectId.toString)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", savedContentPage.name, savedContentPage.objectId.toString)
         Redirect(controllers.admin.routes.AdminContentController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
@@ -216,10 +216,10 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
 
     result match {
       case true =>
-        val successMessage = Messages("edit.success") + " - " + Messages("edit.delete.success", objectId.toString)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.delete.success", objectId.toString)
         Redirect(controllers.admin.routes.AdminContentController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
-        val errorMessage = Messages("edit.error") + " - " + Messages("edit.delete.error")
+        val errorMessage = Messages("admin.error") + " - " + Messages("admin.delete.error")
         Redirect(controllers.admin.routes.AdminContentController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 

@@ -1,6 +1,12 @@
-@(userProfile: models.UserProfile, menuItems: Seq[(String, String, String, String)], tab1: String, tab2: String, tab3: String, tab4: String)(implicit request: RequestHeader)
+@(userProfile: models.UserProfile,
+        menuItems: Seq[(String, String, String, String)],
+        tab1: String,
+        tab2: String,
+        tab3: String,
+        tab4: String,
+        isThisMyProfile: Boolean = false)(implicit request: RequestHeader)
 
-@main(Messages("host.title")) {
+@main(Messages("profile.title")) {
 
     <div class="container host-container">
         <div class="row">
@@ -20,9 +26,9 @@
                         <section>
                             <article>
                                 <h1 class="page-header">@userProfile.getOwner.fullName</h1>
-                                <h3>@userProfile.aboutMeHeadline</h3>
-                                @shared.grade(inputId = "host-grade", initialValue = userProfile.getOwner.getAverageRating, size = "xs", showCaption = true)
-                                <div class="memberid"><p>@Messages("profile.memberid.text")&nbsp;@userProfile.getOwner.objectId</p></div>
+                                <h2>@userProfile.aboutMeHeadline</h2>
+                                @shared.grade(inputId = "host-grade", initialValue = userProfile.getOwner.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = userProfile.getOwner.getNrOfRatings)
+                                <div class="memberid clearfix"><p><strong>@Messages("profile.memberid.text")</strong>&nbsp;@userProfile.getOwner.objectId</p></div>
                                 <div class="breadtext">
                                     @Html(userProfile.aboutMe)
                                 </div>
@@ -34,11 +40,11 @@
                         <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide">
                             <!-- Slider carousel items -->
                             <div class="carousel-inner">
-                                <div class="active item" data-slide-number="0">@shared.img("../../../public/images/host/image1.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="1">@shared.img("../../../public/images/host/image2.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="2">@shared.img("../../../public/images/host/image3.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="3">@shared.img("../../../public/images/host/image4.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="4">@shared.img("../../../public/images/host/image5.jpg", cssClass = "img-responsive")</div>
+                                <div class="active item" data-slide-number="0">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</div>
+                                <div class="item" data-slide-number="4">@shared.img("images/host/image5.jpg", cssClass = "img-responsive")</div>
                             </div>
                             <!-- Carousel nav controls -->
                             <a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
@@ -46,11 +52,11 @@
                         </div>
                         <!-- Thumbnails, don't show responsive -->
                         <ul class="host-main-carousel-thumbs list-inline hidden-xs hidden-sm">
-                            <li class="col-md-3"><a id="carousel-selector-0" class="selected">@shared.img("../../../public/images/host/image1.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-1">@shared.img("../../../public/images/host/image2.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-2">@shared.img("../../../public/images/host/image3.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-3">@shared.img("../../../public/images/host/image4.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-4">@shared.img("../../../public/images/host/image5.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-0" class="selected">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</a></li>
+                            <li class="col-md-3"><a id="carousel-selector-4">@shared.img("images/host/image5.jpg", cssClass = "img-responsive")</a></li>
                         </ul>
                     </div>
                 </div>
@@ -66,7 +72,17 @@
 
                         <div class="tab-content">
                             <div class="tab-pane fade in active" id="@tab1">
-                                Tab1
+                                @if(isThisMyProfile) {
+                                    <a href="@controllers.routes.RecipePageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.recipe.add")</a>
+                                    <hr>
+                                    @for(recipe <- userProfile.getRecipes) {
+                                        <a href="@controllers.routes.RecipePageController.edit(recipe.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> Redigera: @recipe.name</a><br>
+                                    }
+                                }else{
+                                    @for(recipe <- userProfile.getRecipes) {
+                                        @recipe.name<br>
+                                     }
+                                }
                             </div>
                             <div class="tab-pane fade" id="@tab2">
                                 Tab2
@@ -85,7 +101,7 @@
 
             <!-- Banner -->
             <div class="col-xs-12 col-md-3 col-banner">
-                @shared.banner("../../../public/images/banners/banner-0001.png","http://www.bannertarget.se","Senaste nyheterna","Senaste nyheterna")
+                @shared.banner()
             </div>
         </div>
     </div>

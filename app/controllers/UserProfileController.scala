@@ -97,14 +97,25 @@ class UserProfileController  extends Controller  with SecureSocial {
     ("Inbox", "Inbox", INBOX, "")
   )
 
+  private def isThisMyProfile(profile: UserProfile)(implicit request: RequestHeader): Boolean = {
+    utils.Helpers.getUserFromRequest match {
+      case None =>
+        false
+      case Some(user) =>
+        if(profile.getOwner.objectId == user.objectId)
+          true
+        else
+          false
+    }
+  }
 
 
   def viewProfileByName(profileName: String) = UserAwareAction { implicit request =>
 
     // Try getting the profile from name, if failure show 404
-    userProfileService.findByprofileLinkName(profileName) match {
+    userProfileService.findByprofileLinkName(profileName, fetchAll = true) match {
       case Some(profile) =>
-        Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX))
+        Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX, isThisMyProfile(profile)))
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
         Logger.debug(errMess)

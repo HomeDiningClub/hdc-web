@@ -1,8 +1,10 @@
 package models.base;
 
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;
+import org.springframework.data.neo4j.support.index.IndexType;
 
 import java.util.UUID;
 
@@ -10,6 +12,7 @@ public abstract class AbstractEntity {
 
     @GraphId
     public Long graphId; //java.lang.Long
+    //@Indexed(indexType = IndexType.LABEL, level = Indexed.Level.INSTANCE)
     public UUID objectId;
 
     // This method is needed to compare two different objects from DB using hash
