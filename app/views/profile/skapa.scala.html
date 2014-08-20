@@ -26,7 +26,9 @@
                                     'id -> "name",
                                     '_showErrors -> true,
                                     '_label -> Messages("profile.create.form.profilename"),
-                                    '_help -> (Html(Messages("profile.create.form.profilename.help")))
+                                    '_help -> (Html(Messages("profile.create.form.profilename.help")),
+                                    '_error -> EnvDataForm.error("name")
+                                    )
                                 )
                             </li>
                             <li class="list-group-item">
@@ -34,7 +36,8 @@
                                     'id -> "aboutmeheadline",
                                     '_showErrors -> true,
                                     '_label -> Messages("profile.create.form.aboutmeheadline"),
-                                    '_help -> Messages("profile.create.form.aboutmeheadline.help")
+                                    '_help -> Messages("profile.create.form.aboutmeheadline.help"),
+                                    '_error -> EnvDataForm.error("aboutmeheadline")
                                 )
 
                                 @helper.textarea(EnvDataForm("aboutme"),
@@ -42,42 +45,48 @@
                                     '_showErrors -> true,
                                     'class -> "richtextuser",
                                     '_label -> Messages("profile.create.form.aboutme"),
-                                    '_help -> Messages("profile.create.form.aboutme.help")
+                                    '_help -> Messages("profile.create.form.aboutme.help"),
+                                    '_error -> EnvDataForm.error("aboutme")
                                 )
 
                                 @helper.inputText(EnvDataForm("streetAddress"),
                                     'id -> "streetAddress",
                                     '_showErrors -> true,
                                     '_label -> Messages("profile.create.form.streetAddress"),
-                                    '_help -> Messages("profile.create.form.streetAddress.help")
+                                    '_help -> Messages("profile.create.form.streetAddress.help"),
+                                    '_error -> EnvDataForm.error("streetAddress")
                                 )
 
                                 @helper.inputText(EnvDataForm("zipCode"),
                                     'id -> "zipCode",
                                     '_showErrors -> true,
                                     '_label -> Messages("profile.create.form.zipCode"),
-                                    '_help -> Messages("profile.create.form.zipCode.help")
+                                    '_help -> Messages("profile.create.form.zipCode.help"),
+                                    '_error -> EnvDataForm.error("zipCode")
                                 )
 
                                 @helper.inputText(EnvDataForm("city"),
                                     'id -> "city",
                                     '_showErrors -> true,
                                     '_label -> Messages("profile.create.form.city"),
-                                    '_help -> Messages("profile.create.form.city.help")
+                                    '_help -> Messages("profile.create.form.city.help"),
+                                    '_error -> EnvDataForm.error("city")
                                 )
 
 
                                 @helper.inputText(EnvDataForm("phoneNumber"),
-                                    'id -> "city",
+                                    'id -> "phoneNumber",
                                     '_showErrors -> true,
                                     '_label -> Messages("profile.create.form.phoneNumber"),
-                                    '_help -> Messages("profile.create.form.phoneNumber.help")
+                                    '_help -> Messages("profile.create.form.phoneNumber.help"),
+                                    '_error -> EnvDataForm.error("phoneNumber")
                                 )
 
                                 @if(!optionsLocationAreas.isEmpty) {
                                         @helper.select(EnvDataForm("county"),
                                         optionsLocationAreas.get,
-                                        '_label -> Messages("profile.create.form.area")
+                                        '_label -> Messages("profile.create.form.area"),
+                                        '_error -> EnvDataForm.error("county")
                                     )
                                 }
 
