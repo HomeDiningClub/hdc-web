@@ -1,8 +1,23 @@
 <footer>
     <div class="container-fluid footer-container">
         <div class="row-fluid">
-            <div class="col-xs-12 margin-top text-center">
-                @Messages("footer.text") | <a href="@Messages("footer.link.mail.href")" title="@Messages("footer.link.mail.title")" target="_blank">@Messages("footer.link.mail.text")</a>
+            <div class="col-xs-12">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4 margin-top text-center">
+                        <ul class="footer-sociallinks">
+                            <li><a href="@Messages("footer.link.fb.href")" title="@Messages("footer.link.fb.title")" target="_blank"><span class="genericon genericon-facebook"></span> @Messages("footer.link.fb.text")</a></li>
+                            <li><a href="@Messages("footer.link.instagram.href")" title="@Messages("footer.link.instagram.title")" target="_blank"><span class="genericon genericon-instagram"></span> @Messages("footer.link.instagram.text")</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 margin-top text-center">
+                        @Messages("footer.text")
+                    </div>
+                    <div class="col-xs-12 col-sm-4 margin-top text-center">
+                        <ul class="footer-sociallinks">
+                            <li><a href="@Messages("footer.link.mail.href")" title="@Messages("footer.link.mail.title")" target="_blank"><span class="genericon genericon-mail"></span> @Messages("footer.link.mail.text")</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

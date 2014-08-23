@@ -8,15 +8,16 @@ import models.UserCredential
 import securesocial.core.java.SecureSocial.UserAwareAction
 import play.api.templates.Html
 import utils.Helpers
+import utils.authorization.WithRole
+import enums.RoleEnums
+import scala.collection
 
 object HeaderController extends Controller with SecureSocial {
 
   // Name, Title, Href, Class
   val menuItemsList = Seq[(String,String,Call,String)](
     ("Start page", "Start page title", routes.StartPageController.index(), ""),
-    ("Admin mode", "Admin", controllers.admin.routes.AdminController.index(), ""),
     ("My Profile", "My profile", routes.UserProfileController.viewProfileByLoggedInUser(), ""),
-    ("Recipe", "Recipe", routes.RecipePageController.index(), ""),
     ("Login", "Login", securesocial.controllers.routes.LoginPage.login(), ""),
     ("About us", "About us", routes.ContentPageController.aboutUs(), ""),
     ("Campaign page", "Campaign title", routes.CampaignController.index(), "")
@@ -30,12 +31,17 @@ object HeaderController extends Controller with SecureSocial {
     val quickLinkList: Seq[(String,String,Call,String,String)] = Helpers.getUserFromRequest(request) match {
       case Some(user) =>
         quickLinkTitle = Messages("header.link.host-profile-header", "<span class=\"hidden-xs\">" + user.fullName() + "</span>")
-        Seq[(String,String,Call,String,String)](
+        val menu = collection.mutable.Buffer[(String,String,Call,String,String)](
           (Messages("header.link.host-profile"), Messages("header.link.host-profile"), routes.UserProfileController.viewProfileByLoggedInUser(), "", ""),
           (Messages("header.link.host-profile-edit"), Messages("header.link.host-profile-edit"), routes.UserProfileController.edit(), "", ""),
-          (Messages("header.link.inbox"), Messages("header.link.inbox"), routes.UserProfileController.viewProfileByLoggedInUser(), "", "<span class=\"badge\">0</span>"),
-          (Messages("header.link.logout"), Messages("header.link.logout"), securesocial.controllers.routes.LoginPage.logout(), "", "")
+          (Messages("header.link.inbox"), Messages("header.link.inbox"), routes.UserProfileController.viewProfileByLoggedInUser(), "", "<span class=\"badge\">0</span>")
         )
+
+        if(Helpers.isUserAdmin(user))
+          menu.append((Messages("header.link.admin"), Messages("header.link.admin"), admin.routes.AdminController.index(), "", ""))
+
+        menu.append((Messages("header.link.logout"), Messages("header.link.logout"), securesocial.controllers.routes.LoginPage.logout(), "", ""))
+        menu.toSeq
       case None =>
         Seq[(String,String,Call,String,String)](
           (Messages("header.link.become-member"), Messages("header.link.become-member"), securesocial.controllers.routes.LoginPage.login, "hidden-xs", ""),

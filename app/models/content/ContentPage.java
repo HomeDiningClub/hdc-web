@@ -1,6 +1,7 @@
 package models.content;
 
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import utils.Helpers;
 
 @NodeEntity
 public class ContentPage extends ContentBase {
@@ -64,6 +65,7 @@ public class ContentPage extends ContentBase {
     }
 
     private String cleanRoute(String input) {
-        return input.toLowerCase().replace("/", "").replace("\\","").replaceAll("\\W+", "-");
+        return Helpers.createRoute(input);
+        //return input.toLowerCase().replace("/", "").replace("\\","").replaceAll("\\W+", "-");
     }
 }

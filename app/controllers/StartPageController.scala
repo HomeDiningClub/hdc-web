@@ -16,6 +16,7 @@ import models.profile.TagWord
 import play.api.i18n.Messages
 import scala.collection.mutable
 import models.location.County
+import java.util.UUID
 
 
 @SpringController
@@ -37,27 +38,25 @@ class StartPageController extends Controller with SecureSocial {
   val searchStartPageForm = Form(
     mapping(
       //"freeText" -> optional(text),
-      "area" -> optional(text),
-      "foodArea" -> optional(text)
+      "fCounty" -> optional(text),
+      "fTag" -> optional(text)
     )(SearchStartPageForm.apply)(SearchStartPageForm.unapply)
   )
 
-  def filterProfiles = Action { implicit request =>
-    Ok(views.html.startpage.index(
-      searchForm = searchStartPageForm,
-      optionsFoodAreas = getFoodAreas,
-      optionsLocationAreas = getCounties,
-      startPageBoxes = getStartPageBoxes,
-      reviewBoxes = getReviewBoxes
-    ))
-  }
+  def index(fTag: String, fCounty: String) = UserAwareAction { implicit request =>
 
-  def index = UserAwareAction { implicit request =>
+
+    val startPageBoxes = getStartPageBoxes(fTag, fCounty)
+    val form = SearchStartPageForm.apply(
+      fCounty match { case null | "" => None case item => Some(item)},
+      fTag match { case null | "" => None case item => Some(item)}
+    )
+
     Ok(views.html.startpage.index(
-      searchForm = searchStartPageForm,
+      searchForm = searchStartPageForm.fill(form),
       optionsFoodAreas = getFoodAreas,
       optionsLocationAreas = getCounties,
-      startPageBoxes = getStartPageBoxes,
+      startPageBoxes = startPageBoxes,
       reviewBoxes = getReviewBoxes
     ))
   }
@@ -109,27 +108,42 @@ class StartPageController extends Controller with SecureSocial {
 
 
 
-  private def getStartPageBoxes: Option[List[StartPageBox]] = {
-    val startPageBoxes: List[StartPageBox] = userProfileService.getAllUserProfile.map {
-      userProfile: UserProfile =>
-        StartPageBox(
-          objectId = Some(userProfile.objectId),
-          linkToProfile = userProfile.profileLinkName match {
-            case null => ""
-            case pfName => routes.UserProfileController.viewProfileByName(pfName).url
-          },
-          fullName = userProfile.getOwner.fullName,
-          location = userProfile.county,
-          mainBody = None,
-          mainImage = routes.Assets.at("images/startpage/Box2.png").url, //mainImage = userProfile.mainImage.getTransformByName("box").url,
-          userImage = routes.Assets.at("images/host/host-head-example-100x100.jpg").url, //userImage = //mainImage = userProfile.userImage.getTransformByName("thumbnail").url,
-          userRating = userProfile.getOwner.getAverageRating)
+  private def getStartPageBoxes(boxFilterTag: String, boxFilterCounty: String): Option[List[StartPageBox]] = {
+
+    val fetchedTag: Option[TagWord] = boxFilterTag match {
+      case "" | null => None
+      case tagWord =>
+        tagWordService.findById(UUID.fromString(tagWord))
+
     }
 
-    if(startPageBoxes.isEmpty)
-      None
-    else
-      Some(startPageBoxes)
+    val fetchedCounty: Option[County] = boxFilterCounty match {
+      case "" | null => None
+      case county =>
+        countyService.findById(UUID.fromString(county))
+    }
+
+    val userProfiles = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty)
+
+    val startPageBoxes: Option[List[StartPageBox]] = userProfiles match {
+      case None => None
+      case Some(profile) => Some(profile.map {
+        userProfile: UserProfile =>
+          StartPageBox(
+            objectId = Some(userProfile.objectId),
+            linkToProfile = userProfile.profileLinkName match {
+              case null => ""
+              case pfName => routes.UserProfileController.viewProfileByName(pfName).url
+            },
+            fullName = userProfile.getOwner.fullName,
+            location = userProfile.county,
+            mainBody = None,
+            mainImage = routes.Assets.at("images/startpage/Box2.png").url, //mainImage = userProfile.mainImage.getTransformByName("box").url,
+            userImage = routes.Assets.at("images/host/host-head-example-100x100.jpg").url, //userImage = //mainImage = userProfile.userImage.getTransformByName("thumbnail").url,
+            userRating = userProfile.getOwner.getAverageRating)
+      })
+    }
+    startPageBoxes
   }
 
   private def getReviewBoxes: Option[List[ReviewBox]] = {

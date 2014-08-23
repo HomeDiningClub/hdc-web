@@ -1,36 +1,26 @@
-@()(implicit request: RequestHeader)
+@(recipe: models.Recipe,
+        recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
+        isThisMyRecipe: Boolean = false)(implicit request: RequestHeader)
 
 @main(Messages("recipe.title")) {
 
     <div class="container host-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                <div class="row">
-                    <div class="col-xs-12 col-md-12 big-margin-top">
-                        <div class="host-header">
-                            <header>
-                                <h2>Alexandra</h2>
-                                @shared.hostImageCircle()
-                            </header>
-                        </div>
-                    </div>
-                </div>
+                @views.html.profile.profileHeader(recipe.getOwnerProfile.profileLinkName)
                 <div class="row">
                     <div class="col-xs-12 big-margin-top">
-                        <h1 class="page-header">Räkmackor med parmesan och dillkvistar</h1>
+                        <h1 class="page-header">@recipe.getName</h1>
                     </div>
                     <div class="col-xs-12 col-md-4">
                         <section>
                             <article>
-
-                                <div class="breadtext">
-                                    <p>Lagat mat sedan 5-årsåldern, sida vid sida med min duktiga (och tålmodiga) hobby-kock-mamma - vilket gjorde att jag som tonåring kunde laga många klassiska husmansrätter (kåldolmar, kroppkakor, porterstek) och gärna experimenterade med egna skapelser.</p>
-                                    <p>Tankar fanns på en kockkarriär, men det blev annat kreativt yrke istället - men står gärna i köket med/för nära och kära.</p>
-                                    <p>Lagat mat sedan 5-årsåldern, sida vid sida med min duktiga (och tålmodiga) hobby-kock-mamma - vilket gjorde att jag som tonåring kunde laga många klassiska husmansrätter (kåldolmar, kroppkakor, porterstek) och gärna experimenterade med egna skapelser.</p>
-                                    <p>Tankar fanns på en kockkarriär, men det blev annat kreativt yrke istället - men står gärna i köket med/för nära och kära.</p>
-                                    <p>Lagat mat sedan 5-årsåldern, sida vid sida med min duktiga (och tålmodiga) hobby-kock-mamma - vilket gjorde att jag som tonåring kunde laga många klassiska husmansrätter (kåldolmar, kroppkakor, porterstek) och gärna experimenterade med egna skapelser.</p>
-                                    <p>Tankar fanns på en kockkarriär, men det blev annat kreativt yrke istället - men står gärna i köket med/för nära och kära.</p>
-                                </div>
+                                @if(!recipe.getPreAmble.isEmpty) {
+                                    <p class="lead">@recipe.getPreAmble</p>
+                                }
+                                @if(!recipe.getMainBody.isEmpty) {
+                                    <div class="breadtext">@Html(recipe.getMainBody)</div>
+                                }
                             </article>
                         </section>
                     </div>
@@ -56,17 +46,17 @@
                             <li class="col-md-3"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</a></li>
                         </ul>
 
-                        <div class="col-xs-12 big-margin-top">
-                            <ul class="nav navbar-link recipe-like">
-                                <li>
-                                    @shared.hdcShare(url = request.uri)
-                                </li>
-                                <li>
-                                    @shared.fbShare(url = request.uri)
-                                </li>
-                            </ul>
+                        <div class="col-xs-12 margin-top">
+                            @shared.hdcShare(url = request.uri)
+                            @shared.fbShare(url = request.uri)
                         </div>
                     </div>
+
+                    @if(isThisMyRecipe){
+                        <div class="col-xs-12 big-margin-top">
+                            <a href="@controllers.routes.RecipePageController.edit(recipe.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> @Messages("recipe.button.edit")</a><br>
+                        </div>
+                    }
                 </div>
             </div>
 

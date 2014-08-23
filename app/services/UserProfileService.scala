@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.neo4j.graphdb.index.Index
 import org.springframework.context.annotation.Lazy
 import play.api.mvc.Results._
+import models.location.County
+import models.profile.TagWord
 
 
 @Service
@@ -199,12 +201,29 @@ class UserProfileService {
   }
 
 
-    @Transactional(readOnly = true)
+  @Transactional(readOnly = true)
   def getAllUserProfile: List[models.UserProfile] = {
       userProfileRepository.findAll().asScala.toList
   }
 
 
+  @Transactional(readOnly = true)
+  def getUserProfilesFiltered(filterTag: Option[TagWord], filterCounty: Option[County]): Option[List[models.UserProfile]] = {
+
+    var returnList: List[models.UserProfile] = Nil
+
+    returnList = (filterTag, filterCounty) match {
+      case (Some(tw), Some(cnt)) => userProfileRepository.findByTagWordIdAndCountyId(tw.objectId, cnt.objectId).asScala.toList
+      case (Some(tw), None) => userProfileRepository.findByTagWordId(tw.objectId).asScala.toList
+      case (None, Some(cnt)) => userProfileRepository.findByCountyId(cnt.objectId).asScala.toList
+      case _ => userProfileRepository.findAll().asScala.toList
+    }
+
+    returnList match {
+      case Nil | null => None
+      case listOfItem => Some(listOfItem)
+    }
+  }
 
 
 

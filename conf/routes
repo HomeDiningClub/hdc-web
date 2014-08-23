@@ -4,8 +4,8 @@
 
 
 # Start page
-GET         /                                          @controllers.StartPageController.index
-POST        /                                          @controllers.StartPageController.filterProfiles
+GET         /                                          @controllers.StartPageController.index(fTag: String ?= "",fCounty: String ?= "")
+#POST        /                                          @controllers.StartPageController.filterProfiles
 
 # Home page
 GET         /how-does-it-work                          @controllers.ContentPageController.howDoesItWork
@@ -42,11 +42,12 @@ GET         /prodata/skapa                             @controllers.UserProfileC
 #GET         /prodata/test                              @controllers.UserProfileController.test
 
 # Recipe
-GET         /profile/recipe                            @controllers.RecipePageController.index
-GET         /profile/recipe/add                        @controllers.RecipePageController.add
-POST        /profile/recipe/add                        @controllers.RecipePageController.addSubmit
-GET         /profile/recipe/edit/:objectId             @controllers.RecipePageController.edit(objectId: java.util.UUID)
-GET         /profile/recipe/delete/:objectId           @controllers.RecipePageController.delete(objectId: java.util.UUID)
+GET         /profile/view/:profileName/recipe/:recipeName   @controllers.RecipePageController.viewRecipeByNameAndProfile(profileName: String, recipeName: String)
+GET         /recipe/view/:recipeName                        @controllers.RecipePageController.viewRecipeByName(recipeName: String)
+GET         /recipe/add                                     @controllers.RecipePageController.add
+POST        /recipe/add                                     @controllers.RecipePageController.addSubmit
+GET         /recipe/edit/:objectId                          @controllers.RecipePageController.edit(objectId: java.util.UUID)
+GET         /recipe/delete/:objectId                        @controllers.RecipePageController.delete(objectId: java.util.UUID)
 
 # Login page
 GET         /login                                     securesocial.controllers.LoginPage.login
@@ -86,66 +87,67 @@ GET         /assets/*file                              controllers.Assets.at(pat
 
 
 # ADMIN - Index
-GET         /admin                                      @controllers.admin.AdminController.index
+GET         /admin                                     @controllers.admin.AdminController.index
 
 # ADMIN - Content
-GET         /admin/content                              @controllers.admin.AdminContentController.editIndex
-GET         /admin/content/listall                      @controllers.admin.AdminContentController.listAll
-GET         /admin/content/add                          @controllers.admin.AdminContentController.add
-POST        /admin/content/add                          @controllers.admin.AdminContentController.addSubmit
-GET         /admin/content/edit/:objectId               @controllers.admin.AdminContentController.edit(objectId: java.util.UUID)
-GET         /admin/content/delete/:objectId             @controllers.admin.AdminContentController.delete(objectId: java.util.UUID)
+GET         /admin/content                             @controllers.admin.AdminContentController.editIndex
+GET         /admin/content/listall                     @controllers.admin.AdminContentController.listAll
+GET         /admin/content/add                         @controllers.admin.AdminContentController.add
+POST        /admin/content/add                         @controllers.admin.AdminContentController.addSubmit
+GET         /admin/content/edit/:objectId              @controllers.admin.AdminContentController.edit(objectId: java.util.UUID)
+GET         /admin/content/delete/:objectId            @controllers.admin.AdminContentController.delete(objectId: java.util.UUID)
 
 # ADMIN - Recipe
-GET         /admin/recipe                               @controllers.admin.AdminRecipeController.editIndex
-GET         /admin/recipe/listall                       @controllers.admin.AdminRecipeController.listAll
-GET         /admin/recipe/add                           @controllers.admin.AdminRecipeController.add
-POST        /admin/recipe/add                           @controllers.admin.AdminRecipeController.addSubmit
-GET         /admin/recipe/edit/:objectId                @controllers.admin.AdminRecipeController.edit(objectId: java.util.UUID)
-GET         /admin/recipe/delete/:objectId              @controllers.admin.AdminRecipeController.delete(objectId: java.util.UUID)
+GET         /admin/recipe                              @controllers.admin.AdminRecipeController.editIndex
+GET         /admin/recipe/listall                      @controllers.admin.AdminRecipeController.listAll
+GET         /admin/recipe/add                          @controllers.admin.AdminRecipeController.add
+POST        /admin/recipe/add                          @controllers.admin.AdminRecipeController.addSubmit
+GET         /admin/recipe/edit/:objectId               @controllers.admin.AdminRecipeController.edit(objectId: java.util.UUID)
+GET         /admin/recipe/delete/:objectId             @controllers.admin.AdminRecipeController.delete(objectId: java.util.UUID)
+GET         /admin/recipe/deleteall                    @controllers.admin.AdminRecipeController.deleteAll
 
 # ADMIN - County
-GET         /admin/county                               @controllers.admin.AdminCountyController.editIndex
-GET         /admin/county/listall                       @controllers.admin.AdminCountyController.listAll
-GET         /admin/county/add                           @controllers.admin.AdminCountyController.add
-POST        /admin/county/add                           @controllers.admin.AdminCountyController.addSubmit
-GET         /admin/county/edit/:objectId                @controllers.admin.AdminCountyController.edit(objectId: java.util.UUID)
-GET         /admin/county/delete/:objectId              @controllers.admin.AdminCountyController.delete(objectId: java.util.UUID)
+GET         /admin/county                              @controllers.admin.AdminCountyController.editIndex
+GET         /admin/county/listall                      @controllers.admin.AdminCountyController.listAll
+GET         /admin/county/add                          @controllers.admin.AdminCountyController.add
+POST        /admin/county/add                          @controllers.admin.AdminCountyController.addSubmit
+GET         /admin/county/edit/:objectId               @controllers.admin.AdminCountyController.edit(objectId: java.util.UUID)
+GET         /admin/county/delete/:objectId             @controllers.admin.AdminCountyController.delete(objectId: java.util.UUID)
 
 # ADMIN - UserCredential
-GET         /admin/user                                 @controllers.admin.AdminUserCredentialController.editIndex
-GET         /admin/user/listall                         @controllers.admin.AdminUserCredentialController.listAll
-POST        /admin/user/edit                            @controllers.admin.AdminUserCredentialController.editSubmit
-GET         /admin/user/edit/:objectId                  @controllers.admin.AdminUserCredentialController.edit(objectId: java.util.UUID)
-GET         /admin/user/delete/:objectId                @controllers.admin.AdminUserCredentialController.delete(objectId: java.util.UUID)
+GET         /admin/user                                @controllers.admin.AdminUserCredentialController.editIndex
+GET         /admin/user/listall                        @controllers.admin.AdminUserCredentialController.listAll
+POST        /admin/user/edit                           @controllers.admin.AdminUserCredentialController.editSubmit
+GET         /admin/user/edit/:objectId                 @controllers.admin.AdminUserCredentialController.edit(objectId: java.util.UUID)
+GET         /admin/user/delete/:objectId               @controllers.admin.AdminUserCredentialController.delete(objectId: java.util.UUID)
 
 # ADMIN - Roles
-GET         /admin/roles                                @controllers.admin.AdminUserRoleController.editIndex
-GET         /admin/roles/listall                        @controllers.admin.AdminUserRoleController.listAll
-GET         /admin/roles/add                            @controllers.admin.AdminUserRoleController.add
-POST        /admin/roles/add                            @controllers.admin.AdminUserRoleController.addSubmit
-GET         /admin/roles/edit/:objectId                 @controllers.admin.AdminUserRoleController.edit(objectId: java.util.UUID)
-GET         /admin/roles/delete/:objectId               @controllers.admin.AdminUserRoleController.delete(objectId: java.util.UUID)
-GET         /admin/roles/addUserToRole                  @controllers.admin.AdminUserRoleController.addUserToRole
-POST        /admin/roles/addUserToRole                  @controllers.admin.AdminUserRoleController.addUserToRoleSubmit
+GET         /admin/roles                               @controllers.admin.AdminUserRoleController.editIndex
+GET         /admin/roles/listall                       @controllers.admin.AdminUserRoleController.listAll
+GET         /admin/roles/add                           @controllers.admin.AdminUserRoleController.add
+POST        /admin/roles/add                           @controllers.admin.AdminUserRoleController.addSubmit
+GET         /admin/roles/edit/:objectId                @controllers.admin.AdminUserRoleController.edit(objectId: java.util.UUID)
+GET         /admin/roles/delete/:objectId              @controllers.admin.AdminUserRoleController.delete(objectId: java.util.UUID)
+GET         /admin/roles/addUserToRole                 @controllers.admin.AdminUserRoleController.addUserToRole
+POST        /admin/roles/addUserToRole                 @controllers.admin.AdminUserRoleController.addUserToRoleSubmit
 
 # ADMIN - TagWords
-GET         /admin/tagword                              @controllers.admin.AdminTagWordController.editIndex
-GET         /admin/tagword/listall                      @controllers.admin.AdminTagWordController.listAll
-GET         /admin/tagword/add                          @controllers.admin.AdminTagWordController.add
-POST        /admin/tagword/add                          @controllers.admin.AdminTagWordController.addSubmit
-GET         /admin/tagword/edit/:objectId               @controllers.admin.AdminTagWordController.edit(objectId: java.util.UUID)
-GET         /admin/tagword/delete/:objectId             @controllers.admin.AdminTagWordController.delete(objectId: java.util.UUID)
+GET         /admin/tagword                             @controllers.admin.AdminTagWordController.editIndex
+GET         /admin/tagword/listall                     @controllers.admin.AdminTagWordController.listAll
+GET         /admin/tagword/add                         @controllers.admin.AdminTagWordController.add
+POST        /admin/tagword/add                         @controllers.admin.AdminTagWordController.addSubmit
+GET         /admin/tagword/edit/:objectId              @controllers.admin.AdminTagWordController.edit(objectId: java.util.UUID)
+GET         /admin/tagword/delete/:objectId            @controllers.admin.AdminTagWordController.delete(objectId: java.util.UUID)
 
 # ADMIN - Release & Batch
-GET         /admin/release                              @controllers.admin.AdminReleaseController.editIndex
-GET         /admin/release/run                          @controllers.admin.AdminReleaseController.releaseRun
-GET         /admin/release/deleteall                    @controllers.admin.AdminReleaseController.deleteAllFromDB
+GET         /admin/release                             @controllers.admin.AdminReleaseController.editIndex
+GET         /admin/release/run                         @controllers.admin.AdminReleaseController.releaseRun
+GET         /admin/release/deleteall                   @controllers.admin.AdminReleaseController.deleteAllFromDB
 
 # ADMIN - Files
-GET         /admin/file                                 @controllers.admin.AdminFileController.editIndex
-POST        /admin/file/add                             @controllers.admin.AdminFileController.add
-GET         /admin/file/delete/:objectId                @controllers.admin.AdminFileController.deleteImage(objectId: java.util.UUID)
+GET         /admin/file                                @controllers.admin.AdminFileController.editIndex
+POST        /admin/file/add                            @controllers.admin.AdminFileController.add
+GET         /admin/file/delete/:objectId               @controllers.admin.AdminFileController.deleteImage(objectId: java.util.UUID)
 
 
 

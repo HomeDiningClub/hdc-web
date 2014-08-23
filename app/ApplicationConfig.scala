@@ -1,15 +1,26 @@
-import java.util.UUID
 import models.base.AbstractEntity
+import org.neo4j.graphdb.Node
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.context.ApplicationListener
 import org.springframework.data.neo4j.config.{Neo4jConfiguration, EnableNeo4jRepositories}
-import org.springframework.data.neo4j.lifecycle.{AfterDeleteEvent, AfterSaveEvent, BeforeSaveEvent}
-import play.api.Logger
+import org.springframework.data.neo4j.lifecycle.BeforeSaveEvent
 
-@Configuration
-@EnableNeo4jRepositories
-class ApplicationConfig extends Neo4jConfiguration {
+//@Configuration
+//@EnableNeo4jRepositories
+//class ApplicationConfig extends Neo4jConfiguration {
+
+//  @Bean
+//  def beforeSaveEventApplicationListener(): ApplicationListener[BeforeSaveEvent[Node]] = {
+//    return new ApplicationListener[BeforeSaveEvent[Node]]() {
 //
+//      @Override
+//      override def onApplicationEvent(event: BeforeSaveEvent[Node]) {
+//        val entity = event.getEntity().asInstanceOf[AbstractEntity]
+//        val graphid = entity
+//      }
+//    }
+//  }
+
 //  @Bean
 //  def beforeSaveEventApplicationListener(): ApplicationListener[BeforeSaveEvent[AbstractEntity]] = {
 //    new ApplicationListener[BeforeSaveEvent[AbstractEntity]]() {
@@ -41,4 +52,4 @@ class ApplicationConfig extends Neo4jConfiguration {
 //      }
 //    }
 //  }
-}
+//}

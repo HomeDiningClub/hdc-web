@@ -47,8 +47,11 @@ class TagWordService {
   }
 
   @Transactional(readOnly = true)
-  def findById(objectId: UUID): TagWord = {
-    tagWordRepository.findByobjectId(objectId)
+  def findById(objectId: UUID): Option[TagWord] = {
+    tagWordRepository.findByobjectId(objectId) match {
+      case null => None
+      case item => Some(item)
+    }
   }
 
 
@@ -78,13 +81,12 @@ class TagWordService {
 
   @Transactional(readOnly = false)
   def deleteById(objectId: UUID): Boolean = {
-    val item = this.findById(objectId)
-    if(item != null)
-    {
-      tagWordRepository.delete(item)
-      return true
+    this.findById(objectId) match {
+      case None => false
+      case Some(item) =>
+        tagWordRepository.delete(item)
+        true
     }
-    false
   }
 
   @Transactional(readOnly = false)

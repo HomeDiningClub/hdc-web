@@ -4,8 +4,8 @@ main.language=sv
 
 # Error
 error.title=Oj, ett fel inträffade
-error.header=Odjå! Någonting gick väldigt fel!
-error.body=Du kanske kan försöka lite senare, eller gå tillbaka till {0}
+error.header=Ojdå! Ett fel inträffade!
+error.body=Det där skulle inte hända! Du kanske kan försöka lite senare, eller gå tillbaka till {0}
 error.linkhome=startsidan
 notfound.title=Sidan kan inte hittas
 notfound.header=Sidan kunde inte hittas (404)
@@ -20,6 +20,7 @@ header.link.host-profile-edit=Redigera profil
 header.link.inbox=Inkorg
 header.link.become-member=Bli medlem
 header.link.login=Logga in
+header.link.admin=Admin-mode
 header.link.logout=Logga ut
 header.login-form.email=E-post
 header.login-form.password=Lösenord
@@ -33,6 +34,12 @@ footer.text=© Home Dining Club AB
 footer.link.mail.href=mailto:info@homediningclub.se?Subject=Hej%20Home%20dining%20club
 footer.link.mail.title=Maila till info@homediningclub.se
 footer.link.mail.text=info@homediningclub.se
+footer.link.fb.href=https://www.facebook.com/homediningclub
+footer.link.fb.text=Facebook
+footer.link.fb.title=Gilla oss på Facebook!
+footer.link.instagram.href=http://instagram.com/homediningclub
+footer.link.instagram.text=Instagram
+footer.link.instagram.title=Bli hungrig över våra bilder på Instagram
 
 # Banner
 banner.header=Annons:
@@ -59,6 +66,8 @@ startpage.filterform.area=Välj län
 startpage.filterform.foodarea=Välj typ av mat
 startpage.filterform.counties=Välj län
 startpage.filterform.submit=Filtrera
+
+startpage.boxes.not-found=Kunde inte hitta några profiler som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
 
 aboutus.title=Om oss
 aboutus.header=Om oss
@@ -147,6 +156,8 @@ recipe.title=Recept
 recipe.edit.index.header=Recept
 recipe.edit.add.header=Lägg till / Redigera recept
 recipe.edit.add.name=Namn
+recipe.edit.add.preamble=Inledningstext
+recipe.edit.add.preamble.validation=(Max längd 255)
 recipe.edit.add.main-image=Huvudbild
 recipe.edit.add.image=Bild
 recipe.edit.add.body=Huvudtext
@@ -158,6 +169,10 @@ recipe.delete.error=Kunde inte ta bort recept
 recipe.edit.save=Spara
 recipe.edit.abort=Avbryt
 
+recipe.button.edit=Redigera recept
+
+# Recipe box
+recipe.box.button=Se hela receptet
 
 # Admin - Start
 admin.title=Administration
@@ -186,6 +201,7 @@ admin.actions.addusertorole=Lägg till / Ta bort användare i roll
 admin.actions.list=Visa alla
 admin.actions.edit=Redigera
 admin.actions.delete=Ta bort
+admin.actions.delete-all=Ta bort alla
 admin.add.save=Spara
 admin.add.abort=Avbryt
 admin.add.success=Sparad: {0} (id:{1})
@@ -193,6 +209,7 @@ admin.add.error=Kunde inte spara.
 admin.add.error.parametersmissing=Saknar vissa parametrar
 admin.add.error.wrongid=Går inte att hitta objektet via ID
 admin.delete.success=Borttagen (id:{0})
+admin.delete-all.success=Alla borttagna
 admin.delete.error=Kunde inte ta bort, något gick fel.
 
 admin.content.index.header=Sidfunktioner
@@ -220,12 +237,17 @@ admin.content.add.visibility=Synlig i menyer
 admin.recipe.index.header=Recept
 admin.recipe.add.header=Lägg till / Redigera recept
 admin.recipe.add.name=Namn
+admin.recipe.add.route=Sökväg
+admin.recipe.add.preamble=Inledningstext
+admin.recipe.add.preamble.validation=(Max längd 255)
 admin.recipe.add.mainimage=Huvudbild
 admin.recipe.add.image=Bild
 admin.recipe.add.body=Huvudtext
 admin.recipe.add.name.validation=(Tvingande, max längd 255)
 admin.recipe.list.header=Lista av recept
 admin.recipe.list.name=Namn
+admin.recipe.list.owner=Ägare
+admin.recipe.list.route=Sökväg
 admin.recipe.list.action=Funktioner
 
 admin.county.index.header=Län

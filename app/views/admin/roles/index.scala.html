@@ -5,9 +5,11 @@
     <div class="row">
         <div class="col-xs-12">
             <h1 class="page-header">@Messages("admin.roles.index.header")</h1>
-            <p><a href="@controllers.admin.routes.AdminUserRoleController.add()" class="btn-primary">@Messages("admin.actions.add")</a></p>
-            <p><a href="@controllers.admin.routes.AdminUserRoleController.addUserToRole()" class="btn-primary">@Messages("admin.actions.addusertorole")</a></p>
-            <p><a href="@controllers.admin.routes.AdminUserRoleController.listAll()" class="btn-primary">@Messages("admin.actions.list")</a></p>
+            <div class="btn-group">
+                <a href="@controllers.admin.routes.AdminUserRoleController.add()" class="btn btn-primary">@Messages("admin.actions.add")</a>
+                <a href="@controllers.admin.routes.AdminUserRoleController.addUserToRole()" class="btn btn-primary">@Messages("admin.actions.addusertorole")</a>
+                <a href="@controllers.admin.routes.AdminUserRoleController.listAll()" class="btn btn-primary">@Messages("admin.actions.list")</a>
+            </div>
         </div>
     </div>
 

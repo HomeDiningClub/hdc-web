@@ -56,7 +56,10 @@ class AdminTagWordController extends Controller with SecureSocial {
 
         val saved = contentData.id match {
           case Some(id) =>
-            val item = tagwordService.findById(UUID.fromString(id))
+            val item = tagwordService.findById(UUID.fromString(id)) match {
+              case None => tagwordService.createTag(contentData.tagwordName,"","",contentData.tagwordGroupName.toLowerCase)
+              case Some(foundTag) => foundTag
+            }
             item.tagName = contentData.tagwordName
             item.tagGroupName = contentData.tagwordGroupName.toLowerCase
             tagwordService.save(item)
@@ -75,12 +78,12 @@ class AdminTagWordController extends Controller with SecureSocial {
 
   // Edit - Edit content
   def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    val item = tagwordService.findById(objectId)
+    val optionItem = tagwordService.findById(objectId)
 
-    item match {
-      case null =>
+    optionItem match {
+      case None =>
         Ok(views.html.admin.tagword.index())
-      case _ =>
+      case Some(item) =>
         val form = TagWordForm.apply(
           Some(item.objectId.toString),
           item.tagName,

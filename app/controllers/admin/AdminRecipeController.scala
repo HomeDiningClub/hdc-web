@@ -9,14 +9,16 @@ import play.api.data.Forms._
 import play.api.i18n.Messages
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
-import services.{ContentFileService, RecipeService}
+import services.{UserProfileService, ContentFileService, RecipeService}
 import play.api.libs.Files.TemporaryFile
-import enums.{RoleEnums, FileTypeEnums}
+import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
 import java.util.UUID
 import presets.ImagePreSets
 import utils.authorization.WithRole
 import scala.Some
 import models.viewmodels.RecipeForm
+import utils.Helpers
+import play.api.Logger
 
 @SpringController
 class AdminRecipeController extends Controller with SecureSocial {
@@ -25,12 +27,15 @@ class AdminRecipeController extends Controller with SecureSocial {
   private var recipeService: RecipeService = _
 
   @Autowired
+  private var userProfileService: UserProfileService = _
+
+  @Autowired
   private var fileService: ContentFileService = _
 
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    val listOfPage: List[Recipe] = recipeService.getListOfAll
+    val listOfPage: List[Recipe] = recipeService.getListOfAll(fetchAll = true)
     Ok(views.html.admin.recipe.list(listOfPage))
   }
 
@@ -39,6 +44,7 @@ class AdminRecipeController extends Controller with SecureSocial {
     mapping(
       "receipeid" -> optional(text),
       "recipename" -> nonEmptyText(minLength = 1, maxLength = 255),
+      "recipepreamble" -> optional(text(maxLength = 255)),
       "recipebody" -> optional(text)
     )(RecipeForm.apply)(RecipeForm.unapply)
   )
@@ -55,6 +61,8 @@ class AdminRecipeController extends Controller with SecureSocial {
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
 
+    val currentUser: Option[UserCredential] = Helpers.getUserFromRequest
+
     contentForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
@@ -62,13 +70,23 @@ class AdminRecipeController extends Controller with SecureSocial {
       },
       contentData => {
 
-        val newRec = contentData.id match {
+
+        val newRec: Option[Recipe] = contentData.id match {
           case Some(id) =>
-            val item = recipeService.findById(UUID.fromString(id))
-            item.name = contentData.name
-            item
+            recipeService.findById(UUID.fromString(id)) match {
+              case None => None
+              case Some(item) =>
+                item.setName(contentData.name)
+                Some(item)
+            }
           case None =>
-            new Recipe(contentData.name)
+            Some(new Recipe(contentData.name))
+        }
+
+        if(newRec.isEmpty){
+            Logger.debug("Error saving Recipe: User used a non-existing Recipe objectId")
+            val errorMessage = Messages("recipe.add.error")
+            BadRequest(views.html.recipe.addOrEdit(contentForm.fill(contentData))).flashing(FlashMsgConstants.Error -> errorMessage)
         }
 
         request.body.file("recipemainimage").map {
@@ -77,15 +95,18 @@ class AdminRecipeController extends Controller with SecureSocial {
             val imageFile = fileService.uploadFile(filePerm, request.user.asInstanceOf[UserCredential].objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages)
             imageFile match {
               case Some(item) =>
-                newRec.mainImage = item
+                newRec.get.mainImage = item
               case None => None
             }
         }
 
-        newRec.mainBody = contentData.mainBody.getOrElse("")
+        newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
+        newRec.get.setMainBody(contentData.mainBody.getOrElse(""))
+        newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
-        val saved = recipeService.add(newRec)
-        val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.name, saved.objectId.toString)
+        val saved = recipeService.add(newRec.get)
+        val savedProfile = userProfileService.addRecipeToProfile(currentUser.get, saved)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.getName, saved.objectId.toString)
         Redirect(controllers.admin.routes.AdminRecipeController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
@@ -95,16 +116,16 @@ class AdminRecipeController extends Controller with SecureSocial {
 
   // Edit - Edit content
   def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    val item = recipeService.findById(objectId)
 
-    item match {
-      case null =>
+    recipeService.findById(objectId) match {
+      case None =>
         Ok(views.html.admin.recipe.index())
-      case _ =>
+      case Some(item) =>
         val form = RecipeForm.apply(
           Some(item.objectId.toString),
-          item.name,
-          Some(item.mainBody)
+          item.getName,
+          item.getPreAmble match{case null|"" => None case _ => Some(item.getPreAmble)},
+          Some(item.getMainBody)
         )
 
         Ok(views.html.admin.recipe.add(contentForm.fill(form)))
@@ -125,5 +146,10 @@ class AdminRecipeController extends Controller with SecureSocial {
     }
 
   }
-
+  // Edit - Delete content
+  def deleteAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+    recipeService.deleteAll
+    val successMessage = Messages("admin.success") + " - " + Messages("admin.delete-all.success")
+    Redirect(controllers.admin.routes.AdminRecipeController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+  }
 }

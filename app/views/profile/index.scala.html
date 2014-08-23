@@ -4,6 +4,7 @@
         tab2: String,
         tab3: String,
         tab4: String,
+        recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
         isThisMyProfile: Boolean = false)(implicit request: RequestHeader)
 
 @main(Messages("profile.title")) {
@@ -11,16 +12,7 @@
     <div class="container host-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                <div class="row">
-                    <div class="col-xs-12 col-md-12 big-margin-top">
-                        <div class="host-header">
-                            <header>
-                            <h2>@userProfile.profileLinkName</h2>
-                            @shared.hostImageCircle()
-                        </header>
-                        </div>
-                    </div>
-                </div>
+                @views.html.profile.profileHeader(userProfile.profileLinkName)
                 <div class="row">
                     <div class="col-xs-12 col-md-6 big-margin-top">
                         <section>
@@ -71,26 +63,27 @@
                         </nav>
 
                         <div class="tab-content">
-                            <div class="tab-pane fade in active" id="@tab1">
+                            <div class="tab-pane tab-hdc fade in active" id="@tab1">
+                                <div class="row">
                                 @if(isThisMyProfile) {
-                                    <a href="@controllers.routes.RecipePageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.recipe.add")</a>
-                                    <hr>
-                                    @for(recipe <- userProfile.getRecipes) {
-                                        <a href="@controllers.routes.RecipePageController.edit(recipe.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> Redigera: @recipe.name</a><br>
-                                    }
-                                }else{
-                                    @for(recipe <- userProfile.getRecipes) {
-                                        @recipe.name<br>
-                                     }
+                                    <div class="col-xs-12">
+                                        <div class="btn-group btn-edit-group">
+                                            <a href="@controllers.routes.RecipePageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.recipe.add")</a>
+                                        </div>
+                                    </div>
                                 }
+                                @if(recipeBoxes.nonEmpty){
+                                    @recipe.recipeBox(recipeBoxes.get)
+                                }
+                                </div>
                             </div>
-                            <div class="tab-pane fade" id="@tab2">
+                            <div class="tab-pane tab-hdc fade" id="@tab2">
                                 Tab2
                             </div>
-                            <div class="tab-pane fade" id="@tab3">
+                            <div class="tab-pane tab-hdc fade" id="@tab3">
                                 Tab3
                             </div>
-                            <div class="tab-pane fade" id="@tab4">
+                            <div class="tab-pane tab-hdc fade" id="@tab4">
                                 Tab4
                             </div>
                         </div>

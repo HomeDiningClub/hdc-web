@@ -9,6 +9,7 @@
             @helper.form(action=controllers.admin.routes.AdminRecipeController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
                 <fieldset>
                     @helper.inputText(recipeForm("recipename"), '_label -> Messages("admin.recipe.add.name"), '_help -> Messages("admin.recipe.add.name.validation"))
+                    @helper.textarea(recipeForm("recipepreamble"), '_label -> Messages("admin.recipe.add.preamble"), '_help -> Messages("admin.recipe.add.preamble.validation"), '_class -> "recipe-addedit-form-preamble")
                     @helper.inputFile(recipeForm("recipemainimage"), '_label -> Messages("admin.recipe.add.mainimage"))
                     @helper.inputFile(recipeForm("recipeimage01"), '_label -> Messages("admin.recipe.add.image"))
                     @helper.inputFile(recipeForm("recipeimage02"), '_label -> Messages("admin.recipe.add.image"))

@@ -56,6 +56,9 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
+    <!-- Listeners -->
+    <!--<bean id="customerSaveListener" class="c.b.listener.Neo4JCustomerSaveListener" />-->
+
     <!--
         <bean id="InMemoryUserService" class="services.InMemoryUserService">
             <constructor-arg name="application">

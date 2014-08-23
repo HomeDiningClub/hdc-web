@@ -1,0 +1,13 @@
+package models.viewmodels
+
+import java.util.UUID
+
+// Used on the Start page, collects profile information and user information
+case class RecipeBox (
+    objectId: Option[UUID],
+    linkToRecipe: String,
+    name: String,
+    preAmble: Option[String],
+    mainImage: String,
+    recipeRating: Int
+)

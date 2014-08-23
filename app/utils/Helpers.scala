@@ -1,9 +1,12 @@
 package utils
 
-import play.api.mvc.RequestHeader
+import play.api.mvc.{Controller, RequestHeader}
 import models.UserCredential
-import securesocial.core.SecureSocial
+import securesocial.core.{Identity, SecureSocial}
 import play.api.Logger
+import play.api.i18n.Lang
+import utils.authorization.WithRole
+import enums.RoleEnums
 
 
 object Helpers {
@@ -19,6 +22,30 @@ object Helpers {
       user
     else
       None
+  }
+
+  def isUserAdmin(checkUser: Identity): Boolean = {
+      new WithRole(RoleEnums.ADMIN).isAuthorized(checkUser) match {
+        case true => true
+        case false => false
+      }
+  }
+
+  def isUserAdmin(request: RequestHeader): Boolean = {
+    Helpers.getUserFromRequest(request) match {
+      case Some(user) => isUserAdmin(user)
+      case None => false
+    }
+  }
+
+
+  def createRoute(input: String): String = {
+    // TODO: Improve language when making routes
+    input.toLowerCase.replaceAll("å", "a").replaceAll("ä", "a").replaceAll("ö", "o").replaceAll("\\s", "-").replaceAll("\\W_-", "")
+  }
+
+  def removeHtmlTags(input: String): String = {
+    input.replaceAll("""<(?!\/?a(?=>|\s.*>))\/?.*?>""", "")
   }
 
 }

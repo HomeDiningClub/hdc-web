@@ -25,3 +25,10 @@ For listing all indexes and constraints in neo4j-browser, following command is u
 
 List indices and constraints for specific label with:
 :schema ls -l :YourLabel
+
+-----
+
+Some help when developing @Query()
+MATCH (a)-[:`LOCATION_AT`]->(b) WHERE b.objectId ='6f0b11f4-ea07-40fb-ac7c-824f45445a18' RETURN a,b
+start n=node:__types__(className="com.example.MyObject") where n.property1 = {0}, n.property2 = {1} return n
+MATCH (userP)-[:`LOCATION_AT`]->(county) WHERE county.objectId = '6f0b11f4-ea07-40fb-ac7c-824f45445a18' RETURN userP

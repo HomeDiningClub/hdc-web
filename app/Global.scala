@@ -9,6 +9,7 @@ import play.api.mvc.Results._
 import scala.concurrent.Future
 import utils.authorization.WithRole
 import utils.Helpers
+import utils.requests.NormalizedRequest
 
 // Java2Scala
 // http://javatoscala.com/
@@ -49,21 +50,10 @@ object Global extends GlobalSettings {
     //ctx.close() - May or may not be needed
   }
 
-//  override def onRouteRequest(request: play.mvc.Http.RequestHeader): Option[Handler] = {
-//    Some(super.onRouteRequest(NormalizedRequest(request)))
-//  }
-
   override def onError(request: RequestHeader, ex: Throwable) = {
     var currentEx = ex
 
-    val isAdmin: Boolean = Helpers.getUserFromRequest(request) match {
-      case Some(user) =>
-        new WithRole(RoleEnums.ADMIN).isAuthorized(user) match {
-        case true => true
-        case false => false
-        }
-      case None => false
-    }
+    val isAdmin: Boolean = Helpers.isUserAdmin(request)
 
     if(isAdmin){
       var foundRootCause: Boolean = false
@@ -81,12 +71,18 @@ object Global extends GlobalSettings {
     Future.successful(InternalServerError(views.html.error.error(ex = currentEx, isAdmin = isAdmin)(request)))
   }
 
+
   override def onHandlerNotFound(request: RequestHeader) = {
     Future.successful(NotFound(views.html.error.notfound(refUrl = request.path)(request)))
   }
 
   override def onBadRequest(request: RequestHeader, error: String) = {
     Future.successful(InternalServerError(views.html.error.error(errorString = error)(request)))
+  }
+
+  override def onRouteRequest(request: RequestHeader): Option[Handler] = {
+    // Remove trailing slash
+    super.onRouteRequest(NormalizedRequest(request))
   }
 
   /**

@@ -8,7 +8,7 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api.i18n.Messages
 import securesocial.core.{SecuredRequest, SecureSocial}
 
-import services.{CountyService, UserProfileService, TagWordService}
+import services.{RecipeService, CountyService, UserProfileService, TagWordService}
 import models.{UserProfile, UserCredential}
 import models.formdata.UserProfileForm
 
@@ -32,16 +32,17 @@ import controllers._
 class UserProfileController  extends Controller  with SecureSocial {
 
   // Services
-
   @Autowired
   var userProfileService: UserProfileService = _
 
   @Autowired
   var tagWordService : TagWordService = _
 
-
   @Autowired
   var countyService : CountyService = _
+
+  @Autowired
+  private var recipeService: RecipeService = _
 
 
   // Form
@@ -115,7 +116,7 @@ class UserProfileController  extends Controller  with SecureSocial {
     // Try getting the profile from name, if failure show 404
     userProfileService.findByprofileLinkName(profileName, fetchAll = true) match {
       case Some(profile) =>
-        Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX, isThisMyProfile(profile)))
+        Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX, recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner), isThisMyProfile = isThisMyProfile(profile)))
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
         Logger.debug(errMess)

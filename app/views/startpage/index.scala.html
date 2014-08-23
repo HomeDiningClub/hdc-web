@@ -3,7 +3,7 @@
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
         startPageBoxes: Option[List[models.viewmodels.StartPageBox]],
         reviewBoxes: Option[List[models.viewmodels.ReviewBox]])(implicit request: RequestHeader)
-@import helper.twitterBootstrap._
+
 
 @main(Messages("startpage.title")) {
 
@@ -72,23 +72,22 @@
                 <div class="row">
                     <!-- Filtering push -->
                     <div class="col-xs-10 col-xs-offset-1 col-sm-12 col-sm-offset-0 form-startpage-filter animated fadeInDownBig">
-                    @helper.form(action=routes.StartPageController.filterProfiles(), 'class -> "form-horizontal"){
+                    @helper.form(action=routes.StartPageController.index(), 'class -> "form-horizontal form-filter-startpage"){
                         <div class="form-group">
                             @* @helper.inputText(searchForm("freeText"), '_label -> Messages("startpage.filterform.freetext")) *@
-                            @if(!optionsFoodAreas.isEmpty){ <div class="col-xs-12 col-sm-4"> @helper.select(searchForm("foodArea"), optionsFoodAreas.get, '_label -> Messages("startpage.filterform.foodarea"), 'class -> "form-control") </div>}
-                            @if(!optionsLocationAreas.isEmpty){ <div class="col-xs-12 col-sm-4"> @helper.select(searchForm("area"), optionsLocationAreas.get, '_label -> Messages("startpage.filterform.area"), 'class -> "form-control") </div> }
+                            @if(!optionsFoodAreas.isEmpty){ <div class="col-xs-12 col-sm-4"> @helper.select(searchForm("fTag"), optionsFoodAreas.get, '_label -> Messages("startpage.filterform.foodarea"), 'class -> "form-control") </div>}
+                            @if(!optionsLocationAreas.isEmpty){ <div class="col-xs-12 col-sm-4"> @helper.select(searchForm("fCounty"), optionsLocationAreas.get, '_label -> Messages("startpage.filterform.area"), 'class -> "form-control") </div> }
                             <div class="col-xs-12 col-sm-4 form-actions"><button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button></div>
                         </div>
                         }
                     </div>
                 </div>
                 <!-- Boxes -->
-                <div class="row margin-top">
+                <div class="row">
                     @if(!startPageBoxes.isEmpty){
-
-                        @*for( a <- 1 to 10){ *@
-                            @startpage.startpageBox(startPageBoxes.get)
-                        @*}*@
+                        @startpage.startpageBox(startPageBoxes.get)
+                    }else{
+                        <div class="col-xs-12 text-center">@Html(Messages("startpage.boxes.not-found", routes.StartPageController.index().url))</div>
                     }
                 </div>
 
@@ -120,13 +119,13 @@
                 </div>
 
                 <div class="row margin-top row-border-bottom">
-                        <!-- Main intro -->
-                    <div class="col-xs-12 col-md-6">
+                    <!-- Main intro -->
+                    <div class="col-xs-12 col-md-6 text-large">
                         @Html(Messages("startpage.main-content.body"))
                         <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
                     </div>
 
-                        <!-- News -->
+                    <!-- News -->
                     <div class="col-xs-12 col-md-6">
                         <aside>
                             @Html(Messages("startpage.main-aside.body"))
@@ -150,6 +149,9 @@
             <!-- Banner -->
             <div class="col-xs-12 col-md-3 col-banner">
                 @shared.banner()
+                <aside class="big-margin-top">
+                    @shared.img("/images/startpage/now-even-in-sweden.png", cssClass = "img-responsive")
+                </aside>
             </div>
         </div>
     </div>

@@ -13,6 +13,7 @@
                         @helper.form(action=controllers.routes.RecipePageController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
                             <fieldset>
                                 @helper.inputText(recipeForm("recipename"), '_label -> Messages("recipe.edit.add.name"), '_help -> Messages("admin.recipe.add.name.validation"))
+                                @helper.textarea(recipeForm("recipepreamble"), '_label -> Messages("recipe.edit.add.preamble"), '_help -> Messages("recipe.edit.add.preamble.validation"), '_class -> "recipe-addedit-form-preamble")
                                 @helper.inputFile(recipeForm("recipemainimage"), '_label -> Messages("recipe.edit.add.main-image"))
                                 @helper.inputFile(recipeForm("recipeimage01"), '_label -> Messages("recipe.edit.add.image"))
                                 @helper.inputFile(recipeForm("recipeimage02"), '_label -> Messages("recipe.edit.add.image"))
@@ -23,7 +24,7 @@
                             </fieldset>
                             <div class="form-actions">
                                 <button class="btn btn-primary" type="submit">@Messages("recipe.edit.save")</button>
-                                <a class="btn" href="@controllers.routes.RecipePageController.index()">@Messages("recipe.edit.abort")</a>
+                                <a class="btn" href="@controllers.routes.UserProfileController.viewProfileByLoggedInUser()">@Messages("recipe.edit.abort")</a>
                             </div>
                         }
                     </div>

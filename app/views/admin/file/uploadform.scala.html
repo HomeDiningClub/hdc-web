@@ -2,5 +2,5 @@
 
 @helper.form(action = controllers.admin.routes.AdminFileController.add(), 'enctype -> "multipart/form-data") {
     <input type="file" name="file">
-    <input type="submit" value="@Messages("admin.file.button.upload")">
+    <input type="submit" class="btn btn-primary" value="@Messages("admin.file.button.upload")">
 }
