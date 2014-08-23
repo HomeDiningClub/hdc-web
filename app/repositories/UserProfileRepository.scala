@@ -12,11 +12,7 @@ import java.util.UUID
 trait  UserProfileRepository extends GraphRepository[UserProfile] {
 
   // Get all profiles matching a tag and a county
-  @Query("" +
-    "MATCH (userP:`UserProfile`)-[:`TAGGED_ON`]->(tw:`TagWord`) " +
-    "MATCH (userP:`UserProfile`)-[:`LOCATION_AT`]->(c:`County`) " +
-    "WHERE tw.objectId={0} AND c.objectId={1} " +
-    "RETURN userP")
+  @Query("MATCH (userP:`UserProfile`)-[:`TAGGED_ON`]->(tw:`TagWord`) MATCH (userP:`UserProfile`)-[:`LOCATION_AT`]->(c:`County`) WHERE tw.objectId={0} AND c.objectId={1} RETURN userP")
   def findByTagWordIdAndCountyId(tagWordId: UUID, countyId: UUID) : java.util.List[UserProfile]
 
   // Get all profiles matching a tag
