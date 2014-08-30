@@ -101,9 +101,7 @@
                     <div class="panel-body">
                         <label>@Messages("profile.create.form.tagwords")</label><br>
                         @for(t <- element) {
-                            <input type="checkbox" id="@t.name" name="@t.v" value="@t.name" @klass.getString(t.name)>
-                            &nbsp;
-                            <label for="@t.name" class="notbold">@t.name</label><br>
+                          @t.name
                         }
                     </div>
                 </div>

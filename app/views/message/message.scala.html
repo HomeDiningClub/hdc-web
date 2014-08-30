@@ -1,0 +1,36 @@
+@(messageForm: Form[controllers.MessageText])
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-md-9">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h1 class="page-header">@Messages("recipe.edit.add.header")</h1>
+
+
+                    @helper.form(action=controllers.routes.MessageController.save(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
+                        <fieldset>
+                            @helper.inputText(messageForm("text"), '_label -> Messages("recipe.edit.add.name"), '_help -> Messages("admin.recipe.add.name.validation"))
+                            @helper.inputText(messageForm("kod"), '_label -> Messages("recipe.edit.add.name"), '_help -> Messages("admin.recipe.add.name.validation"))
+
+                            @helper.checkbox(
+                                messageForm("foodCategories[" + "1" + "].going"),
+                                'id ->  "1",
+                                'name -> "test",
+                                '_label -> None, '_text -> "Husmanskost",
+                                '_showConstraints -> false
+                            )
+                        </fieldset>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary" type="submit">@Messages("recipe.edit.save")</button>
+
+                        </div>
+
+                    }
+                </div>
+            </div>
+        </div>
+
+
+</div>

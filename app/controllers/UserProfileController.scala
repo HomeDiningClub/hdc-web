@@ -69,7 +69,7 @@ class UserProfileController  extends Controller  with SecureSocial {
 
     val AnvandareForm = Form(
       mapping(
-        "name" -> text,
+        "name" -> nonEmptyText,
         "quality" -> list(text),
         "aboutmeheadline" -> text,
         "aboutme" -> text,
@@ -81,6 +81,13 @@ class UserProfileController  extends Controller  with SecureSocial {
       )
       (EnvData.apply) (EnvData.unapply)
     )
+
+  val tagForm = Form(
+    mapping(
+      "quality" -> list(text)
+    )
+      (TagsData.apply) (TagsData.unapply)
+  )
 
 
 
@@ -296,20 +303,11 @@ if(userTags != null) {
   // Sort & List
   val retTagList = tagList.toList.sortBy(tw => tw.name)
 
-  // member
 
-  /*
-  var memberList = tagWordService.listByGroupOption("member")
 
-  if(memberList.isDefined) {
-    for(theMemberStatus <- memberList.get) {
-      println("Member status" + theMemberStatus.orderId + ", " + theMemberStatus.tagName + ", " + theMemberStatus.tagId)
-    }
-  }
 
-*/
 
-  println("DEBUG::::: 1111 ")
+
 
 
   println("county stored : [" +  theUser.county + "]")
@@ -326,7 +324,7 @@ if(userTags != null) {
   // File with stored values
   val eData : EnvData = new EnvData(
     theUser.profileLinkName,
-    List("adam", "bertil"),
+  List("", ""),
     theUser.aboutMeHeadline,
     theUser.aboutMe,
     locationId,         // county
@@ -343,6 +341,129 @@ if(userTags != null) {
 }
 
 
+  /** ******************************************************
+    * Show intrests
+    * @return
+    */
+
+  def showTags = SecuredAction { implicit request =>
+
+    // Fetch UserProfile from UserCredentials that is fetch by SocialSocial
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+
+    // Pre selected
+    val typ = new models.Types
+
+    var userTags = theUser.getTags
+
+    if(userTags != null) {
+      var itterTags = userTags.iterator()
+
+      while (itterTags.hasNext) {
+        typ.addVald(itterTags.next().tagWord.tagName)
+      }
+    }
+
+    // Fetch all tags
+    var d = tagWordService.listByGroupOption("profile")
+
+
+    var l : Long = 0
+    var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
+
+
+
+    if(d.isDefined){
+      for(theTag <- d.get) {
+        var newType : models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l+"]" )
+        l = l + 1
+        println(theTag.tagName)
+        tagList.add(newType)
+      }
+    }
+
+    // Sort & List
+    val retTagList = tagList.toList.sortBy(tw => tw.name)
+
+
+    // File with stored values
+    val tData : TagsData = new TagsData(
+      List("adam", "bertil")
+    )
+
+    val nyForm =  tagForm.fill(tData)
+
+
+  //   Ok(views.html.profile.skapa(nyForm, retTagList, typ, optionsLocationAreas = getCounties))
+    Ok(views.html.profile.tags(tagForm, retTagList, typ))
+  //Ok("test")
+  }
+
+
+
+
+
+  /**
+   * Save chaged tages
+    * @return
+   */
+  def saveTags = SecuredAction { implicit request =>
+
+    println("##SAVE TAGS#########################################################################")
+
+    var map: Map[String, String] = Map()
+
+
+    tagForm.bindFromRequest.fold(
+      errors => {
+        if (errors.hasErrors) {
+          println("1234 Fel lista: " + errors.toString)
+
+          Ok("så fel det kan bli")
+        }
+      },
+      reqUserProfile => {
+        // test
+
+
+        for (d <- reqUserProfile.quality) {
+          println("VALD  : " + d)
+          map += (d -> d)
+
+        }
+
+
+      })
+
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+
+
+    theUser.removeAllTags()
+
+    // Fetch all tags available to choose
+    var d = tagWordService.listByGroupOption("profile")
+
+    if (d.isDefined) {
+      // Loop all available tags
+      for (theTag <- d.get) {
+        var value = map.getOrElse(theTag.tagName, "empty")
+
+        if (!value.equals("empty")) {
+
+          // If the the user have tagged the particial chooice tag it
+          theUser.tag(theTag)
+        }
+
+      } // end loop
+
+    }
+
+
+    println("#########################################################save food interestes ##########################")
+    userProfileService.saveUserProfile(theUser)
+
+    Redirect(routes.UserProfileController.showTags())
+  }
 
 
 // Save profile
@@ -375,17 +496,21 @@ def editSubmit = SecuredAction { implicit request =>
       AnvandareForm.bindFromRequest.fold(
         errors => {
           if(errors.hasErrors) {
-            println("Fel data!")
+            println("1234 Fel data!")
 
-            println("Fel lista: "  + errors.toString)
+            println("1234 Fel lista: "  + errors.toString)
+
+            Ok("så fel det kan bli")
           }
 
           // Felaktigt ifyllt formulär
 
+          Ok("Det blir fel")
+
         },
         reqUserProfile => {
             // test
-            println(reqUserProfile.name)
+            println("Korrekt formulär : " +reqUserProfile.name)
 
             println("About Me: " + reqUserProfile.aboutme)
           aboutMeHeadlineText   = reqUserProfile.aboutmeheadline
@@ -399,16 +524,6 @@ def editSubmit = SecuredAction { implicit request =>
           println("????? county = " + reqUserProfile.county)
 
 
-
-         // var linkedUser = service.findByProfileLinkName(profileLinkName)
-
-
-
-            for(d <- reqUserProfile.quality) {
-                println("VALD  : " + d)
-                map += (d->d)
-
-            }
 
 
         })
@@ -464,6 +579,8 @@ def editSubmit = SecuredAction { implicit request =>
 
 
   // save the new UserProfiel
+
+      println("#########################################################save profile ##########################")
       userProfileService.saveUserProfile(theUser)
 
      Redirect(routes.UserProfileController.edit())
@@ -480,7 +597,8 @@ def editSubmit = SecuredAction { implicit request =>
           }
           println("#error#")
           // Felaktigt ifyllt formulär
-          Ok(views.html.profile.updateUserProfile(errors))
+          // Ok(views.html.profile.updateUserProfile(errors))
+          Ok("eror")
         },
         userProfileForm => {
 
@@ -493,7 +611,7 @@ def editSubmit = SecuredAction { implicit request =>
           // Hämta värden
           //val savedForm =  userProfileForm.fill()
           // Ok(views.html.profile.updateUserProfile())
-          Ok("TEST")
+          Ok(".............................................")
         }
       )
   }
