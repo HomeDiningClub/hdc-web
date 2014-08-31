@@ -185,8 +185,8 @@ class RecipePageController extends Controller with SecureSocial {
   def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
 
     val recipe: Option[Recipe] = recipeService.findById(objectId)
-    recipe match {
-      case None =>
+
+    if(recipe.isEmpty){
         val errorMessage = Messages("recipe.delete.error")
         Redirect(controllers.routes.UserProfileController.viewProfileByLoggedInUser()).flashing(FlashMsgConstants.Error -> errorMessage)
     }

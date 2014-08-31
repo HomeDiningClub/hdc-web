@@ -10,9 +10,10 @@ import org.springframework.transaction.annotation.Transactional
 import securesocial.core._
 import scala.Some
 
-import models.profile.TagWord
+import models.profile.{TaggedUserProfile, TagWord}
 import repositories.TagWordRepository
 import scala.collection.JavaConverters._
+import models.UserProfile
 
 
 @Service
@@ -63,7 +64,19 @@ class TagWordService {
     }
   }
 
-//  @Transactional(readOnly = true)
+  @Transactional(readOnly = true)
+  def findByProfileAndGroup(profile: UserProfile, groupName: String): Option[List[TagWord]] = {
+    profile.getTags.asScala.filter(tag => tag.tagWord.tagGroupName.equalsIgnoreCase(groupName)).toList match {
+      case null => None
+      case tags => Some(tags.map {
+        tup: TaggedUserProfile =>
+          tup.tagWord
+      })
+    }
+  }
+
+
+  //  @Transactional(readOnly = true)
 //  def listByGroup(groupName: String): Option[List[TagWord]] = {
 //   listAll() match {
 //     case null => None

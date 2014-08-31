@@ -23,6 +23,10 @@ public abstract class ContentBase extends AbstractEntity {
         this.contentState = ContentStateEnums.UNPUBLISHED().toString();
     }
 
+    public boolean isPublished() {
+        return contentState.equalsIgnoreCase(ContentStateEnums.PUBLISHED().toString());
+    }
+
     protected ContentBase() {
         unPublish();
     }

@@ -2,7 +2,7 @@ package models.viewmodels
 
 case class AddContentForm(
                           id: Option[String],
-                          parentId: Option[String],
+                          relatedPages: Option[List[String]],
                           name: String,
                           route: String,
                           title: Option[String],

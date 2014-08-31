@@ -122,11 +122,11 @@ class UserProfileController  extends Controller  with SecureSocial {
     // Try getting the profile from name, if failure show 404
     userProfileService.findByprofileLinkName(profileName, fetchAll = true) match {
       case Some(profile) =>
-        Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX, recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner), isThisMyProfile = isThisMyProfile(profile)))
+        Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX, recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner), tagWordService.findByProfileAndGroup(profile,"profile"), isThisMyProfile = isThisMyProfile(profile)))
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
         Logger.debug(errMess)
-        NotFound(errMess)
+        BadRequest(errMess)
     }
   }
 

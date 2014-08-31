@@ -9,6 +9,11 @@ public final class RelationshipTypesJava {
         public static final String Constant = "REACHABLE_BY_ROCKET";
     }
 
+    public final static class RELATED_PAGE implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "RELATED_PAGE";
+    }
+
     public final static class IN_ROLE implements RelationshipType {
         public String name() { return Constant; }
         public static final String Constant = "IN_ROLE";

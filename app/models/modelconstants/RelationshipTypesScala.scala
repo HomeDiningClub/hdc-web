@@ -9,6 +9,11 @@ object RelationshipTypesScala {
      def name(): String = Constant
    }
 
+  object RELATED_PAGE {
+    final val Constant = "RELATED_PAGE"
+    def name(): String = Constant
+  }
+
   object IN_ROLE {
     final val Constant = "IN_ROLE"
     def name(): String = Constant

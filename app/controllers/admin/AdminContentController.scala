@@ -15,6 +15,7 @@ import java.util.UUID
 import scala.collection.mutable
 import enums.{RoleEnums, ContentCategoryEnums, ContentStateEnums}
 import utils.authorization.WithRole
+import java.util
 
 @SpringController
 class AdminContentController extends Controller with securesocial.core.SecureSocial {
@@ -34,7 +35,7 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
   val contentForm = Form(
     mapping(
       "pageid" -> optional(text),
-      "pageparentid" -> optional(text),
+      "relatedpages" -> optional(list(text)),
       "pagename" -> nonEmptyText(minLength = 1, maxLength = 255),
       "pageroute" -> nonEmptyText(minLength = 1, maxLength = 255),
       "pagetitle" -> optional(text),
@@ -53,7 +54,7 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
   def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     // Default values for new item
     val defaultContent = AddContentForm(None,None,"","",None,None,None,ContentStateEnums.UNPUBLISHED.toString,None,visibleInMenus = false)
-    Ok(views.html.admin.content.add(contentForm.fill(defaultContent), getPagesAsDropDown, getContentStatesAsDropDown, getCategoriesAsDropDown))
+    Ok(views.html.admin.content.add(contentForm.fill(defaultContent), contentService.getPagesAsDropDown(), contentService.getContentStatesAsDropDown, contentService.getCategoriesAsDropDown))
   }
 
   def addSubmit() = SecuredAction(WithRole(RoleEnums.ADMIN)) { implicit request =>
@@ -61,54 +62,57 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
     contentForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
-        BadRequest(views.html.admin.content.add(errors, getPagesAsDropDown, getContentStatesAsDropDown, getCategoriesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.admin.content.add(errors, contentService.getPagesAsDropDown(), contentService.getContentStatesAsDropDown, contentService.getCategoriesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
 
-        val newContent = contentData.id match {
+        val newContent: Option[ContentPage] = contentData.id match {
           case Some(id) =>
-            val page = contentService.findContentById(UUID.fromString(id))
-            page.name = contentData.name
-            page.route = contentData.route
-            page.visibleInMenus = contentData.visibleInMenus
-            page
+            contentService.findContentById(UUID.fromString(id)) match {
+              case None => None
+              case Some(page) =>
+                page.name = contentData.name
+                page.route = contentData.route
+                page.visibleInMenus = contentData.visibleInMenus
+                Some(page)
+            }
           case None =>
-            new ContentPage(contentData.name,contentData.route, contentData.visibleInMenus)
+            Some(new ContentPage(contentData.name,contentData.route, contentData.visibleInMenus))
         }
 
         // If this occurs, user has sent an invalid UUID to edit and save
-        if(newContent == null){
+        if(newContent == None){
           val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
-          BadRequest(views.html.admin.content.add(contentForm, getPagesAsDropDown, getContentStatesAsDropDown, getCategoriesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
+          BadRequest(views.html.admin.content.add(contentForm, contentService.getPagesAsDropDown(), contentService.getContentStatesAsDropDown, contentService.getCategoriesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
 
         }
 
         contentData.title match {
-          case Some(title) => newContent.title = title
-          case None => newContent.title = ""
+          case Some(title) => newContent.get.title = title
+          case None => newContent.get.title = ""
         }
         contentData.preamble match {
-          case Some(preamble) => newContent.preamble = preamble
-          case None => newContent.preamble = ""
+          case Some(preamble) => newContent.get.preamble = preamble
+          case None => newContent.get.preamble = ""
         }
         contentData.mainBody match {
-          case Some(content) => newContent.mainBody = content
-          case None => newContent.mainBody = ""
+          case Some(content) => newContent.get.mainBody = content
+          case None => newContent.get.mainBody = ""
         }
-        contentData.parentId match {
-          case Some(id) =>
-            val settingParentPage = contentService.findContentById(UUID.fromString(id))
-
-            // Cannot set itself as a parent
-            if(settingParentPage.objectId == newContent.objectId)
-              newContent.parentPage = null
-            else
-              newContent.parentPage = contentService.findContentById(UUID.fromString(id))
-
-          case None =>
-            if(newContent.parentPage != null)
-              newContent.parentPage = null
-        }
+//        contentData.parentId match {
+//          case Some(id) =>
+//            val settingParentPage = contentService.findContentById(UUID.fromString(id))
+//
+//            // Cannot set itself as a parent
+//            if(settingParentPage.objectId == newContent.objectId)
+//              newContent.parentPage = null
+//            else
+//              newContent.parentPage = contentService.findContentById(UUID.fromString(id))
+//
+//          case None =>
+//            if(newContent.parentPage != null)
+//              newContent.parentPage = null
+//        }
 
         // get request value from submitted form
 //        val map: Option[Map[String, Seq[String]]] = request.body.asFormUrlEncoded match {
@@ -119,21 +123,36 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
 //        // Assign checked value to model
 //        newContent.contentCategories = checkedVal
 
+        contentData.relatedPages match {
+          case Some(listOfPages) =>
+            // Clear earlier pages
+            newContent.get.removeAllRelatedPages()
+            listOfPages.foreach {
+              objIdAsStr: String =>
+                contentService.findContentById(UUID.fromString(objIdAsStr)) match {
+                  case None =>
+                  case Some(item) =>
+                    newContent.get.addRelatedPage(item)
+                }
+            }
+          case None =>
+            newContent.get.relatedPages = new util.HashSet[RelatedPage]
+        }
 
         contentData.contentCategories match {
           case Some(listOfCategories) =>
-            newContent.contentCategories = listOfCategories.toArray
+            newContent.get.contentCategories = listOfCategories.toArray
           case None =>
-            newContent.contentCategories = null
+            newContent.get.contentCategories = null
         }
 
         if(contentData.contentState == ContentStateEnums.PUBLISHED.toString)
-          newContent.publish()
+          newContent.get.publish()
         else if(contentData.contentState == ContentStateEnums.UNPUBLISHED.toString){
-          newContent.unPublish()
+          newContent.get.unPublish()
         }
 
-        val savedContentPage = contentService.addContentPage(newContent)
+        val savedContentPage = contentService.addContentPage(newContent.get)
         val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", savedContentPage.name, savedContentPage.objectId.toString)
         Redirect(controllers.admin.routes.AdminContentController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
@@ -141,55 +160,20 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
 
   }
 
-  private def getPagesAsDropDown: Option[Seq[(String,String)]] = {
-    val returnItems: Option[Seq[(String,String)]] = contentService.getListOfAll() match {
-      case Some(items) =>
-        var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
-
-        // Map and add the rest
-        items.sortBy(tw => tw.name).toBuffer.map {
-          item: ContentPage =>
-            bufferList += ((item.objectId.toString, item.name + " - (" + item.route + ")"))
-        }
-        Some(bufferList.toSeq)
-      case None =>
-        None
-    }
-    returnItems
-  }
-
-
-  private def getContentStatesAsDropDown: Seq[(String,String)] = {
-    val returnItems: Seq[(String,String)] = Seq(
-      (ContentStateEnums.PUBLISHED.toString,ContentStateEnums.PUBLISHED.toString),
-      (ContentStateEnums.UNPUBLISHED.toString,ContentStateEnums.UNPUBLISHED.toString)
-    )
-    returnItems
-  }
-
-  private def getCategoriesAsDropDown: Option[Seq[(String,String)]] = {
-    val returnItems: Seq[(String,String)] = List(
-      (ContentCategoryEnums.MAINMENU.toString,ContentCategoryEnums.MAINMENU.toString),
-      (ContentCategoryEnums.NEWS.toString,ContentCategoryEnums.NEWS.toString),
-      (ContentCategoryEnums.QUICKLINKS.toString,ContentCategoryEnums.QUICKLINKS.toString)
-    )
-    Some(returnItems)
-  }
 
 
 
   // Edit - Edit content
   def edit(objectId: java.util.UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    val item = contentService.findContentById(objectId, fetchAll = true)
-    item match {
-      case null =>
+    contentService.findContentById(objectId, fetchAll = true) match {
+      case None =>
         Ok(views.html.admin.content.index())
-      case _ =>
+      case Some(item) =>
         val form = AddContentForm.apply(
         Some(item.objectId.toString),
-        item.parentPage match {
+        item.relatedPages match {
           case null => None
-          case page => Some(page.objectId.toString)
+          case relPages => Some(contentService.mapRelatedPagesToStringOfObjectIds(item))
         },
         item.name,
         item.route,
@@ -206,7 +190,7 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
         },
         item.visibleInMenus)
 
-      Ok(views.html.admin.content.add(contentForm.fill(form), getPagesAsDropDown, getContentStatesAsDropDown, getCategoriesAsDropDown))
+      Ok(views.html.admin.content.add(contentForm.fill(form), contentService.getPagesAsDropDown(Some(item)), contentService.getContentStatesAsDropDown, contentService.getCategoriesAsDropDown))
     }
   }
 

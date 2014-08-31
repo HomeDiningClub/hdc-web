@@ -13,7 +13,8 @@ notfound.body=Vi är ledsna vi kunde inte hitta sidan du letade efter ({0}).<br>
 notfound.linkhome=startsidan
 
 # Header
-header.link.campaign=Nyhetsbrev
+header.main-menu.link.startpage=Hem
+header.main-menu.link.newsletter=Nyhetsbrev
 header.link.host-profile-header={0}
 header.link.host-profile=Gå till min sida
 header.link.host-profile-edit=Redigera profil
@@ -69,6 +70,11 @@ startpage.filterform.submit=Filtrera
 
 startpage.boxes.not-found=Kunde inte hitta några profiler som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
 
+
+# ContentPages
+content.menu.header=Relaterad information
+
+
 aboutus.title=Om oss
 aboutus.header=Om oss
 aboutus.body=body
@@ -123,6 +129,8 @@ like.text=Jag tycker om
 # Profile
 profile.title=Profil
 profile.button.recipe.add=Lägg till recept
+profile.tags.header=Taggar:
+
 
 profile.create.title=Din profil
 profile.create.text=Här skapar du din profil, den kommer andra medlemmar att se. Om du råkar missa att fylla i viss information så går det bra att redigera din profil senare, om du vill komplettera med mer information.
@@ -217,13 +225,13 @@ admin.content.list.header=Lista av sidor
 admin.content.list.created_date=Skapades datum
 admin.content.list.contentstate=Status
 admin.content.list.name=Namn
-admin.content.list.parent=Förälder
+admin.content.list.related-pages=Relaterade sidor
 admin.content.list.visibility=Synlig i menyer
 admin.content.list.route=Sökväg
 admin.content.list.action=Funktioner
 admin.content.add.header=Lägg till / Redigera sida
 admin.content.add.name=Namn
-admin.content.add.parent=Förälder
+admin.content.add.related-pages=Relaterade sidor (meny)
 admin.content.add.name.validation=(Tvingande, max längd 255)
 admin.content.add.route=Sökväg (exempel: my-page)
 admin.content.add.route.validation=(Tvingande, max längd 255)

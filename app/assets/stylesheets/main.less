@@ -439,6 +439,10 @@ input[type="reset"]:hover
   height:74px;
   box-shadow: 0px 1px 3px #999;
 }
+.food-carousel-inner
+{
+  overflow:visible;
+}
 .food-nav-image-base
 {
   position: relative;
@@ -502,7 +506,11 @@ input[type="reset"]:hover
 .quicklinks .nav > li > a:focus {
   background-color: lighten(@hdc-green, 5%);
 }
-
+.quicklinks .nav .open > a,
+.quicklinks .nav .open > a:hover,
+.quicklinks .nav .open > a:focus {
+  background-color: lighten(@hdc-green, 5%);
+}
 // Header - Login form
 .header-login-form
 {
@@ -869,23 +877,49 @@ input[type="reset"]:hover
 
 
 // Content pages
-.content-side-menu
+.panel-aside
 {
-  margin-top:10px;
+  margin-top:40px;
+  border-right:none;
+  border-left:none;
+  border-bottom:none;
+  border-color: lighten(@hdc-green, 10%);
 }
-.content-side-menu ul
+.panel-aside .aside-title
+{
+  font-size:14px;
+}
+.panel-aside > .panel-heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  background-color: lighten(@hdc-green, 20%);
+  background-image: linear-gradient(to bottom, lighten(@hdc-green, 20%) 0px, lighten(@hdc-green, 10%) 100%);
+  border-color: lighten(@hdc-green, 10%);
+  color:#fff;
+}
+.panel-aside .list-group
+{
+  font-size:13px;
+  list-style: none;
+  padding:0px;
+}
+.panel-aside .list-group-item
 {
   list-style: none;
   padding:0px;
 }
-.content-side-menu li
+.panel-aside .list-group-item a
 {
-  list-style: none;
-  padding:2px 0px;
+  padding:10px 15px;
+  display: block;
 }
-
-
-
+.panel-aside .list-group-item a:hover
+{
+  background-color:#f9f9f9;
+}
+.panel-aside .list-group-item-selected {
+  background-color:#f9f9f9;
+}
 // Profile
 .host-image img
 {

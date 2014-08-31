@@ -5,6 +5,7 @@
         tab3: String,
         tab4: String,
         recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
+        tagList: Option[List[models.profile.TagWord]] = None,
         isThisMyProfile: Boolean = false)(implicit request: RequestHeader)
 
 @main(Messages("profile.title")) {
@@ -24,6 +25,7 @@
                                 <div class="breadtext">
                                     @Html(userProfile.aboutMe)
                                 </div>
+                                @shared.tagList(tagList)
                             </article>
                         </section>
                     </div>

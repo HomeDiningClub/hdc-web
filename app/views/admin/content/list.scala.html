@@ -14,7 +14,7 @@
                     <th>@Messages("admin.content.list.contentstate")</th>
                     <th>@Messages("admin.content.list.route")</th>
                     <th>@Messages("admin.content.list.name")</th>
-                    <th>@Messages("admin.content.list.parent")</th>
+                    <th>@Messages("admin.content.list.related-pages")</th>
                     <th>@Messages("admin.content.list.visibility")</th>
                     <th>@Messages("admin.content.list.action")</th>
                 </tr>
@@ -28,7 +28,7 @@
                         <td>@contentPage.contentState</td>
                         <td>@contentPage.route</td>
                         <td>@contentPage.name</td>
-                        <td>@if(contentPage.parentPage != null){ @contentPage.parentPage.name }</td>
+                        <td>@if(contentPage.relatedPages != null && contentPage.relatedPages.nonEmpty){ @contentPage.relatedPages.toList.length.toString }</td>
                         <td>@contentPage.visibleInMenus.booleanValue().toString</td>
                         <td>
                             <ul class="nav nav-pills">

@@ -1,19 +1,27 @@
-@(asideHeader: String = "", asideMenu: List[models.content.MenuItem] = Nil)
+@(asideHeader: String = "", asideMenu: Option[List[models.viewmodels.MenuItem]] = None)
 
 @if(!asideMenu.isEmpty) {
     <div class="col-xs-12 col-md-3 pull-left content-side-menu">
         <aside>
-            @if(!asideHeader.isEmpty) {
-                <h3 class="aside-header">@asideHeader</h3>
-            }
-            <ul>
-            @for(mItem <- asideMenu){
+            <div class="panel panel-aside">
 
-                <li @if(!mItem.cssClass.isEmpty){ class="@mItem.cssClass" }>
-                    <a href="@mItem.url" @if(!mItem.alt.isEmpty){ alt="@mItem.alt" } @if(!mItem.title.isEmpty){ title="@mItem.title" }>@mItem.name</a>
-                </li>
-            }
-            </ul>
+                <div class="panel-heading">
+                    @if(!asideHeader.isEmpty) {
+                        <h3 class="panel-title aside-title">@asideHeader</h3>
+                    }else {
+                        <h3 class="panel-title aside-title">@Messages("content.menu.header")</h3>
+                    }
+                </div>
+
+                <ul class="list-group">
+                @for(mItem <- asideMenu.get){
+
+                    <li class="list-group-item@if(!mItem.cssClass.isEmpty){ @mItem.cssClass }@if(mItem.selected){ list-group-item-selected }">
+                        <a href="@mItem.url" @if(!mItem.alt.isEmpty){ alt="@mItem.alt" } @if(!mItem.title.isEmpty){ title="@mItem.title" }>@mItem.name</a>
+                    </li>
+                }
+                </ul>
+            </div>
         </aside>
     </div>
 }

@@ -1,4 +1,4 @@
-@(menuItems: Seq[(String, String, Call, String)], quickLinkTitle: String = "", quicklinkItems: Seq[(String, String, Call, String, String)])
+@(menuItems: Option[List[models.viewmodels.MenuItem]], quickLinkTitle: String = "", quicklinkItems: Seq[(String, String, Call, String, String)])
 <header>
     <div class="navbar-fixed-top header-navbar">
         <div class="container">
@@ -67,25 +67,28 @@ o
             </div>
 
         </div>
+
+        @if(menuItems.nonEmpty) {
         <div class="nav-main-menu-wrapper">
             <div class="container">
                 <div class="row header-navigation">
                     <nav>
                         <div class="col-xs-12">
-                            <ul class="nav nav-pills nav-main-menu collapse bs-navbar-collapse">
-                                @for(nav <- menuItems) {
-                                    <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1</a></li>
+                                <ul class="nav nav-pills nav-main-menu collapse bs-navbar-collapse">
+                                @for(nav:models.viewmodels.MenuItem <- menuItems.get) {
+                                    <li><a class="@nav.cssClass" href="@nav.url" title="@nav.title">@if(nav.icon.nonEmpty){<span class="@nav.icon"></span>&nbsp;}@nav.name</a></li>
                                 }
-                            </ul>
+                                </ul>
                         </div>
                     </nav>
                 </div>
             </div>
         </div>
+        }
 
         <div class="food-nav hidden-xs">
             <div id="carousel-header" class="carousel slide carousel-fade" data-ride="carousel" data-interval="4000">
-                <div class="carousel-inner">
+                <div class="carousel-inner food-carousel-inner">
                     <div class="item active"><div class="food-nav-image-base food-nav-image-01"></div></div>
                     <div class="item"><div class="food-nav-image-base food-nav-image-02"></div></div>
                     <div class="item"><div class="food-nav-image-base food-nav-image-03"></div></div>

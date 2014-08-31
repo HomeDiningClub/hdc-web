@@ -13,7 +13,6 @@
             @helper.form(action=controllers.admin.routes.AdminContentController.addSubmit(), 'class -> "form-horizontal"){
                 <fieldset>
                     @helper.inputText(contentForm("pagename"), '_label -> Messages("admin.content.add.name"), '_help -> Messages("admin.content.add.name.validation"))
-                    @if(optionPages.nonEmpty){ @helper.select(contentForm("pageparentid"), optionPages.get, '_default -> "", '_label -> Messages("admin.content.add.parent")) }
                     @helper.inputText(contentForm("pageroute"), '_label -> Messages("admin.content.add.route"), '_help -> Messages("admin.content.add.route.validation"))
                     @helper.inputText(contentForm("pagetitle"), '_label -> Messages("admin.content.add.title"))
                     @helper.textarea(contentForm("pagepreamble"), '_label -> Messages("admin.content.add.preamble"), 'class -> "richtext")
@@ -23,6 +22,7 @@
                     @if(contentCategories.nonEmpty) {
                         @helper.inputCheckboxGroup(contentForm("contentcategories"), contentCategories.get, '_label -> Messages("admin.content.add.contentcategories"))
                     }
+                    @if(optionPages.nonEmpty){ @helper.inputCheckboxGroup(contentForm("relatedpages"), optionPages.get, '_default -> "", '_label -> Messages("admin.content.add.related-pages")) }
                     @helper.inputHidden(contentForm("pageid"))
                 </fieldset>
                 <div class="form-actions">

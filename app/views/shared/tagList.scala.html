@@ -1,0 +1,9 @@
+@(listOfTags: Option[List[models.profile.TagWord]])
+
+@if(listOfTags.nonEmpty) {
+    <hr>
+    <div class="tag-header">@Messages("profile.tags.header")</div>
+    @for(tag <- listOfTags.get){
+        <div class="tag"><span class="glyphicon glyphicon-tag"></span>@tag.tagName</div>
+    }
+}
