@@ -69,7 +69,7 @@ class UserProfileController  extends Controller  with SecureSocial {
 
     val AnvandareForm = Form(
       mapping(
-        "name" -> nonEmptyText,
+        "name" -> text(minLength = 5, maxLength = 20),
         "aboutmeheadline" -> text,
         "aboutme" -> text,
         "county" -> text,

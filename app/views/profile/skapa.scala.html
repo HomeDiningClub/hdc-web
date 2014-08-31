@@ -20,6 +20,9 @@
                     <div class="panel-body">
                         <ul class="list-group">
                             <li class="list-group-item">
+
+
+
                                 @helper.inputText(EnvDataForm("name"),
                                     'id -> "name",
                                     '_showErrors -> true,
@@ -29,6 +32,11 @@
                                     )
                                 )
                             </li>
+
+                            <li class="list-group-item">
+                                <a href="@routes.UserProfileController.showTags()" style="margin-top: 10px; display: block;">Edit tags</a>
+                            </li>
+
                             <li class="list-group-item">
                                 @helper.inputText(EnvDataForm("aboutmeheadline"),
                                     'id -> "aboutmeheadline",
