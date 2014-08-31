@@ -13,7 +13,7 @@ case class UserProfileForm
   firstName    : String,
   lastName     : String,
   aboutMe      : String,
-  quality: List[Boolean],
+  //quality: List[Boolean],
   county       : String,
   streetAddress : String,
  zipCode        : String,

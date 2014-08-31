@@ -54,7 +54,7 @@ class UserProfileController  extends Controller  with SecureSocial {
       "firstName" -> text,
       "lastName" -> text,
       "aboutme" -> text,
-      "quality" -> list(boolean),
+     // "quality" -> list(boolean),
       "county" -> text,
       "streetAddress" -> text,
       "zipCode" -> text,
@@ -70,7 +70,6 @@ class UserProfileController  extends Controller  with SecureSocial {
     val AnvandareForm = Form(
       mapping(
         "name" -> nonEmptyText,
-        "quality" -> list(text),
         "aboutmeheadline" -> text,
         "aboutme" -> text,
         "county" -> text,
@@ -324,7 +323,6 @@ if(userTags != null) {
   // File with stored values
   val eData : EnvData = new EnvData(
     theUser.profileLinkName,
-  List("", ""),
     theUser.aboutMeHeadline,
     theUser.aboutMe,
     locationId,         // county
@@ -335,7 +333,7 @@ if(userTags != null) {
   )
 
   val nyForm =  AnvandareForm.fill(eData)
-  Ok(views.html.profile.skapa(nyForm, retTagList, typ, optionsLocationAreas = getCounties))
+  Ok(views.html.profile.skapa(nyForm, optionsLocationAreas = getCounties))
 
 
 }
@@ -466,6 +464,8 @@ if(userTags != null) {
   }
 
 
+
+
 // Save profile
 def editSubmit = SecuredAction { implicit request =>
 
@@ -495,17 +495,7 @@ def editSubmit = SecuredAction { implicit request =>
 
       AnvandareForm.bindFromRequest.fold(
         errors => {
-          if(errors.hasErrors) {
-            println("1234 Fel data!")
-
-            println("1234 Fel lista: "  + errors.toString)
-
-            Ok("så fel det kan bli")
-          }
-
-          // Felaktigt ifyllt formulär
-
-          Ok("Det blir fel")
+          BadRequest(views.html.profile.skapa(errors, optionsLocationAreas = getCounties))
 
         },
         reqUserProfile => {
@@ -526,9 +516,9 @@ def editSubmit = SecuredAction { implicit request =>
 
 
 
-        })
 
-        var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+
+     var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
      theUser.aboutMeHeadline      = aboutMeHeadlineText
      theUser.aboutMe              = aboutMeText
@@ -575,15 +565,10 @@ def editSubmit = SecuredAction { implicit request =>
       }
     }
 
-
-
-
-  // save the new UserProfiel
-
-      println("#########################################################save profile ##########################")
       userProfileService.saveUserProfile(theUser)
 
      Redirect(routes.UserProfileController.edit())
+  })
 }
 
 

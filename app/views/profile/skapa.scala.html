@@ -1,6 +1,4 @@
 @(EnvDataForm: Form[controllers.EnvData],
-        element: List[Type],
-        klass: Types,
         optionsLocationAreas: Option[Seq[(String,String)]] = None)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
 
 @main(Messages("profile.title")){
@@ -98,12 +96,7 @@
 
                     <div class="panel panel-default">
                     <div class="panel-heading">@Messages("profile.create.header.food")</div>
-                    <div class="panel-body">
-                        <label>@Messages("profile.create.form.tagwords")</label><br>
-                        @for(t <- element) {
-                          @t.name
-                        }
-                    </div>
+
                 </div>
 
                 <input class="btn btn-primary" type="submit" value="@Messages("profile.create.save")">

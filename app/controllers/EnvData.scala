@@ -2,7 +2,6 @@ package controllers
 
 case class EnvData(
         name            : String,
-        quality         : List[String],
         aboutmeheadline : String,
         aboutme         : String,
         county          : String,
