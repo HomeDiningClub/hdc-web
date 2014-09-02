@@ -577,6 +577,47 @@ input[type="reset"]:hover
   background-color: @hdc-green;
 }
 
+// Header - Beta banner
+.ribbon {
+  border-top:2px solid white;
+  border-bottom:2px solid white;
+  background-color: @hdc-red;
+  background-image: linear-gradient(to bottom, @hdc-red 0px, lighten(@hdc-red, 10%) 100%);
+  overflow: hidden;
+  white-space: nowrap;
+  /* top left corner */
+  position: absolute;
+  left: -35px;
+  top: 8px;
+  /* 45 deg ccw rotation */
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  /* shadow */
+  -webkit-box-shadow: 0 0 7px #888;
+  -moz-box-shadow: 0 0 7px #888;
+  box-shadow: 0 0 7px #888;
+  z-index: 999;
+}
+.ribbon:hover {
+  background-color: lighten(@hdc-red, 5%);
+  background-image: linear-gradient(to bottom, lighten(@hdc-red, 5%) 0px, lighten(@hdc-red, 10%) 100%);
+
+}
+.ribbon a {
+  display: block;
+  font-weight:bold;
+  color: #fff;
+  border: 1px solid lighter(@hdc-red, 20%);
+  margin: 1px 0;
+  padding: 10px 50px;
+  text-align: center;
+  text-decoration: none;
+  /* shadow */
+  text-shadow: 0 0 5px #444;
+}
 
 
 // Footer
@@ -606,6 +647,8 @@ input[type="reset"]:hover
   padding-left: 0;
   list-style: none;
 }
+
+
 
 // Main content
 .maincontent-container
@@ -1109,6 +1152,7 @@ input[type="reset"]:hover
   {
     display:block;
   }
+
 }
 /* Small devices (tablets, 768px and down) */
 @media screen and (max-width: 768px) {
@@ -1192,6 +1236,18 @@ input[type="reset"]:hover
     margin-left: auto;
     margin-right: auto;
     width:150px;
+  }
+  .ribbon
+  {
+    left:15px;
+    top:46px;
+    transform: none;
+  }
+  .ribbon a
+  {
+    font-size:12px;
+    padding: 0px 5px 0px 5px;
+
   }
 }
 /* XX-Small devices (tablets, 480px and below) */

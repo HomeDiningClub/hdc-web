@@ -1,6 +1,6 @@
 @(listOfTags: Option[List[models.profile.TagWord]])
 
-@if(listOfTags.nonEmpty) {
+@if(!listOfTags.isEmpty) {
     <hr>
     <div class="tag-header">@Messages("profile.tags.header")</div>
     @for(tag <- listOfTags.get){

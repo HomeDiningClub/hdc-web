@@ -1,6 +1,9 @@
 @(menuItems: Option[List[models.viewmodels.MenuItem]], quickLinkTitle: String = "", quicklinkItems: Seq[(String, String, Call, String, String)])
 <header>
     <div class="navbar-fixed-top header-navbar">
+        <div class="ribbon">
+            <a href="@routes.ContentPageController.viewContentByName(contentName = "beta").url">@Messages("header.ribbon.text")</a>
+        </div>
         <div class="container">
             <div class="row no-gutter header-container">
                 <div class="col-xs-12">

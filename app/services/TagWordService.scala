@@ -59,7 +59,7 @@ class TagWordService {
   @Transactional(readOnly = true)
   def listByGroupOption(groupName: String): Option[List[TagWord]] = {
     tagWordRepository.findByTagGroupName(groupName).asScala.toList match {
-      case null => None
+      case null | Nil  => None
       case tags => Some(tags)
     }
   }
@@ -67,7 +67,7 @@ class TagWordService {
   @Transactional(readOnly = true)
   def findByProfileAndGroup(profile: UserProfile, groupName: String): Option[List[TagWord]] = {
     profile.getTags.asScala.filter(tag => tag.tagWord.tagGroupName.equalsIgnoreCase(groupName)).toList match {
-      case null => None
+      case null | Nil => None
       case tags => Some(tags.map {
         tup: TaggedUserProfile =>
           tup.tagWord
