@@ -69,7 +69,7 @@ class UserProfileController  extends Controller  with SecureSocial {
 
     val AnvandareForm = Form(
       mapping(
-        "name" -> text(minLength = 5, maxLength = 20),
+        "name" -> text.verifying("Inte ett unikt användarnamn", txt=>isNew(txt)),
         "aboutmeheadline" -> text,
         "aboutme" -> text,
         "county" -> text,
@@ -103,6 +103,34 @@ class UserProfileController  extends Controller  with SecureSocial {
     ("Omdömen", "Omdömen", REVIEWS, ""),
     ("Inbox", "Inbox", INBOX, "")
   )
+
+
+ def isNew(profileName : String) : Boolean = {
+
+   //var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+
+   var profileWithLinkName = userProfileService.findByprofileLinkName(profileName, false)
+
+   var profileNameExists =
+   profileWithLinkName match {
+     case None =>{
+       println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+       println("No mtach")
+       return true
+     }
+     case Some(up)=> {
+       println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+       println("ID : " + up.userIdentity)
+       println("profileLinkName : " + up.profileLinkName)
+       return false
+     }
+
+   }
+
+   false
+   //profileName.startsWith("test")
+ }
+
 
   private def isThisMyProfile(profile: UserProfile)(implicit request: RequestHeader): Boolean = {
     utils.Helpers.getUserFromRequest match {
@@ -245,6 +273,7 @@ def edit = SecuredAction { implicit request =>
 
 
   // Fetch UserProfile from UserCredentials
+  // c
   var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
   var countiesList = getCounties
@@ -512,6 +541,9 @@ def editSubmit = SecuredAction { implicit request =>
           phoneNumber           = reqUserProfile.phoneNumber
           countyId              = reqUserProfile.county
           println("????? county = " + reqUserProfile.county)
+
+
+
 
 
 
