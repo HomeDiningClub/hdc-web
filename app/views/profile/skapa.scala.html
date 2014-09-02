@@ -14,6 +14,17 @@
 
                 @shared.flashmsg(flash)
 
+                @if(EnvDataForm.hasGlobalErrors) {
+                    <div class="alert alert-error">
+                        <a class="close" data-dismiss="alert">×</a>
+                        Profilen innehåller felaktig värden
+                        @for(v <-EnvDataForm.globalErrors){
+                        <br> @v.message
+                        }
+                    </div>
+                }
+
+
                 @helper.form(action = routes.UserProfileController.editSubmit()) {
                 <div class="panel panel-default">
                     <div class="panel-heading">@Messages("profile.create.header.user")</div>
@@ -30,6 +41,15 @@
                                     '_help -> (Html(Messages("profile.create.form.profilename.help")),
                                     '_error -> EnvDataForm.error("name")
                                     )
+                                )
+
+                                @helper.inputHidden(EnvDataForm("name2"),
+                                    'id -> "name",
+                                    '_showErrors -> true,
+                                    '_label -> Messages("profile.create.form.profilename"),
+                                    '_help -> (Html(Messages("profile.create.form.profilename.help")),
+                                            '_error -> EnvDataForm.error("name")
+                                            )
                                 )
                             </li>
 

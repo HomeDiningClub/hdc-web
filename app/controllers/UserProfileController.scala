@@ -65,11 +65,12 @@ class UserProfileController  extends Controller  with SecureSocial {
   )
 
 
-
+// text.verifying("Inte ett unikt användarnamn", txt=>isNew(txt))
 
     val AnvandareForm = Form(
       mapping(
-        "name" -> text.verifying("Inte ett unikt användarnamn", txt=>isNew(txt)),
+        "name" -> text,
+        "name2" -> text,
         "aboutmeheadline" -> text,
         "aboutme" -> text,
         "county" -> text,
@@ -79,6 +80,7 @@ class UserProfileController  extends Controller  with SecureSocial {
         "phoneNumber" -> text
       )
       (EnvData.apply) (EnvData.unapply)
+        verifying ("Profilnamn måste vara unikt", f => isUniqueProfileName(f.name, f.name2))
     )
 
   val tagForm = Form(
@@ -105,11 +107,16 @@ class UserProfileController  extends Controller  with SecureSocial {
   )
 
 
- def isNew(profileName : String) : Boolean = {
+ def isUniqueProfileName(profileName : String, storedProfileName : String) : Boolean = {
 
    //var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
    var profileWithLinkName = userProfileService.findByprofileLinkName(profileName, false)
+
+   // Får endast innehålla små bokstäver mellan a till z
+   if (!profileName.matches("[a-z]+")) return false
+
+
 
    var profileNameExists =
    profileWithLinkName match {
@@ -122,6 +129,14 @@ class UserProfileController  extends Controller  with SecureSocial {
        println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
        println("ID : " + up.userIdentity)
        println("profileLinkName : " + up.profileLinkName)
+
+       if(profileName == storedProfileName) {
+         return true
+       }
+
+      // params.flash();
+      // flash.error("Please correct the error below!");
+
        return false
      }
 
@@ -351,6 +366,7 @@ if(userTags != null) {
 
   // File with stored values
   val eData : EnvData = new EnvData(
+    theUser.profileLinkName,
     theUser.profileLinkName,
     theUser.aboutMeHeadline,
     theUser.aboutMe,

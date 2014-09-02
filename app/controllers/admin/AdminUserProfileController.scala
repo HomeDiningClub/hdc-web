@@ -44,6 +44,7 @@ class AdminUserProfileController  extends Controller with SecureSocial {
   val AnvandareForm = Form(
     mapping(
       "name" -> text,
+      "name2" -> text,
     //  "quality" -> list(text),
       "aboutmeheadline" -> text,
       "aboutme" -> text,
