@@ -9,6 +9,11 @@ public final class RelationshipTypesJava {
         public static final String Constant = "REACHABLE_BY_ROCKET";
     }
 
+    public final static class MAIN_IMAGE implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "MAIN_IMAGE";
+    }
+
     public final static class RELATED_PAGE implements RelationshipType {
         public String name() { return Constant; }
         public static final String Constant = "RELATED_PAGE";
@@ -24,9 +29,9 @@ public final class RelationshipTypesJava {
         public static final String Constant = "OWNER";
     }
 
-    public final static class USED_BY implements RelationshipType {
+    public final static class IMAGES implements RelationshipType {
         public String name() { return Constant; }
-        public static final String Constant = "USED_BY";
+        public static final String Constant = "IMAGES";
     }
 
     public final static class RATED implements RelationshipType {

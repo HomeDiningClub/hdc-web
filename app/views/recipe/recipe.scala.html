@@ -1,6 +1,7 @@
 @(recipe: models.Recipe,
         recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
         isThisMyRecipe: Boolean = false)(implicit request: RequestHeader)
+@import scala.collection.JavaConverters._
 
 @main(Messages("recipe.title")) {
 
@@ -26,25 +27,42 @@
                     </div>
                     <div class="col-xs-12 col-md-8 host-image-gallery">
 
-                        <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide">
-                                <!-- Slider carousel items -->
-                            <div class="carousel-inner">
-                                <div class="active item" data-slide-number="0">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</div>
-                            </div>
-                                <!-- Carousel nav controls -->
-                            <a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                            <a class="carousel-control right hidden-md hidden-lg" href="#host-main-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
-                        </div>
-                            <!-- Thumbnails, don't show responsive -->
-                        <ul class="host-main-carousel-thumbs list-inline hidden-xs hidden-sm">
-                            <li class="col-md-3"><a id="carousel-selector-0" class="selected">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</a></li>
-                        </ul>
+                        @recipe.getMainImage match {
+                            case null => {  }
+                            case image: models.files.ContentFile => {
+                                @defining(recipe.getRecipeImages.asScala) { recipeImages =>
+
+                                    <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide">
+                                            <!-- Slider carousel items -->
+                                        <div class="carousel-inner">
+                                            <div class="active item" data-slide-number="0">@shared.img(image.getTransformByName("normal").getUrl, cssClass = "img-responsive")</div>
+                                            @if(recipeImages.nonEmpty) {
+                                                @for((recipeImage,i) <- recipeImages.zipWithIndex) {
+                                                    <div class="item" data-slide-number="@(i+1)">@shared.img(recipeImage.getTransformByName("normal").getUrl, cssClass = "img-responsive")</div>
+                                                }
+                                            }
+                                        </div>
+                                            <!-- Carousel nav controls -->
+                                        <a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                                        <a class="carousel-control right hidden-md hidden-lg" href="#host-main-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                                    </div>
+
+                                    @if(recipeImages.nonEmpty) {
+                                            <!-- Thumbnails, don't show responsive -->
+                                        <ul class="host-main-carousel-thumbs list-inline hidden-xs hidden-sm">
+                                            <li class="col-md-3"><a id="carousel-selector-0">@shared.img(image.getTransformByName("thumbnail").getUrl, cssClass = "img-responsive")</a></li>
+                                            @if(recipeImages.nonEmpty) {
+                                                @for((recipeImage,i) <- recipeImages.zipWithIndex) {
+                                                    <li class="col-md-3"><a id="carousel-selector-@(i+1)">@shared.img(recipeImage.getTransformByName("thumbnail").getUrl, cssClass = "img-responsive")</a></li>
+                                                }
+                                            }
+                                        </ul>
+                                    }
+
+                                }
+                            }
+                        }
+
 
                         <div class="col-xs-12 margin-top">
                             @shared.hdcShare(url = request.uri)

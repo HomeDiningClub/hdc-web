@@ -50,7 +50,7 @@ class ContentFileService {
   def getFileByKey(objectId: UUID): Option[ContentFile] = {
     val results = contentFileRepository.findByobjectId(objectId) match {
       case null => None
-      case unit => Some(populateBucketUrl(unit))
+      case unit => Some(unit)
     }
     results
   }
@@ -59,7 +59,7 @@ class ContentFileService {
   // Get all files
   def getAllFiles: List[ContentFile] = {
     val dbRes = IteratorUtil.asCollection(contentFileRepository.findAll()).asScala
-    val parsedList: List[ContentFile] = populateBucketUrls(dbRes)
+    val parsedList: List[ContentFile] = dbRes.toList
     parsedList
   }
 
@@ -67,7 +67,7 @@ class ContentFileService {
   def getAllImages: List[ContentFile] = {
     val results = contentFileRepository.findBybaseContentType(FileTypeEnums.IMAGE.toString).asScala match {
       case null => Nil
-      case unit => populateBucketUrls(unit)
+      case unit => unit.toList
     }
     results
   }
@@ -76,7 +76,7 @@ class ContentFileService {
   def getAllVideos: List[ContentFile] = {
     val results = contentFileRepository.findBybaseContentType(FileTypeEnums.VIDEO.toString).asScala match {
       case null => Nil
-      case unit => populateBucketUrls(unit)
+      case unit => unit.toList
     }
     results
   }
@@ -94,40 +94,55 @@ class ContentFileService {
     None
   }
 
-
   // This method populates all urls for base image and all it's transforms
-  private def populateBucketUrls(filesToParse: Iterable[ContentFile]): List[ContentFile] = {
-    var parsedList: ListBuffer[ContentFile] = ListBuffer()
+//  private def populateBucketUrls(filesToParse: Iterable[ContentFile]): List[ContentFile] = {
+//    var parsedList: ListBuffer[ContentFile] = ListBuffer()
+//
+//    if(filesToParse != Nil || filesToParse != null)
+//    {
+//      for (file <- filesToParse) {
+//        val basePath = getFilePath(file)
+//        val fileExt = getFileExtension(file)
+//
+//        // Set the original url
+//        file.basePath = basePath + fileExt
+//        file.url = bucketRepository.S3Bucket.url(file.basePath)
+//        for (fileTransformation <- file.fileTransformations.asScala)
+//        {
+//          val variationPath: String = getTransformationPath(fileTransformation)
+//
+//          // Set the transformation url
+//          fileTransformation.basePath = basePath + variationPath + getFileExtension(fileTransformation)
+//          fileTransformation.url = bucketRepository.S3Bucket.url(fileTransformation.basePath)
+//        }
+//        parsedList += file
+//      }
+//    }
+//    parsedList.result()
+//  }
 
-    if(filesToParse != Nil || filesToParse != null)
-    {
-      for (file <- filesToParse) {
-        val basePath = getFilePath(file)
-        val fileExt = getFileExtension(file)
-
-        // Set the original url
-        file.basePath = basePath + fileExt
-        file.url = bucketRepository.S3Bucket.url(file.basePath)
-        for (fileTransformation <- file.fileTransformations.asScala)
-        {
-          val variationPath: String = getTransformationPath(fileTransformation)
-
-          // Set the transformation url
-          fileTransformation.basePath = basePath + variationPath + getFileExtension(fileTransformation)
-          fileTransformation.url = bucketRepository.S3Bucket.url(fileTransformation.basePath)
-        }
-        parsedList += file
-      }
-    }
-    parsedList.result()
-  }
 
   // Wrapper method for one item
-  private def populateBucketUrl(fileToParse: ContentFile): ContentFile = {
-    val fileList: List[ContentFile] = List{fileToParse}
-    val returnList = populateBucketUrls(fileList)
-    returnList.head
+  //  def populateBucketUrl(fileToParse: ContentFile): ContentFile = {
+  //    val fileList: List[ContentFile] = List{fileToParse}
+  //    val returnList = populateBucketUrls(fileList)
+  //    returnList.head
+  //  }
+
+
+
+  def getBucketUrl(file: ContentFile): String = {
+    val fileExt = getFileExtension(file)
+    bucketRepository.S3Bucket.url(file.getBasePath + fileExt)
   }
+
+  def getBucketUrl(fileTransformation: FileTransformation): String = {
+    val variationPath = getTransformationPath(fileTransformation)
+    bucketRepository.S3Bucket.url(fileTransformation.getOwnerFile.getBasePath + variationPath + getFileExtension(fileTransformation))
+  }
+
+
+
 
 
   // Uploads a file
@@ -229,7 +244,7 @@ class ContentFileService {
     // If Filename and File-Mime type match set the file ending, else abort upload
     if (!file.contentType.equals(fileExtensionMimeType)) {
       Logger.error("Error: File and file-extensions has an different mime-types, aborting.")
-      None
+      return None
     } else {
 
       // Parse file extension
@@ -265,10 +280,10 @@ class ContentFileService {
       .recover {
         case S3Exception(status, code, message, originalXml) =>
           Logger.error("Error: " + message)
-          None
+          return None
         case _ =>
           Logger.error("Error: Cannot upload file.")
-          None
+          return None
       }
 
       val uploadResult = Await.result(futureResult, 20 seconds)
@@ -279,12 +294,12 @@ class ContentFileService {
         // But only on the image objects
         if(!fileTransformations.isEmpty && newFile.baseContentType.equalsIgnoreCase(FileTypeEnums.IMAGE.toString)){
           val editedFile: ContentFile = uploadAndCreateTransformations(uploadResult.get,file.ref.file,fileTransformations)
-          Some(editedFile)
+          return Some(editedFile)
         }
 
-        Some(newFile)
+        return Some(newFile)
       }
-      None
+      return None
     }
   }
 
@@ -320,7 +335,7 @@ class ContentFileService {
 
         // Build path to new file transformation
         // Set the extension - All transforms should be saved as PNG
-        transform.extension = "png"
+        transform.extension = "jpg"
         val fileUrl = getFilePath(contentFile) + getTransformationPath(transform) + getFileExtension(transform)
 
         // Create a receiving file
@@ -330,11 +345,11 @@ class ContentFileService {
         // We can add more transforms:
         // https://github.com/sksamuel/scrimage
         transform.transformationType match {
-          case FileTransformationConstants.FIT => Image(fileToUpload).fit(transform.width, transform.height, color = Color.White).write(transformedFile, Format.PNG)
-          case FileTransformationConstants.SCALE => Image(fileToUpload).scale(transform.scale).write(transformedFile, Format.PNG)
-          case FileTransformationConstants.BOUND => Image(fileToUpload).bound(transform.width, transform.height).write(transformedFile, Format.PNG)
-          case FileTransformationConstants.COVER => Image(fileToUpload).cover(transform.width, transform.height).write(transformedFile, Format.PNG)
-          case _ => Image(fileToUpload).cover(transform.width, transform.height).write(transformedFile, Format.PNG)
+          case FileTransformationConstants.FIT => Image(fileToUpload).fit(transform.width, transform.height, color = Color.White).writer(Format.JPEG).withCompression(50).write(transformedFile)
+          case FileTransformationConstants.SCALE => Image(fileToUpload).scale(transform.scale).writer(Format.JPEG).withCompression(50).write(transformedFile)
+          case FileTransformationConstants.BOUND => Image(fileToUpload).bound(transform.width, transform.height).writer(Format.JPEG).withCompression(50).write(transformedFile)
+          case FileTransformationConstants.COVER => Image(fileToUpload).cover(transform.width, transform.height).writer(Format.JPEG).withCompression(50).write(transformedFile)
+          case _ => Image(fileToUpload).cover(transform.width, transform.height).writer(Format.JPEG).withCompression(50).write(transformedFile)
         }
 
         // Move to immutable
@@ -379,7 +394,7 @@ class ContentFileService {
 
   // Returns file path using a file entry
   // Returns an String with full path
-  private def getFilePath(file: ContentFile): String = {
+  def getFilePath(file: ContentFile): String = {
 
     var retString: String = ""
 
@@ -420,7 +435,7 @@ class ContentFileService {
   // Returns a correct partial path from a FileTransform
   // If empty, just returns an empty string
   // Use this in combination with getFilePath & getFileExtension
-  private def getTransformationPath(fileTransformation: FileTransformation): String = {
+  def getTransformationPath(fileTransformation: FileTransformation): String = {
     "-" + fileTransformation.name.toLowerCase + "-" + fileTransformation.width + "-" + fileTransformation.height
   }
 
@@ -441,17 +456,17 @@ class ContentFileService {
     // Remove file if found in DB
     // Also remove all its transforms
     val future: Future[Unit] = Future {
-      bucketRepository.S3Bucket.remove(fileToDelete.get.basePath)
+      bucketRepository.S3Bucket.remove(fileToDelete.get.getBasePath)
       if(!fileTransformations.isEmpty) {
         for (transform <- fileTransformations) {
-          bucketRepository.S3Bucket.remove(transform.basePath)
+          bucketRepository.S3Bucket.remove(transform.getBasePath)
         }
       }
     }
 
     val results: Future[Boolean] = future.map {
       unitResponse =>
-        Logger.debug("Deleted file: " + fileToDelete.get.basePath)
+        Logger.debug("Deleted file: " + fileToDelete.get.getBasePath)
         if(!fileTransformations.isEmpty) {
           for (transform <- fileTransformations) {
             deleteTransformation(transform)

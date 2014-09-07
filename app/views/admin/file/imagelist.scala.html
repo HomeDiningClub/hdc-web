@@ -19,18 +19,18 @@
                 <td>@image.createdDate</td>
                 <td>
                 @Option(image.getTransformByName("thumbnail")) match {
-                    case Some(transform) => { <img src="@transform.url"> }
+                    case Some(transform) => { <img src="@transform.getUrl"> }
                     case None => { }
                 }
                 </td>
                 <td>@image.name</td>
                 <td>@image.owner.fullName<br>@image.owner.emailAddress</td>
-                <td><a href="@image.url" target="_blank">Open original</a></td>
+                <td><a href="@image.getUrl" target="_blank">Open original</a></td>
                 <td>
                 @if(!image.fileTransformations.isEmpty) {
                     <ul>
                         @for(transformedImage <- image.fileTransformations){
-                            <li><a href="@transformedImage.url" target="_blank">@transformedImage.name</a> (@transformedImage.transformationType)</li>
+                            <li><a href="@transformedImage.getUrl" target="_blank">@transformedImage.name</a> (@transformedImage.transformationType)</li>
                         }
                     </ul>
                 }

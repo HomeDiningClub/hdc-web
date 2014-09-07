@@ -105,8 +105,9 @@ class RecipePageController extends Controller with SecureSocial {
   }
 
   def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
+    val editingRecipe = recipeService.findById(objectId)
 
-    recipeService.findById(objectId) match {
+    editingRecipe match {
       case None =>
         val errorMsg = "Wrong ID, cannot edit, Page cannot be found."
         Logger.debug(errorMsg)
@@ -119,7 +120,7 @@ class RecipePageController extends Controller with SecureSocial {
           Some(item.getMainBody)
         )
 
-        Ok(views.html.recipe.addOrEdit(recForm.fill(form)))
+        Ok(views.html.recipe.addOrEdit(recForm.fill(form),editingRecipe))
     }
   }
 
@@ -149,22 +150,41 @@ class RecipePageController extends Controller with SecureSocial {
             Some(new Recipe(contentData.name))
         }
 
-        if(newRec.isEmpty){
-            Logger.debug("Error saving Recipe: User used a non-existing Recipe objectId")
-            val errorMessage = Messages("recipe.add.error")
-            BadRequest(views.html.recipe.addOrEdit(recForm.fill(contentData))).flashing(FlashMsgConstants.Error -> errorMessage)
+        if (newRec.isEmpty) {
+          Logger.debug("Error saving Recipe: User used a non-existing Recipe objectId")
+          val errorMessage = Messages("recipe.add.error")
+          BadRequest(views.html.recipe.addOrEdit(recForm.fill(contentData))).flashing(FlashMsgConstants.Error -> errorMessage)
         }
 
-        request.body.file("recipemainimage").map {
+        val uploadResult = request.body.file("recipemainimage").map {
           file =>
             val filePerm: MultipartFormData.FilePart[TemporaryFile] = file
-            val imageFile = fileService.uploadFile(filePerm, request.user.asInstanceOf[UserCredential].objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages)
+            val imageFile = fileService.uploadFile(filePerm, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages)
             imageFile match {
               case Some(item) =>
-                newRec.get.mainImage = item
-              case None => None
+                newRec.get.setAndRemoveMainImage(item)
+              case None =>
+                None
             }
         }
+
+
+        var recImagesCount = 1
+        while(recImagesCount < 5) {
+          request.body.file("recipeimage" + recImagesCount).map {
+            file =>
+              val filePerm: MultipartFormData.FilePart[TemporaryFile] = file
+              val imageFile = fileService.uploadFile(filePerm, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages)
+              imageFile match {
+                case Some(item) =>
+                  newRec.get.addRecipeImage(item)
+                case None =>
+                  None
+              }
+          }
+          recImagesCount = recImagesCount + 1
+        }
+
 
         newRec.get.setMainBody(contentData.mainBody.getOrElse(""))
         newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
@@ -179,11 +199,8 @@ class RecipePageController extends Controller with SecureSocial {
 
   }
 
-
-
-  // Edit - Delete content
+  // Edit - Delete
   def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
-
     val recipe: Option[Recipe] = recipeService.findById(objectId)
 
     if(recipe.isEmpty){
@@ -192,6 +209,7 @@ class RecipePageController extends Controller with SecureSocial {
     }
 
     val recipeLinkName = recipe.get.getLink
+    val recipeOwnerProfileName =  recipe.get.getOwnerProfile.profileLinkName
     val result: Boolean = recipeService.deleteById(recipe.get.objectId)
 
     result match {
@@ -200,7 +218,7 @@ class RecipePageController extends Controller with SecureSocial {
         Redirect(controllers.routes.UserProfileController.viewProfileByLoggedInUser()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("recipe.delete.error")
-        Redirect(controllers.routes.RecipePageController.viewRecipeByName(recipeLinkName)).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.routes.RecipePageController.viewRecipeByNameAndProfile(recipeOwnerProfileName,recipeLinkName)).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

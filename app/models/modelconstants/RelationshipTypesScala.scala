@@ -9,6 +9,11 @@ object RelationshipTypesScala {
      def name(): String = Constant
    }
 
+  object MAIN_IMAGE {
+    final val Constant = "MAIN_IMAGE"
+    def name(): String = Constant
+  }
+
   object RELATED_PAGE {
     final val Constant = "RELATED_PAGE"
     def name(): String = Constant
@@ -24,8 +29,8 @@ object RelationshipTypesScala {
      def name(): String = Constant
    }
 
-  object USED_BY {
-    final val Constant = "USED_BY"
+  object IMAGES {
+    final val Constant = "IMAGES"
     def name(): String = Constant
   }
 

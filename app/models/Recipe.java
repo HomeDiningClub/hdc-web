@@ -10,9 +10,12 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.data.neo4j.support.index.IndexType;
+import services.InstancedServices;
 import utils.Helpers;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 @NodeEntity
@@ -24,11 +27,12 @@ public class Recipe extends ContentBase {
     private String mainBody;
 
     @Fetch
-    public ContentFile mainImage;
+    @RelatedTo(type = RelationshipTypesJava.MAIN_IMAGE.Constant, direction = Direction.OUTGOING)
+    private ContentFile mainImage;
 
     @Fetch
-    @RelatedTo(type = RelationshipTypesJava.USED_BY.Constant, direction = Direction.OUTGOING)
-    public Set<ContentFile> recipeImages;
+    @RelatedTo(type = RelationshipTypesJava.IMAGES.Constant, direction = Direction.OUTGOING)
+    private Set<ContentFile> recipeImages;
 
     @RelatedTo(type = RelationshipTypesJava.HAS_RECIPES.Constant, direction = Direction.INCOMING)
     private UserProfile ownerProfile;
@@ -60,6 +64,66 @@ public class Recipe extends ContentBase {
         this.name = name;
         setLink(name);
     }
+
+    public Iterable<ContentFile> getRecipeImages() {
+        return this.recipeImages;
+    }
+
+    public ContentFile addRecipeImage(ContentFile recipeImage) {
+        if(this.recipeImages == null){
+            this.recipeImages = new HashSet<>();
+        }
+
+        this.recipeImages.add(recipeImage);
+        return recipeImage;
+    }
+
+    public ContentFile getMainImage() {
+        return this.mainImage;
+    }
+
+    public void setAndRemoveMainImage(ContentFile newMainImage) {
+
+        // Remove former image before adding a new one
+        deleteMainImage();
+
+        this.mainImage = newMainImage;
+    }
+
+    public void deleteMainImage() {
+        if(this.mainImage != null && this.mainImage.objectId != null)
+        {
+            InstancedServices.contentFileService().deleteFile(this.mainImage.objectId);
+            this.mainImage = null;
+        }
+    }
+
+    public void deleteRecipeImages() {
+        if(this.recipeImages != null && !this.recipeImages.isEmpty())
+        {
+            // Temporary store all
+            ArrayList<ContentFile> arr = new ArrayList<ContentFile>();
+            for (ContentFile tagProfile : this.recipeImages) {
+                arr.add(tagProfile);
+            }
+
+            // Remove all
+            Iterator<ContentFile> iteration = (Iterator<ContentFile>) arr.iterator();
+            while (iteration.hasNext()) {
+                deleteRecipeImage(iteration.next());
+            }
+        }
+    }
+
+    public void deleteRecipeImage(ContentFile recipeImage) {
+        if(this.recipeImages == null){
+            this.recipeImages = new HashSet<>();
+        }else {
+            InstancedServices.contentFileService().deleteFile(recipeImage.objectId);
+            this.recipeImages.remove(recipeImage);
+        }
+    }
+
 
     public String getName() {
         return this.name;

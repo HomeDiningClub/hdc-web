@@ -16,8 +16,7 @@ object ImagePreSets {
     List[FileTransformation](
       new FileTransformation("thumbnail", 150, 100, FileTransformationConstants.FIT),
       new FileTransformation("box", 275, 160, FileTransformationConstants.FIT),
-      new FileTransformation("normal", 460, 305, FileTransformationConstants.FIT),
-      new FileTransformation("big", 800, 600, FileTransformationConstants.FIT)
+      new FileTransformation("normal", 460, 305, FileTransformationConstants.FIT)
     )
   }
 

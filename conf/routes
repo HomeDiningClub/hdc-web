@@ -50,7 +50,7 @@ GET         /prodata/skapa                                       @controllers.Us
 
 # Recipe
 GET         /profile/view/:profileName/recipe/:recipeName        @controllers.RecipePageController.viewRecipeByNameAndProfile(profileName: String, recipeName: String)
-GET         /recipe/view/:recipeName                             @controllers.RecipePageController.viewRecipeByName(recipeName: String)
+#GET         /recipe/view/:recipeName                             @controllers.RecipePageController.viewRecipeByName(recipeName: String)
 GET         /recipe/add                                          @controllers.RecipePageController.add
 POST        /recipe/add                                          @controllers.RecipePageController.addSubmit
 GET         /recipe/edit/:objectId                               @controllers.RecipePageController.edit(objectId: java.util.UUID)

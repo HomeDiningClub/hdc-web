@@ -1,4 +1,5 @@
-@(recipeForm: Form[models.viewmodels.RecipeForm])(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
+@(recipeForm: Form[models.viewmodels.RecipeForm], editingRecipe: Option[models.Recipe] = None)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
+@import helper.twitterBootstrap._
 
 @main(Messages("admin.title")){
 
@@ -15,16 +16,25 @@
                                 @helper.inputText(recipeForm("recipename"), '_label -> Messages("recipe.edit.add.name"), '_help -> Messages("admin.recipe.add.name.validation"))
                                 @helper.textarea(recipeForm("recipepreamble"), '_label -> Messages("recipe.edit.add.preamble"), '_help -> Messages("recipe.edit.add.preamble.validation"), '_class -> "recipe-addedit-form-preamble")
                                 @helper.inputFile(recipeForm("recipemainimage"), '_label -> Messages("recipe.edit.add.main-image"))
-                                @helper.inputFile(recipeForm("recipeimage01"), '_label -> Messages("recipe.edit.add.image"))
-                                @helper.inputFile(recipeForm("recipeimage02"), '_label -> Messages("recipe.edit.add.image"))
-                                @helper.inputFile(recipeForm("recipeimage03"), '_label -> Messages("recipe.edit.add.image"))
-                                @helper.inputFile(recipeForm("recipeimage04"), '_label -> Messages("recipe.edit.add.image"))
+                                @if(editingRecipe.isDefined && editingRecipe.get.getMainImage != null) {
+                                    <div class="alert alert-info">@editingRecipe.get.getMainImage.name - @Messages("recipe.edit.add.main-image.existing")</div>
+                                }
+                                @helper.inputFile(recipeForm("recipeimage1"), '_label -> Messages("recipe.edit.add.image", "1"))
+                                @helper.inputFile(recipeForm("recipeimage2"), '_label -> Messages("recipe.edit.add.image", "2"))
+                                @helper.inputFile(recipeForm("recipeimage3"), '_label -> Messages("recipe.edit.add.image", "3"))
+                                @helper.inputFile(recipeForm("recipeimage4"), '_label -> Messages("recipe.edit.add.image", "4"))
                                 @helper.textarea(recipeForm("recipebody"), '_label -> Messages("recipe.edit.add.body"), 'class -> "richtextrecipe")
                                 @helper.inputHidden(recipeForm("receipeid"))
                             </fieldset>
                             <div class="form-actions">
                                 <button class="btn btn-primary" type="submit">@Messages("recipe.edit.save")</button>
-                                <a class="btn" href="@controllers.routes.UserProfileController.viewProfileByLoggedInUser()">@Messages("recipe.edit.abort")</a>
+                                @defining(if(editingRecipe.isDefined){
+                                    controllers.routes.RecipePageController.viewRecipeByNameAndProfile(editingRecipe.get.getOwnerProfile.profileLinkName,editingRecipe.get.getLink).url
+                                }else{
+                                    controllers.routes.UserProfileController.viewProfileByLoggedInUser().url
+                                }) { abortLink =>
+                                    <a class="btn" href="@abortLink">@Messages("recipe.edit.abort")</a>
+                                }
                             </div>
                         }
                     </div>

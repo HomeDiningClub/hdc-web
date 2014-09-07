@@ -74,10 +74,12 @@
                                         </div>
                                     </div>
                                 }
-                                @if(recipeBoxes.nonEmpty){
-                                    @recipe.recipeBox(recipeBoxes.get)
-                                }
                                 </div>
+                                @if(recipeBoxes.nonEmpty){
+                                    <div class="row">
+                                        @recipe.recipeBox(recipeBoxes.get)
+                                    </div>
+                                }
                             </div>
                             <div class="tab-pane tab-hdc fade" id="@tab2">
                                 Tab2

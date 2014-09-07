@@ -95,7 +95,7 @@ class AdminRecipeController extends Controller with SecureSocial {
             val imageFile = fileService.uploadFile(filePerm, request.user.asInstanceOf[UserCredential].objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages)
             imageFile match {
               case Some(item) =>
-                newRec.get.mainImage = item
+                newRec.get.setAndRemoveMainImage(item)
               case None => None
             }
         }
@@ -116,8 +116,8 @@ class AdminRecipeController extends Controller with SecureSocial {
 
   // Edit - Edit content
   def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-
-    recipeService.findById(objectId) match {
+    val editingRecipe = recipeService.findById(objectId)
+    editingRecipe match {
       case None =>
         Ok(views.html.admin.recipe.index())
       case Some(item) =>
@@ -128,7 +128,7 @@ class AdminRecipeController extends Controller with SecureSocial {
           Some(item.getMainBody)
         )
 
-        Ok(views.html.admin.recipe.add(contentForm.fill(form)))
+        Ok(views.html.admin.recipe.add(contentForm.fill(form),editingRecipe))
     }
   }
 

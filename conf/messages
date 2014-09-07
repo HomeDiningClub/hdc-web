@@ -29,7 +29,7 @@ header.login-form.forgot-password=Har du glömt ditt lösenord?
 header.login-form.submit=Logga in
 header.logo.alt=Home dining club logotyp
 header.mobile-menu.title=Visa meny
-header.ribbon.text=BETA
+header.ribbon.text=BETA 1.0
 
 # Footer
 footer.text=© Home Dining Club AB
@@ -124,8 +124,8 @@ contact.body2=body
 
 
 # Like
-like.text=Jag tycker om
-
+like.text=Gilla
+like.text.nr-of-likes={0}
 
 # Profile
 profile.title=Profil
@@ -168,7 +168,8 @@ recipe.edit.add.name=Namn
 recipe.edit.add.preamble=Inledningstext
 recipe.edit.add.preamble.validation=(Max längd 255)
 recipe.edit.add.main-image=Huvudbild
-recipe.edit.add.image=Bild
+recipe.edit.add.main-image.existing=(Välj en ny bild för att ersätta existerande bild)
+recipe.edit.add.image=Bild {0}
 recipe.edit.add.body=Huvudtext
 recipe.edit.add.name.validation=(Tvingande, max längd 255)
 recipe.add.success=Recept sparat: {0}

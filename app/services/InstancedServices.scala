@@ -22,6 +22,9 @@ object InstancedServices {
 
   @Autowired
   var userRoleService: UserRoleService = _
+
+  @Autowired
+  var contentFileService: ContentFileService = _
 }
 
 // Just here for default constructor, don't add code in this class!

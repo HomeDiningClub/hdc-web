@@ -8,6 +8,6 @@ case class RecipeBox (
     linkToRecipe: String,
     name: String,
     preAmble: Option[String],
-    mainImage: String,
+    mainImage: Option[String],
     recipeRating: Int
 )

@@ -1,12 +1,11 @@
 @(boxes: List[models.viewmodels.RecipeBox] = Nil)
 
 @if(!boxes.isEmpty) {
-    @for(box: models.viewmodels.RecipeBox <- boxes){
-
-        <div class="col-xs-6 col-sm-6 col-sm-offset-0 col-md-4 col-md-offset-0">
+    @for((box: models.viewmodels.RecipeBox,i) <- boxes.zipWithIndex){
+        <div class="col-xs-12 col-sm-6 col-sm-offset-0 col-md-4 col-md-offset-0 col-recipe-boxes">
             <a href="@box.linkToRecipe" class="link-recipe-panel">
-                <div class="thumbnail panel-recipe"> <!--style="background-image: url('@box.mainImage')"-->
-                    <img src="@box.mainImage" class="img-responsive">
+                <div class="thumbnail panel-recipe">
+                    @if(box.mainImage.nonEmpty){<img src="@box.mainImage" class="img-responsive">}
                     <div class="body">
                         <h2>@box.name</h2>
                         <div class="preamble">@box.preAmble</div>

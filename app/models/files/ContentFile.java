@@ -13,6 +13,8 @@ import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
+import services.InstancedServices;
+import services.InstancedServices$;
 
 @NodeEntity
 public class ContentFile extends AbstractEntity {
@@ -40,13 +42,29 @@ public class ContentFile extends AbstractEntity {
     public Set<FileTransformation> fileTransformations;
 
     @Transient
-    public String url;
+    private String url;
 
     @Transient
-    public String basePath;
+    private String basePath;
 
 
     // Getter Setters
+    public String getBasePath(){
+        return InstancedServices.contentFileService().getFilePath(this);
+    }
+//
+//    public void setBasePath(String basePath){
+//        this.basePath = basePath;
+//    }
+
+    public String getUrl(){
+        return InstancedServices.contentFileService().getBucketUrl(this);
+    }
+//
+//    public void setUrl(String url){
+//        this.url = url;
+//    }
+
     public FileTransformation getTransformByName(String name)
     {
         for (FileTransformation transform : this.fileTransformations) {
@@ -55,6 +73,7 @@ public class ContentFile extends AbstractEntity {
         }
         return null;
     }
+
 
     // Constructors
     public ContentFile(String name, String extension, String contentType, String baseContentType, UserCredential ownerUser, Set<FileTransformation> fileTransforms) {

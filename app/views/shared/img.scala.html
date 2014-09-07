@@ -2,4 +2,8 @@
 @import play.api.Play.resource
 @import play.api.Play.current
 
-@if(resource("public/" + path.stripPrefix("/")).isDefined) {<img src="@routes.Assets.at(path.stripPrefix("/"))" @if(!cssClass.isEmpty){ class="@cssClass" } border="0" @if(!title.isEmpty){ title="@title" } @if(!alt.isEmpty){ alt="@alt" }>}
+@if(resource("public/" + path.stripPrefix("/")).isDefined || path.toLowerCase.startsWith("http")) {
+    @defining(if(path.toLowerCase.startsWith("http")){ path }else{ routes.Assets.at(path.stripPrefix("/")) }){ parsedPath =>
+        <img src="@parsedPath" @if(!cssClass.isEmpty){ class="@cssClass" } border="0" @if(!title.isEmpty){ title="@title" } @if(!alt.isEmpty){ alt="@alt" }>
+    }
+}

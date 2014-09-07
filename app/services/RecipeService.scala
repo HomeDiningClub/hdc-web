@@ -94,7 +94,10 @@ class RecipeService {
                 Some(retBody)
               case content => Some(content)
             },
-            mainImage = routes.Assets.at("images/startpage/Box2.png").url, //mainImage = userProfile.mainImage.getTransformByName("box").url,
+            mainImage = recipeItem.getMainImage match {
+              case null => None
+              case item => Some(item.getTransformByName("box").getUrl)
+            },
             recipeRating = 0)
       }
     }
@@ -126,6 +129,8 @@ class RecipeService {
     this.findById(objectId) match {
       case None => false
       case Some(item) =>
+        item.deleteMainImage()
+        item.deleteRecipeImages()
         recipeRepository.delete(item)
         true
     }
