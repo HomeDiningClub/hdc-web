@@ -1,5 +1,6 @@
 package services
 
+import models.files.ContentFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
@@ -26,6 +27,16 @@ class RecipeService {
 //    recipeRepository.findBySchemaPropertyValue("name", name)
 //  }
 
+
+  @Transactional(readOnly = true)
+  def findByownerProfileProfileLinkNameAndRecipeLinkName(profileLinkNane: String, recipeLinkName: String): Option[Recipe] = {
+    recipeRepository.findByownerProfileProfileLinkNameAndRecipeLinkName(profileLinkNane, recipeLinkName) match {
+      case null => None
+      case profile =>
+        Some(profile)
+    }
+  }
+
   @Transactional(readOnly = true)
   def findByrecipeLinkName(recipeLinkName: String, fetchAll: Boolean = false): Option[Recipe] = {
 
@@ -35,7 +46,7 @@ class RecipeService {
       returnObject = recipeRepository.findByrecipeLinkName(recipeLinkName) match {
         case null => None
         case profile =>
-          // Lazy fetching
+          // Lazy fetching, this is crazy slow
           if(fetchAll){
             template.fetch(profile.getOwnerProfile)
           }
@@ -68,6 +79,16 @@ class RecipeService {
           fetchedList
         }
         recipes
+    }
+  }
+
+  // This code is ugly as hell, but replaces an earlier image
+  // Remodel to JSON-delete etc in the future
+  def getSortedRecipeImages(recipe: Recipe): Option[List[ContentFile]] = {
+    recipe.getRecipeImages.asScala match {
+      case Nil => None
+      case images =>
+        Some(images.toList.sortBy(file => file.graphId))
     }
   }
 

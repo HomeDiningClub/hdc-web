@@ -37,6 +37,7 @@ POST        /profile/spara                                       @controllers.Us
 #GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
 GET         /profile/showtag                                     @controllers.UserProfileController.showTags
 POST        /profile/savetags                                    @controllers.UserProfileController.saveTags
+GET         /profile/verify                                      @controllers.UserProfileController.verifyUserProfile
 
 # Profile - Inbox
 GET         /inbox/show                                          controllers.MessageController.show

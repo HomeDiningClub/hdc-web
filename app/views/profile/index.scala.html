@@ -13,7 +13,7 @@
     <div class="container host-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                @views.html.profile.profileHeader(userProfile.profileLinkName)
+                @views.html.profile.profileHeader(userProfile.profileLinkName, userProfile.getAvatarImage.getTransformByName("thumbnail").getUrl)
                 <div class="row">
                     <div class="col-xs-12 col-md-6 big-margin-top">
                         <section>
@@ -31,27 +31,29 @@
                     </div>
                     <div class="col-xs-12 col-md-6 big-margin-top host-image-gallery">
 
-                        <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide">
-                            <!-- Slider carousel items -->
-                            <div class="carousel-inner">
-                                <div class="active item" data-slide-number="0">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</div>
-                                <div class="item" data-slide-number="4">@shared.img("images/host/image5.jpg", cssClass = "img-responsive")</div>
+
+                    @userProfile.getMainImage match {
+                        case null => {}
+                        case image: models.files.ContentFile => {
+                            <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide">
+                                    <!-- Slider carousel items -->
+                                <div class="carousel-inner">
+                                    <div class="active item" data-slide-number="0">@shared.img(image.getTransformByName("normal").getUrl, cssClass = "img-responsive")</div>
+                                </div>
+                                @*<!-- Carousel nav controls -->*@
+                                @*<a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>*@
+                                @*<a class="carousel-control right hidden-md hidden-lg" href="#host-main-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>*@
                             </div>
-                            <!-- Carousel nav controls -->
-                            <a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                            <a class="carousel-control right hidden-md hidden-lg" href="#host-main-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
-                        </div>
-                        <!-- Thumbnails, don't show responsive -->
-                        <ul class="host-main-carousel-thumbs list-inline hidden-xs hidden-sm">
-                            <li class="col-md-3"><a id="carousel-selector-0" class="selected">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</a></li>
-                            <li class="col-md-3"><a id="carousel-selector-4">@shared.img("images/host/image5.jpg", cssClass = "img-responsive")</a></li>
-                        </ul>
+                            @*<!-- Thumbnails, don't show responsive -->*@
+                            @*<ul class="host-main-carousel-thumbs list-inline hidden-xs hidden-sm">*@
+                            @*<li class="col-md-3"><a id="carousel-selector-0" class="selected">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</a></li>*@
+                            @*<li class="col-md-3"><a id="carousel-selector-1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</a></li>*@
+                            @*<li class="col-md-3"><a id="carousel-selector-2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</a></li>*@
+                            @*<li class="col-md-3"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</a></li>*@
+                            @*<li class="col-md-3"><a id="carousel-selector-4">@shared.img("images/host/image5.jpg", cssClass = "img-responsive")</a></li>*@
+                            @*</ul>*@
+                        }
+                    }
                     </div>
                 </div>
                 <div class="row">

@@ -1,6 +1,7 @@
 package models;
 
 import models.base.AbstractEntity;
+import models.files.ContentFile;
 import models.modelconstants.RelationshipTypesJava;
 import models.profile.TagWord;
 import models.location.County;
@@ -10,6 +11,8 @@ import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
 import models.modelconstants.RelationshipTypesJava;
+import services.InstancedServices;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -65,8 +68,8 @@ public class UserProfile extends AbstractEntity {
     public String phoneNumber = "";
 
 
-    // profile look up name
-    //@Indexed(unique=true)
+    // Profile look up name
+    @Indexed(unique = true, indexType = IndexType.LABEL)
     public String profileLinkName = "";
 
 
@@ -83,9 +86,54 @@ public class UserProfile extends AbstractEntity {
     @RelatedTo(type = RelationshipTypesJava.HAS_RECIPES.Constant, direction = Direction.OUTGOING)
     private Set<Recipe> recipes;
 
-    @Fetch
     @RelatedTo(type = "IN_PROFILE", direction = Direction.INCOMING)
     private UserCredential owner;
+
+    @RelatedTo(type = RelationshipTypesJava.MAIN_IMAGE.Constant, direction = Direction.OUTGOING)
+    private ContentFile mainImage;
+
+    @RelatedTo(type = RelationshipTypesJava.AVATAR_IMAGE.Constant, direction = Direction.OUTGOING)
+    private ContentFile avatarImage;
+
+
+    @Fetch
+    public ContentFile getMainImage() {
+        return this.mainImage;
+    }
+
+    public void setAndRemoveMainImage(ContentFile newImage) {
+        // Remove former image before adding a new one
+        deleteMainImage();
+        this.mainImage = newImage;
+    }
+
+    public void deleteMainImage() {
+        if(this.mainImage != null && this.mainImage.objectId != null)
+        {
+            InstancedServices.contentFileService().deleteFile(this.mainImage.objectId);
+            this.mainImage = null;
+        }
+    }
+
+    @Fetch
+    public ContentFile getAvatarImage() {
+        return this.avatarImage;
+    }
+
+    public void setAndRemoveAvatarImage(ContentFile newImage) {
+        // Remove former image before adding a new one
+        deleteAvatarImage();
+        this.avatarImage = newImage;
+    }
+
+    public void deleteAvatarImage() {
+        if(this.avatarImage != null && this.avatarImage.objectId != null)
+        {
+            InstancedServices.contentFileService().deleteFile(this.avatarImage.objectId);
+            this.avatarImage = null;
+        }
+    }
+
 
     public TaggedUserProfile tag(TagWord tagWord) {
         TaggedUserProfile taggedProfile = new TaggedUserProfile(this, tagWord);
@@ -133,7 +181,9 @@ public class UserProfile extends AbstractEntity {
         }
     }
 
+    @Fetch
     public UserCredential getOwner() { return owner; }
+
     public Iterable<Recipe> getRecipes() { return recipes; }
     public Iterable<TaggedUserProfile> getTags() { return userProfileTag; }
     public Iterable<TaggedLocationUserProfile> getLocations() { return userLocationProfileTag; }
@@ -141,8 +191,6 @@ public class UserProfile extends AbstractEntity {
    // public boolean isHost = false;
     public String aboutMe = "";
     public String aboutMeHeadline = "";
-    public String profilePicture = "";
-    public String backgroundImage = "";
 
     // food pictures
 

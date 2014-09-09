@@ -1,5 +1,6 @@
 package controllers
 
+import models.files.ContentFile
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc._
 import securesocial.core.SecureSocial
@@ -37,35 +38,21 @@ class RecipePageController extends Controller with SecureSocial {
   def viewRecipeByNameAndProfile(profileName: String, recipeName: String) = UserAwareAction { implicit request =>
 
     // Try getting the recipe from name, if failure show 404
-    userProfileService.findByprofileLinkName(profileName, fetchAll = true) match {
-      case Some(profile) =>
-        recipeService.findByrecipeLinkName(recipeName, fetchAll = true) match {
-          case Some(recipe) =>
-
-            if (profile.getRecipes.iterator().asScala.contains(recipe)){
-              Ok(views.html.recipe.recipe(recipe, recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), isThisMyRecipe = isThisMyRecipe(recipe)))
-            }else{
-              val errMess = "The recipe is not one of the profiles recipes. Recipe: " + recipeName + " Profile: " + profileName
-              Logger.debug(errMess)
-              NotFound(errMess)
-            }
+    recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
+      case Some(recipe) =>
+             Ok(views.html.recipe.recipe(recipe, recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), isThisMyRecipe = isThisMyRecipe(recipe)))
           case None =>
-            val errMess = "Cannot find recipe using name:" + recipeName
+            val errMess = "Cannot find recipe using name:" + recipeName + " and profileName:" + profileName
             Logger.debug(errMess)
-            NotFound(errMess)
+            BadRequest(errMess)
         }
-      case None =>
-        val errMess = "Cannot find user profile using name:" + profileName
-        Logger.debug(errMess)
-        NotFound(errMess)
-    }
   }
 
 
   def viewRecipeByName(recipeName: String) = UserAwareAction { implicit request =>
 
     // Try getting the recipe from name, if failure show 404
-    recipeService.findByrecipeLinkName(recipeName, fetchAll = true) match {
+    recipeService.findByrecipeLinkName(recipeName, fetchAll = false) match {
       case Some(recipe) =>
         Redirect(controllers.routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.profileLinkName,recipe.getLink))
       case None =>
@@ -120,9 +107,13 @@ class RecipePageController extends Controller with SecureSocial {
           Some(item.getMainBody)
         )
 
-        Ok(views.html.recipe.addOrEdit(recForm.fill(form),editingRecipe))
+        // Get any images and sort them
+        val sortedImages = recipeService.getSortedRecipeImages(item)
+
+        Ok(views.html.recipe.addOrEdit(recForm.fill(form),editingRecipe, sortedImages))
     }
   }
+
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
@@ -156,33 +147,33 @@ class RecipePageController extends Controller with SecureSocial {
           BadRequest(views.html.recipe.addOrEdit(recForm.fill(contentData))).flashing(FlashMsgConstants.Error -> errorMessage)
         }
 
-        val uploadResult = request.body.file("recipemainimage").map {
+        request.body.file("recipemainimage").map {
           file =>
-            val filePerm: MultipartFormData.FilePart[TemporaryFile] = file
-            val imageFile = fileService.uploadFile(filePerm, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages)
-            imageFile match {
-              case Some(item) =>
-                newRec.get.setAndRemoveMainImage(item)
-              case None =>
-                None
+            fileService.uploadFile(file, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages) match {
+              case Some(item) => newRec.get.setAndRemoveMainImage(item)
+              case None => None
             }
         }
 
-
-        var recImagesCount = 1
-        while(recImagesCount < 5) {
-          request.body.file("recipeimage" + recImagesCount).map {
+        // Get a sorted list to compare with replacing images
+        val sortedImages = recipeService.getSortedRecipeImages(newRec.get)
+        var i = 1
+        while(i < 6) {
+          request.body.file("recipeimage" + i).map {
             file =>
-              val filePerm: MultipartFormData.FilePart[TemporaryFile] = file
-              val imageFile = fileService.uploadFile(filePerm, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages)
-              imageFile match {
+                fileService.uploadFile(file, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages) match {
                 case Some(item) =>
+                  // This code is ugly as hell, but replaces an earlier image
+                  // Remodel to JSON-delete etc in the future
+                  if(sortedImages.isDefined && sortedImages.get.isDefinedAt(i)){
+                    newRec.get.deleteRecipeImage(sortedImages.get(i))
+                  }
                   newRec.get.addRecipeImage(item)
                 case None =>
                   None
               }
           }
-          recImagesCount = recImagesCount + 1
+          i = i + 1
         }
 
 
@@ -199,7 +190,7 @@ class RecipePageController extends Controller with SecureSocial {
 
   }
 
-  // Edit - Delete
+  // Delete
   def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
     val recipe: Option[Recipe] = recipeService.findById(objectId)
 

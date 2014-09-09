@@ -6,9 +6,11 @@ import models.profile.{TagWord, TaggedUserProfile}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.i18n.Messages
+import play.api.libs.Files.TemporaryFile
+import presets.ImagePreSets
 import securesocial.core.{SecuredRequest, SecureSocial}
 
-import services.{RecipeService, CountyService, UserProfileService, TagWordService}
+import services._
 import models.{UserProfile, UserCredential}
 import models.formdata.UserProfileForm
 
@@ -17,16 +19,17 @@ import play.api.data.Forms._
 
 import play.api._
 import play.api.mvc._
+import utils.Helpers
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import models.location.County
 import java.util.UUID
-import enums.RoleEnums
+import enums.{FileTypeEnums, RoleEnums}
 import utils.authorization.WithRole
 import constants.FlashMsgConstants
 import controllers._
-
+import scala.collection.JavaConverters._
 
 @SpringController
 class UserProfileController  extends Controller  with SecureSocial {
@@ -44,6 +47,8 @@ class UserProfileController  extends Controller  with SecureSocial {
   @Autowired
   private var recipeService: RecipeService = _
 
+  @Autowired
+  private var fileService: ContentFileService = _
 
   // Form
 
@@ -159,11 +164,21 @@ class UserProfileController  extends Controller  with SecureSocial {
     }
   }
 
+  def verifyUserProfile = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: RequestHeader =>
+    val curUser = utils.Helpers.getUserFromRequest.get
+
+    // Check so that all important information is filled, otherwise redirect to profile editing
+    if(curUser.profiles.asScala.head.profileLinkName.isEmpty) {
+      Redirect(routes.UserProfileController.edit()).flashing(FlashMsgConstants.Error -> Messages("profile.profilelinkname.isempty"))
+    }else{
+      Redirect(routes.UserProfileController.viewProfileByName(curUser.profiles.asScala.head.profileLinkName))
+    }
+  }
 
   def viewProfileByName(profileName: String) = UserAwareAction { implicit request =>
 
     // Try getting the profile from name, if failure show 404
-    userProfileService.findByprofileLinkName(profileName, fetchAll = true) match {
+    userProfileService.findByprofileLinkName(profileName, fetchAll = false) match {
       case Some(profile) =>
         Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX, recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner), tagWordService.findByProfileAndGroup(profile,"profile"), isThisMyProfile = isThisMyProfile(profile)))
       case None =>
@@ -378,7 +393,7 @@ if(userTags != null) {
   )
 
   val nyForm =  AnvandareForm.fill(eData)
-  Ok(views.html.profile.skapa(nyForm, optionsLocationAreas = getCounties))
+  Ok(views.html.profile.skapa(nyForm, optionsLocationAreas = getCounties, editingProfile = Some(theUser)))
 
 
 }
@@ -511,54 +526,52 @@ if(userTags != null) {
 
 
 
-// Save profile
-def editSubmit = SecuredAction { implicit request =>
+  // Save profile
+  def editSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-  println("************************ save profile *********************************************")
-
-
-  //var service = new services.UserProfileService()
-
-      // Fetch user
-
-      // Fetch usersprofile
-
-      // remove all tags
-
-      // add all new tags
-
-      var map:Map[String,String] = Map()
-      var aboutMeHeadlineText   : String = ""
-      var aboutMeText           : String = ""
-      var profileLinkName       : String = ""
-      var zipCode               : String = ""
-      var streetAddress         : String = ""
-      var city                  : String = ""
-      var phoneNumber           : String = ""
-      var countyId              : String = ""
+    println("************************ save profile *********************************************")
 
 
-      AnvandareForm.bindFromRequest.fold(
-        errors => {
-          BadRequest(views.html.profile.skapa(errors, optionsLocationAreas = getCounties))
+    //var service = new services.UserProfileService()
 
-        },
-        reqUserProfile => {
-            // test
-            println("Korrekt formulär : " +reqUserProfile.name)
+        // Fetch user
 
-            println("About Me: " + reqUserProfile.aboutme)
-          aboutMeHeadlineText   = reqUserProfile.aboutmeheadline
-          aboutMeText           = reqUserProfile.aboutme
-          profileLinkName       = reqUserProfile.name
-          zipCode               = reqUserProfile.zipCode
-          streetAddress         = reqUserProfile.streetAddress
-          city                  = reqUserProfile.city
-          phoneNumber           = reqUserProfile.phoneNumber
-          countyId              = reqUserProfile.county
-          println("????? county = " + reqUserProfile.county)
+        // Fetch usersprofile
+
+        // remove all tags
+
+        // add all new tags
+
+        var map:Map[String,String] = Map()
+        var aboutMeHeadlineText   : String = ""
+        var aboutMeText           : String = ""
+        var profileLinkName       : String = ""
+        var zipCode               : String = ""
+        var streetAddress         : String = ""
+        var city                  : String = ""
+        var phoneNumber           : String = ""
+        var countyId              : String = ""
 
 
+        AnvandareForm.bindFromRequest.fold(
+          errors => {
+            BadRequest(views.html.profile.skapa(errors, optionsLocationAreas = getCounties))
+
+          },
+          reqUserProfile => {
+              // test
+              println("Korrekt formulär : " +reqUserProfile.name)
+
+              println("About Me: " + reqUserProfile.aboutme)
+            aboutMeHeadlineText   = reqUserProfile.aboutmeheadline
+            aboutMeText           = reqUserProfile.aboutme
+            profileLinkName       = reqUserProfile.name
+            zipCode               = reqUserProfile.zipCode
+            streetAddress         = reqUserProfile.streetAddress
+            city                  = reqUserProfile.city
+            phoneNumber           = reqUserProfile.phoneNumber
+            countyId              = reqUserProfile.county
+            println("????? county = " + reqUserProfile.county)
 
 
 
@@ -566,58 +579,79 @@ def editSubmit = SecuredAction { implicit request =>
 
 
 
-     var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
-     theUser.aboutMeHeadline      = aboutMeHeadlineText
-     theUser.aboutMe              = aboutMeText
-     theUser.profileLinkName      = profileLinkName
-     theUser.city                 = city
-     theUser.zipCode              = zipCode
-     theUser.streetAddress        = streetAddress
-     theUser.phoneNumber          = phoneNumber
+           val userCred = Helpers.getUserFromRequest.get
+           var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+
+           theUser.aboutMeHeadline      = aboutMeHeadlineText
+           theUser.aboutMe              = aboutMeText
+           theUser.profileLinkName      = profileLinkName
+           theUser.city                 = city
+           theUser.zipCode              = zipCode
+           theUser.streetAddress        = streetAddress
+           theUser.phoneNumber          = phoneNumber
 
 
-      theUser.removeAllTags()
+            theUser.removeAllTags()
 
-      // Fetch all tags available to choose
-      var d = tagWordService.listByGroupOption("profile")
+            // Fetch all tags available to choose
+            var d = tagWordService.listByGroupOption("profile")
 
-      if(d.isDefined){
-        // Loop all available tags
-        for(theTag <- d.get) {
-          var value = map.getOrElse(theTag.tagName, "empty")
+            if(d.isDefined){
+              // Loop all available tags
+              for(theTag <- d.get) {
+                var value = map.getOrElse(theTag.tagName, "empty")
 
-          if(!value.equals("empty")) {
+                if(!value.equals("empty")) {
 
-            // If the the user have tagged the particial chooice tag it
-            theUser.tag(theTag)
+                  // If the the user have tagged the particial chooice tag it
+                  theUser.tag(theTag)
+                }
+
+              } // end loop
+
+            }
+
+          if(countyId == None || countyId == null || countyId.trim().size < 2) {
+            theUser.removeLocation()
+          } else {
+            countyService.findById(UUID.fromString(countyId)) match {
+              case None => // Do something when nothing found
+                println("county name: NONE value ")
+                theUser.removeLocation()
+              case Some(item) =>
+                theUser.removeLocation()
+                theUser.locate(item)
+                println("county name: " + item.name)
+                println("OBJECTID: " + item.objectId + " def :  " + item.toString)
+
+            }
           }
 
-        } // end loop
+          // Images
+          // Main image
+          request.body.file("mainimage").map {
+            file =>
+                fileService.uploadFile(file, userCred.objectId, FileTypeEnums.IMAGE, ImagePreSets.profileImages) match {
+                case Some(item) => theUser.setAndRemoveMainImage(item)
+                case None => None
+              }
+          }
+          // Avatar
+          request.body.file("avatarimage").map {
+            file =>
+              fileService.uploadFile(file, userCred.objectId, FileTypeEnums.IMAGE, ImagePreSets.userCredentialImages) match {
+                case Some(item) => theUser.setAndRemoveAvatarImage(item)
+                case None => None
+              }
+          }
 
-      }
 
-    if(countyId == None || countyId == null || countyId.trim().size < 2) {
-      theUser.removeLocation()
-    } else {
-      countyService.findById(UUID.fromString(countyId)) match {
-        case None => // Do something when nothing found
-          println("county name: NONE value ")
-          theUser.removeLocation()
-        case Some(item) =>
-          theUser.removeLocation()
-          theUser.locate(item)
-          println("county name: " + item.name)
-          println("OBJECTID: " + item.objectId + " def :  " + item.toString)
+          userProfileService.saveUserProfile(theUser)
 
-      }
-    }
-
-      userProfileService.saveUserProfile(theUser)
-
-     Redirect(routes.UserProfileController.edit())
-  })
-}
+      Redirect(routes.UserProfileController.edit())
+    })
+  }
 
 
 

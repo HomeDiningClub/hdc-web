@@ -12,7 +12,6 @@ import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.data.neo4j.support.index.IndexType;
 import services.InstancedServices;
 import utils.Helpers;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,6 +23,7 @@ public class Recipe extends ContentBase {
     @Indexed(indexType = IndexType.FULLTEXT,indexName = "recipeName")
     private String name;
     private String preAmble;
+    @Indexed(indexType = IndexType.FULLTEXT,indexName = "recipeMainBody")
     private String mainBody;
 
     @Fetch
@@ -37,7 +37,7 @@ public class Recipe extends ContentBase {
     @RelatedTo(type = RelationshipTypesJava.HAS_RECIPES.Constant, direction = Direction.INCOMING)
     private UserProfile ownerProfile;
 
-    @Indexed(unique = true)
+    @Indexed(unique = true, indexType = IndexType.LABEL)
     private String recipeLinkName = "";
 
     public void setMainBody(String mainBody){
@@ -140,6 +140,7 @@ public class Recipe extends ContentBase {
         return this.recipeLinkName;
     }
 
+    @Fetch
     public UserProfile getOwnerProfile() {
         return this.ownerProfile;
     }

@@ -32,3 +32,20 @@ Some help when developing @Query()
 MATCH (a)-[:`LOCATION_AT`]->(b) WHERE b.objectId ='6f0b11f4-ea07-40fb-ac7c-824f45445a18' RETURN a,b
 start n=node:__types__(className="com.example.MyObject") where n.property1 = {0}, n.property2 = {1} return n
 MATCH (userP)-[:`LOCATION_AT`]->(county) WHERE county.objectId = '6f0b11f4-ea07-40fb-ac7c-824f45445a18' RETURN userP
+
+--
+Reindex:
+If you configure it after the fact you have to re-set the properties with a cypher statement like this:
+
+MATCH (n:`UserProfile`)
+WHERE has(n.profileLinkName)
+SET n.profileLinkName=n.profileLinkName
+
+If you already have many nodes in your database you have to batch it manually to cater for the transaction size limits, like this (increase SKIP by 50000 from 0 to until the query returns zero):
+
+MATCH (n)
+WHERE has(n.title)
+SKIP 150000 LIMIT 50000
+SET n.title=n.title
+RETURN COUNT(*)
+--

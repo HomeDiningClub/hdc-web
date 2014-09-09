@@ -89,16 +89,37 @@ class AdminRecipeController extends Controller with SecureSocial {
             BadRequest(views.html.recipe.addOrEdit(contentForm.fill(contentData))).flashing(FlashMsgConstants.Error -> errorMessage)
         }
 
-        request.body.file("recipemainimage").map {
+        val uploadResult = request.body.file("recipemainimage").map {
           file =>
-            val filePerm: MultipartFormData.FilePart[TemporaryFile] = file
-            val imageFile = fileService.uploadFile(filePerm, request.user.asInstanceOf[UserCredential].objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages)
-            imageFile match {
+              fileService.uploadFile(file, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages) match {
               case Some(item) =>
                 newRec.get.setAndRemoveMainImage(item)
-              case None => None
+              case None =>
+                None
             }
         }
+
+        // Get a sorted list to compare with replacing images
+        val sortedImages = recipeService.getSortedRecipeImages(newRec.get)
+        var i = 1
+        while(i < 6) {
+          request.body.file("recipeimage" + i).map {
+            file =>
+              fileService.uploadFile(file, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages) match {
+                case Some(item) =>
+                  // This code is ugly as hell, but replaces an earlier image
+                  // Remodel to JSON-delete etc in the future
+                  if(sortedImages.isDefined && sortedImages.get.isDefinedAt(i)){
+                    newRec.get.deleteRecipeImage(sortedImages.get(i))
+                  }
+                  newRec.get.addRecipeImage(item)
+                case None =>
+                  None
+              }
+          }
+          i = i + 1
+        }
+
 
         newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
         newRec.get.setMainBody(contentData.mainBody.getOrElse(""))
@@ -128,7 +149,10 @@ class AdminRecipeController extends Controller with SecureSocial {
           Some(item.getMainBody)
         )
 
-        Ok(views.html.admin.recipe.add(contentForm.fill(form),editingRecipe))
+        // Get any images and sort them
+        val sortedImages = recipeService.getSortedRecipeImages(item)
+
+        Ok(views.html.admin.recipe.add(contentForm.fill(form),editingRecipe, sortedImages))
     }
   }
 

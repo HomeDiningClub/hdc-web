@@ -6,13 +6,15 @@ import java.util.Map
 
 import org.springframework.data.neo4j.support.{Neo4jTemplate, DelegatingGraphDatabase, DelegatingGraphDatabaseGlobalOperations}
 import org.springframework.data.neo4j.rest.SpringRestGraphDatabase
-import org.neo4j.graphdb.{NotFoundException, Direction, Node, Relationship}
+import org.neo4j.graphdb._
 import org.neo4j.graphdb.index.{RelationshipIndex, Index}
 import org.neo4j.rest.graphdb.index.RestIndex
+import play.api.Logger
 import scala.collection.JavaConverters._
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.template.Neo4jOperations
+import models._
 
 @Service
 class Neo4jDatabaseCleanerService {
@@ -100,4 +102,37 @@ class Neo4jDatabaseCleanerService {
     }
   }
 
+
+  // Rebuild Neo4j Lucene index
+  // Not tested yet
+  def rebuildIndex() {
+
+    /* begin a transaction */
+    val tx: Transaction = graph.beginTx()
+    try {
+      /* for all nodes in the database */
+      for (node: Node <- graph.getAllNodes.asScala) {
+        /* reconstruct the saved object based on the __type__ property on the node - the result is a class that was annotated with @NodeEntity */
+        val ddn: Node = template.createEntityFromStoredType(node, null)
+
+        /* reindex this node, adding it to the __types__ index, with key "className" (it is used by spring-data-neo4j) with the value __type__ */
+        graph.index().forNodes("__types__")
+          .add(node, "className", node.getProperty("__type__"))
+
+        /* if the reconstructed object is a Profile object */
+        if (ddn.isInstanceOf[UserProfile]) {
+          /* add it to the User index, with the key "username" (which is also the saved fields name) */
+          graph.index().forNodes("UserProfile")
+            .add(node, "profileLinkName", node.getProperty("profileLinkName"))
+        }
+      }
+      tx.success()
+    } catch {
+      case e: UnsupportedOperationException =>
+        Logger.debug("Error rebuilding index:" + e.getCause.getMessage)
+        tx.failure()
+    } finally {
+      tx.close()
+    }
+  }
 }

@@ -9,6 +9,11 @@ object RelationshipTypesScala {
      def name(): String = Constant
    }
 
+  object AVATAR_IMAGE {
+    final val Constant = "AVATAR_IMAGE"
+    def name(): String = Constant
+  }
+
   object MAIN_IMAGE {
     final val Constant = "MAIN_IMAGE"
     def name(): String = Constant

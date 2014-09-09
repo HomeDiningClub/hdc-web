@@ -1,13 +1,13 @@
-@(header: String, imageUrl: String = "")
+@(header: String, avatarUrl: String = "")
 <div class="row">
     <div class="col-xs-12 col-md-12 big-margin-top">
         <div class="host-header">
             <header>
                 <h2>@header</h2>
-                @if(imageUrl.isEmpty){
+                @if(avatarUrl.isEmpty){
                     @shared.hostImageCircle()
                 }else{
-                    @shared.hostImageCircle(imageUrl)
+                    @shared.hostImageCircle(avatarUrl)
                 }
 
             </header>

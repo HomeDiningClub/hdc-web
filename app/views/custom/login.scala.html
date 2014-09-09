@@ -36,7 +36,7 @@
                 @defining( Registry.providers.all.values.filter( _.id != UsernamePassword) ) { externalProviders =>
 
                         @Registry.providers.get(UsernamePassword).map { up =>
-                            <div class="col-xs-12 col-md-4 col-md-offset-1 login-form">
+                            <div class="col-xs-12 col-md-10 col-md-offset-1 login-form">
                                 @if( externalProviders.size > 0 ) {
                                     <h3>@Messages("securesocial.login.useEmailAndPassword")</h3>
                                 } else {

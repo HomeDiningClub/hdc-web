@@ -213,10 +213,10 @@ class UserProfileService {
     var returnList: List[models.UserProfile] = Nil
 
     returnList = (filterTag, filterCounty) match {
-      case (Some(tw), Some(cnt)) => userProfileRepository.findByTagWordIdAndCountyId(tw.objectId, cnt.objectId).asScala.toList
-      case (Some(tw), None) => userProfileRepository.findByTagWordId(tw.objectId).asScala.toList
-      case (None, Some(cnt)) => userProfileRepository.findByCountyId(cnt.objectId).asScala.toList
-      case _ => userProfileRepository.findAll().asScala.toList
+      case (Some(tw), Some(cnt)) => userProfileRepository.findByTagWordIdAndCountyId(tw.objectId, cnt.objectId).asScala.toList.filter(p => p.profileLinkName.nonEmpty)
+      case (Some(tw), None) => userProfileRepository.findByTagWordId(tw.objectId).asScala.toList.filter(p => p.profileLinkName.nonEmpty)
+      case (None, Some(cnt)) => userProfileRepository.findByCountyId(cnt.objectId).asScala.toList.filter(p => p.profileLinkName.nonEmpty)
+      case _ => userProfileRepository.findAll().asScala.toList.filter(p => p.profileLinkName.nonEmpty)
     }
 
     returnList match {

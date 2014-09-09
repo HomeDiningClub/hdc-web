@@ -12,7 +12,7 @@ public abstract class AbstractEntity {
 
     @GraphId
     public Long graphId; //java.lang.Long
-    //@Indexed(indexType = IndexType.LABEL, level = Indexed.Level.INSTANCE)
+    @Indexed(indexType = IndexType.LABEL, level = Indexed.Level.INSTANCE)
     public UUID objectId;
 
     // This method is needed to compare two different objects from DB using hash
