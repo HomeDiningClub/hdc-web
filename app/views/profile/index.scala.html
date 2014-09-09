@@ -13,7 +13,9 @@
     <div class="container host-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                @views.html.profile.profileHeader(userProfile.profileLinkName, userProfile.getAvatarImage.getTransformByName("thumbnail").getUrl)
+                @defining(if(userProfile.getAvatarImage != null){userProfile.getAvatarImage.getTransformByName("thumbnail").getUrl}else{""}){ avatarUrl =>
+                    @views.html.profile.profileHeader(userProfile.profileLinkName, avatarUrl)
+                }
                 <div class="row">
                     <div class="col-xs-12 col-md-6 big-margin-top">
                         <section>
