@@ -121,6 +121,14 @@
                                     '_error -> EnvDataForm.error("phoneNumber")
                                 )
 
+                                @helper.inputText(EnvDataForm("personnummer"),
+                                    'id -> "phoneNumber",
+                                    '_showErrors -> true,
+                                    '_label -> Messages("profile.create.form.personnummer"),
+                                    '_help -> Messages("profile.create.form.personnummer.help"),
+                                    '_error -> EnvDataForm.error("personnummer")
+                                )
+
                                 @if(!optionsLocationAreas.isEmpty) {
                                         @helper.select(EnvDataForm("county"),
                                         optionsLocationAreas.get,

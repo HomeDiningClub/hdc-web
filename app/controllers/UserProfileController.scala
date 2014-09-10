@@ -82,10 +82,12 @@ class UserProfileController  extends Controller  with SecureSocial {
         "streetAddress" -> text,
         "zipCode" -> text,
         "city" -> text,
-        "phoneNumber" -> text
+        "phoneNumber" -> text,
+        "personnummer" -> text
       )
       (EnvData.apply) (EnvData.unapply)
         verifying ("Profilnamn måste vara unikt", f => isUniqueProfileName(f.name, f.name2))
+        verifying ("Personnummer måste vara korrekt angivet", g => isCorrectPersonnummer(g.personnummer))
     )
 
   val tagForm = Form(
@@ -112,6 +114,18 @@ class UserProfileController  extends Controller  with SecureSocial {
   )
 
 
+
+  def isCorrectPersonnummer(personnummer : String) : Boolean = {
+    if(personnummer.size < 1) return true
+
+    if(personnummer.matches("[1-2][0-9]{11}")) return true
+    if(personnummer.matches("[0-9]{6}[-][0-9]{4}")) return true
+
+
+    false
+  }
+
+
  def isUniqueProfileName(profileName : String, storedProfileName : String) : Boolean = {
 
    //var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
@@ -119,7 +133,7 @@ class UserProfileController  extends Controller  with SecureSocial {
    var profileWithLinkName = userProfileService.findByprofileLinkName(profileName, false)
 
    // Får endast innehålla små bokstäver mellan a till z
-   if (!profileName.matches("[a-z]+")) return false
+   if (!profileName.matches("[a-z,A-Z]+[a-z,A-Z,0-9,-]*")) return false
 
 
 
@@ -389,7 +403,8 @@ if(userTags != null) {
     theUser.streetAddress, // street Address,
     theUser.zipCode, // zip code
     theUser.city, // city
-    theUser.phoneNumber // phone number
+    theUser.phoneNumber, // phone number
+    "" // TODO
   )
 
   val nyForm =  AnvandareForm.fill(eData)
