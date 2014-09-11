@@ -17,6 +17,7 @@ import play.api.i18n.Messages
 import scala.collection.mutable
 import models.location.County
 import java.util.UUID
+import scala.collection.JavaConverters._
 
 
 @SpringController
@@ -123,9 +124,7 @@ class StartPageController extends Controller with SecureSocial {
         countyService.findById(UUID.fromString(county))
     }
 
-    val userProfiles = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty)
-
-    val startPageBoxes: Option[List[StartPageBox]] = userProfiles match {
+    val startPageBoxes: Option[List[StartPageBox]] = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty) match {
       case None => None
       case Some(profile) => Some(profile.map {
         userProfile: UserProfile =>
@@ -138,8 +137,14 @@ class StartPageController extends Controller with SecureSocial {
             fullName = userProfile.getOwner.fullName,
             location = userProfile.county,
             mainBody = None,
-            mainImage = routes.Assets.at("images/startpage/Box2.png").url, //mainImage = userProfile.mainImage.getTransformByName("box").url,
-            userImage = routes.Assets.at("images/host/host-head-example-100x100.jpg").url, //userImage = //mainImage = userProfile.userImage.getTransformByName("thumbnail").url,
+            mainImage = userProfile.getMainImage match {
+              case null => None
+              case image => Some(image.getTransformByName("box").getUrl)
+            },
+            userImage = userProfile.getAvatarImage match {
+              case null => None
+              case image => Some(image.getTransformByName("thumbnail").getUrl)
+            },
             userRating = userProfile.getOwner.getAverageRating)
       })
     }
@@ -153,13 +158,13 @@ class StartPageController extends Controller with SecureSocial {
         Some{ items.take(4).map { ratingItem: RatingUserCredential =>
           ReviewBox(
             objectId = Some(ratingItem.objectId),
-            linkToProfile = ratingItem.userWhoIsRating.profiles.iterator().next().profileLinkName match { // TODO: Review-boxes links quite ugly
+            linkToProfile = ratingItem.userWhoIsRating.profiles.asScala.head.profileLinkName match {
               case null => ""
               case pfName => routes.UserProfileController.viewProfileByName(pfName).url
             },
             fullName = ratingItem.userWhoIsRating.fullName,
             reviewText = Some(ratingItem.ratingComment),
-            userImage = routes.Assets.at("images/host/host-head-example-100x100.jpg").url, //ratingItem.userWhoIsRating.userImage.getTransformByName("thumbnail").url
+            userImage = ratingItem.userWhoIsRating.profiles.asScala.head.getAvatarImage.getTransformByName("thumbnail").getUrl,
             rating = ratingItem.ratingValue)}
         }
     }

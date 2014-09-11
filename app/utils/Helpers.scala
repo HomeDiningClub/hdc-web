@@ -8,6 +8,8 @@ import play.api.i18n.Lang
 import utils.authorization.WithRole
 import enums.RoleEnums
 
+import scala.util.Random
+
 
 object Helpers {
 
@@ -48,4 +50,7 @@ object Helpers {
     input.replaceAll("""<(?!\/?a(?=>|\s.*>))\/?.*?>""", "")
   }
 
+  def randomBetween(lowerBound: Int, upperBound: Int): Int = {
+    Random.nextInt(upperBound - lowerBound) + lowerBound
+  }
 }

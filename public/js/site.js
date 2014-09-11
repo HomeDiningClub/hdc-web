@@ -21,24 +21,23 @@ $(document).ready(function () {
     // Activate tooltips
    $(".host-level-icon").tooltip();
 
-    // Profile - Handles the carousel thumbnails
+    // Clicking on carousel thumbnails
     $('[id^=carousel-selector-]').click( function(){
         var id_selector = $(this).attr("id");
         var id = id_selector.substr(id_selector.length -1);
         id = parseInt(id);
-        $("#host-main-carousel").carousel(id);
+        $(".hdc-carousel").carousel(id);
         $("[id^=carousel-selector-]").removeClass("selected");
         $(this).addClass("selected");
     });
 
-    // Profile - When the carousel slides, auto update
-    $("#host-main-carousel").on("slid", function (e) {
-        var id = $(".item.active").data("slide-number");
+    // When the carousel slides, auto update
+    $(".hdc-carousel").on("slid.bs.carousel", function () {
+        var id = $(".hdc-carousel .item.active").data("slide-number");
         id = parseInt(id);
         $("[id^=carousel-selector-]").removeClass("selected");
         $("[id^=carousel-selector-" + id + "]").addClass("selected");
     });
-
 
     // GA include
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
