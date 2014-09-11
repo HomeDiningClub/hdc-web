@@ -325,11 +325,12 @@ admin.release.index.header=Release och batchjobb
 admin.release.actions.releaserun=Kör release rutin
 admin.release.actions.deleteall=Ta bort allt i hela databasen
 
-admin.file.title=Ladda upp filer
-admin.file.upload.header=Ladda upp dina bilder
+admin.file.title=Filhantering
+admin.file.upload.header=Ladda upp adminbilder
 admin.file.filelist.header=Alla filer
 admin.file.button.upload=Ladda upp
 admin.file.list.delete=Ta bort
+admin.file.list.isAdminFile=Adminfil
 
 # Admin - End
 

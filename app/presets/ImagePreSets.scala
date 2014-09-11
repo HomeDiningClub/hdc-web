@@ -5,6 +5,12 @@ import constants.FileTransformationConstants
 
 object ImagePreSets {
 
+  def adminImages: List[FileTransformation] = {
+    List[FileTransformation](
+      new FileTransformation("thumbnail", 150, 100, FileTransformationConstants.FIT)
+    )
+  }
+
   def userCredentialImages: List[FileTransformation] = {
     List[FileTransformation](
       new FileTransformation("mini", 30, 30, FileTransformationConstants.COVER),

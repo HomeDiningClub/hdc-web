@@ -141,13 +141,123 @@ class ContentFileService {
     bucketRepository.S3Bucket.url(fileTransformation.getOwnerFile.getBasePath + variationPath + getFileExtension(fileTransformation))
   }
 
+  private def approveMimeType(file: MultipartFormData.FilePart[TemporaryFile], fileType: FileTypeEnums): Option[String] = {
 
+    var contentType: Option[String] = None
+    val fileContentType: Option[String] = file.contentType.map(_.toLowerCase(Locale.ENGLISH))
 
+    if(fileType == FileTypeEnums.IMAGE){
+      contentType = fileContentType match {
+        case Some("image/jpeg") => Some("image/jpeg")
+        case Some("image/png") => Some("image/png")
+        case Some("image/gif") => Some("image/gif")
+        case _ =>
+          Logger.debug("Debug: Cannot upload image, file is of wrong mime-type")
+          None
+      }
+    }else if (fileType == FileTypeEnums.VIDEO){
+      contentType = fileContentType match {
+        case Some("video/mpeg") => Some("video/mpeg")
+        case Some("video/mp4") => Some("video/mp4")
+        case Some("video/x-flv") => Some("video/x-flv")
+        case _ =>
+          Logger.debug("Debug: Cannot upload video, file is of wrong mime-type")
+          None
+      }
+    }else{
+      throw new IllegalArgumentException("Missing a correct fileType")
+    }
 
+    contentType
+  }
+
+  private def compareMimeType(file: MultipartFormData.FilePart[TemporaryFile], fileName: String): Boolean ={
+    file.contentType.equals(MimeTypes.forFileName(fileName)) match {
+      case true =>
+        true
+      case false =>
+        Logger.error("Error: File and file-extensions has an different mime-types, aborting.")
+        false
+    }
+  }
+
+  // Gets the filename from a tempfile
+  private def fetchFileName(file: MultipartFormData.FilePart[TemporaryFile]): String = {
+    play.utils.UriEncoding.encodePathSegment(file.filename, "UTF-8")
+  }
+
+  // Gets the last instance of a "."
+  private def fetchLastIndexOfDot(fileName: String): Int = {
+    fileName.lastIndexOf('.') match {
+      case -1 => fileName.length
+      case integer => integer
+    }
+  }
+
+  // Grab extensions, if no extension on file, add
+  private def fetchExtension(fileName: String): String = {
+    fileName.split('.').takeRight(1).headOption match {
+      case None => "unknown"
+      case Some(extension) => extension
+    }
+  }
+
+  // Get filename without extension
+  private def fetchFilenameWithoutExtension(fileName: String, lastIndexOfDot: Int): String = {
+    fileName.substring(0, lastIndexOfDot) match {
+      case "" => "no-filename"
+      case filename => filename
+    }
+  }
+
+  // Is the size too big, bail out
+  // 1MB = 1048576
+  // 2MB = 2097152
+  // 3MB = 3145728
+  // 4MB = 4194304
+  private val OneMB: Long = 1048576
+  private val TwoMB: Long = 2097152
+  private val ThreeMB: Long = 3145728
+  private val FourMB: Long = 4194304
+
+  private def isFileSizeBiggerThan(file: MultipartFormData.FilePart[TemporaryFile], maxSize: Long): Boolean = {
+    if(file.ref.file.length() > maxSize) {
+      Logger.debug("Debug: Cannot upload image, image is too large, largest is " + maxSize + "kb")
+      true
+    }else{
+      false
+    }
+  }
+
+  // Get filename without extension
+  private def cleanFilename(uncleanedFileName: String, uncleanedFileExt: String): String = {
+    uncleanedFileName.toLowerCase.replaceAll("\\W+", "-") + "." + uncleanedFileExt.toLowerCase.replaceAll("\\W+", "")
+  }
+
+  // Parse file extension
+  private def parseFileExtension(fileName: String): String = {
+    fileName.split('.').drop(1).lastOption match {
+      case None => "unknown"
+      case Some(fileExt) => fileExt
+    }
+  }
+
+  // Set filename & path
+  // Goal is the following:
+  //<userid>/<fileid>/<fileid>.<fileextension>
+  private def createNewContentFile(fileName: String, fileExtension: String, contentType: Option[String], fileType: FileTypeEnums, user: UserCredential, isAdminFile: Boolean): ContentFile = {
+    fileType match {
+      case FileTypeEnums.IMAGE => new ContentFile(fileName,fileExtension,contentType.get,FileTypeEnums.IMAGE.toString,user,isAdminFile)
+      case FileTypeEnums.VIDEO => new ContentFile (fileName, fileExtension, contentType.get, FileTypeEnums.VIDEO.toString,user,isAdminFile)
+      case _ =>
+        Logger.error("Error: No base file type specified on upload, must be either any of the FileTypeConstants")
+        null
+    }
+  }
 
   // Uploads a file
   // Return ContentObject if found
-  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile], userObjectId: UUID, fileType: FileTypeEnums, fileTransformations: List[FileTransformation] = Nil): Option[ContentFile] = {
+  def uploadFile(file: MultipartFormData.FilePart[TemporaryFile], userObjectId: UUID, fileType: FileTypeEnums, fileTransformations: List[FileTransformation] = Nil, isAdminFile: Boolean = false): Option[ContentFile] = {
 
     // Prepare object
     var user: UserCredential = null
@@ -163,112 +273,48 @@ class ContentFileService {
     }
 
     // Is the size too big, bail out
-    // 1MB = 1048576
-    // 2MB = 2097152
-    // 3MB = 3145728
-    // 4MB = 4194304
-    if(file.ref.file.length() > 2097152) {
-      Logger.debug("Debug: Cannot upload image, image is too large, largest image is 2MB.")
+    if((isAdminFile && isFileSizeBiggerThan(file, FourMB)) || (!isAdminFile && isFileSizeBiggerThan(file, TwoMB))){
       return None
     }
 
-
-    // Check the Mime-type from the actual file
-//    val contentType = file.contentType match {
-//      case Some("js") => ""
-//      case Some("java") => ""
-//      case Some("cmd") => ""
-//      case Some("bat") => ""
-//      case Some("jar") => ""
-//      case Some("exe") => ""
-//      case Some(contentType) => contentType
-//      case None => ""
-//    }
-
     // Compare mime-type with approved types and fetch and return is so
-    var contentType: Option[String] = None
-    val fileContentType: Option[String] = file.contentType.map(_.toLowerCase(Locale.ENGLISH))
-
-    if(fileType == FileTypeEnums.IMAGE){
-        contentType = fileContentType match {
-          case Some("image/jpeg") => Some("image/jpeg")
-          case Some("image/png") => Some("image/png")
-          case Some("image/gif") => Some("image/gif")
-          case _ =>
-            Logger.debug("Debug: Cannot upload image, file is of wrong mime-type")
-            None
-        }
-    }else if (fileType == FileTypeEnums.VIDEO){
-        contentType = fileContentType match {
-          case Some("video/mpeg") => Some("video/mpeg")
-          case Some("video/mp4") => Some("video/mp4")
-          case Some("video/x-flv") => Some("video/x-flv")
-          case _ =>
-            Logger.debug("Debug: Cannot upload video, file is of wrong mime-type")
-            None
-        }
-    }else {
-        throw new IllegalArgumentException("Missing a correct fileType")
-    }
+    val contentType = approveMimeType(file,fileType)
 
     if(contentType.isEmpty)
       return None
 
     // Fetch the uploaded filename
-    val uncleanedFullFileName: String = play.utils.UriEncoding.encodePathSegment(file.filename, "UTF-8")
+    val uncleanedFullFileName = fetchFileName(file)
 
     // Find the last dot for extension, or if no extension use full length filename
-    val lastIndexOfDot = uncleanedFullFileName.lastIndexOf('.') match {
-      case -1 => uncleanedFullFileName.length
-      case integer => integer
-    }
+    val lastIndexOfDot = fetchLastIndexOfDot(uncleanedFullFileName)
 
     // Grab extensions, if no extension on file, add
-    val uncleanedFileExt: String = uncleanedFullFileName.split('.').takeRight(1).headOption match {
-      case None => "unknown"
-      case Some(extension) => extension
-    }
+    val uncleanedFileExt = fetchExtension(uncleanedFullFileName)
 
     // Grab just the filename by removing the extension
-    val uncleanedFileName: String = uncleanedFullFileName.substring(0, lastIndexOfDot) match {
-        case "" => "no-filename"
-        case filename => filename
-      }
+    val uncleanedFileName = fetchFilenameWithoutExtension(uncleanedFullFileName,lastIndexOfDot)
 
     // Clean filename + extension build a new name
-    val fileName: String = uncleanedFileName.toLowerCase.replaceAll("\\W+", "-") + "." + uncleanedFileExt.toLowerCase.replaceAll("\\W+", "")
-
-    // Get Mime-type as given by the filename
-    val fileExtensionMimeType = MimeTypes.forFileName(fileName)
+    val fileName = cleanFilename(uncleanedFileName, uncleanedFileExt)
 
     // If Filename and File-Mime type match set the file ending, else abort upload
-    if (!file.contentType.equals(fileExtensionMimeType)) {
-      Logger.error("Error: File and file-extensions has an different mime-types, aborting.")
+    if(!compareMimeType(file,fileName)) {
       return None
     } else {
 
       // Parse file extension
-      val fileExtension = fileName.split('.').drop(1).lastOption match {
-        case None => "unknown"
-        case Some(fileExt) => fileExt
-      }
-
       // Set filename & path
       // Goal is the following:
       //<userid>/<fileid>/<fileid>.<fileextension>
-      val newFile = fileType match {
-        case FileTypeEnums.IMAGE => new ContentFile(fileName,fileExtension,contentType.get,FileTypeEnums.IMAGE.toString,user)
-        case FileTypeEnums.VIDEO => new ContentFile(fileName,fileExtension,contentType.get,FileTypeEnums.VIDEO.toString,user)
-        case _ =>
-          Logger.error("Error: No base file type specified on upload, must be either any of the FileTypeConstants")
-          null
-      }
+      val newFile = createNewContentFile(fileName,parseFileExtension(fileName),contentType,fileType,user,isAdminFile = isAdminFile)
+
       if(newFile == null)
         return None
 
 
       // Set path and Upload original
-      val fileUrl = getFilePath(newFile) + getFileExtension(newFile)
+      val fileUrl = getFilePath(newFile,adminPath = isAdminFile) + getFileExtension(newFile)
 
       // Handle result
       val futureResult: Future[Option[ContentFile]] = doUpload(fileUrl,contentType.get,file.ref.file).map {
@@ -288,12 +334,12 @@ class ContentFileService {
 
       val uploadResult = Await.result(futureResult, 20 seconds)
 
-      if(!uploadResult.isEmpty)
+      if(uploadResult.nonEmpty)
       {
         // Successfully saved and uploaded, lets make the transforms if any
         // But only on the image objects
-        if(!fileTransformations.isEmpty && newFile.baseContentType.equalsIgnoreCase(FileTypeEnums.IMAGE.toString)){
-          val editedFile: ContentFile = uploadAndCreateTransformations(uploadResult.get,file.ref.file,fileTransformations)
+        if(fileTransformations.nonEmpty && newFile.baseContentType.equalsIgnoreCase(FileTypeEnums.IMAGE.toString)){
+          val editedFile: ContentFile = uploadAndCreateTransformations(uploadResult.get, file.ref.file, fileTransformations, isAdminFile)
           return Some(editedFile)
         }
 
@@ -313,11 +359,11 @@ class ContentFileService {
   }
 
   // Handle transformations
-  private def uploadAndCreateTransformations(contentFile: ContentFile, fileToUpload: File, fileTransformations: List[FileTransformation]): ContentFile = {
+  private def uploadAndCreateTransformations(contentFile: ContentFile, fileToUpload: File, fileTransformations: List[FileTransformation], isAdminFile: Boolean = false): ContentFile = {
 
     var uploadResult: Option[ContentFile] = None
 
-    if(!fileTransformations.isEmpty && contentFile != null)
+    if(fileTransformations.nonEmpty && contentFile != null)
     {
       for(transform <- fileTransformations)
       {
@@ -336,7 +382,7 @@ class ContentFileService {
         // Build path to new file transformation
         // Set the extension - All transforms should be saved as PNG
         transform.extension = "jpg"
-        val fileUrl = getFilePath(contentFile) + getTransformationPath(transform) + getFileExtension(transform)
+        val fileUrl = getFilePath(contentFile, isAdminFile) + getTransformationPath(transform) + getFileExtension(transform)
 
         // Create a receiving file
         val transformedFile = new File("/tmp/" + fileUrl)
@@ -394,9 +440,13 @@ class ContentFileService {
 
   // Returns file path using a file entry
   // Returns an String with full path
-  def getFilePath(file: ContentFile): String = {
+  def getFilePath(file: ContentFile, adminPath: Boolean = false): String = {
 
     var retString: String = ""
+
+    if(adminPath){
+      retString += "admin" + "/"
+    }
 
     if(file.owner != null && file.owner.objectId != null)
       retString += file.owner.objectId + "/"
@@ -457,7 +507,7 @@ class ContentFileService {
     // Also remove all its transforms
     val future: Future[Unit] = Future {
       bucketRepository.S3Bucket.remove(fileToDelete.get.getBasePath)
-      if(!fileTransformations.isEmpty) {
+      if(fileTransformations.nonEmpty) {
         for (transform <- fileTransformations) {
           bucketRepository.S3Bucket.remove(transform.getBasePath)
         }
@@ -467,7 +517,7 @@ class ContentFileService {
     val results: Future[Boolean] = future.map {
       unitResponse =>
         Logger.debug("Deleted file: " + fileToDelete.get.getBasePath)
-        if(!fileTransformations.isEmpty) {
+        if(fileTransformations.nonEmpty) {
           for (transform <- fileTransformations) {
             deleteTransformation(transform)
           }
