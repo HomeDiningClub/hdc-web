@@ -25,6 +25,9 @@ object InstancedServices {
 
   @Autowired
   var contentFileService: ContentFileService = _
+
+  @Autowired
+  var nodeEntityService: NodeEntityService = _
 }
 
 // Just here for default constructor, don't add code in this class!

@@ -1,5 +1,6 @@
 package models;
 
+import interfaces.IEditable;
 import models.base.AbstractEntity;
 import models.files.ContentFile;
 import models.modelconstants.RelationshipTypesJava;
@@ -8,18 +9,20 @@ import models.location.County;
 import models.profile.TaggedLocationUserProfile;
 import models.profile.TaggedUserProfile;
 import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
-import models.modelconstants.RelationshipTypesJava;
 import services.InstancedServices;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
+import java.lang.Boolean;
 
 @NodeEntity
-public class UserProfile extends AbstractEntity {
+public class UserProfile extends AbstractEntity implements IEditable {
 
   public String county = "";
 
@@ -179,6 +182,14 @@ public class UserProfile extends AbstractEntity {
                 userProfileTag.remove(itter2.next());
             }
         }
+    }
+
+    @Transient
+    public Boolean isEditableBy(UUID objectId){
+        if(objectId != null && objectId.equals(this.getOwner().objectId))
+            return true;
+        else
+            return false;
     }
 
     @Fetch

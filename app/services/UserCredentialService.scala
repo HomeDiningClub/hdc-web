@@ -4,7 +4,7 @@ import _root_.java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
-import repositories.{NodeEntityRepository, UserRoleRepository, UserCredentialRepository}
+import repositories.{UserRoleRepository, UserCredentialRepository}
 import models.{UserRole, UserCredential}
 import securesocial.core._
 import scala.collection.JavaConverters._
@@ -26,9 +26,6 @@ class UserCredentialService {
 
   @Autowired
   var userRoleRepository: UserRoleRepository = _
-
-  @Autowired
-  var nodeEntityRepository: NodeEntityRepository = _
 
 
   // Från databasen till SecureSocial

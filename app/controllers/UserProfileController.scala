@@ -347,7 +347,7 @@ def edit = SecuredAction { implicit request =>
 var userTags = theUser.getTags
 
 if(userTags != null) {
-  var itterTags = userTags.iterator()
+  var itterTags = userTags.iterator
 
   while (itterTags.hasNext) {
     typ.addVald(itterTags.next().tagWord.tagName)
@@ -385,8 +385,8 @@ if(userTags != null) {
   println("county stored : [" +  theUser.county + "]")
 
   try {
-    println("county name: " + theUser.getLocations.iterator().next().county.name)
-    locationId = theUser.getLocations.iterator().next().county.objectId.toString
+    println("county name: " + theUser.getLocations.iterator.next().county.name)
+    locationId = theUser.getLocations.iterator.next().county.objectId.toString
     //locationId = "0ec35cae-495c-43b8-b99c-bc14755288f2"
   } catch
     {
@@ -430,7 +430,7 @@ if(userTags != null) {
     var userTags = theUser.getTags
 
     if(userTags != null) {
-      var itterTags = userTags.iterator()
+      var itterTags = userTags.iterator
 
       while (itterTags.hasNext) {
         typ.addVald(itterTags.next().tagWord.tagName)

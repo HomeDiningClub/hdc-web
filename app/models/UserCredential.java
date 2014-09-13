@@ -1,9 +1,11 @@
 package models;
 
+import interfaces.IEditable;
 import models.base.AbstractEntity;
 import models.modelconstants.RelationshipTypesJava;
 import models.rating.RatingUserCredential;
 import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
 import play.libs.Scala;
@@ -12,6 +14,8 @@ import securesocial.core.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
+import java.lang.Boolean;
 
 
 /**
@@ -23,7 +27,7 @@ import java.util.Set;
 
 
 @NodeEntity
-public class UserCredential extends AbstractEntity implements Identity {
+public class UserCredential extends AbstractEntity implements Identity, IEditable {
 
     @Indexed(indexType = IndexType.FULLTEXT, indexName = "userId")
     public String userId = "";
@@ -85,6 +89,15 @@ public class UserCredential extends AbstractEntity implements Identity {
     @RelatedToVia(type = RelationshipTypesJava.RATED.Constant)
     @Fetch
     Set<RatingUserCredential> ratings;
+
+    // Verify the object owner
+    @Transient
+    public Boolean isEditableBy(UUID objectId){
+        if(objectId != null && this.objectId != null && objectId.equals(this.objectId))
+            return true;
+        else
+            return false;
+    }
 
     public int getAverageRating() {
         int sumOfRatingValues = 0, count = 0;

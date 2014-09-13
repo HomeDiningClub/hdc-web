@@ -100,6 +100,7 @@ class RecipePageController extends Controller with SecureSocial {
         Logger.debug(errorMsg)
         NotFound(errorMsg)
       case Some(item) =>
+        item.isEditableBy(Helpers.getUserFromRequest.get.objectId)
         val form = RecipeForm.apply(
           Some(item.objectId.toString),
           item.getName,
@@ -134,15 +135,20 @@ class RecipePageController extends Controller with SecureSocial {
             recipeService.findById(UUID.fromString(id)) match {
               case None => None
               case Some(item) =>
-                item.setName(contentData.name)
-                Some(item)
+                item.isEditableBy(currentUser.get.objectId).asInstanceOf[Boolean] match {
+                  case true =>
+                    item.setName(contentData.name)
+                    Some(item)
+                  case false =>
+                    None
+                }
             }
           case None =>
             Some(new Recipe(contentData.name))
         }
 
         if (newRec.isEmpty) {
-          Logger.debug("Error saving Recipe: User used a non-existing Recipe objectId")
+          Logger.debug("Error saving Recipe: User used a non-existing, or someone elses Recipe")
           val errorMessage = Messages("recipe.add.error")
           BadRequest(views.html.recipe.addOrEdit(recForm.fill(contentData))).flashing(FlashMsgConstants.Error -> errorMessage)
         }

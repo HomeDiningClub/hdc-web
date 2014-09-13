@@ -49,3 +49,28 @@ SKIP 150000 LIMIT 50000
 SET n.title=n.title
 RETURN COUNT(*)
 --
+
+--
+(http://refcardz.dzone.com/refcardz/core-spring-data)
+Logical keyword	Keyword expressions
+AFTER	After, IsAfter (date types only)
+BEFORE	Before, IsBefore (date types only)
+BETWEEN	Between, IsBetween (date and numeric types only)
+CONTAINING	Containing, IsContaining, Contains (String or collection types only)
+ENDING_WITH	EndingWith, IsEndingWith, EndsWith (String types only)
+EXISTS	Exists
+FALSE	False (boolean properties only)
+GREATER_THAN	GreaterThan, IsGreaterThan (comparable types only)
+GREATER_THAN_EQUALS	GreaterThanEqual, IsGreaterThanEqual (compüarable types only)
+IN	In, IsIn (expects collection or array parameter)
+IS	Is, Equals, (or no keyword at all)
+IS_NOT_NULL	NotNull, IsNotNull
+IS_NULL	Null, IsNull
+LESS_THAN	LessThan, IsLessThan (comparable types)
+LESS_THAN_GREATER	LessThanGreater, IsLessThanGreater (comparable types only)
+LIKE	Like, IsLike (expects the store-specific like syntax, prefer CONTAINING, STARTS_WITH, ENDS_WITH)
+NOT	Not, IsNot (boolean types only)
+NOT_IN	NotIn, IsNotIn (expects collection or array parameter)
+NOT_LIKE	NotLike, IsNotLike
+STARTING_WITH	StartingWith, IsStartingWith, StartsWith (String types only)
+TRUE	True, IsTrue (boolean types only)

@@ -1,34 +1,44 @@
 package utils.authorization
 
+import interfaces.IEditable
+import models.entity.EmptyNode
 import securesocial.core.{Identity, Authorization}
-import models.{UserProfile, UserRole, UserCredential}
+import models.{Recipe, UserProfile, UserRole, UserCredential}
 import enums.RoleEnums.RoleEnums
 import scala.collection.JavaConverters._
-import services.{InstancedServices, UserCredentialService}
+import services.InstancedServices
 import java.util.UUID
-import org.springframework.data.neo4j.annotation.NodeEntity
 import play.api.Logger
-import models.base.AbstractEntity
-import org.neo4j.graphdb.index.Index
-import org.neo4j.graphdb.Node
+import scala.collection.JavaConverters._
+
 
 case class WithRoleAndOwnerOfObject(role: RoleEnums, objectIdToControl: UUID) extends Authorization {
 
   def isAuthorized(user: Identity) = {
-    val userInRole = user match {
-      case user: UserCredential =>
-        val isInRole = user.roles.iterator.asScala.find((r: UserRole) => r.name.equalsIgnoreCase(role.toString)) match {
-          case Some(foundRole) => true
-          case None => false
+
+    user match {
+      case userCred: UserCredential =>
+        userCred.roles.iterator.asScala.find((r: UserRole) => r.name.equalsIgnoreCase(role.toString)) match {
+          case Some(foundRole) =>
+
+            // User is a credential and has the correct role, now check the access to the objectId
+            val node = InstancedServices.nodeEntityService.getAnyNodeUsingId(objectIdToControl)
+            node match {
+              case None => false
+              case Some(anyItem) =>
+                // TODO: Security check might be slow, we do three different DB-queries
+                InstancedServices.nodeEntityService.template.findOne(anyItem.graphId,InstancedServices.userCredentialService.template.getStoredEntityType(anyItem).getType).asInstanceOf[IEditable].isEditableBy(userCred.objectId).asInstanceOf[Boolean]
+            }
+          case None =>
+            false
         }
-        isInRole
       case _ =>
         false
     }
-
-    if(userInRole){
-      //val dataIndex = InstancedServices.userCredentialService.template.getIndex(classOf[NodeEntity], "objectId")
-      userInRole
+//
+//    if(optionUser){
+//      //val dataIndex = InstancedServices.userCredentialService.template.getIndex(classOf[NodeEntity], "objectId")
+//      userInRole
 //      if(dataIndex == null){
 //        false
 //      } else {
@@ -53,8 +63,8 @@ case class WithRoleAndOwnerOfObject(role: RoleEnums, objectIdToControl: UUID) ex
 //        }
 //      }
 
-    } else {
-      userInRole
-    }
+//    } else {
+//      userInRole
+//    }
   }
 }

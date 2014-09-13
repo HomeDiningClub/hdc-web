@@ -15,7 +15,9 @@
     <div class="container host-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                @views.html.profile.profileHeader(recipe.getOwnerProfile.profileLinkName)
+                @defining(if(recipe.getOwnerProfile.getAvatarImage != null){recipe.getOwnerProfile.getAvatarImage.getTransformByName("thumbnail").getUrl}else{""}) { avatarUrl =>
+                    @views.html.profile.profileHeader(recipe.getOwnerProfile.profileLinkName, avatarUrl)
+                }
                 <div class="row">
                     <div class="col-xs-12 big-margin-top">
                         <h1 class="page-header">@recipe.getName</h1>

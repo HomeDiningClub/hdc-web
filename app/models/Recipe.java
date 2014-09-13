@@ -1,24 +1,28 @@
 package models;
 
+import interfaces.IEditable;
 import models.content.ContentBase;
 import models.files.ContentFile;
 import models.modelconstants.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
-import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.data.neo4j.support.index.IndexType;
 import services.InstancedServices;
 import utils.Helpers;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
+import java.lang.Boolean;
 
 @NodeEntity
-public class Recipe extends ContentBase {
+public class Recipe extends ContentBase implements IEditable {
 
     @Indexed(indexType = IndexType.FULLTEXT,indexName = "recipeName")
     private String name;
@@ -139,6 +143,16 @@ public class Recipe extends ContentBase {
 
         return this.recipeLinkName;
     }
+
+    // Verify the object owner
+    @Transient
+    public Boolean isEditableBy(UUID objectId){
+        if(objectId != null && objectId.equals(this.getOwnerProfile().getOwner().objectId))
+            return true;
+        else
+            return false;
+    }
+
 
     @Fetch
     public UserProfile getOwnerProfile() {

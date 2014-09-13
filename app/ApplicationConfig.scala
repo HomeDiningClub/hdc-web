@@ -1,4 +1,7 @@
+import java.util.UUID
+
 import models.base.AbstractEntity
+import models.content.ContentPage
 import org.neo4j.graphdb.Node
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.context.ApplicationListener
@@ -20,14 +23,14 @@ import org.springframework.data.neo4j.lifecycle.BeforeSaveEvent
 //      }
 //    }
 //  }
-
-//  @Bean
-//  def beforeSaveEventApplicationListener(): ApplicationListener[BeforeSaveEvent[AbstractEntity]] = {
-//    new ApplicationListener[BeforeSaveEvent[AbstractEntity]]() {
 //
-//      override def onApplicationEvent(event: BeforeSaveEvent[AbstractEntity]) {
+//  @Bean
+//  def beforeSaveEventApplicationListener(): ApplicationListener[BeforeSaveEvent[ContentPage]] = {
+//    new ApplicationListener[BeforeSaveEvent[ContentPage]]() {
+//
+//      override def onApplicationEvent(event: BeforeSaveEvent[ContentPage]) {
 //        val entity = event.getEntity
-//        entity.setUniqueId(UUID.randomUUID)
+//        //entity.setUniqueId(UUID.randomUUID)
 //      }
 //    }
 //  }

@@ -21,6 +21,13 @@ $(document).ready(function () {
     // Activate tooltips
    $(".host-level-icon").tooltip();
 
+    // Disable double click
+    $(document).ready(function(){
+        $("*").dblclick(function(e){
+            e.preventDefault();
+        });
+    });
+
     // Clicking on carousel thumbnails
     $('[id^=carousel-selector-]').click( function(){
         var id_selector = $(this).attr("id");
