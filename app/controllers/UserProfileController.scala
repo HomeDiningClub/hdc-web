@@ -50,6 +50,9 @@ class UserProfileController  extends Controller  with SecureSocial {
   @Autowired
   private var fileService: ContentFileService = _
 
+  @Autowired
+  var userCredentialService : services.UserCredentialService = _
+
   // Form
 
   val userProfileForm : play.api.data.Form[models.formdata.UserProfileForm]  = play.api.data.Form(
@@ -320,6 +323,8 @@ def edit = SecuredAction { implicit request =>
   // c
   var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
+  var personnummer = theUser.getOwner.personNummer
+
   var countiesList = getCounties
 
   var countyItter = countiesList.iterator
@@ -393,6 +398,9 @@ if(userTags != null) {
       case e : Exception => println("COUNTY EXCEPTION : " + e.getMessage)
     }
 
+
+
+
   // File with stored values
   val eData : EnvData = new EnvData(
     theUser.profileLinkName,
@@ -404,7 +412,7 @@ if(userTags != null) {
     theUser.zipCode, // zip code
     theUser.city, // city
     theUser.phoneNumber, // phone number
-    "" // TODO
+    personnummer // TODO
   )
 
   val nyForm =  AnvandareForm.fill(eData)
@@ -587,16 +595,20 @@ if(userTags != null) {
             phoneNumber           = reqUserProfile.phoneNumber
             countyId              = reqUserProfile.county
             println("????? county = " + reqUserProfile.county)
-
-
-
-
-
-
+            println("Personnummer: " + reqUserProfile.personnummer)
 
 
            val userCred = Helpers.getUserFromRequest.get
            var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+
+
+           var userCredentials =  theUser.getOwner
+
+            userCredentials.personNummer = reqUserProfile.personnummer
+            userCredentialService.save(userCredentials)
+
+
+
 
            theUser.aboutMeHeadline      = aboutMeHeadlineText
            theUser.aboutMe              = aboutMeText

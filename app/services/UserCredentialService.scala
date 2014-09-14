@@ -220,6 +220,16 @@ class UserCredentialService {
     savedUser
   }
 
+  // Save UserCredential used to save personnummer modified in the
+  // UserCredentials.
+  @Transactional(readOnly = false)
+  def save(user: UserCredential): UserCredential = {
+    // Save
+    val savedUser = userCredentialRepository.save(user)
+    savedUser
+  }
+
+
   @Transactional(readOnly = false)
   def add(newItem: UserCredential): UserCredential = {
     val newResult = userCredentialRepository.save(newItem)

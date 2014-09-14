@@ -67,6 +67,8 @@ public class UserCredential extends AbstractEntity implements Identity, IEditabl
 
     public String oAuth2InfoRefreshToken    = "";
 
+    public String personNummer              = "";
+
     // passwordInfo
 
     public String hasher = "";
