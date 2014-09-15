@@ -308,7 +308,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       modUserCredential.fullName                = userCredential.fullName
       modUserCredential.salt                    = userCredential.salt
       modUserCredential.hasher                  = userCredential.hasher
-      modUserCredential.personNummer            = userCredential.personNummer
+     // modUserCredential.personNummer            = userCredential.personNummer
         var newUserCredential                   = saveUser(modUserCredential)
         return newUserCredential
 
