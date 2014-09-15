@@ -51,8 +51,11 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
     <context:component-scan base-package="controllers, services, repositories, models" />
 
     <neo4j:repositories base-package="repositories"/>
-    <!--<neo4j:auditing></neo4j:auditing>-->
 
+    <!--
+    <neo4j:auditing date-time-provider-ref="entityAuditor" auditor-aware-ref="entityAuditor"></neo4j:auditing>
+    <bean id="entityAuditor" class="utils.auditing.UserCredentialAuditor" />
+-->
     <tx:annotation-driven mode="proxy"/>
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>

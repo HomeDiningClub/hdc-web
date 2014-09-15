@@ -36,26 +36,30 @@
                             @helper.inputText(
                                 signUpForm("firstName"),
                                 '_label -> Messages("securesocial.signup.firstName"),
-                                'class -> "input-xlarge"
+                                'class -> "input-xlarge",
+                                '_help -> Messages("securesocial.signup.firstname-required")
                             )
 
                             @helper.inputText(
                                 signUpForm("lastName"),
                                 '_label -> Messages("securesocial.signup.lastName"),
-                                'class -> "input-xlarge"
+                                'class -> "input-xlarge",
+                                '_help -> Messages("securesocial.signup.lastname-required")
                             )
 
                             @helper.inputPassword(
                                 signUpForm("password.password1"),
                                 '_label -> Messages("securesocial.signup.password1"),
-                                'class -> "input-xlarge"
+                                'class -> "input-xlarge",
+                                '_help -> Messages("securesocial.signup.password-required")
                             )
 
                             @helper.inputPassword(
                                 signUpForm("password.password2"),
                                 '_label -> Messages("securesocial.signup.password2"),
                                 '_error -> signUpForm.error("password"),
-                                'class -> "input-xlarge"
+                                'class -> "input-xlarge",
+                                '_help -> Messages("securesocial.signup.password-required")
                             )
 
                             <div class="form-actions">

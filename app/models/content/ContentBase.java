@@ -1,17 +1,9 @@
 package models.content;
 
 import enums.ContentStateEnums;
-import models.base.AbstractEntity;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import models.base.AuditEntity;
 
-public abstract class ContentBase extends AbstractEntity {
-
-    @CreatedDate
-    public Long createdDate;
-
-    @LastModifiedDate
-    public Long lastModifiedDate;
+public abstract class ContentBase extends AuditEntity {
 
     public String contentState;
 

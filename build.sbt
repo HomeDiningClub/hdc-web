@@ -34,9 +34,11 @@ libraryDependencies ++= Seq(
   //"com.sksamuel.scrimage" %% "scrimage-filters" % "1.4.1" (for filter and effects)
   //"com.sksamuel.scrimage" %% "scrimage-canvas" % "1.4.1" (for image manipulation)
   //"org.julienrf" %% "play-jsmessages" % "1.6.2"
+  //filters, (for gzip and such)
 )
 
 // Import more bindings for routes
+// This makes support for unknown types in routing
 routesImport ++= Seq(
   "util.Binders._"
 )
