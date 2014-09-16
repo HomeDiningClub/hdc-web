@@ -3,7 +3,7 @@ package utils
 import play.api.mvc.{Controller, RequestHeader}
 import models.UserCredential
 import securesocial.core.{Identity, SecureSocial}
-import play.api.Logger
+import play.api.{DefaultGlobal, Logger}
 import play.api.i18n.Lang
 import utils.authorization.WithRole
 import enums.RoleEnums

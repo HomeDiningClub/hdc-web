@@ -10,7 +10,8 @@
         <table class="table table-striped table-hover table-bordered">
             <thead>
                 <tr>
-                    <th>@Messages("admin.content.list.created_date")</th>
+                    <th>@Messages("admin.content.list.created-info")</th>
+                    <th>@Messages("admin.content.list.modified-info")</th>
                     <th>@Messages("admin.content.list.contentstate")</th>
                     <th>@Messages("admin.content.list.route")</th>
                     <th>@Messages("admin.content.list.name")</th>
@@ -24,7 +25,14 @@
             @if(contentList.nonEmpty) {
                 @for(contentPage <- contentList.get) {
                     <tr>
-                        <td>@contentPage.createdDate</td>
+                        <td>
+                            @contentPage.getCreatedBy<br>
+                            @contentPage.getCreatedDate
+                        </td>
+                        <td>
+                            @contentPage.getLastUpdatedBy<br>
+                            @contentPage.getLastModifiedDate
+                        </td>
                         <td>@contentPage.contentState</td>
                         <td>@contentPage.route</td>
                         <td>@contentPage.name</td>

@@ -10,20 +10,18 @@ import scala.concurrent.Future
 import utils.authorization.WithRole
 import utils.Helpers
 import utils.requests.NormalizedRequest
-
-// Java2Scala
-// http://javatoscala.com/
-
-//object Global {
-//  private var init: Boolean = false
-//}
-
+import utils.filters.GlobalLoggingFilter
+/*
+import play.filters.gzip.GzipFilter
+import play.filters.csrf.CSRFFilter
+*/
 object Global extends GlobalSettings {
+
   /**
    * Declare the application context to be used.
    */
-
   val ctx = new ClassPathXmlApplicationContext("applicationContext.xml")
+  val currentUser = null
 
   /**
    * Sync the context lifecycle with Play's.
@@ -49,6 +47,11 @@ object Global extends GlobalSettings {
 
     //ctx.close() - May or may not be needed
   }
+
+  // Disable filter for now
+//  override def doFilter(next: EssentialAction): EssentialAction = {
+//    Filters(super.doFilter(next), GlobalLoggingFilter)//, new GzipFilter())//, CSRFFilter())
+//  }
 
   override def onError(request: RequestHeader, ex: Throwable) = {
     var currentEx = ex
