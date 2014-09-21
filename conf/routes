@@ -39,10 +39,10 @@ GET         /profile/showtag                                     @controllers.Us
 POST        /profile/savetags                                    @controllers.UserProfileController.saveTags
 GET         /profile/verify                                      @controllers.UserProfileController.verifyUserProfile
 
-//GET         /profile/favorite/add                                @controllers.UserProfileController.test(userId : String)
+#GET         /profile/favorite/add                                @controllers.UserProfileController.test(userId : String)
 # http://localhost:9000/profile/favorite/add?userId=94caa47f-dd26-40c3-a9ab-2effa14517ea
 
-//GET         /profile/favorite/show                               @controllers.UserProfileController.showFavorites
+#GET         /profile/favorite/show                               @controllers.UserProfileController.showFavorites
 
 # Profile - Inbox
 GET         /inbox/show                                          controllers.MessageController.show
