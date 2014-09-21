@@ -6,6 +6,7 @@ import models.files.ContentFile;
 import models.modelconstants.RelationshipTypesJava;
 import models.profile.TagWord;
 import models.location.County;
+import models.profile.TaggedFavoritesToUserProfile;
 import models.profile.TaggedLocationUserProfile;
 import models.profile.TaggedUserProfile;
 import org.neo4j.graphdb.Direction;
@@ -86,6 +87,9 @@ public class UserProfile extends AuditEntity implements IEditable {
     @RelatedToVia(type = "LOCATION_AT")
     private Set<TaggedLocationUserProfile> userLocationProfileTag;
 
+    @RelatedToVia(type="FAVORITE_USER")
+    private Set<TaggedFavoritesToUserProfile>userFriendsProfileTag;
+
     @RelatedTo(type = RelationshipTypesJava.HAS_RECIPES.Constant, direction = Direction.OUTGOING)
     private Set<Recipe> recipes;
 
@@ -150,6 +154,14 @@ public class UserProfile extends AuditEntity implements IEditable {
         return taggedLocationProfile;
     }
 
+    // User favorites
+    public TaggedFavoritesToUserProfile addFavoriteUserProfile(UserProfile userProfile) {
+        TaggedFavoritesToUserProfile taggedFavoritesToUserProfile = new TaggedFavoritesToUserProfile(this, userProfile, 1);
+       userFriendsProfileTag.add(taggedFavoritesToUserProfile);
+        return taggedFavoritesToUserProfile;
+    }
+
+
     public UserProfile addRecipe(Recipe recipeToAdd) {
         if(this.recipes == null)
             this.recipes = new HashSet<Recipe>();
@@ -198,6 +210,8 @@ public class UserProfile extends AuditEntity implements IEditable {
     public Iterable<Recipe> getRecipes() { return recipes; }
     public Iterable<TaggedUserProfile> getTags() { return userProfileTag; }
     public Iterable<TaggedLocationUserProfile> getLocations() { return userLocationProfileTag; }
+
+    public Set<TaggedFavoritesToUserProfile> getFavorites() { return userFriendsProfileTag;}
 
    // public boolean isHost = false;
     public String aboutMe = "";

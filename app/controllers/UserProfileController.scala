@@ -520,8 +520,7 @@ if(userTags != null) {
     var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
 
-    theUser = userProfileService.removeAllProfileTags(theUser)
-    //theUser.removeAllTags()
+    theUser.removeAllTags()
 
     // Fetch all tags available to choose
     var d = tagWordService.listByGroupOption("profile")
@@ -534,8 +533,7 @@ if(userTags != null) {
         if (!value.equals("empty")) {
 
           // If the the user have tagged the particial chooice tag it
-          theUser = userProfileService.addProfileTag(theUser, theTag)
-          //theUser.tag(theTag)
+          theUser.tag(theTag)
         }
 
       } // end loop
@@ -621,8 +619,6 @@ if(userTags != null) {
            theUser.streetAddress        = streetAddress
            theUser.phoneNumber          = phoneNumber
 
-            theUser = userProfileService.removeAllProfileTags(theUser)
-            //theUser.removeAllTags()
 
             // Fetch all tags available to choose
             var d = tagWordService.listByGroupOption("profile")
