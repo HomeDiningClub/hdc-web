@@ -27,7 +27,7 @@ case class WithRoleAndOwnerOfObject(role: RoleEnums, objectIdToControl: UUID) ex
               case None => false
               case Some(anyItem) =>
                 // TODO: Security check might be slow, we do three different DB-queries
-                InstancedServices.nodeEntityService.template.findOne(anyItem.graphId,InstancedServices.userCredentialService.template.getStoredEntityType(anyItem).getType).asInstanceOf[IEditable].isEditableBy(userCred.objectId).asInstanceOf[Boolean]
+                InstancedServices.nodeEntityService.isNodeEditableBy(anyItem, userCred)
             }
           case None =>
             false

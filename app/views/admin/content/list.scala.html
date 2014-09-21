@@ -26,17 +26,15 @@
                 @for(contentPage <- contentList.get) {
                     <tr>
                         <td>
-                            @contentPage.getCreatedBy<br>
                             @contentPage.getCreatedDate
                         </td>
                         <td>
-                            @contentPage.getLastUpdatedBy<br>
                             @contentPage.getLastModifiedDate
                         </td>
                         <td>@contentPage.contentState</td>
                         <td>@contentPage.route</td>
                         <td>@contentPage.name</td>
-                        <td>@if(contentPage.relatedPages != null && contentPage.relatedPages.nonEmpty){ @contentPage.relatedPages.toList.length.toString }</td>
+                        <td>@if(contentPage.getRelatedPages != null && contentPage.getRelatedPages.nonEmpty){ @contentPage.getRelatedPages.toList.length.toString }</td>
                         <td>@contentPage.visibleInMenus.booleanValue().toString</td>
                         <td>
                             <ul class="nav nav-pills">

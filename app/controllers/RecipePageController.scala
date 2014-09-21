@@ -52,7 +52,7 @@ class RecipePageController extends Controller with SecureSocial {
   def viewRecipeByName(recipeName: String) = UserAwareAction { implicit request =>
 
     // Try getting the recipe from name, if failure show 404
-    recipeService.findByrecipeLinkName(recipeName, fetchAll = false) match {
+    recipeService.findByrecipeLinkName(recipeName) match {
       case Some(recipe) =>
         Redirect(controllers.routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.profileLinkName,recipe.getLink))
       case None =>

@@ -64,8 +64,9 @@ class CountyService {
   }
 
   @Transactional(readOnly = false)
-  def deleteAllContentPages() {
-    countyRepository.deleteAll()
+  def deleteAll(): Boolean = {
+    countyRepository.deleteAll
+    true
   }
 
   @Transactional(readOnly = false)

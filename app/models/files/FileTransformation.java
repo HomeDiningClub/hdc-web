@@ -3,7 +3,6 @@ package models.files;
 import models.base.AbstractEntity;
 import models.modelconstants.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
@@ -13,7 +12,7 @@ import services.InstancedServices;
 @NodeEntity
 public class FileTransformation extends AbstractEntity {
 
-    @Indexed(unique = false)
+    @Indexed
     public String name;
     public int width;
     public int height;
@@ -21,16 +20,10 @@ public class FileTransformation extends AbstractEntity {
     public String transformationType;
     public String extension;
 
-    @Fetch
     @RelatedTo(type = RelationshipTypesJava.FILE_TRANSFORMATION.Constant, direction = Direction.INCOMING)
     private ContentFile ownerFile;
 
-    @Transient
-    private String url;
-    @Transient
-    private String basePath;
-
-
+    @Fetch
     public ContentFile getOwnerFile(){
         return this.ownerFile;
     }

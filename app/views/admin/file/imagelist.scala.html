@@ -5,6 +5,7 @@
         <thead>
         <tr>
             <th>Created date</th>
+            <th>Modified date</th>
             <th>Thumbnail</th>
             <th>Name</th>
             <th>Owner</th>
@@ -16,7 +17,8 @@
         <tbody>
         @for(image <- images) {
             <tr>
-                <td>@image.createdDate</td>
+                <td>@image.getCreatedDate</td>
+                <td>@image.getLastModifiedDate</td>
                 <td>
                 @Option(image.getTransformByName("thumbnail")) match {
                     case Some(transform) => { <img src="@transform.getUrl"> }

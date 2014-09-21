@@ -35,7 +35,7 @@ class AdminRecipeController extends Controller with SecureSocial {
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    val listOfPage: List[Recipe] = recipeService.getListOfAll(fetchAll = true)
+    val listOfPage: List[Recipe] = recipeService.getListOfAll
     Ok(views.html.admin.recipe.list(listOfPage))
   }
 

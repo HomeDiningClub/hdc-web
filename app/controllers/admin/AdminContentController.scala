@@ -27,7 +27,7 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    val listOfPage: Option[List[ContentPage]] = contentService.getListOfAll(fetchAll = true)
+    val listOfPage: Option[List[ContentPage]] = contentService.getListOfAll
     Ok(views.html.admin.content.list(listOfPage))
   }
 
@@ -136,7 +136,7 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
                 }
             }
           case None =>
-            newContent.get.relatedPages = new util.HashSet[RelatedPage]
+            contentService.removeAllRelatedPages(newContent.get)
         }
 
         contentData.contentCategories match {
@@ -165,13 +165,13 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
 
   // Edit - Edit content
   def edit(objectId: java.util.UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    contentService.findContentById(objectId, fetchAll = true) match {
+    contentService.findContentById(objectId) match {
       case None =>
         Ok(views.html.admin.content.index())
       case Some(item) =>
         val form = AddContentForm.apply(
         Some(item.objectId.toString),
-        item.relatedPages match {
+        item.getRelatedPages match {
           case null => None
           case relPages => Some(contentService.mapRelatedPagesToStringOfObjectIds(item))
         },

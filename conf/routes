@@ -149,7 +149,8 @@ GET         /admin/tagword/delete/:objectId                      @controllers.ad
 
 # ADMIN - Release & Batch
 GET         /admin/release                                       @controllers.admin.AdminReleaseController.editIndex
-GET         /admin/release/run                                   @controllers.admin.AdminReleaseController.releaseRun
+GET         /admin/release/run                                   @controllers.admin.AdminReleaseController.createDefaultData
+GET         /admin/release/admin                                 @controllers.admin.AdminReleaseController.addAdmin
 GET         /admin/release/deleteall                             @controllers.admin.AdminReleaseController.deleteAllFromDB
 
 # ADMIN - Files

@@ -31,7 +31,10 @@ class AdminReleaseController extends Controller with SecureSocial {
   }
 
   // Create default data in this method
-  def releaseRun = UserAwareAction { implicit request =>
+  def createDefaultData = UserAwareAction { implicit request =>
+
+    // Clear all tags
+    tagWordService.deleteAll
 
     // Create default Tags
     val groupName = "profile"
@@ -56,6 +59,9 @@ class AdminReleaseController extends Controller with SecureSocial {
     tagWordService.createTag("Efterrätter", "Efterrätter", "quality[18]", groupName)
     tagWordService.createTag("Bakverk", "Bakverk", "quality[19]", groupName)
 
+    // Clear all countys
+    countyService.deleteAll
+
     // Create county's
     countyService.createCounty("Blekinge", 1, true)
     countyService.createCounty("Dalarna", 2, true)
@@ -78,9 +84,18 @@ class AdminReleaseController extends Controller with SecureSocial {
     countyService.createCounty("Örebro", 19, true)
     countyService.createCounty("Östergötland", 20, true)
 
-    val adminRole = userRoleService.createRole(RoleEnums.ADMIN)
+    // Clear all roles
+    userRoleService.deleteAll
+
+    userRoleService.createRole(RoleEnums.ADMIN)
     userRoleService.createRole(RoleEnums.POWERUSER)
     userRoleService.createRole(RoleEnums.USER)
+
+
+    Ok("Default data created/recreated")
+  }
+
+  def addAdmin = UserAwareAction { implicit request =>
 
     // Add running user to admin group
     request.user match {
@@ -92,8 +107,7 @@ class AdminReleaseController extends Controller with SecureSocial {
       case None =>
     }
 
-    val successMessage = Messages("admin.success")
-    Redirect(controllers.admin.routes.AdminReleaseController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+    Ok("User added to admin-role")
   }
 
   // Clean up the whole database, use with extreme caution

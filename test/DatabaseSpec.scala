@@ -23,7 +23,7 @@ class DatabaseSpec extends Specification {
     "userprofileIndex" in new WithApplication {
 
       var startTime = System.currentTimeMillis
-      var results = InstancedServices.userProfileService.findByprofileLinkName("testname", fetchAll = true)
+      var results = InstancedServices.userProfileService.findByprofileLinkName("testname")
       var endTime = System.currentTimeMillis
       var requestTime = endTime - startTime
 
