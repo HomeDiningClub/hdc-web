@@ -198,7 +198,11 @@ class UserProfileController  extends Controller  with SecureSocial {
     // Try getting the profile from name, if failure show 404
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) =>
-        Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX, recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner), tagWordService.findByProfileAndGroup(profile,"profile"), isThisMyProfile = isThisMyProfile(profile)))
+        Ok(views.html.profile.index(profile,
+          menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX,
+          recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner),
+          tagWordService.findByProfileAndGroup(profile,"profile"),
+          isThisMyProfile = isThisMyProfile(profile)))
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
         Logger.debug(errMess)
@@ -620,23 +624,28 @@ if(userTags != null) {
            theUser.phoneNumber          = phoneNumber
 
 
-            // Fetch all tags available to choose
-            var d = tagWordService.listByGroupOption("profile")
+//        This part is not needed since tags or on it's own page now, activate this code if they are moved back
 
-            if(d.isDefined){
-              // Loop all available tags
-              for(theTag <- d.get) {
-                var value = map.getOrElse(theTag.tagName, "empty")
-
-                if(!value.equals("empty")) {
-
-                  // If the the user have tagged the particial chooice tag it
-                  theUser.tag(theTag)
-                }
-
-              } // end loop
-
-            }
+//            theUser = userProfileService.removeAllProfileTags(theUser)
+//            //theUser.removeAllTags()
+//
+//            // Fetch all tags available to choose
+//            var d = tagWordService.listByGroupOption("profile")
+//
+//            if(d.isDefined){
+//              // Loop all available tags
+//              for(theTag <- d.get) {
+//                var value = map.getOrElse(theTag.tagName, "empty")
+//
+//                if(!value.equals("empty")) {
+//
+//                  // If the the user have tagged the particial chooice tag it
+//                  theUser.tag(theTag)
+//                }
+//
+//              } // end loop
+//
+//            }
 
           if(countyId == None || countyId == null || countyId.trim().size < 2) {
             //theUser.removeLocation()

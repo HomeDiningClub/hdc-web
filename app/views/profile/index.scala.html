@@ -27,17 +27,16 @@
                                 <div class="breadtext">
                                     @Html(userProfile.aboutMe)
                                 </div>
-                                @shared.tagList(tagList)
                             </article>
                         </section>
                     </div>
-                    <div class="col-xs-12 col-md-6 big-margin-top host-image-gallery">
+                    <div class="col-xs-12 col-md-6 big-margin-top">
 
 
                     @userProfile.getMainImage match {
                         case null => {}
                         case image: models.files.ContentFile => {
-                            <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide">
+                            <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide host-image-gallery">
                                     <!-- Slider carousel items -->
                                 <div class="carousel-inner">
                                     <div class="active item" data-slide-number="0">@shared.img(image.getTransformByName("normal").getUrl, cssClass = "img-responsive")</div>
@@ -56,6 +55,20 @@
                             @*</ul>*@
                         }
                     }
+
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            @shared.tagList(tagList, userProfile.getOwner.firstName())
+                            <br>
+                            @if(userProfile.getLocations.iterator().hasNext()){
+                                <strong>@Messages("profile.county.text")</strong> @userProfile.getLocations.iterator().next().county.name
+                            }
+                        </div>
+                    </div>
+
+                    @shared.hdcShare(url = request.uri)
+                    @shared.fbShare(url = request.uri)
+
                     </div>
                 </div>
                 <div class="row">

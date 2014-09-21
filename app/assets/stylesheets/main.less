@@ -601,6 +601,12 @@ input[type="reset"]:hover
   -o-transition: text-decoration 0.5s;
   transition: text-decoration 0.5s;
 }
+
+.nav-main-menu > li > a:hover span,
+.nav-main-menu > li > a:focus span {
+  text-decoration: none;
+}
+
 .navbar-toggle-mobile-menu
 {
   padding:10px 8px 10px 8px;
@@ -703,6 +709,23 @@ input[type="reset"]:hover
 
 
 // Start page
+.panel-startpage-aside {
+  background-color: @hdc-light-gray;
+}
+h1.aside-title {
+  font-size:20px;
+  margin-top: 0px;
+  border-bottom:1px solid @hdc-green;
+}
+h2.aside-title {
+  margin-top: 0px;
+  border-bottom:1px solid @hdc-green;
+}
+h3.aside-title {
+  font-weight: bold;
+  margin-top: 0px;
+  border-bottom:1px solid @hdc-green;
+}
 .form-filter-startpage dl
 {
   margin-bottom:0px;
@@ -1007,6 +1030,8 @@ input[type="reset"]:hover
 .panel-aside .list-group-item-selected {
   background-color:#f9f9f9;
 }
+
+
 // Profile
 .host-image img
 {
@@ -1094,7 +1119,14 @@ input[type="reset"]:hover
 }
 
 
-
+// Profile Tags
+.tag-header {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.tag .glyphicon-tag {
+  color: #42B3CF;
+}
 
 // RecipeBox
 .panel-recipe

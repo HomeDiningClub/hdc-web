@@ -34,14 +34,14 @@
                             </article>
                         </section>
                     </div>
-                    <div class="col-xs-12 col-md-8 host-image-gallery">
+                    <div class="col-xs-12 col-md-8">
 
                         @recipe.getMainImage match {
                             case null => {  }
                             case image: models.files.ContentFile => {
                                 @defining(recipe.getRecipeImages.asScala) { recipeImages =>
 
-                                    <div id="recipe-carousel" data-ride="carousel" data-interval="4000" class="carousel slide hdc-carousel">
+                                    <div id="recipe-carousel" data-ride="carousel" data-interval="4000" class="carousel slide hdc-carousel host-image-gallery">
                                             <!-- Slider carousel items -->
                                         <div class="carousel-inner">
                                             <div class="active item" data-slide-number="0">@shared.img(image.getTransformByName("normal").getUrl, cssClass = "img-responsive")</div>

@@ -28,135 +28,151 @@
 
 
                 @helper.form(action = routes.UserProfileController.editSubmit(), 'enctype -> "multipart/form-data") {
-                <div class="panel panel-default">
-                    <div class="panel-heading">@Messages("profile.create.header.user")</div>
-                    <div class="panel-body">
-                        <ul class="list-group">
-                            <li class="list-group-item">
+                <div class="col-xs-12 col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">@Messages("profile.create.header.profile-name")</div>
+                        <div class="panel-body">
+                            @helper.inputText(EnvDataForm("name"),
+                                'id -> "name",
+                                '_showErrors -> true,
+                                '_label -> Messages("profile.create.form.profilename"),
+                                '_help -> Messages("profile.create.form.profilename.required"),
+                                '_error -> EnvDataForm.error("name")
+                            )
+                            <div class="alert alert-info">@Html(Messages("profile.create.form.profilename.help"))</div>
 
-
-
-                                @helper.inputText(EnvDataForm("name"),
-                                    'id -> "name",
-                                    '_showErrors -> true,
-                                    '_label -> Messages("profile.create.form.profilename"),
-                                    '_help -> Messages("profile.create.form.profilename.required"),
-                                    '_error -> EnvDataForm.error("name")
-                                )
-                                <div class="alert alert-info">@Html(Messages("profile.create.form.profilename.help"))</div>
-
-                                @helper.inputHidden(EnvDataForm("name2"),
-                                    'id -> "name",
-                                    '_showErrors -> true,
-                                    '_label -> Messages("profile.create.form.profilename"),
-                                    '_help -> "",
-                                    '_error -> EnvDataForm.error("name")
-                                )
-                            </li>
-
-                            <li class="list-group-item">
-                                <a href="@routes.UserProfileController.showTags()" style="margin-top: 10px; display: block;">Edit tags</a>
-                            </li>
-
-                            <li class="list-group-item">
-                                @helper.inputText(EnvDataForm("aboutmeheadline"),
-                                    'id -> "aboutmeheadline",
-                                    '_showErrors -> true,
-                                    '_label -> Messages("profile.create.form.aboutmeheadline"),
-                                    '_help -> Messages("profile.create.form.aboutmeheadline.help"),
-                                    '_error -> EnvDataForm.error("aboutmeheadline")
-                                )
-
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        @helper.inputFile(EnvDataForm("avatarimage"), '_label -> Messages("profile.create.form.avatar-image"))
-                                        @if(editingProfile.isDefined && editingProfile.get.getAvatarImage != null) {
-                                            @shared.hostImageCircle(editingProfile.get.getAvatarImage.getTransformByName("thumbnail").getUrl) - @Messages("profile.create.form.avatar-image.existing")
-                                        }else{
-                                            @shared.hostImageCircle()
-                                        }
-                                    </div>
-                                </div>
-
-
-                                @helper.textarea(EnvDataForm("aboutme"),
-                                    'id -> "aboutme",
-                                    '_showErrors -> true,
-                                    'class -> "richtextuser",
-                                    '_label -> Messages("profile.create.form.aboutme"),
-                                    '_help -> Messages("profile.create.form.aboutme.help"),
-                                    '_error -> EnvDataForm.error("aboutme")
-                                )
-
-                                @helper.inputText(EnvDataForm("streetAddress"),
-                                    'id -> "streetAddress",
-                                    '_showErrors -> true,
-                                    '_label -> Messages("profile.create.form.streetAddress"),
-                                    '_help -> Messages("profile.create.form.streetAddress.help"),
-                                    '_error -> EnvDataForm.error("streetAddress")
-                                )
-
-                                @helper.inputText(EnvDataForm("zipCode"),
-                                    'id -> "zipCode",
-                                    '_showErrors -> true,
-                                    '_label -> Messages("profile.create.form.zipCode"),
-                                    '_help -> Messages("profile.create.form.zipCode.help"),
-                                    '_error -> EnvDataForm.error("zipCode")
-                                )
-
-                                @helper.inputText(EnvDataForm("city"),
-                                    'id -> "city",
-                                    '_showErrors -> true,
-                                    '_label -> Messages("profile.create.form.city"),
-                                    '_help -> Messages("profile.create.form.city.help"),
-                                    '_error -> EnvDataForm.error("city")
-                                )
-
-
-                                @helper.inputText(EnvDataForm("phoneNumber"),
-                                    'id -> "phoneNumber",
-                                    '_showErrors -> true,
-                                    '_label -> Messages("profile.create.form.phoneNumber"),
-                                    '_help -> Messages("profile.create.form.phoneNumber.help"),
-                                    '_error -> EnvDataForm.error("phoneNumber")
-                                )
-
-                                @helper.inputText(EnvDataForm("personnummer"),
-                                    'id -> "phoneNumber",
-                                    '_showErrors -> true,
-                                    '_label -> Messages("profile.create.form.personnummer"),
-                                    '_help -> Messages("profile.create.form.personnummer.help"),
-                                    '_error -> EnvDataForm.error("personnummer")
-                                )
-
-                                @if(!optionsLocationAreas.isEmpty) {
-                                        @helper.select(EnvDataForm("county"),
-                                        optionsLocationAreas.get,
-                                        '_label -> Messages("profile.create.form.area"),
-                                        '_error -> EnvDataForm.error("county")
-                                    )
-                                }
-
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        @helper.inputFile(EnvDataForm("mainimage"), '_label -> Messages("profile.create.form.main-image"))
-                                        @if(editingProfile.isDefined && editingProfile.get.getMainImage != null) {
-                                            @shared.img(editingProfile.get.getMainImage.getTransformByName("thumbnail").getUrl) - @Messages("profile.create.form.main-image.existing")
-                                        }
-                                    </div>
-                                </div>
-
-                            </li>
-                        </ul>
+                            @helper.inputHidden(EnvDataForm("name2"),
+                                'id -> "name",
+                                '_showErrors -> true,
+                                '_label -> Messages("profile.create.form.profilename"),
+                                '_help -> "",
+                                '_error -> EnvDataForm.error("name")
+                            )
+                        </div>
                     </div>
-                </div>
+
+
 
                     <div class="panel panel-default">
-                    <div class="panel-heading">@Messages("profile.create.header.food")</div>
+                        <div class="panel-heading">@Messages("profile.create.header.about-me")</div>
+                        <div class="panel-body">
+
+                            @helper.inputText(EnvDataForm("aboutmeheadline"),
+                                'id -> "aboutmeheadline",
+                                '_showErrors -> true,
+                                '_label -> Messages("profile.create.form.aboutmeheadline"),
+                                '_help -> Messages("profile.create.form.aboutmeheadline.help"),
+                                '_error -> EnvDataForm.error("aboutmeheadline")
+                            )
+
+                            <hr>
+
+                            @helper.inputFile(EnvDataForm("avatarimage"), '_label -> Messages("profile.create.form.avatar-image"))
+                            @if(editingProfile.isDefined && editingProfile.get.getAvatarImage != null) {
+                                @shared.hostImageCircle(editingProfile.get.getAvatarImage.getTransformByName("thumbnail").getUrl) - @Messages("profile.create.form.avatar-image.existing")
+                            }else{
+                                @shared.hostImageCircle()
+                            }
+
+                            <hr>
+
+                            @helper.textarea(EnvDataForm("aboutme"),
+                                'id -> "aboutme",
+                                '_showErrors -> true,
+                                'class -> "richtextuser",
+                                '_label -> Messages("profile.create.form.aboutme"),
+                                '_help -> Messages("profile.create.form.aboutme.help"),
+                                '_error -> EnvDataForm.error("aboutme")
+                            )
+
+                            <hr>
+                            @helper.inputFile(EnvDataForm("mainimage"), '_label -> Messages("profile.create.form.main-image"))
+                            @if(editingProfile.isDefined && editingProfile.get.getMainImage != null) {
+                                @shared.img(editingProfile.get.getMainImage.getTransformByName("thumbnail").getUrl) - @Messages("profile.create.form.main-image.existing")
+                            }
+
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+                </div>
+                <div class="col-xs-12 col-md-6">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">@Messages("profile.create.header.food")</div>
+                        <div class="panel-body">
+
+                            <a href="@routes.UserProfileController.showTags()">Edit tags</a>
+
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">@Messages("profile.create.header.personal-information")</div>
+                        <div class="panel-body">
+
+
+                            @helper.inputText(EnvDataForm("streetAddress"),
+                                'id -> "streetAddress",
+                                '_showErrors -> true,
+                                '_label -> Messages("profile.create.form.streetAddress"),
+                                '_help -> Messages("profile.create.form.streetAddress.help"),
+                                '_error -> EnvDataForm.error("streetAddress")
+                            )
+
+                            @helper.inputText(EnvDataForm("zipCode"),
+                                'id -> "zipCode",
+                                '_showErrors -> true,
+                                '_label -> Messages("profile.create.form.zipCode"),
+                                '_help -> Messages("profile.create.form.zipCode.help"),
+                                '_error -> EnvDataForm.error("zipCode")
+                            )
+
+                            @helper.inputText(EnvDataForm("city"),
+                                'id -> "city",
+                                '_showErrors -> true,
+                                '_label -> Messages("profile.create.form.city"),
+                                '_help -> Messages("profile.create.form.city.help"),
+                                '_error -> EnvDataForm.error("city")
+                            )
+
+
+                            @helper.inputText(EnvDataForm("phoneNumber"),
+                                'id -> "phoneNumber",
+                                '_showErrors -> true,
+                                '_label -> Messages("profile.create.form.phoneNumber"),
+                                '_help -> Messages("profile.create.form.phoneNumber.help"),
+                                '_error -> EnvDataForm.error("phoneNumber")
+                            )
+
+                            @helper.inputText(EnvDataForm("personnummer"),
+                                'id -> "phoneNumber",
+                                '_showErrors -> true,
+                                '_label -> Messages("profile.create.form.personnummer"),
+                                '_help -> Messages("profile.create.form.personnummer.help"),
+                                '_error -> EnvDataForm.error("personnummer")
+                            )
+
+                            @if(!optionsLocationAreas.isEmpty) {
+                                @helper.select(EnvDataForm("county"),
+                                    optionsLocationAreas.get,
+                                    '_label -> Messages("profile.create.form.area"),
+                                    '_error -> EnvDataForm.error("county")
+                                )
+                            }
+                        </div>
+                    </div>
 
                 </div>
 
-                <input class="btn btn-primary" type="submit" value="@Messages("profile.create.save")">
+                <div class="col-xs-12">
+                    <input class="btn btn-primary" type="submit" value="@Messages("profile.create.save")">
+                </div>
                 }
             </div>
         </div>

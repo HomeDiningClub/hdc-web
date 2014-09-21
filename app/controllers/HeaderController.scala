@@ -67,16 +67,31 @@ object HeaderController extends Controller with SecureSocial {
 
     // Define default items
     val defMenuItem01 = MenuItem(
-      name = Messages("header.main-menu.link.startpage"),
-      title = Messages("header.main-menu.link.startpage"),
+      name = Messages("header.main-menu.link.startpage.text"),
+      title = Messages("header.main-menu.link.startpage.title"),
       url = routes.StartPageController.index().url,
       icon = "glyphicon glyphicon-home")
 
     val defMenuItem02 = MenuItem(
-      name = Messages("header.main-menu.link.newsletter"),
-      title = Messages("header.main-menu.link.newsletter"),
+      name = Messages("header.main-menu.link.newsletter.text"),
+      title = Messages("header.main-menu.link.newsletter.title"),
       url = routes.CampaignController.index().url,
       icon = "glyphicon glyphicon-envelope")
+
+    val defMenuItem03 = MenuItem(
+      name = Messages("header.main-menu.link.fb.text"),
+      title = Messages("header.main-menu.link.fb.title"),
+      url = Messages("header.link.fb.href"),
+      icon = "genericon genericon-facebook",
+      wrapperCssClass = "pull-right")
+
+    val defMenuItem04 = MenuItem(
+      name = Messages("header.main-menu.link.instagram.text"),
+      title = Messages("header.main-menu.link.instagram.title"),
+      url = Messages("header.link.instagram.href"),
+      icon = "genericon genericon-instagram",
+      wrapperCssClass = "pull-right")
+
 
 
     // Define main items
@@ -98,6 +113,8 @@ object HeaderController extends Controller with SecureSocial {
 
     retMenuItemsList.prepend(defMenuItem01)
     retMenuItemsList.append(defMenuItem02)
+    retMenuItemsList.append(defMenuItem03)
+    retMenuItemsList.append(defMenuItem04)
 
 
 

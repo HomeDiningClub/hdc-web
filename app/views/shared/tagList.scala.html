@@ -1,9 +1,8 @@
-@(listOfTags: Option[List[models.profile.TagWord]])
+@(listOfTags: Option[List[models.profile.TagWord]], userName: String)
 
 @if(!listOfTags.isEmpty) {
-    <hr>
-    <div class="tag-header">@Messages("profile.tags.header")</div>
+    <div class="tag-header"><strong>@Messages("profile.tags.header", userName)</strong></div>
     @for(tag <- listOfTags.get){
-        <div class="tag"><span class="glyphicon glyphicon-tag"></span>@tag.tagName</div>
+        <div class="tag"><span class="glyphicon glyphicon-tag"></span>&nbsp;@tag.tagName</div>
     }
 }

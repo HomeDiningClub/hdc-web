@@ -68,16 +68,37 @@
 
     <div class="container maincontent-container">
         <div class="row margin-top">
-            <div class="col-xs-12 col-md-9">
+            <div class="col-xs-12 col-md-3">
+                <aside>
+                    <!-- Main intro -->
+                    <div class="panel panel-default panel-startpage-aside">
+                        <div class="panel-body">
+                            <h1 class="aside-title">@Html(Messages("startpage.main-aside.header"))</h1>
+                            @Html(Messages("startpage.main-aside.body"))
+                        </div>
+                    </div>
+
+                    <!-- News -->
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h3 class="aside-title">@Html(Messages("startpage.main-aside.news.header"))</h3>
+                            @Html(Messages("startpage.main-aside.news.body"))
+                            @shared.img("/images/startpage/now-even-in-sweden.png", cssClass = "img-responsive")
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <div class="col-xs-12 col-md-6">
                 <div class="row">
                     <!-- Filtering push -->
                     <div class="col-xs-10 col-xs-offset-1 col-sm-12 col-sm-offset-0 form-startpage-filter animated fadeInDownBig">
                     @helper.form(action=routes.StartPageController.index(), 'class -> "form-horizontal form-filter-startpage"){
                         <div class="form-group">
                             @* @helper.inputText(searchForm("freeText"), '_label -> Messages("startpage.filterform.freetext")) *@
-                            @if(!optionsFoodAreas.isEmpty){ <div class="col-xs-12 col-sm-4"> @helper.select(searchForm("fTag"), optionsFoodAreas.get, '_label -> Messages("startpage.filterform.foodarea"), 'class -> "form-control") </div>}
-                            @if(!optionsLocationAreas.isEmpty){ <div class="col-xs-12 col-sm-4"> @helper.select(searchForm("fCounty"), optionsLocationAreas.get, '_label -> Messages("startpage.filterform.area"), 'class -> "form-control") </div> }
-                            <div class="col-xs-12 col-sm-4 form-actions"><button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button></div>
+                            @if(!optionsFoodAreas.isEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fTag"), optionsFoodAreas.get, '_label -> Messages("startpage.filterform.foodarea"), 'class -> "form-control") </div>}
+                            @if(!optionsLocationAreas.isEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fCounty"), optionsLocationAreas.get, '_label -> Messages("startpage.filterform.area"), 'class -> "form-control") </div> }
+                            <div class="col-xs-12 col-sm-2 form-actions"><button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button></div>
                         </div>
                         }
                     </div>
@@ -102,7 +123,7 @@
                 </div>
 
                 <!-- Reviews -->
-                <div class="row row-border-bottom">
+                <div class="row">
                     @if(!reviewBoxes.isEmpty){
                         @for( a <- 1 to 10){
                             @startpage.reviewBox(reviewBoxes.get)
@@ -110,27 +131,14 @@
                     }
                 </div>
 
-
-
-                <div class="row big-margin-top">
-                    <div class="col-xs-12">
-                        <h1 class="page-header">@Messages("startpage.main-content.header")</h1>
-                    </div>
-                </div>
-
                 <div class="row margin-top row-border-bottom">
-                    <!-- Main intro -->
-                    <div class="col-xs-12 col-md-6 text-large">
+                    <!-- Video -->
+                    <div class="col-xs-12">
+                        <h2 class="page-header">@Messages("startpage.main-content.header")</h2>
                         @Html(Messages("startpage.main-content.body"))
-                        <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
-                    </div>
+                        <iframe style="margin:0 auto; display:block;" src="//player.vimeo.com/video/97540915?title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff&amp;autoplay=0" width="100%" height="259" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-                    <!-- News -->
-                    <div class="col-xs-12 col-md-6">
-                        <aside>
-                            @Html(Messages("startpage.main-aside.body"))
-                            <iframe style="margin:0 auto; display:block;" src="//player.vimeo.com/video/97540915?title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff&amp;autoplay=0" width="100%" height="259" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                        </aside>
+                        <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
                     </div>
                 </div>
 
@@ -149,9 +157,6 @@
             <!-- Banner -->
             <div class="col-xs-12 col-md-3 col-banner">
                 @shared.banner()
-                <aside class="big-margin-top">
-                    @shared.img("/images/startpage/now-even-in-sweden.png", cssClass = "img-responsive")
-                </aside>
             </div>
         </div>
     </div>

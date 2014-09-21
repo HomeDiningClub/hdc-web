@@ -13,8 +13,18 @@ notfound.body=Vi är ledsna vi kunde inte hitta sidan du letade efter ({0}).<br>
 notfound.linkhome=startsidan
 
 # Header
-header.main-menu.link.startpage=Hem
-header.main-menu.link.newsletter=Nyhetsbrev
+header.main-menu.link.startpage.text=Hem
+header.main-menu.link.startpage.title=Hem
+header.main-menu.link.newsletter.text=Nyhetsbrev
+header.main-menu.link.newsletter.title=Nyhetsbrev
+header.main-menu.link.fb.href=https://www.facebook.com/homediningclub
+header.main-menu.link.fb.text=Facebook
+header.main-menu.link.fb.title=Gilla oss på Facebook!
+header.main-menu.link.instagram.href=http://instagram.com/homediningclub
+header.main-menu.link.instagram.text=Instagram
+header.main-menu.link.instagram.title=Bli hungrig över våra bilder på Instagram
+
+
 header.link.host-profile-header={0}
 header.link.host-profile=Gå till min sida
 header.link.host-profile-edit=Redigera profil
@@ -36,12 +46,6 @@ footer.text=© Home Dining Club AB
 footer.link.mail.href=mailto:info@homediningclub.se?Subject=Hej%20Home%20dining%20club
 footer.link.mail.title=Maila till info@homediningclub.se
 footer.link.mail.text=info@homediningclub.se
-footer.link.fb.href=https://www.facebook.com/homediningclub
-footer.link.fb.text=Facebook
-footer.link.fb.title=Gilla oss på Facebook!
-footer.link.instagram.href=http://instagram.com/homediningclub
-footer.link.instagram.text=Instagram
-footer.link.instagram.title=Bli hungrig över våra bilder på Instagram
 
 # Banner
 banner.header=Annons:
@@ -55,10 +59,13 @@ person.lista=Lista personer (svenska)
 
 # Startpage
 startpage.title=Sveriges första riktiga klubb för alla riktigt matintresserade!
-startpage.main-aside.header=Introduktionsvideo
-startpage.main-aside.body=
+startpage.main-aside.header=Home dining club
+startpage.main-aside.body=<p>Bjud hem nya vänner på middag och få betyg och omdömen på din kokkonst. Håll arrangemang för små och stora grupper. Ta betalt eller bjud! Det är upp till dig. Du kanske har den bästa Paellan i hela Stockholm. Varför inte låta folk få komma hem till dig och prova den?</p><p>Eller så är du bara intresserad av att läsa recept, eller äta hos andra. Upptäcka nya kulinariska höjder och lära känna andra lika matintresserade. Det här är tjänsten för dig!</p> <p><em>Henrik Larsson,<br>VD Home Dining Club</em></p>
+startpage.main-aside.news.header=Nu även i sverige!
+startpage.main-aside.news.body=
 startpage.main-content.header=Home Dining Club i korthet
-startpage.main-content.body=<p>Bjud hem nya vänner på middag och få betyg och omdömen på din kokkonst. Håll arrangemang för små och stora grupper. Ta betalt eller bjud! Det är upp till dig. Du kanske har den bästa Paellan i hela Stockholm. Varför inte låta folk få komma hem till dig och prova den?</p><p>Eller så är du bara intresserad av att läsa recept, eller äta hos andra. Upptäcka nya kulinariska höjder och lära känna andra lika matintresserade. Det här är tjänsten för dig!</p>
+startpage.main-content.body=
+
 startpage.main-content.body.btn.signup=Bli medlem idag!
 startpage.main.cta.text=Bli medlem idag!
 startpage.main.cta.link.text=Registrera dig
@@ -130,13 +137,15 @@ like.text.nr-of-likes={0}
 # Profile
 profile.title=Profil
 profile.button.recipe.add=Lägg till recept
-profile.tags.header=Taggar:
+profile.tags.header={0} är intresserad av
 
 
 profile.create.title=Din profil
 profile.create.text=Här skapar du din profil, den kommer andra medlemmar att se. Om du råkar missa att fylla i viss information så går det bra att redigera din profil senare, om du vill komplettera med mer information.
-profile.create.header.user=Beskriv dig själv
+profile.create.header.profile-name=Profilnamn
+profile.create.header.about-me=Beskriv dig själv
 profile.create.header.food=Beskriv din mat
+profile.create.header.personal-information=Personlig information
 profile.create.form.profilename=Profilnamn
 profile.create.form.profilename.required=*
 profile.create.form.profilename.help=<strong>Viktig information</strong><br>Detta namn kommer att användas för att identifiera din profilsida. <br>Denna måste vara unik. Vi kommer ta bort ÅÄÖ, punkter, / eller andra tecken förutom bindestreck.<br><br><strong>Exempel:</strong><br>linda-larsson<br>henriksrestaurang<br>den-goda-maten
@@ -166,6 +175,7 @@ profile.create.form.personnummer.help=Personnummer ÅÅÅÅMMDDNNNN
 profile.create.save=Spara
 profile.profilelinkname.isempty=Ett profilnamn måste vara valt!
 profile.memberid.text=MedlemsID:
+profile.county.text=Län:
 
 # Recipe
 recipe.title=Recept
