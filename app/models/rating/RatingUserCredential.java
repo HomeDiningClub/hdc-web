@@ -1,13 +1,11 @@
 package models.rating;
 
 import models.UserCredential;
-import models.base.AbstractEntity;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import models.base.AuditEntity;
 import org.springframework.data.neo4j.annotation.*;
 
 @RelationshipEntity
-public class RatingUserCredential extends AbstractEntity {
+public class RatingUserCredential extends AuditEntity {
 
     @StartNode
     public UserCredential userWhoIsRating;
@@ -18,12 +16,6 @@ public class RatingUserCredential extends AbstractEntity {
     public int ratingValue;
     public String userRaterIP;
     public String ratingComment;
-
-    @CreatedDate
-    public Long createdDate;
-
-    @LastModifiedDate
-    public Long lastModifiedDate;
 
     public RatingUserCredential rate(int ratingValue, String ratingComment, String userRaterIP) {
         this.userRaterIP = userRaterIP;

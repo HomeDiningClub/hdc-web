@@ -38,7 +38,7 @@ class RecipeService {
   }
 
   @Transactional(readOnly = true)
-  def findByrecipeLinkName(recipeLinkName: String, fetchAll: Boolean = false): Option[Recipe] = {
+  def findByrecipeLinkName(recipeLinkName: String): Option[Recipe] = {
 
     var returnObject: Option[Recipe] = None
     if(recipeLinkName.nonEmpty)
@@ -47,9 +47,9 @@ class RecipeService {
         case null => None
         case profile =>
           // Lazy fetching, this is crazy slow
-          if(fetchAll){
-            template.fetch(profile.getOwnerProfile)
-          }
+//          if(fetchAll){
+//            template.fetch(profile.getOwnerProfile)
+//          }
           Some(profile)
       }
     }
@@ -65,19 +65,19 @@ class RecipeService {
   }
 
   @Transactional(readOnly = true)
-  def getListOfAll(fetchAll: Boolean = false): List[Recipe] = {
+  def getListOfAll: List[Recipe] = {
     recipeRepository.findAll.iterator.asScala.toList match {
       case null => null
       case recipes =>
 
         // Lazy fetching
-        if(fetchAll){
-          val fetchedList = recipes.par.foreach { p =>
-            if(p.getOwnerProfile != null)
-              template.fetch(p.getOwnerProfile)
-          }
-          fetchedList
-        }
+//        if(fetchAll){
+//          val fetchedList = recipes.par.foreach { p =>
+//            if(p.getOwnerProfile != null)
+//              template.fetch(p.getOwnerProfile)
+//          }
+//          fetchedList
+//        }
         recipes
     }
   }

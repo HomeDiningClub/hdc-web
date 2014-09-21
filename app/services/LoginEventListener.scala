@@ -13,6 +13,8 @@ class LoginEventListener(app: Application) extends EventListener {
       case e: LoginEvent => {
 //        val loggedInUser = event.user.asInstanceOf[UserCredential]
 //        Some(session.+("id",loggedInUser.objectId.toString))
+//
+//        session("uuid",loggedInUser.objectId.toString)
         "login"
       }
       case e: LogoutEvent => {

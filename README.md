@@ -3,8 +3,7 @@ HDC
 
 Spring Data Neo4J
 ---
-* [Spring Book - 3.0.1.RELEASE](http://docs.spring.io/spring-data/neo4j/docs/3.0.1.RELEASE/reference/html/)
-* [Spring Book - 3.0.1.RELEASE - Model Example](http://docs.spring.io/spring-data/data-neo4j/docs/3.0.1.RELEASE/reference/html/programming-model.html)
+* [Spring Book - 3.2.0.RELEASE](http://docs.spring.io/spring-data/data-neo4j/docs/3.2.0.RELEASE/reference/html/)
 * [Neo4J - Cheat-Sheet](http://docs.neo4j.org/spring/SpringDataNeo4j_DeveloperNotes.pdf)
 * [Neo4J - GitHub Examples](https://github.com/spring-projects/spring-data-neo4j)
 

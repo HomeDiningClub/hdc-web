@@ -1,7 +1,7 @@
 package models;
 
 import interfaces.IEditable;
-import models.base.AbstractEntity;
+import models.base.AuditEntity;
 import models.modelconstants.RelationshipTypesJava;
 import models.rating.RatingUserCredential;
 import org.neo4j.graphdb.Direction;
@@ -27,7 +27,7 @@ import java.lang.Boolean;
 
 
 @NodeEntity
-public class UserCredential extends AbstractEntity implements Identity, IEditable {
+public class UserCredential extends AuditEntity implements Identity, IEditable {
 
     @Indexed(indexType = IndexType.FULLTEXT, indexName = "userId")
     public String userId = "";

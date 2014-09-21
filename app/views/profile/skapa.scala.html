@@ -73,7 +73,7 @@
                                         @if(editingProfile.isDefined && editingProfile.get.getAvatarImage != null) {
                                             @shared.hostImageCircle(editingProfile.get.getAvatarImage.getTransformByName("thumbnail").getUrl) - @Messages("profile.create.form.avatar-image.existing")
                                         }else{
-                                            @shared.hostImageCircle
+                                            @shared.hostImageCircle()
                                         }
                                     </div>
                                 </div>

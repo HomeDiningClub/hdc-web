@@ -5,6 +5,7 @@ package controllers
 import models.profile.{TagWord, TaggedUserProfile}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
+import org.springframework.transaction.annotation.Transactional
 import play.api.i18n.Messages
 import play.api.libs.Files.TemporaryFile
 import presets.ImagePreSets
@@ -133,7 +134,7 @@ class UserProfileController  extends Controller  with SecureSocial {
 
    //var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
-   var profileWithLinkName = userProfileService.findByprofileLinkName(profileName, false)
+   var profileWithLinkName = userProfileService.findByprofileLinkName(profileName)
 
    // Får endast innehålla små bokstäver mellan a till z
    if (!profileName.matches("[a-z,A-Z]+[a-z,A-Z,0-9,-]*")) return false
@@ -195,7 +196,7 @@ class UserProfileController  extends Controller  with SecureSocial {
   def viewProfileByName(profileName: String) = UserAwareAction { implicit request =>
 
     // Try getting the profile from name, if failure show 404
-    userProfileService.findByprofileLinkName(profileName, fetchAll = false) match {
+    userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) =>
         Ok(views.html.profile.index(profile, menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX, recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner), tagWordService.findByProfileAndGroup(profile,"profile"), isThisMyProfile = isThisMyProfile(profile)))
       case None =>
@@ -519,7 +520,8 @@ if(userTags != null) {
     var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
 
-    theUser.removeAllTags()
+    theUser = userProfileService.removeAllProfileTags(theUser)
+    //theUser.removeAllTags()
 
     // Fetch all tags available to choose
     var d = tagWordService.listByGroupOption("profile")
@@ -532,7 +534,8 @@ if(userTags != null) {
         if (!value.equals("empty")) {
 
           // If the the user have tagged the particial chooice tag it
-          theUser.tag(theTag)
+          theUser = userProfileService.addProfileTag(theUser, theTag)
+          //theUser.tag(theTag)
         }
 
       } // end loop
@@ -618,8 +621,8 @@ if(userTags != null) {
            theUser.streetAddress        = streetAddress
            theUser.phoneNumber          = phoneNumber
 
-
-            theUser.removeAllTags()
+            theUser = userProfileService.removeAllProfileTags(theUser)
+            //theUser.removeAllTags()
 
             // Fetch all tags available to choose
             var d = tagWordService.listByGroupOption("profile")
@@ -640,15 +643,18 @@ if(userTags != null) {
             }
 
           if(countyId == None || countyId == null || countyId.trim().size < 2) {
-            theUser.removeLocation()
+            //theUser.removeLocation()
+            theUser = userProfileService.removeAllLocationTags(theUser)
           } else {
             countyService.findById(UUID.fromString(countyId)) match {
               case None => // Do something when nothing found
                 println("county name: NONE value ")
-                theUser.removeLocation()
+                theUser = userProfileService.removeAllLocationTags(theUser)
               case Some(item) =>
-                theUser.removeLocation()
-                theUser.locate(item)
+                theUser = userProfileService.removeAllLocationTags(theUser)
+                theUser = userProfileService.addLocation(theUser, item)
+                //theUser.locate(item)
+
                 println("county name: " + item.name)
                 println("OBJECTID: " + item.objectId + " def :  " + item.toString)
 
@@ -660,7 +666,7 @@ if(userTags != null) {
           request.body.file("mainimage").map {
             file =>
                 fileService.uploadFile(file, userCred.objectId, FileTypeEnums.IMAGE, ImagePreSets.profileImages) match {
-                case Some(item) => theUser.setAndRemoveMainImage(item)
+                case Some(item) => theUser = userProfileService.setAndRemoveMainImage(theUser,item)
                 case None => None
               }
           }
@@ -668,11 +674,10 @@ if(userTags != null) {
           request.body.file("avatarimage").map {
             file =>
               fileService.uploadFile(file, userCred.objectId, FileTypeEnums.IMAGE, ImagePreSets.userCredentialImages) match {
-                case Some(item) => theUser.setAndRemoveAvatarImage(item)
+                case Some(item) => theUser = userProfileService.setAndRemoveAvatarImage(theUser,item)
                 case None => None
               }
           }
-
 
           userProfileService.saveUserProfile(theUser)
 

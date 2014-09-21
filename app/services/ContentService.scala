@@ -63,9 +63,9 @@ class ContentService {
 
   @Transactional(readOnly = true)
   def getRelatedPages(objectId: UUID): Option[List[ContentPage]] = {
-    this.findContentById(objectId, true) match {
+    this.findContentById(objectId) match {
       case None => None
-      case Some(cp) => cp.relatedPages.asScala.toList match {
+      case Some(cp) => cp.getRelatedPages.asScala.toList match {
         case null | Nil => None
         case items =>
 
@@ -105,7 +105,7 @@ class ContentService {
   }
 
   def mapRelatedPagesToStringOfObjectIds(item: ContentPage): List[String] = {
-    item.relatedPages.asScala.toList.sortBy(rp => rp.sortOrder).map {
+    item.getRelatedPages.asScala.toList.sortBy(rp => rp.sortOrder).map {
         relPage: RelatedPage =>
           if(item.objectId == relPage.relatedTo.objectId){
             relPage.relatedFrom.objectId.toString
@@ -118,7 +118,7 @@ class ContentService {
 
   @Transactional(readOnly = true)
   def getPagesAsDropDown(filterPage: Option[ContentPage] = None): Option[Seq[(String,String)]] = {
-    val returnItems: Option[Seq[(String,String)]] = this.getListOfAll() match {
+    val returnItems: Option[Seq[(String,String)]] = this.getListOfAll match {
       case Some(items) =>
         val filteredItems = filterPage match {
           case None => items
@@ -161,22 +161,22 @@ class ContentService {
 
 
   @Transactional(readOnly = true)
-  def findContentById(objectId: java.util.UUID, fetchAll: Boolean = false): Option[ContentPage] = {
+  def findContentById(objectId: java.util.UUID): Option[ContentPage] = {
     val item = contentPageRepository.findByobjectId(objectId)
 
     item match {
       case null => None
       case page =>
-        if(fetchAll){
-          if(page.relatedPages != null)
-            template.fetch(page.relatedPages)
-        }
+//        if(fetchAll){
+//          if(page.relatedPages != null)
+//            template.fetch(page.relatedPages)
+//        }
         Some(page)
     }
   }
 
   @Transactional(readOnly = true)
-  def getListOfAll(fetchAll: Boolean = false): Option[List[ContentPage]] = {
+  def getListOfAll: Option[List[ContentPage]] = {
     val listOfAll: List[ContentPage] = contentPageRepository.findAll().iterator.asScala.toList
 
     if (listOfAll.isEmpty){
@@ -184,15 +184,21 @@ class ContentService {
     }else {
 
       // Lazy fetching
-      if(fetchAll){
-        val fetchedList = listOfAll.par.foreach { page =>
-          if(page.relatedPages != null)
-            template.fetch(page.relatedPages)
-        }
-        Some(fetchedList)
-      }
+//      if(fetchAll){
+//        val fetchedList = listOfAll.par.foreach { page =>
+//          if(page.relatedPages != null)
+//            template.fetch(page.relatedPages)
+//        }
+//        Some(fetchedList)
+//      }
       Some(listOfAll)
     }
+  }
+
+  @Transactional(readOnly = false)
+  def removeAllRelatedPages(contentPage: ContentPage): Boolean = {
+    contentPage.removeAllRelatedPages
+    true
   }
 
   @Transactional(readOnly = false)

@@ -1,5 +1,6 @@
 package services
 
+import models.files.ContentFile
 import models.{Recipe, UserCredential, UserProfile}
 import org.neo4j.graphdb._
 import org.neo4j.helpers.collection.IteratorUtil
@@ -68,7 +69,7 @@ class UserProfileService {
     userProfile.addRecipe(recipeToAdd)
   }
 
-  def findByprofileLinkName(profileName: String, fetchAll: Boolean = false): Option[UserProfile] =
+  def findByprofileLinkName(profileName: String): Option[UserProfile] =
   {
     var returnObject: Option[UserProfile] = None
     if(profileName.nonEmpty)
@@ -77,9 +78,9 @@ class UserProfileService {
         case null => None
         case profile =>
           // Lazy fetching
-          if(fetchAll){
-            template.fetch(profile.getRecipes)
-          }
+//          if(fetchAll){
+//            template.fetch(profile.getRecipes)
+//          }
           Some(profile)
       }
     }
@@ -87,15 +88,15 @@ class UserProfileService {
   }
 
 
-  def findByowner(userCred: UserCredential, fetchAll: Boolean = false): Option[UserProfile] =
+  def findByowner(userCred: UserCredential): Option[UserProfile] =
   {
     userProfileRepository.findByowner(userCred) match {
       case null => None
       case profile =>
         // Lazy fetching
-        if(fetchAll){
-          template.fetch(profile.getRecipes)
-        }
+//        if(fetchAll){
+//          template.fetch(profile.getRecipes)
+//        }
         Some(profile)
     }
   }
@@ -151,6 +152,41 @@ class UserProfileService {
   }
 
 
+  @Transactional(readOnly = false)
+  def removeAllLocationTags(userProfile: UserProfile): UserProfile = {
+    userProfile.removeLocation()
+    userProfile
+  }
+
+  @Transactional(readOnly = false)
+  def removeAllProfileTags(userProfile: UserProfile): UserProfile = {
+    userProfile.removeAllTags()
+    userProfile
+  }
+
+  @Transactional(readOnly = false)
+  def addProfileTag(userProfile: UserProfile, tag: TagWord): UserProfile = {
+    userProfile.tag(tag)
+    userProfile
+  }
+
+  @Transactional(readOnly = false)
+  def addLocation(userProfile: UserProfile, county: County): UserProfile = {
+    userProfile.locate(county)
+    userProfile
+  }
+
+  @Transactional(readOnly = false)
+  def setAndRemoveMainImage(userProfile: UserProfile, newImage: ContentFile): UserProfile = {
+    userProfile.setAndRemoveMainImage(newImage)
+    userProfile
+  }
+
+  @Transactional(readOnly = false)
+  def setAndRemoveAvatarImage(userProfile: UserProfile, newImage: ContentFile): UserProfile = {
+    userProfile.setAndRemoveAvatarImage(newImage)
+    userProfile
+  }
 
 
   @Transactional(readOnly = true)
@@ -199,6 +235,14 @@ class UserProfileService {
 
     currNode
   }
+
+
+
+//  @Transactional(readOnly = false)
+//  def updateUserProfile(userProfile: UserProfile, reqUserProfile: AnvandareForm): UserProfile = {
+//    userProfileRepository.findAll().asScala.toList
+//  }
+
 
 
   @Transactional(readOnly = true)

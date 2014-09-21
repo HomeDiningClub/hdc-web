@@ -1,14 +1,12 @@
 package models.files;
 
 import models.UserCredential;
-import models.base.AbstractEntity;
 import java.util.HashSet;
 import java.util.Set;
+
+import models.base.AuditEntity;
 import models.modelconstants.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
@@ -16,21 +14,17 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 import services.InstancedServices;
 
 @NodeEntity
-public class ContentFile extends AbstractEntity {
-
-    @CreatedDate
-    public Long createdDate;
-
-    @LastModifiedDate
-    public Long lastModifiedDate;
+public class ContentFile extends AuditEntity {
 
     @Indexed
     public String name;
     public String extension;
+    @Indexed
     public String contentType;
     // Eg: "VIDEO", "IMAGE", "CODE", "TEXT" etc..
     // See definition in enums.FileTypeEnums
     public String baseContentType;
+    @Indexed
     public Boolean isAdminFile;
 
     @Fetch
@@ -41,31 +35,16 @@ public class ContentFile extends AbstractEntity {
     @RelatedTo(type = RelationshipTypesJava.FILE_TRANSFORMATION.Constant, direction = Direction.OUTGOING)
     public Set<FileTransformation> fileTransformations;
 
-//    @Transient
-//    private String url;
-//
-//    @Transient
-//    private String basePath;
-//
-
     // Getter Setters
     public String getBasePath(){
         if(this.isAdminFile == null)
             this.isAdminFile = false;
         return InstancedServices.contentFileService().getFilePath(this,this.isAdminFile);
     }
-//
-//    public void setBasePath(String basePath){
-//        this.basePath = basePath;
-//    }
 
     public String getUrl(){
         return InstancedServices.contentFileService().getBucketUrl(this);
     }
-//
-//    public void setUrl(String url){
-//        this.url = url;
-//    }
 
     public FileTransformation getTransformByName(String name)
     {

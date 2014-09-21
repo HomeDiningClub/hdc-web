@@ -15,10 +15,13 @@ http://www.springframework.org/schema/data/neo4j/spring-neo4j.xsd
 http://www.springframework.org/schema/tx
 http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <!-- Neo4j Local data store configuration: -->
-    <!-- <neo4j:config storeDirectory="db" base-package="models" /> -->
 
-    <!--<neo4j:config storeDir="graph.db" base-package="com.example.domain"/>-->
+
+    <!-- Neo4j Local data store configuration: -->
+    <!-- <neo4j:config storeDir="graph.db" base-package="com.example.domain"/> -->
+    <neo4j:config storeDirectory="/neo4j/hdc-web.db" base-package="models" />
+
+
 
     <!--
     Neo4j Rest API:
@@ -38,24 +41,24 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
     <constructor-arg value="http://localhost:7474/db/data"/>
     -->
 
-    <neo4j:config graphDatabaseService="graphDatabaseService" base-package="models" />
+    <!-- Working Rest config -->
+    <!--<neo4j:config graphDatabaseService="graphDatabaseService" base-package="models" />-->
 
-    <bean id="graphDatabaseService" class="org.springframework.data.neo4j.rest.SpringRestGraphDatabase">
-        <constructor-arg index="0" value="${NEO4J_REST_URL}" />
-        <constructor-arg index="1" value="${NEO4J_LOGIN}" />
-        <constructor-arg index="2" value="${NEO4J_PASSWORD}" />
-    </bean>
+    <!--<bean id="graphDatabaseService" class="org.springframework.data.neo4j.rest.SpringRestGraphDatabase">-->
+        <!--<constructor-arg index="0" value="${NEO4J_REST_URL}" />-->
+        <!--<constructor-arg index="1" value="${NEO4J_LOGIN}" />-->
+        <!--<constructor-arg index="2" value="${NEO4J_PASSWORD}" />-->
+    <!--</bean>-->
 
+
+    <!-- Base config for DB -->
     <context:annotation-config/>
-
     <context:component-scan base-package="controllers, services, repositories, models" />
-
     <neo4j:repositories base-package="repositories"/>
 
-    <!--
-    <neo4j:auditing date-time-provider-ref="entityAuditor" auditor-aware-ref="entityAuditor"></neo4j:auditing>
+    <!-- Auditing -->
+    <neo4j:auditing date-time-provider-ref="entityAuditor" modify-on-creation="true" auditor-aware-ref="entityAuditor" />
     <bean id="entityAuditor" class="utils.auditing.UserCredentialAuditor" />
--->
     <tx:annotation-driven mode="proxy"/>
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>

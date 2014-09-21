@@ -1,4 +1,5 @@
 import enums.RoleEnums
+import org.springframework.data.neo4j.support.Neo4jTemplate
 import play.api.mvc.Handler
 import play.api.Application
 import play.api.GlobalSettings
@@ -21,7 +22,6 @@ object Global extends GlobalSettings {
    * Declare the application context to be used.
    */
   val ctx = new ClassPathXmlApplicationContext("applicationContext.xml")
-  val currentUser = null
 
   /**
    * Sync the context lifecycle with Play's.
@@ -30,7 +30,7 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
     Logger.info("Application has started")
     // Needed for embedded DB
-    //ctx.start()
+    ctx.start()
   }
 
   /**
@@ -40,12 +40,11 @@ object Global extends GlobalSettings {
   override def onStop(app: Application) {
     Logger.info("Application shutdown...")
 
-    // Needed for embedded DB
-    //val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate])
-    //neoTemplate.getGraphDatabaseService.shutdown()
-    //ctx.stop()
-
-    //ctx.close() - May or may not be needed
+    //Needed for embedded DB
+    val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate])
+    neoTemplate.getGraphDatabaseService.shutdown()
+    ctx.stop()
+    ctx.close() //- May or may not be needed
   }
 
   // Disable filter for now
@@ -92,7 +91,6 @@ object Global extends GlobalSettings {
    * Controllers must be resolved through the application context. There is a special method of GlobalSettings
    * that we can override to resolve a given controller. This resolution is required by the Play router.
    * @param controllerClass
-   * @param A
    * @return
    */
   override def getControllerInstance[A](controllerClass: Class[A]): A = ctx.getBean(controllerClass)

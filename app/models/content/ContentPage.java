@@ -3,7 +3,6 @@ package models.content;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.annotation.RelatedToVia;
 import utils.Helpers;
 
@@ -26,7 +25,7 @@ public class ContentPage extends ContentBase {
     public Boolean visibleInMenus;
 
     @RelatedToVia(type = "RELATED_PAGE", direction = Direction.BOTH)
-    public Set<RelatedPage> relatedPages;
+    private Set<RelatedPage> relatedPages;
 
 //    @RelatedTo(type = "IS_CHILD_OF", direction = Direction.OUTGOING)
 //    public Set<ContentPage> isParentOf;
@@ -35,6 +34,11 @@ public class ContentPage extends ContentBase {
 //    public ContentPage isChildOf;
 
     // Getter & setters
+    @Fetch
+    public Set<RelatedPage> getRelatedPages(){
+        return this.relatedPages;
+    }
+
     public RelatedPage addRelatedPageSorted(ContentPage contentPage, Integer sortOrder) {
         if(this.relatedPages == null)
             this.relatedPages = new HashSet<>();
@@ -71,7 +75,7 @@ public class ContentPage extends ContentBase {
     }
 
     public void removeRelatedPage(ContentPage contentPage) {
-        if(this.relatedPages != null && this.relatedPages.contains(contentPage))
+        if(this.relatedPages != null)
             this.relatedPages.remove(contentPage);
     }
 

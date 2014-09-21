@@ -1,7 +1,7 @@
 package models;
 
 import interfaces.IEditable;
-import models.base.AbstractEntity;
+import models.base.AuditEntity;
 import models.files.ContentFile;
 import models.modelconstants.RelationshipTypesJava;
 import models.profile.TagWord;
@@ -22,7 +22,7 @@ import java.util.UUID;
 import java.lang.Boolean;
 
 @NodeEntity
-public class UserProfile extends AbstractEntity implements IEditable {
+public class UserProfile extends AuditEntity implements IEditable {
 
   public String county = "";
 
@@ -162,7 +162,6 @@ public class UserProfile extends AbstractEntity implements IEditable {
         userLocationProfileTag.clear();
     }
 
-
     public void removeAllTags() {
 
         Iterable<TaggedUserProfile> itter = getTags();
@@ -195,6 +194,7 @@ public class UserProfile extends AbstractEntity implements IEditable {
     @Fetch
     public UserCredential getOwner() { return owner; }
 
+    @Fetch
     public Iterable<Recipe> getRecipes() { return recipes; }
     public Iterable<TaggedUserProfile> getTags() { return userProfileTag; }
     public Iterable<TaggedLocationUserProfile> getLocations() { return userLocationProfileTag; }
