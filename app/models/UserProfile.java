@@ -160,6 +160,9 @@ public class UserProfile extends AuditEntity implements IEditable {
        userFriendsProfileTag.add(taggedFavoritesToUserProfile);
 
         // check if it is not to many favorites when remove the oldest ...
+        if(userFriendsProfileTag.size() > 10) {
+
+        }
 
 
         return taggedFavoritesToUserProfile;
