@@ -1,3 +1,4 @@
+import controllers.routes
 import enums.RoleEnums
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import play.api.mvc.Handler
@@ -83,6 +84,13 @@ object Global extends GlobalSettings {
   }
 
   override def onRouteRequest(request: RequestHeader): Option[Handler] = {
+
+   if(play.api.Play.isProd(play.api.Play.current)){
+    if(!request.path.contains("/assets/")){
+     return Some(controllers.CampaignController.index)
+    }
+   }
+
     // Remove trailing slash
     super.onRouteRequest(NormalizedRequest(request))
   }

@@ -13,3 +13,12 @@ class CampaignController extends Controller {
   }
 
 }
+
+@SpringController
+object CampaignController extends Controller {
+
+  def index = Action { implicit request =>
+    Ok(views.html.campaign.index())
+  }
+
+}
