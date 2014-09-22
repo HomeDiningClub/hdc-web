@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import java.lang.Boolean;
+import java.util.Calendar;
 
 @NodeEntity
 public class UserProfile extends AuditEntity implements IEditable {
@@ -156,18 +157,48 @@ public class UserProfile extends AuditEntity implements IEditable {
 
     // User favorites
     public TaggedFavoritesToUserProfile addFavoriteUserProfile(UserProfile userProfile) {
-        TaggedFavoritesToUserProfile taggedFavoritesToUserProfile = new TaggedFavoritesToUserProfile(this, userProfile, 1);
+
+        Calendar cal = Calendar.getInstance();
+
+
+        TaggedFavoritesToUserProfile taggedFavoritesToUserProfile = new
+                TaggedFavoritesToUserProfile(this, userProfile,
+                cal.get(Calendar.MILLISECOND));
        userFriendsProfileTag.add(taggedFavoritesToUserProfile);
 
         // check if it is not to many favorites when remove the oldest ...
         if(userFriendsProfileTag.size() > 10) {
 
-        }
+        Iterator<TaggedFavoritesToUserProfile> itter = userFriendsProfileTag.iterator();
+         TaggedFavoritesToUserProfile startTag = null;
+         TaggedFavoritesToUserProfile curTag = null;
+
+            while(itter.hasNext()) {
+
+                curTag = itter.next();
+
+                if(startTag == null) {
+                   startTag = curTag;
+                }
+
+                // Find the oldest favorite
+                if(curTag.created() < startTag.created()) {
+                    startTag = curTag;
+                }
+            }
+
+            // remove the oldes favorite
+            userFriendsProfileTag.remove(startTag);
+
+
+        } // more when 10 favorites reomove one
 
 
         return taggedFavoritesToUserProfile;
     }
 
+
+    //@TODO not working
     public TaggedFavoritesToUserProfile removeFavoriteUserProfile(UserProfile userProfile) {
         TaggedFavoritesToUserProfile taggedFavoritesToUserProfile = new TaggedFavoritesToUserProfile(this, userProfile, 1);
         userFriendsProfileTag.remove(taggedFavoritesToUserProfile);
