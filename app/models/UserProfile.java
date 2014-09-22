@@ -158,8 +158,19 @@ public class UserProfile extends AuditEntity implements IEditable {
     public TaggedFavoritesToUserProfile addFavoriteUserProfile(UserProfile userProfile) {
         TaggedFavoritesToUserProfile taggedFavoritesToUserProfile = new TaggedFavoritesToUserProfile(this, userProfile, 1);
        userFriendsProfileTag.add(taggedFavoritesToUserProfile);
+
+        // check if it is not to many favorites when remove the oldest ...
+
+
         return taggedFavoritesToUserProfile;
     }
+
+    public TaggedFavoritesToUserProfile removeFavoriteUserProfile(UserProfile userProfile) {
+        TaggedFavoritesToUserProfile taggedFavoritesToUserProfile = new TaggedFavoritesToUserProfile(this, userProfile, 1);
+        userFriendsProfileTag.remove(taggedFavoritesToUserProfile);
+        return taggedFavoritesToUserProfile;
+    }
+
 
 
     public UserProfile addRecipe(Recipe recipeToAdd) {
