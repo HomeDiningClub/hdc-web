@@ -13,16 +13,21 @@ public class TaggedFavoritesToUserProfile extends AbstractEntity {
 
     @Fetch @StartNode   public UserProfile      startUserProfile;
     @Fetch @EndNode     public UserProfile      favoritesUserProfile;
-    int counter = 0;
+    long dateTime = 0L;
 
 
-    public TaggedFavoritesToUserProfile(UserProfile startUserProfile, UserProfile favoritesUserProfile, int counter) {
+    public TaggedFavoritesToUserProfile(UserProfile startUserProfile, UserProfile favoritesUserProfile, long dateTime) {
         this.startUserProfile               =    startUserProfile;
         this.favoritesUserProfile           =    favoritesUserProfile;
-        this.counter                        =    counter;
+        this.dateTime                        =    dateTime;
     }
 
     public TaggedFavoritesToUserProfile() {
 
     }
+
+    public long created() {
+        return this.dateTime;
+    }
+
 }

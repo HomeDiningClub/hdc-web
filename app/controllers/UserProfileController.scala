@@ -2,7 +2,7 @@ package controllers
 
 // http://www.playframework.com/documentation/2.2.x/ScalaForms
 
-import models.profile.{TagWord, TaggedUserProfile}
+import models.profile.{TaggedFavoritesToUserProfile, TagWord, TaggedUserProfile}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import org.springframework.transaction.annotation.Transactional
@@ -484,6 +484,47 @@ if(userTags != null) {
     Ok(views.html.profile.tags(tagForm, retTagList, typ))
   //Ok("test")
   }
+
+
+
+  // add favorite
+  def addFavorite(userCredentialObjectId : String) = SecuredAction { implicit request =>
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+
+    var uuid : UUID = UUID.fromString(userCredentialObjectId)
+    var friendsUserCredential = userCredentialService.findById(uuid)
+
+    if(friendsUserCredential!=None && friendsUserCredential!= null) {
+
+      var fUserProfile : UserProfile = friendsUserCredential.profiles.iterator().next()
+      theUser.addFavoriteUserProfile(fUserProfile)
+
+
+    }
+
+
+    Ok("Ok")
+  }
+
+
+  // lista favorites
+  def listFavorites = SecuredAction { implicit request =>
+
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+    var listOfFavorites = theUser.getFavorites.iterator()
+
+    while(listOfFavorites.hasNext) {
+      var cur = listOfFavorites.next()
+      var fav : UserProfile = cur.favoritesUserProfile
+
+      // add to return variable ....
+       println("ObjectId : " + fav.objectId + ", email : " + fav.email)
+    }
+
+    // return to page
+    Ok("OK")
+  }
+
 
 
 
