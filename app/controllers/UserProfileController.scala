@@ -506,7 +506,7 @@ if(userTags != null) {
     var listOfFavorites = theUser.getFavorites.iterator()
 
 
-    var favorites = scala.collection.mutable.Buffer[models.viewmodels.FavoriteForm]()
+    var favorites = scala.collection.mutable.ListBuffer[models.viewmodels.FavoriteForm]()
 
     while(listOfFavorites.hasNext) {
       var cur = listOfFavorites.next()
@@ -518,7 +518,7 @@ if(userTags != null) {
     }
 
     // return to page
-    Ok("test")
+    Ok(views.html.profile.showListOfFavorites(favorites.toList))
   }
 
 

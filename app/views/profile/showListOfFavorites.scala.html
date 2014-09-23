@@ -1,10 +1,5 @@
-@(favorites: List[models.viewmodels.FavoriteForm])
-(implicit request: RequestHeader)
-
-
-
-
-
+@(favorites: List[models.viewmodels.FavoriteForm])(implicit request: RequestHeader)
+Favoriter:
                                     @for(i <- favorites) {
 
                                             <div class="panel-body">
