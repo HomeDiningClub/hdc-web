@@ -1,5 +1,7 @@
 package services
 
+import java.util.UUID
+
 import models.files.ContentFile
 import models.{Recipe, UserCredential, UserProfile}
 import org.neo4j.graphdb._
@@ -55,6 +57,23 @@ class UserProfileService {
 
     modUserProfile
   }
+
+
+
+  @Transactional(readOnly = false)
+  def addFavorites(
+                             theUser:  models.UserProfile,
+                             friendsUserCredential:  models.UserCredential
+                            ): models.UserProfile = {
+
+    if(friendsUserCredential!=None && friendsUserCredential!= null) {
+      var fUserProfile : UserProfile = friendsUserCredential.profiles.asScala.head
+      theUser.addFavoriteUserProfile(fUserProfile)
+    }
+
+    theUser
+  }
+
 
   @Transactional(readOnly = false)
   def updateUserProfileTags(

@@ -489,19 +489,11 @@ if(userTags != null) {
 
   // add favorite
   def addFavorite(userCredentialObjectId : String) = SecuredAction { implicit request =>
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
 
     var uuid : UUID = UUID.fromString(userCredentialObjectId)
     var friendsUserCredential = userCredentialService.findById(uuid)
-
-    if(friendsUserCredential!=None && friendsUserCredential!= null) {
-
-      var fUserProfile : UserProfile = friendsUserCredential.profiles.iterator().next()
-      theUser.addFavoriteUserProfile(fUserProfile)
-
-
-    }
-
+    userProfileService.addFavorites(theUser,friendsUserCredential)
 
     Ok("Ok")
   }
