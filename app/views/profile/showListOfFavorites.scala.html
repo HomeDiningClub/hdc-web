@@ -1,0 +1,46 @@
+@(favorites: List[models.viewmodels.FavoriteForm])
+(implicit request: RequestHeader)
+
+
+@main(Messages("admin.title")){
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-9">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h1 class="page-header">@Messages("recipe.edit.add.header")</h1>
+
+
+
+                            <fieldset>
+
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+
+                                        }
+                                    </div>
+                                </div>
+
+                                    @for(i <- favorites) {
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                            @i.profileName, @i.objectId
+
+                                            </div>
+                                        </div>
+                                    }
+
+                            </fieldset>
+                            <div class="form-actions">
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+                <!-- Banner -->
+            <div class="col-xs-12 col-md-3 col-banner">
+            </div>
+        </div>
+    </div>

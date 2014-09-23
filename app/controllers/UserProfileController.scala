@@ -505,16 +505,20 @@ if(userTags != null) {
     var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
     var listOfFavorites = theUser.getFavorites.iterator()
 
+
+    var favorites = scala.collection.mutable.Buffer[models.viewmodels.FavoriteForm]()
+
     while(listOfFavorites.hasNext) {
       var cur = listOfFavorites.next()
       var fav : UserProfile = cur.favoritesUserProfile
 
       // add to return variable ....
+      favorites += models.viewmodels.FavoriteForm(fav.profileLinkName, fav.objectId.toString)
        println("ObjectId : " + fav.objectId + ", email : " + fav.email)
     }
 
     // return to page
-    Ok("OK")
+    Ok("test")
   }
 
 
