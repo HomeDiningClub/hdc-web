@@ -1,5 +1,7 @@
 package services
 
+import java.util.UUID
+
 import models.files.ContentFile
 import models.{Recipe, UserCredential, UserProfile}
 import org.neo4j.graphdb._
@@ -18,6 +20,7 @@ import org.springframework.context.annotation.Lazy
 import play.api.mvc.Results._
 import models.location.County
 import models.profile.TagWord
+import scala.collection.JavaConverters._
 
 
 @Service
@@ -54,6 +57,55 @@ class UserProfileService {
 
     modUserProfile
   }
+
+
+
+  @Transactional(readOnly = false)
+  def addFavorites(
+                             theUser:  models.UserProfile,
+                             friendsUserCredential:  models.UserCredential
+                            ): models.UserProfile = {
+
+    if(friendsUserCredential!=None && friendsUserCredential!= null) {
+      var fUserProfile : UserProfile = friendsUserCredential.profiles.asScala.head
+      theUser.addFavoriteUserProfile(fUserProfile)
+    }
+
+    theUser
+  }
+
+
+  @Transactional(readOnly = false)
+  def updateUserProfileTags(
+    theUser:  models.UserProfile,
+    d:        Option[List[TagWord]],
+    map:      Map[String, String] ): models.UserProfile = {
+
+    theUser.removeAllTags()
+
+    // Fetch all tags available to choose
+    if (d.isDefined)
+    {
+      // Loop all available tags
+      for (theTag <- d.get)
+      {
+        var value = map.getOrElse(theTag.tagName, "empty")
+
+        if (!value.equals("empty")) {
+
+          // If the the user have tagged the particial chooice tag it
+          theUser.tag(theTag)
+        }
+
+      } // end loop
+
+    }
+
+    saveUserProfile(theUser)
+
+  }
+
+
 
   @Transactional(readOnly = false)
   def addRecipeToProfile(user: UserCredential, recipeToAdd: Recipe): UserProfile = {

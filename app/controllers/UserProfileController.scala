@@ -489,19 +489,11 @@ if(userTags != null) {
 
   // add favorite
   def addFavorite(userCredentialObjectId : String) = SecuredAction { implicit request =>
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
 
     var uuid : UUID = UUID.fromString(userCredentialObjectId)
     var friendsUserCredential = userCredentialService.findById(uuid)
-
-    if(friendsUserCredential!=None && friendsUserCredential!= null) {
-
-      var fUserProfile : UserProfile = friendsUserCredential.profiles.iterator().next()
-      theUser.addFavoriteUserProfile(fUserProfile)
-
-
-    }
-
+    userProfileService.addFavorites(theUser,friendsUserCredential)
 
     Ok("Ok")
   }
@@ -513,16 +505,20 @@ if(userTags != null) {
     var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
     var listOfFavorites = theUser.getFavorites.iterator()
 
+
+    var favorites = scala.collection.mutable.ListBuffer[models.viewmodels.FavoriteForm]()
+
     while(listOfFavorites.hasNext) {
       var cur = listOfFavorites.next()
       var fav : UserProfile = cur.favoritesUserProfile
 
       // add to return variable ....
+      favorites += models.viewmodels.FavoriteForm(fav.profileLinkName, fav.objectId.toString)
        println("ObjectId : " + fav.objectId + ", email : " + fav.email)
     }
 
     // return to page
-    Ok("OK")
+    Ok(views.html.profile.showListOfFavorites(favorites.toList))
   }
 
 
@@ -536,25 +532,20 @@ if(userTags != null) {
    */
   def saveTags = SecuredAction { implicit request =>
 
-    println("##SAVE TAGS#########################################################################")
-
     var map: Map[String, String] = Map()
 
 
     tagForm.bindFromRequest.fold(
       errors => {
         if (errors.hasErrors) {
-          println("1234 Fel lista: " + errors.toString)
-
-          Ok("så fel det kan bli")
+          Ok("Tags kunde inte sparas")
         }
       },
       reqUserProfile => {
         // test
 
-
-        for (d <- reqUserProfile.quality) {
-          println("VALD  : " + d)
+        for (d <- reqUserProfile.quality)
+        {
           map += (d -> d)
 
         }
@@ -562,32 +553,9 @@ if(userTags != null) {
 
       })
 
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
-
-
-    theUser.removeAllTags()
-
-    // Fetch all tags available to choose
-    var d = tagWordService.listByGroupOption("profile")
-
-    if (d.isDefined) {
-      // Loop all available tags
-      for (theTag <- d.get) {
-        var value = map.getOrElse(theTag.tagName, "empty")
-
-        if (!value.equals("empty")) {
-
-          // If the the user have tagged the particial chooice tag it
-          theUser.tag(theTag)
-        }
-
-      } // end loop
-
-    }
-
-
-    println("#########################################################save food interestes ##########################")
-    userProfileService.saveUserProfile(theUser)
+      var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+      var d = tagWordService.listByGroupOption("profile")
+      userProfileService.updateUserProfileTags(theUser, d, map)
 
     Redirect(routes.UserProfileController.showTags())
   }
