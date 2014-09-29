@@ -1,20 +1,22 @@
 package services
 
 import java.util.Date
+import org.springframework.stereotype.Service
 import play.api.Play.current
 import com.typesafe.plugin._
 import play.api.Logger
 
+@Service
 class MailService {
-  private final val INSTANCE: MailService = new MailService
+  //private final val INSTANCE: MailService = new MailService
 
-  private def MailService() {
+//  private def MailService() {
+//
+//  }
 
-  }
-
-  def getInstance: MailService = {
-    INSTANCE
-  }
+//  def getInstance: MailService = {
+//    INSTANCE
+//  }
 
   def createMail(subject: String, message: String, recipients: List[EmailAndName], bbc: List[EmailAndName], from: EmailAndName, replyTo: EmailAndName): MailerAPI = {
     val mail = use[MailerPlugin].email
