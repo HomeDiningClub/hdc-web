@@ -70,7 +70,7 @@ class UserRoleService {
   @Transactional(readOnly = false)
   def addRoleToUser(roleObjectId: UUID, userObjectId: UUID): UserCredential = {
     val role = findById(roleObjectId)
-    val user = userCredentialService.findById(userObjectId)
+    val user = userCredentialService.findById(userObjectId).get
     user.roles.add(role)
     val modUser = userCredentialService.userCredentialRepository.save(user)
     modUser
@@ -79,7 +79,7 @@ class UserRoleService {
   @Transactional(readOnly = false)
   def removeRoleFromUser(roleObjectId: UUID, userObjectId: UUID): UserCredential = {
     val role = findById(roleObjectId)
-    val user = userCredentialService.findById(userObjectId)
+    val user = userCredentialService.findById(userObjectId).get
     user.roles.remove(role)
     val modUser = userCredentialService.userCredentialRepository.save(user)
     modUser

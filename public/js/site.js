@@ -21,6 +21,15 @@ $(document).ready(function () {
     // Activate tooltips
    $(".host-level-icon").tooltip();
 
+//   $(".btn-rate-popover").popover({
+//       trigger: "click",
+//       placement: "bottom",
+//       container: ".rate-popover-placeholder",
+//       html : true,
+//       content : $(".rate-popover").html()
+//   });
+
+
     // Disable double click
     $(document).ready(function(){
         $("*").dblclick(function(e){

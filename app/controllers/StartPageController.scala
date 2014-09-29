@@ -10,7 +10,7 @@ import securesocial.core.SecureSocial
 import org.springframework.beans.factory.annotation.Autowired
 import services.{RatingService, CountyService, TagWordService, UserProfileService}
 import models.{UserCredential, UserProfile}
-import models.rating.RatingUserCredential
+import models.rating.RatesUserCredential
 import views.html.helper.{select, options}
 import models.profile.TagWord
 import play.api.i18n.Messages
@@ -155,7 +155,7 @@ class StartPageController extends Controller with SecureSocial {
     ratingService.findRatingByRatingValue(4) match {
       case None => None
       case Some(items) =>
-        Some{ items.take(4).map { ratingItem: RatingUserCredential =>
+        Some{ items.take(4).map { ratingItem: RatesUserCredential =>
           ReviewBox(
             objectId = Some(ratingItem.objectId),
             linkToProfile = ratingItem.userWhoIsRating.profiles.asScala.head.profileLinkName match {

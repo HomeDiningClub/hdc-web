@@ -102,7 +102,7 @@ class AdminReleaseController extends Controller with SecureSocial {
       case Some(reqUser) =>
         val currentUser = userCredentialService.findById(reqUser.asInstanceOf[UserCredential].objectId)
         if(currentUser != null) {
-          userCredentialService.addRole(currentUser, RoleEnums.ADMIN)
+          userCredentialService.addRole(currentUser.get, RoleEnums.ADMIN)
         }
       case None =>
     }

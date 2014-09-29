@@ -59,7 +59,7 @@ class AdminUserCredentialController extends Controller with SecureSocial {
       },
       contentData => {
 
-        val newRec = userCredentialService.findById(UUID.fromString(contentData.id))
+        val newRec = userCredentialService.findById(UUID.fromString(contentData.id)).get
         newRec.firstName = contentData.firstName
         newRec.lastName = contentData.lastName
         newRec.fullName = contentData.firstName + " " + contentData.lastName
@@ -77,7 +77,7 @@ class AdminUserCredentialController extends Controller with SecureSocial {
 
   // Edit
   def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    val item = userCredentialService.findById(objectId)
+    val item = userCredentialService.findById(objectId).get
 
     item match {
       case null =>

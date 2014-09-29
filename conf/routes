@@ -31,10 +31,10 @@ GET         /profile/view/:profileName                           @controllers.Us
 GET         /profile/view-my-profile                             @controllers.UserProfileController.viewProfileByLoggedInUser
 GET         /profile/edit                                        @controllers.UserProfileController.edit
 POST        /profile/skicka                                      @controllers.UserProfileController.editSubmit
-#POST        /profile/skapa                             @controllers.UserProfileController.save
+#POST        /profile/skapa                                       @controllers.UserProfileController.save
 POST        /profile/spara                                       @controllers.UserProfileController.saveUserProfile
-#GET         /profile/ny                                @controllers.UserProfileController.skapaNyProfil
-#GET         /profile/find/:userName                    @controllers.UserProfileController.hamtaProfil(userName)
+#GET         /profile/ny                                          @controllers.UserProfileController.skapaNyProfil
+#GET         /profile/find/:userName                              @controllers.UserProfileController.hamtaProfil(userName)
 GET         /profile/showtag                                     @controllers.UserProfileController.showTags
 POST        /profile/savetags                                    @controllers.UserProfileController.saveTags
 GET         /profile/verify                                      @controllers.UserProfileController.verifyUserProfile
@@ -52,7 +52,7 @@ POST        /inbox/saveit                                        controllers.Mes
 
 # New profile
 GET         /prodata/skapa                                       @controllers.UserProfileController.createTags
-#GET         /prodata/test                              @controllers.UserProfileController.test
+#GET         /prodata/test                                        @controllers.UserProfileController.test
 
 # Recipe
 GET         /profile/view/:profileName/recipe/:recipeName        @controllers.RecipePageController.viewRecipeByNameAndProfile(profileName: String, recipeName: String)
@@ -61,6 +61,9 @@ GET         /recipe/add                                          @controllers.Re
 POST        /recipe/add                                          @controllers.RecipePageController.addSubmit
 GET         /recipe/edit/:objectId                               @controllers.RecipePageController.edit(objectId: java.util.UUID)
 GET         /recipe/delete/:objectId                             @controllers.RecipePageController.delete(objectId: java.util.UUID)
+
+# Rating
+POST        /rate/user                                           controllers.RatingController.rateUserSubmit
 
 # Login page
 GET         /login                                               securesocial.controllers.LoginPage.login
@@ -89,8 +92,8 @@ GET         /not-authorized                                      securesocial.co
 
 
 # TEST
-#GET         /profile/loggain                           @controllers.UserProfileController.login
-#GET         /worlds                                    @controllers.test.WorldController.index
+#GET         /profile/loggain                                    @controllers.UserProfileController.login
+#GET         /worlds                                             @controllers.test.WorldController.index
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                        controllers.Assets.at(path="/public", file)

@@ -1,20 +1,18 @@
 package repositories
 
-import models.profile.TagWord
-import org.springframework.data.neo4j.annotation.Query
+
 import org.springframework.data.neo4j.repository.GraphRepository
 import java.util.UUID
 import java.util
-import models.rating.RatingUserCredential
+import models.rating.RatesUserCredential
 import models.UserCredential
 
-
-trait RatingUserCredentialRepository extends GraphRepository[RatingUserCredential] {
+trait RatingUserCredentialRepository extends GraphRepository[RatesUserCredential] {
 
   // Auto-mapped by Spring
-  def findByobjectId(objectId: UUID): RatingUserCredential
-  def findByuserWhoIsRating(userWhoIsRating: UserCredential): util.List[RatingUserCredential]
-  def findByuserRates(userRates: UserCredential): util.List[RatingUserCredential]
-  def findByratingValue(ratingValue: Int): util.List[RatingUserCredential]
-
+  def findByobjectId(objectId: UUID): RatesUserCredential
+  def findByuserWhoIsRating(userWhoIsRating: UserCredential): util.List[RatesUserCredential]
+  def findByuserRates(userRates: UserCredential): util.List[RatesUserCredential]
+  def findByratingValue(ratingValue: Int): util.List[RatesUserCredential]
+  def findByuserWhoIsRatingAndUserRates(userWhoIsRating: UserCredential, userRates: UserCredential): util.List[RatesUserCredential]
 }

@@ -45,7 +45,7 @@
                                 }else{
                                     controllers.routes.UserProfileController.viewProfileByLoggedInUser().url
                                 }) { abortLink =>
-                                    <a class="btn" href="@abortLink">@Messages("recipe.edit.abort")</a>
+                                    <a class="btn" data-loading-text="@Messages("recipe.edit.saving")" href="@abortLink">@Messages("recipe.edit.abort")</a>
                                 }
                             </div>
                         }

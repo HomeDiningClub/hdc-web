@@ -1,7 +1,5 @@
 package models.viewmodels
 
-import models.files.ContentFile
-import models.rating.RatingUserCredential
 import java.util.UUID
 
 // Used on the Start page, collects profile information and user information

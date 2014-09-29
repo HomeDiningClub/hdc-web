@@ -5,7 +5,7 @@ import models.base.AuditEntity;
 import org.springframework.data.neo4j.annotation.*;
 
 @RelationshipEntity
-public class RatingUserCredential extends AuditEntity {
+public class RatesUserCredential extends BaseRating {
 
     @StartNode
     public UserCredential userWhoIsRating;
@@ -13,11 +13,7 @@ public class RatingUserCredential extends AuditEntity {
     @EndNode
     public UserCredential userRates;
 
-    public int ratingValue;
-    public String userRaterIP;
-    public String ratingComment;
-
-    public RatingUserCredential rate(int ratingValue, String ratingComment, String userRaterIP) {
+    public RatesUserCredential rate(int ratingValue, String ratingComment, String userRaterIP) {
         this.userRaterIP = userRaterIP;
         this.ratingValue = ratingValue;
         this.ratingComment = ratingComment;

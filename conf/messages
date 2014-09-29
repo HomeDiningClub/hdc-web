@@ -195,6 +195,7 @@ recipe.delete.success=Recept borttaget
 recipe.delete.error=Kunde inte ta bort recept
 recipe.edit.save=Spara
 recipe.edit.abort=Avbryt
+recipe.edit.saving=Sparar...
 
 recipe.button.edit=Redigera recept
 
@@ -364,7 +365,18 @@ grade.rating.4=Utmärkt
 grade.rating.5=Superbt
 grade.submit=Betygsätt
 grade.rating-text=stjärna(or)
-grade.nr-of-ratings=(av {0} betyg)
+grade.nr-of-ratings=({0} betyg)
+
+rating.add.title=Sätt ditt betyg på {0}
+rating.add.lead=Du kan endast ge ett betyg och kommentar till en annan medlem, om du vill kan du när som helst revidera ditt betyg/kommentar.
+rating.add.button.text=Betygsätt
+rating.add.rated-before=Du gav betyg detta betyg tidigare:
+rating.add.rated-before.date-format=yyyy-MM-dd - HH:mm:ss
+rating.add.give-rate-to-self=Tyvärr, du kan inte betygsätta dig själv, be dina vänner här på klubben!
+rating.add.form.rating-value=Välj ditt betyg:
+rating.add.form.rating-comment=Kommentar (valfri)
+rating.not-logged-in=Du är inte inloggad och kan inte ge betyg.<br>Bli medlem i Sveriges godaste klubb!
+rating.not-logged-in.link.text=Bli medlem / Logga in
 
 # Level
 level.guest.header=Gäst

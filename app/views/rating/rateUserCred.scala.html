@@ -1,0 +1,37 @@
+@(ratingForm: Form[models.viewmodels.RatingForm], userToBeRated: Option[models.UserCredential], ratedEarlierDate: Option[java.util.Date])(implicit request: RequestHeader)
+@*import java.text.DateFormat*@
+
+@views.html.rating.rateMain() {
+    <div class="well well-hdc">
+        <h3>@Messages("rating.add.title", userToBeRated.get.firstName())</h3>
+        <p><em>@Messages("rating.add.lead")</em></p>
+
+        @utils.Helpers.getUserFromRequest match {
+            case None => {}
+            case Some(currentUser) => {
+                @if(ratingForm.get.id.nonEmpty && !ratingForm.get.id.toString.equalsIgnoreCase(currentUser.objectId.toString)){
+                    <div class="grade hdc-grade">
+                        @helper.form(action = routes.RatingController.rateUserSubmit()) {
+                            <label for="ratingValue" class="rating-label pull-left">@Messages("rating.add.form.rating-value")</label>
+                            <input type="number" name="ratingValue" class="rating" value="@ratingForm.get.ratingValue" min="0" max="5" step="1" data-disabled="false" data-show-caption="false" data-show-clear="false" data-readonly="false" data-star-captions="" data-default-caption="{rating} @Messages("grade.rating-text")" data-size="xs">
+
+                            @helper.textarea(ratingForm("ratingComment"),
+                                '_label -> Messages("rating.add.form.rating-comment"),
+                                'rows -> 6
+                            )
+
+                            @if(ratedEarlierDate.nonEmpty){
+                                <div class="rated-before-date clearfix"><strong>@Messages("rating.add.rated-before")</strong> @ratedEarlierDate.get.date.format(Messages("rating.add.rated-before.date-format"))</div>
+                                @*DateFormat.getDateInstance(DateFormat.SHORT, lang.toLocale).format(date)*@
+                            }
+
+                            @helper.inputHidden(ratingForm("id"))
+                            @helper.inputHidden(ratingForm("returnurl"))
+                            <input type="submit" class="btn btn-primary" value="@Messages("grade.submit")">
+                        }
+                    </div>
+                }
+            }
+        }
+    </div>
+}

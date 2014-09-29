@@ -85,11 +85,19 @@ object Global extends GlobalSettings {
 
   override def onRouteRequest(request: RequestHeader): Option[Handler] = {
 
-   if(play.api.Play.isProd(play.api.Play.current)){
-    if(!request.path.contains("/assets/")){
-     return Some(controllers.CampaignController.index)
+    // Is Production?
+    if(play.api.Play.isProd(play.api.Play.current)){
+      val approvedPaths = List("/assets/","/login", "/logout", "/signup", "/reset", "/password", "/authenticate", "/not-authorized")
+
+      // Checked for logged in user
+      if(utils.Helpers.getUserFromRequest(request).isEmpty){
+
+          // Anonymous
+          if(!approvedPaths.exists(path => request.path.contains(path))){
+              return Some(controllers.CampaignController.index)
+          }
+      }
     }
-   }
 
     // Remove trailing slash
     super.onRouteRequest(NormalizedRequest(request))

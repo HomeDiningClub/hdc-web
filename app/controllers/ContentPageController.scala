@@ -5,7 +5,7 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
 import play.api.i18n.Messages
 import org.springframework.beans.factory.annotation.Autowired
-import services.ContentService
+import services.{MailService, ContentService}
 import models.viewmodels.{MenuItem, AddContentForm}
 import play.api.Logger
 import java.util.UUID

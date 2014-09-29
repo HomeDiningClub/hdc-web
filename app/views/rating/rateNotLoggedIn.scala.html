@@ -1,0 +1,8 @@
+@()
+
+@views.html.rating.rateMain() {
+    <div class="well well-hdc">
+        <p>@Html(Messages("rating.not-logged-in"))</p>
+        <a class="btn btn-primary" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("rating.not-logged-in.link.text")</a>
+    </div>
+}

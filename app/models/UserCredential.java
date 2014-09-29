@@ -3,7 +3,7 @@ package models;
 import interfaces.IEditable;
 import models.base.AuditEntity;
 import models.modelconstants.RelationshipTypesJava;
-import models.rating.RatingUserCredential;
+import models.rating.RatesUserCredential;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
@@ -88,9 +88,11 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     public Set<UserProfile> profiles;
 
     // Rating
-    @RelatedToVia(type = RelationshipTypesJava.RATED.Constant)
-    @Fetch
-    Set<RatingUserCredential> ratings;
+    @RelatedToVia(type = RelationshipTypesJava.RATED.Constant, direction = Direction.INCOMING)
+    private Set<RatesUserCredential> ratings;
+
+    @RelatedToVia(type = RelationshipTypesJava.RATED.Constant, direction = Direction.OUTGOING)
+    private Set<RatesUserCredential> hasRated;
 
     // Verify the object owner
     @Transient
@@ -101,22 +103,51 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
             return false;
     }
 
+    // Rating - average
     public int getAverageRating() {
         int sumOfRatingValues = 0, count = 0;
-        for (RatingUserCredential rating : this.ratings) {
+        for (RatesUserCredential rating : this.getRatings()) {
             sumOfRatingValues += rating.ratingValue;
             count++;
         }
         return count == 0 ? 0 : sumOfRatingValues / count;
     }
+
+    // Rating count
     public int getNrOfRatings() {
         int count = 0;
 
-        if(this.ratings != null)
-            count = this.ratings.size();
+        if(this.getRatings() != null)
+            count = this.getRatings().size();
 
         return count;
     }
+
+    // Getter & setters
+    public void addRating(RatesUserCredential ratingToAdd) {
+        if(this.ratings == null)
+            this.ratings = new HashSet<>();
+
+        this.ratings.add(ratingToAdd);
+    }
+
+    @Fetch
+    public Set<RatesUserCredential> getRatings() {
+        if(this.ratings == null)
+            this.ratings = new HashSet<>();
+
+        return this.ratings;
+    }
+
+    @Fetch
+    public Set<RatesUserCredential> getHasRated() {
+        if(this.hasRated == null)
+            this.hasRated = new HashSet<>();
+
+        return this.hasRated;
+    }
+
+
     public UserCredential() {
         this.roles = new HashSet<>();
         this.ratings = new HashSet<>();
@@ -191,9 +222,6 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
 
     @Override
     public Option<OAuth2Info> oAuth2Info() {
-
-
-
         OAuth2Info oAuth2Info = new OAuth2Info
                 (
                         oAuth2InfoAccessToken,

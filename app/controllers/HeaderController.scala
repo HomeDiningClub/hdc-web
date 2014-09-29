@@ -81,14 +81,14 @@ object HeaderController extends Controller with SecureSocial {
     val defMenuItem03 = MenuItem(
       name = Messages("header.main-menu.link.fb.text"),
       title = Messages("header.main-menu.link.fb.title"),
-      url = Messages("header.link.fb.href"),
+      url = Messages("header.main-menu.link.fb.href"),
       icon = "genericon genericon-facebook",
       wrapperCssClass = "pull-right")
 
     val defMenuItem04 = MenuItem(
       name = Messages("header.main-menu.link.instagram.text"),
       title = Messages("header.main-menu.link.instagram.title"),
-      url = Messages("header.link.instagram.href"),
+      url = Messages("header.main-menu.link.instagram.href"),
       icon = "genericon genericon-instagram",
       wrapperCssClass = "pull-right")
 

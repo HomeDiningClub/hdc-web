@@ -33,7 +33,7 @@ import controllers._
 import scala.collection.JavaConverters._
 
 @SpringController
-class UserProfileController  extends Controller  with SecureSocial {
+class UserProfileController extends Controller with SecureSocial {
 
   // Services
   @Autowired
@@ -493,7 +493,7 @@ if(userTags != null) {
 
     var uuid : UUID = UUID.fromString(userCredentialObjectId)
     var friendsUserCredential = userCredentialService.findById(uuid)
-    userProfileService.addFavorites(theUser,friendsUserCredential)
+    userProfileService.addFavorites(theUser,friendsUserCredential.get)
 
     Ok("Ok")
   }

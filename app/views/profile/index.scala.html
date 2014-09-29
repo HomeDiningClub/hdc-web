@@ -22,7 +22,8 @@
                             <article>
                                 <h1 class="page-header">@userProfile.getOwner.fullName</h1>
                                 <h2>@userProfile.aboutMeHeadline</h2>
-                                @shared.grade(inputId = "host-grade", initialValue = userProfile.getOwner.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = userProfile.getOwner.getNrOfRatings)
+                                @shared.grade(inputId = "host-grade", initialValue = userProfile.getOwner.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = userProfile.getOwner.getNrOfRatings)
+                                @RatingController.renderRateForm(userProfile.getOwner, routes.UserProfileController.viewProfileByName(userProfile.profileLinkName).url)(request)
                                 <div class="memberid clearfix"><p><strong>@Messages("profile.memberid.text")</strong>&nbsp;@userProfile.getOwner.objectId</p></div>
                                 <a href="@routes.UserProfileController.addFavorite(userProfile.getOwner.objectId.toString())" target="_blank">Lägg till som favorit</a>
                                 <a href="@routes.UserProfileController.listFavorites()">Visa favoriter</a>

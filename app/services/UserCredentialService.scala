@@ -140,8 +140,11 @@ class UserCredentialService {
 
 
   @Transactional(readOnly = true)
-  def findById(objectId: UUID): UserCredential = {
-    userCredentialRepository.findByobjectId(objectId)
+  def findById(objectId: UUID): Option[UserCredential] = {
+    userCredentialRepository.findByobjectId(objectId) match {
+      case null => None
+      case item => Some(item)
+    }
   }
 
   @Transactional(readOnly = true)
@@ -238,13 +241,13 @@ class UserCredentialService {
 
   @Transactional(readOnly = false)
   def deleteById(objectId: UUID): Boolean = {
-    val item = this.findById(objectId)
-    if(item != null)
-    {
-      userCredentialRepository.delete(item)
-      return true
+    this.findById(objectId) match {
+      case None => false
+      case Some(item) => {
+        userCredentialRepository.delete(item)
+        return true
+      }
     }
-    false
   }
 
 
