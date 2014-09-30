@@ -166,8 +166,9 @@ GET         /admin/file                                          @controllers.ad
 POST        /admin/file/add                                      @controllers.admin.AdminFileController.add
 GET         /admin/file/delete/:objectId                         @controllers.admin.AdminFileController.deleteImage(objectId: java.util.UUID)
 
-
-
+GET         /test/grund                                          @controllers.UserProfileController.testAction
+GET         /test/testsida                                       @controllers.UserProfileController.testsida
+GET         /test/grund2                                         @controllers.UserProfileController.testAction2(callingString : String)
 
 
 

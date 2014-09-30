@@ -3,6 +3,7 @@ package controllers
 // http://www.playframework.com/documentation/2.2.x/ScalaForms
 
 import models.profile.{TaggedFavoritesToUserProfile, TagWord, TaggedUserProfile}
+import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import org.springframework.transaction.annotation.Transactional
@@ -496,6 +497,19 @@ if(userTags != null) {
     userProfileService.addFavorites(theUser,friendsUserCredential.get)
 
     Ok("Ok")
+  }
+
+  def testAction = SecuredAction  { implicit request =>
+    Ok("Datum: " + DateTime.now())
+  }
+
+  def testAction2(callingString : String) = SecuredAction  { implicit request =>
+    Ok("Datum: " + DateTime.now() + "svar: " + callingString)
+  }
+
+  def testsida = SecuredAction { implicit request =>
+    println("test ...")
+    Ok(views.html.test.json("test"))
   }
 
 
