@@ -499,6 +499,22 @@ if(userTags != null) {
     Ok("Ok")
   }
 
+  // remove favorite
+  def removeFavorite(userCredentialObjectId : String) = SecuredAction { implicit request =>
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+
+    var uuid : UUID = UUID.fromString(userCredentialObjectId)
+    var friendsUserCredential = userCredentialService.findById(uuid)
+
+    // todo calll new method to remove favorite
+    // userProfileService.addFavorites(theUser,friendsUserCredential.get)
+
+    Ok("Ok")
+  }
+
+
+
+
   def testAction = SecuredAction  { implicit request =>
     Ok("Datum: " + DateTime.now())
   }
