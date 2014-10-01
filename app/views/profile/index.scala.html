@@ -8,7 +8,11 @@
         tagList: Option[List[models.profile.TagWord]] = None,
         isThisMyProfile: Boolean = false)(implicit request: RequestHeader)
 
-@main(Messages("profile.title")) {
+@pageScripts = {
+    <script type="text/javascript">alert("hello !");</script>
+}
+
+@main(Messages("profile.title"), footerScripts = pageScripts) {
 
 
     <div class="container host-container">

@@ -4,12 +4,10 @@ import interfaces.IEditable;
 import models.content.ContentBase;
 import models.files.ContentFile;
 import models.modelconstants.RelationshipTypesJava;
+import models.rating.RatesRecipe;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.neo4j.annotation.Fetch;
-import org.springframework.data.neo4j.annotation.Indexed;
-import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
+import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
 import services.InstancedServices;
 import utils.Helpers;
@@ -44,6 +42,17 @@ public class Recipe extends ContentBase implements IEditable {
     @Indexed(unique = true, indexType = IndexType.LABEL)
     private String recipeLinkName = "";
 
+    // Rating
+    @RelatedToVia(type = RelationshipTypesJava.RATED.Constant, direction = Direction.INCOMING)
+    private Set<RatesRecipe> ratings;
+
+    @RelatedToVia(type = RelationshipTypesJava.RATED.Constant, direction = Direction.OUTGOING)
+    private Set<RatesRecipe> hasRated;
+
+
+
+
+    // Getter & Setters
     public void setMainBody(String mainBody){
         this.mainBody = mainBody;
     }
@@ -153,12 +162,60 @@ public class Recipe extends ContentBase implements IEditable {
             return false;
     }
 
-
     @Fetch
     public UserProfile getOwnerProfile() {
         return this.ownerProfile;
     }
 
+
+    // Rate Recipe
+    // Rating - average
+    public int getAverageRating() {
+        int sumOfRatingValues = 0, count = 0;
+        for (RatesRecipe rating : this.getRatings()) {
+            sumOfRatingValues += rating.ratingValue;
+            count++;
+        }
+        return count == 0 ? 0 : sumOfRatingValues / count;
+    }
+
+    // Rating count
+    public int getNrOfRatings() {
+        int count = 0;
+
+        if(this.getRatings() != null)
+            count = this.getRatings().size();
+
+        return count;
+    }
+
+    public void addRating(RatesRecipe ratingToAdd) {
+        if(this.ratings == null)
+            this.ratings = new HashSet<>();
+
+        this.ratings.add(ratingToAdd);
+    }
+
+    @Fetch
+    public Set<RatesRecipe> getRatings() {
+        if(this.ratings == null)
+            this.ratings = new HashSet<>();
+
+        return this.ratings;
+    }
+
+    @Fetch
+    public Set<RatesRecipe> getHasRated() {
+        if(this.hasRated == null)
+            this.hasRated = new HashSet<>();
+
+        return this.hasRated;
+    }
+
+
+
+
+    // Constructors
     public Recipe(String name, String preAmble, String mainBody, ContentFile mainImage, Set<ContentFile> recipeImages){
         this.setName(name);
         this.mainImage = mainImage;

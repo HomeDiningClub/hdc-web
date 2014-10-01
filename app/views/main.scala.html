@@ -1,4 +1,4 @@
-@(title: String, headerVisible: Boolean = true, footerVisible: Boolean = true)(content: Html)(implicit request: RequestHeader)
+@(title: String, headerVisible: Boolean = true, footerVisible: Boolean = true, footerScripts: Html = Html(""))(content: Html)(implicit request: RequestHeader)
 <!DOCTYPE html>
 
 <html lang="@Messages("main.language")">
@@ -21,13 +21,14 @@
         <div id="fb-root"></div>
 
         @*TODO - Create controllers with local backups, also bundle *@
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="@routes.Assets.at("js/libs/jquery.1.11.1.min.js")"></script>
         <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")"></script>
         <script src="@routes.Assets.at("tinymce/tinymce.min.js")"></script>
         @*<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>*@
-        <script src="@routes.Assets.at("js/jquery.gray.min.js")"></script>
-        <script src="@routes.Assets.at("js/star-rating.min.js")"></script>
-        <script src="@routes.Assets.at("js/bootbox.min.js")"></script>
+        <script src="@routes.Assets.at("js/libs/jquery.gray.min.js")"></script>
+        <script src="@routes.Assets.at("js/libs/star-rating.2.0.0.min.js")"></script>
+        <script src="@routes.Assets.at("js/libs/bootbox.4.3.0.min.js")"></script>
         <script src="@routes.Assets.at("js/site.js")"></script>
+        @footerScripts
     </body>
 </html>
