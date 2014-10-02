@@ -129,6 +129,8 @@ contact.body1=body
 contact.header2=Kontakta oss
 contact.body2=body
 
+# Host header / Profile header
+host-header.tooltip.text=Gå tillbaka till {0}
 
 # Like
 like.text=Gilla
@@ -368,7 +370,8 @@ grade.rating-text=stjärna(or)
 grade.nr-of-ratings=({0} betyg)
 
 rating.add.title=Sätt ditt betyg på {0}
-rating.add.lead=Du kan endast ge ett betyg och kommentar till en annan medlem, om du vill kan du när som helst revidera ditt betyg/kommentar.
+rating.add.lead.user=Du kan endast ge ett betyg och kommentar till en annan medlem, du kan när som helst revidera ditt betyg/kommentar.
+rating.add.lead.recipe=Du kan endast ge ett betyg och kommentar på ett recept, du kan när som helst revidera ditt betyg/kommentar.
 rating.add.button.text=Betygsätt
 rating.add.rated-before=Du gav betyg detta betyg tidigare:
 rating.add.rated-before.date-format=yyyy-MM-dd - HH:mm:ss
@@ -377,6 +380,7 @@ rating.add.form.rating-value=Välj ditt betyg:
 rating.add.form.rating-comment=Kommentar (valfri)
 rating.not-logged-in=Du är inte inloggad och kan inte ge betyg.<br>Bli medlem i Sveriges godaste klubb!
 rating.not-logged-in.link.text=Bli medlem / Logga in
+rating.add.error=Någonting gick fel när du skulle addera ett betyg, försök igen, om det inte fungerar vad god kontakta oss!
 
 # Level
 level.guest.header=Gäst

@@ -17,6 +17,7 @@
 @hdc-black: #000;
 @hdc-red: #8E0000;
 @hdc-light-green: lighten(@hdc-green, 39%);
+@hdc-orange: #ef7b3e;
 
 @host-level-01-color: @hdc-green;
 @host-level-02-color: @hdc-black;
@@ -122,6 +123,36 @@ img
 {
   padding-left:0px;
   padding-right:0px;
+}
+
+// Tooltips
+.hdc-tooltip + .tooltip > .tooltip-inner {
+  background-color: @hdc-orange;
+  color:#000;
+}
+.hdc-tooltip + .tooltip.top .tooltip-inner {
+  background-color: @hdc-orange;
+}
+.hdc-tooltip + .tooltip.top .tooltip-arrow {
+  background-color: @hdc-orange;
+}
+.hdc-tooltip + .tooltip.right .tooltip-inner {
+  background-color: @hdc-orange;
+}
+.hdc-tooltip + .tooltip.right .tooltip-arrow {
+  border-right-color: @hdc-orange;
+}
+.hdc-tooltip + .tooltip.bottom .tooltip-inner {
+  background-color: @hdc-orange;
+}
+.hdc-tooltip + .tooltip.bottom .tooltip-arrow {
+  border-bottom-color: @hdc-orange;
+}
+.hdc-tooltip + .tooltip.left .tooltip-inner {
+  background-color: @hdc-orange;
+}
+.hdc-tooltip + .tooltip.left .tooltip-arrow {
+  border-left-color: @hdc-orange;
 }
 
 // General wells
@@ -1105,8 +1136,16 @@ h3.aside-title {
   background-color: @hdc-green;
   padding:5px 15px 5px 15px;
 }
+.host-container .host-header .glyphicon-lowered {
+  top:3px;
+}
+.host-container .host-header a:hover
+{
+  text-decoration: none;
+}
 .host-container .host-header h2
 {
+  display: inline-block;
   color: #fff;
   margin-bottom:0px;
   margin-top:0px;
@@ -1175,7 +1214,7 @@ h3.aside-title {
   margin-bottom: 10px;
 }
 .tag .glyphicon-tag {
-  color: #42B3CF;
+  color: @hdc-orange;
 }
 
 // RecipeBox

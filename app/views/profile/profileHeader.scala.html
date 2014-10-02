@@ -1,15 +1,22 @@
-@(header: String, avatarUrl: String = "")
+@(header: String, avatarUrl: String = "", showLinkBack: Boolean = false)
 <div class="row">
     <div class="col-xs-12 col-md-12 big-margin-top">
         <div class="host-header">
             <header>
-                <h2>@header</h2>
-                @if(avatarUrl.isEmpty){
-                    @shared.hostImageCircle()
+                @if(showLinkBack){
+                <a href="@routes.UserProfileController.viewProfileByName(header).url">
+                    <h2 class="host-header-link hdc-tooltip" data-toggle="tooltip" data-placement="right" data-original-title="@Messages("host-header.tooltip.text", header)"><span class="glyphicon glyphicon-chevron-left glyphicon-lowered"></span>&nbsp;@header</h2>
                 }else{
-                    @shared.hostImageCircle(avatarUrl)
+                    <h2>@header</h2>
                 }
-
+                    @if(avatarUrl.isEmpty){
+                        @shared.hostImageCircle()
+                    }else{
+                        @shared.hostImageCircle(avatarUrl)
+                    }
+                @if(showLinkBack){
+                </a>
+                }
             </header>
         </div>
     </div>

@@ -152,7 +152,7 @@ class StartPageController extends Controller with SecureSocial {
   }
 
   private def getReviewBoxes: Option[List[ReviewBox]] = {
-    ratingService.findRatingByRatingValue(4) match {
+    ratingService.findUserRatingByRatingValue(4) match {
       case None => None
       case Some(items) =>
         Some{ items.take(4).map { ratingItem: RatesUserCredential =>

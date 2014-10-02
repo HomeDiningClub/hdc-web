@@ -63,7 +63,7 @@ GET         /recipe/edit/:objectId                               @controllers.Re
 GET         /recipe/delete/:objectId                             @controllers.RecipePageController.delete(objectId: java.util.UUID)
 
 # Rating
-POST        /rate/user                                           controllers.RatingController.rateUserSubmit
+POST        /rate/user                                           controllers.RatingController.rateSubmit
 
 # Login page
 GET         /login                                               securesocial.controllers.LoginPage.login

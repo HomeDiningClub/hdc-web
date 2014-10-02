@@ -16,7 +16,7 @@
         <div class="row">
             <div class="col-xs-12 col-md-9">
                 @defining(if(recipe.getOwnerProfile.getAvatarImage != null){recipe.getOwnerProfile.getAvatarImage.getTransformByName("thumbnail").getUrl}else{""}) { avatarUrl =>
-                    @views.html.profile.profileHeader(recipe.getOwnerProfile.profileLinkName, avatarUrl)
+                    @views.html.profile.profileHeader(recipe.getOwnerProfile.profileLinkName, avatarUrl, true)
                 }
                 <div class="row">
                     <div class="col-xs-12 big-margin-top">
@@ -31,6 +31,10 @@
                                 @if(!recipe.getMainBody.isEmpty) {
                                     <div class="breadtext">@Html(recipe.getMainBody)</div>
                                 }
+                            </article>
+                            <article>
+                                @shared.grade(inputId = "recipe-grade", initialValue = recipe.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = recipe.getNrOfRatings)
+                                @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.profileLinkName, recipe.getLink).url)(request)
                             </article>
                         </section>
                     </div>
@@ -51,7 +55,7 @@
                                                 }
                                             }
                                         </div>
-                                            <!-- Carousel nav controls -->
+                                        <!-- Carousel nav controls -->
                                         <a class="carousel-control left hidden-md hidden-lg" href="#recipe-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
                                         <a class="carousel-control right hidden-md hidden-lg" href="#recipe-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
                                     </div>

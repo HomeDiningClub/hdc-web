@@ -19,7 +19,7 @@
             }
 
             @if( provider.authMethod == UserPassword ) {
-                <div class="col-xs-6 col-md-4 col-md-offset-1 login-form">
+                <div class="col-xs-12 col-md-4 col-md-offset-1 login-form">
                 @if(providerHeader.nonEmpty){ <h3>@providerHeader</h3> }
                 <form action = "@securesocial.core.providers.utils.RoutesHelper.authenticateByPost("userpass").absoluteURL(IdentityProvider.sslEnabled)(request)"
                       class="form-horizontal" autocomplete="off" method="POST">
@@ -58,7 +58,9 @@
                 </form>
                 </div>
 
-                <div class="col-xs-6 col-md-4 col-md-offset-1 login-form">
+                <div class="col-xs-12 visible-xs visible-sm margin-top"></div>
+
+                <div class="col-xs-12 col-md-4 col-md-offset-1 login-form">
                     <h3>@Messages("securesocial.login.signUp")</h3><br>
                     <p><a class="btn btn-primary" href="@securesocial.core.providers.utils.RoutesHelper.startSignUp()">@Messages("securesocial.login.here")</a></p>
                 </div>

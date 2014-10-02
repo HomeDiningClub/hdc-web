@@ -39,8 +39,13 @@ object RelationshipTypesScala {
     def name(): String = Constant
   }
 
-  object RATED {
-    final val Constant = "RATED"
+  object RATED_USER {
+    final val Constant = "RATED_USER"
+    def name(): String = Constant
+  }
+
+  object RATED_RECIPE {
+    final val Constant = "RATED_RECIPE"
     def name(): String = Constant
   }
 

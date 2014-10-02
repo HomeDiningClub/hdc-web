@@ -39,9 +39,14 @@ public final class RelationshipTypesJava {
         public static final String Constant = "IMAGES";
     }
 
-    public final static class RATED implements RelationshipType {
+    public final static class RATED_USER implements RelationshipType {
         public String name() { return Constant; }
-        public static final String Constant = "RATED";
+        public static final String Constant = "RATED_USER";
+    }
+
+    public final static class RATED_RECIPE implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "RATED_RECIPE";
     }
 
     public final static class HAS_RECIPES implements RelationshipType {

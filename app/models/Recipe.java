@@ -43,13 +43,8 @@ public class Recipe extends ContentBase implements IEditable {
     private String recipeLinkName = "";
 
     // Rating
-    @RelatedToVia(type = RelationshipTypesJava.RATED.Constant, direction = Direction.INCOMING)
+    @RelatedToVia(type = RelationshipTypesJava.RATED_RECIPE.Constant, direction = Direction.INCOMING)
     private Set<RatesRecipe> ratings;
-
-    @RelatedToVia(type = RelationshipTypesJava.RATED.Constant, direction = Direction.OUTGOING)
-    private Set<RatesRecipe> hasRated;
-
-
 
 
     // Getter & Setters
@@ -203,16 +198,6 @@ public class Recipe extends ContentBase implements IEditable {
 
         return this.ratings;
     }
-
-    @Fetch
-    public Set<RatesRecipe> getHasRated() {
-        if(this.hasRated == null)
-            this.hasRated = new HashSet<>();
-
-        return this.hasRated;
-    }
-
-
 
 
     // Constructors

@@ -19,7 +19,7 @@
 $(document).ready(function () {
 
     // Activate tooltips
-   $(".host-level-icon").tooltip();
+   $(".host-level-icon,.host-header-link").tooltip();
 
 //   $(".btn-rate-popover").popover({
 //       trigger: "click",

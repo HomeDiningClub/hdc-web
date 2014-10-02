@@ -3,6 +3,7 @@ package models;
 import interfaces.IEditable;
 import models.base.AuditEntity;
 import models.modelconstants.RelationshipTypesJava;
+import models.rating.RatesRecipe;
 import models.rating.RatesUserCredential;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
@@ -88,11 +89,14 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     public Set<UserProfile> profiles;
 
     // Rating
-    @RelatedToVia(type = RelationshipTypesJava.RATED.Constant, direction = Direction.INCOMING)
+    @RelatedToVia(type = RelationshipTypesJava.RATED_USER.Constant, direction = Direction.INCOMING)
     private Set<RatesUserCredential> ratings;
 
-    @RelatedToVia(type = RelationshipTypesJava.RATED.Constant, direction = Direction.OUTGOING)
-    private Set<RatesUserCredential> hasRated;
+    @RelatedToVia(type = RelationshipTypesJava.RATED_USER.Constant, direction = Direction.OUTGOING)
+    private Set<RatesUserCredential> hasRatedUsers;
+
+    @RelatedToVia(type = RelationshipTypesJava.RATED_RECIPE.Constant, direction = Direction.OUTGOING)
+    private Set<RatesRecipe> hasRatedRecipes;
 
     // Verify the object owner
     @Transient
@@ -140,11 +144,19 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     }
 
     @Fetch
-    public Set<RatesUserCredential> getHasRated() {
-        if(this.hasRated == null)
-            this.hasRated = new HashSet<>();
+    public Set<RatesUserCredential> getHasRatedUsers() {
+        if(this.hasRatedUsers == null)
+            this.hasRatedUsers = new HashSet<>();
 
-        return this.hasRated;
+        return this.hasRatedUsers;
+    }
+
+    @Fetch
+    public Set<RatesRecipe> getHasRatedRecipes() {
+        if(this.hasRatedRecipes == null)
+            this.hasRatedRecipes = new HashSet<>();
+
+        return this.hasRatedRecipes;
     }
 
 

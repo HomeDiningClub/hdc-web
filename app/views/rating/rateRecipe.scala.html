@@ -1,10 +1,10 @@
-@(ratingForm: Form[models.viewmodels.RatingForm], userToBeRated: Option[models.UserCredential], ratedEarlierDate: Option[java.util.Date])(implicit request: RequestHeader)
+@(ratingForm: Form[models.viewmodels.RatingForm], recipeToBeRated: Option[models.Recipe], ratedEarlierDate: Option[java.util.Date])(implicit request: RequestHeader)
 @*import java.text.DateFormat*@
 
 @views.html.rating.rateMain() {
     <div class="well well-hdc">
-        <h3>@Messages("rating.add.title", userToBeRated.get.firstName())</h3>
-        <p><em>@Messages("rating.add.lead.user")</em></p>
+        <h3>@Messages("rating.add.title", recipeToBeRated.get.getName)</h3>
+        <p><em>@Messages("rating.add.lead.recipe")</em></p>
 
         @utils.Helpers.getUserFromRequest match {
             case None => {}
