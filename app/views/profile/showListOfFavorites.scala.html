@@ -1,10 +1,19 @@
 @(favorites: List[models.viewmodels.FavoriteForm])(implicit request: RequestHeader)
-Favoriter:
+
+                                    <table>
+                                    <tr>
+                                        <td>ProfileName</td>
+                                        <td>UserProfile ObjectId</td>
+                                        <td>UserCredential ObjectId</td>
+                                    </tr>
                                     @for(i <- favorites) {
-
-                                            <div class="panel-body">
-                                            @i.profileName, @i.objectId
-
+                                            <tr>
+                                                <div class="panel-body">
+                                                <td>@i.profileName</td>
+                                                <td>@i.objectId</td>
+                                                <td>@i.userCredObjectId</td>
+                                            </tr>
                                     }
 
 
+                                    </table>

@@ -8,7 +8,25 @@
         tagList: Option[List[models.profile.TagWord]] = None,
         isThisMyProfile: Boolean = false)(implicit request: RequestHeader)
 
-@main(Messages("profile.title")) {
+    @pageScripts= {
+        <script>
+        $(document).ready(function(){
+
+        $("#addAsFavorite").click(function(){
+            $.get("/test/grund2?callingString=test2&call2=nu",function(data,status){
+            //alert("Data: " + data + "\nStatus: " + status);
+
+
+                //if(data.size < 100) {
+                    $ ( "#result" ).text ( data ) ;
+                //}
+        });
+        });
+        });
+        </script>
+    }
+
+@main(Messages("profile.title"), footerScripts = pageScripts) {
     <div class="container host-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
@@ -27,6 +45,9 @@
                                 <div class="memberid clearfix"><p><strong>@Messages("profile.memberid.text")</strong>&nbsp;@userProfile.getOwner.objectId</p></div>*@
                                 <a href="@routes.UserProfileController.addFavorite(userProfile.getOwner.objectId.toString())" target="_blank"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;Lägg till som favorit</a>
                                 <a href="@routes.UserProfileController.listFavorites()">Visa favoriter</a>
+
+                                <a id="addAsFavorite">Add as favorite</a>
+                                <p id="result"></p>
 
                                 <div class="breadtext">
                                     @Html(userProfile.aboutMe)
@@ -116,6 +137,9 @@
                     </div>
                 </div>
             </div>
+
+
+
 
             <!-- Banner -->
             <div class="col-xs-12 col-md-3 col-banner">

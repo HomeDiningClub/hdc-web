@@ -507,7 +507,8 @@ if(userTags != null) {
     var friendsUserCredential = userCredentialService.findById(uuid)
 
     // todo calll new method to remove favorite
-    // userProfileService.addFavorites(theUser,friendsUserCredential.get)
+
+    userProfileService.removeFavorites(theUser,friendsUserCredential.get)
 
     Ok("Ok")
   }
@@ -543,13 +544,25 @@ if(userTags != null) {
       var fav : UserProfile = cur.favoritesUserProfile
 
       // add to return variable ....
-      favorites += models.viewmodels.FavoriteForm(fav.profileLinkName, fav.objectId.toString)
+      favorites += models.viewmodels.FavoriteForm(fav.profileLinkName, fav.objectId.toString, fav.getOwner.objectId.toString)
        println("ObjectId : " + fav.objectId + ", email : " + fav.email)
     }
 
     // return to page
     Ok(views.html.profile.showListOfFavorites(favorites.toList))
   }
+
+
+
+  def showFavoritesPage = SecuredAction
+  { implicit request =>
+
+    var userProfile = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+
+
+    Ok(views.html.profile.addAsFavorite(userProfile))
+  }
+
 
 
 
@@ -758,5 +771,6 @@ if(userTags != null) {
         }
       )
   }
+
 
 }

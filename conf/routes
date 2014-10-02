@@ -39,8 +39,11 @@ GET         /profile/showtag                                     @controllers.Us
 POST        /profile/savetags                                    @controllers.UserProfileController.saveTags
 GET         /profile/verify                                      @controllers.UserProfileController.verifyUserProfile
 
+# Add favorit to UserProfile
 GET         /profile/favorite/add                                @controllers.UserProfileController.addFavorite(userCredentialObjectId : String)
-# http://localhost:9000/profile/favorite/add?userCredentialObjectId=932cb1bc-7676-4f7e-84a3-5ab4ed0ed9dc
+
+# Remove favorite to userProfile
+GET         /profile/favorite/remove                             @controllers.UserProfileController.removeFavorite(userCredentialObjectId : String)
 
 GET         /profile/favorite/show                               @controllers.UserProfileController.listFavorites
 
@@ -169,6 +172,8 @@ GET         /admin/file/delete/:objectId                         @controllers.ad
 GET         /test/grund                                          @controllers.UserProfileController.testAction
 GET         /test/testsida                                       @controllers.UserProfileController.testsida
 GET         /test/grund2                                         @controllers.UserProfileController.testAction2(callingString : String)
+GET         /profile/addFavorite                                 @controllers.UserProfileController.showFavoritesPage
+
 
 
 

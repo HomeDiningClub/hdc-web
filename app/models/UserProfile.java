@@ -155,7 +155,14 @@ public class UserProfile extends AuditEntity implements IEditable {
         return taggedLocationProfile;
     }
 
-    // User favorites
+
+    // Remove favorite
+    public void removeFavoriteUserProfile(TaggedFavoritesToUserProfile userProfile) {
+        userFriendsProfileTag.remove(userProfile);
+    }
+
+
+    // Add favorite
     public TaggedFavoritesToUserProfile addFavoriteUserProfile(UserProfile userProfile) {
 
         Calendar cal = Calendar.getInstance();

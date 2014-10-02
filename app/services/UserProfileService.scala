@@ -19,7 +19,7 @@ import org.neo4j.graphdb.index.Index
 import org.springframework.context.annotation.Lazy
 import play.api.mvc.Results._
 import models.location.County
-import models.profile.TagWord
+import models.profile.{TaggedFavoritesToUserProfile, TaggedUserProfile, TagWord}
 import scala.collection.JavaConverters._
 
 
@@ -73,6 +73,36 @@ class UserProfileService {
 
     theUser
   }
+
+  @Transactional(readOnly = false)
+  def removeFavorites(
+                    theUser:  models.UserProfile,
+                    friendsUserCredential:  models.UserCredential
+                    ): models.UserProfile = {
+
+    if(friendsUserCredential!=None && friendsUserCredential!= null) {
+      var fUserProfile : UserProfile = friendsUserCredential.profiles.asScala.head
+
+      var jmfFriend = friendsUserCredential.objectId
+      var profileLink : Option[TaggedFavoritesToUserProfile] = None
+
+
+      var itter = theUser.getFavorites.iterator()
+      while(itter.hasNext) {
+        var tagProfile = itter.next()
+        if(tagProfile.favoritesUserProfile.getOwner.objectId == jmfFriend) {
+          profileLink = Some(tagProfile)
+        }
+      }
+
+      theUser.removeFavoriteUserProfile(profileLink.get)
+    }
+
+    theUser
+  }
+
+
+
 
 
   @Transactional(readOnly = false)
