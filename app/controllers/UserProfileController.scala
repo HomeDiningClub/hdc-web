@@ -544,7 +544,7 @@ if(userTags != null) {
 
   def testsida = SecuredAction { implicit request =>
     println("test ...")
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
     println("ProfileLink Name : " + theUser.profileLinkName)
     Ok(views.html.test.json("test"))
   }
