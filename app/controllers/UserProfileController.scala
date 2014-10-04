@@ -522,12 +522,30 @@ if(userTags != null) {
     Ok("Datum: " + DateTime.now())
   }
 
-  def testAction2(callingString : String) = SecuredAction  { implicit request =>
-    Ok("Datum: " + DateTime.now() + "svar: " + callingString)
+  // SecuredAction
+  // UserAwareAction
+  // Action
+  def testAction2(callingString : String) = UserAwareAction { implicit request =>
+
+    var user = request.user
+    var isLoggedIn = false
+    var svar = ""
+
+    if (user == None || user == null) {
+      svar = "NO_USER"
+    }  else {
+      isLoggedIn = true
+      svar = "USER_OK"
+    }
+
+    Ok(svar)
+
   }
 
   def testsida = SecuredAction { implicit request =>
     println("test ...")
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+    println("ProfileLink Name : " + theUser.profileLinkName)
     Ok(views.html.test.json("test"))
   }
 
