@@ -1,33 +1,21 @@
 @(favorites: List[models.viewmodels.FavoriteForm], favMe: List[models.viewmodels.FavoriteForm])(implicit request: RequestHeader)
 
+<div class="panel-body">
+    Mina favoriter
     <table>
-    <tr>
-        <td>ProfileName</td>
-        <td>UserProfile ObjectId</td>
-        <td>UserCredential ObjectId</td>
-    </tr>
     @for(i <- favorites) {
             <tr>
-                <div class="panel-body">
-                <td>@i.profileName</td>
-                <td>@i.objectId</td>
-                <td>@i.userCredObjectId</td>
+                <td><a href="@routes.UserProfileController.viewProfileByName(i.profileName).url">@i.profileName</a></td>
             </tr>
     }
     </table>
 
+Vilka har mig som favorit?
     <table>
-    <tr>
-    <td>ProfileName</td>
-    <td>UserProfile ObjectId</td>
-    <td>UserCredential ObjectId</td>
-    </tr>
     @for(f <- favMe) {
     <tr>
-        <div class="panel-body">
-            <td>@f.profileName</td>
-            <td>@f.objectId</td>
-            <td>@f.userCredObjectId</td>
+        <td><a href="@routes.UserProfileController.viewProfileByName(f.profileName).url">@f.profileName</a></td>
     </tr>
     }
     </table>
+</div>
