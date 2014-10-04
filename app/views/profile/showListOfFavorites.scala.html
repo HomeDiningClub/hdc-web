@@ -1,19 +1,33 @@
-@(favorites: List[models.viewmodels.FavoriteForm])(implicit request: RequestHeader)
+@(favorites: List[models.viewmodels.FavoriteForm], favMe: List[models.viewmodels.FavoriteForm])(implicit request: RequestHeader)
 
-                                    <table>
-                                    <tr>
-                                        <td>ProfileName</td>
-                                        <td>UserProfile ObjectId</td>
-                                        <td>UserCredential ObjectId</td>
-                                    </tr>
-                                    @for(i <- favorites) {
-                                            <tr>
-                                                <div class="panel-body">
-                                                <td>@i.profileName</td>
-                                                <td>@i.objectId</td>
-                                                <td>@i.userCredObjectId</td>
-                                            </tr>
-                                    }
+    <table>
+    <tr>
+        <td>ProfileName</td>
+        <td>UserProfile ObjectId</td>
+        <td>UserCredential ObjectId</td>
+    </tr>
+    @for(i <- favorites) {
+            <tr>
+                <div class="panel-body">
+                <td>@i.profileName</td>
+                <td>@i.objectId</td>
+                <td>@i.userCredObjectId</td>
+            </tr>
+    }
+    </table>
 
-
-                                    </table>
+    <table>
+    <tr>
+    <td>ProfileName</td>
+    <td>UserProfile ObjectId</td>
+    <td>UserCredential ObjectId</td>
+    </tr>
+    @for(f <- favMe) {
+    <tr>
+        <div class="panel-body">
+            <td>@f.profileName</td>
+            <td>@f.objectId</td>
+            <td>@f.userCredObjectId</td>
+    </tr>
+    }
+    </table>

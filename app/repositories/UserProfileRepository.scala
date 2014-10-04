@@ -23,6 +23,11 @@ trait  UserProfileRepository extends GraphRepository[UserProfile] {
   @Query("MATCH (userP:`UserProfile`)-[:`LOCATION_AT`]->(c:`County`) WHERE c.objectId={0} RETURN userP")
   def findByCountyId(countyId: UUID) : java.util.List[UserProfile]
 
+  // Get all who has me as favorite
+  @Query("MATCH (u:`UserProfile`)<-[:FAVORITE_USER]-(f:`UserProfile`) WHERE u.objectId={0} RETURN f")
+  def findFriendsToUser(userId: UUID) : java.util.List[UserProfile]
+
+
   // Auto-mapped by spring
   def findByUserIdentityAndProviderIdentity(userIdentity: String, providerIdentity: String) :  UserProfile
   def findByprofileLinkName(profileLinkName: String) : UserProfile

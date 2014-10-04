@@ -352,6 +352,12 @@ class UserProfileService {
   }
 
 
+  @Transactional(readOnly = true)
+  def getUserWhoFavoritesUser(userProfile: models.UserProfile): List[models.UserProfile] = {
+    userProfileRepository.findFriendsToUser(userProfile.objectId).asScala.toList.filter(p=>p.profileLinkName != null && p.profileLinkName.nonEmpty)
+  }
+
+
 
 }
 

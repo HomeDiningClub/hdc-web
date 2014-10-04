@@ -109,13 +109,15 @@ class UserProfileController extends Controller with SecureSocial {
   val BLOG = "blog-tab"
   val REVIEWS = "reviews-tab"
   val INBOX = "inbox-tab"
+  val FAVRITES = "favorites-tab"
 
   // Link-name, title, link-href, class-name, active
   val menuItemsList = Seq[(String,String,String,String)](
     ("Mat & Dryck", "Mat & Dryck", FOODANDBEVERAGE, "active"),
     ("Blogg", "Blogg", BLOG, ""),
     ("Omdömen", "Omdömen", REVIEWS, ""),
-    ("Inbox", "Inbox", INBOX, "")
+    ("Inbox", "Inbox", INBOX, ""),
+    ("Favoriter", "Favoriter", FAVRITES, "")
   )
 
 
@@ -536,9 +538,12 @@ if(userTags != null) {
     var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
     var listOfFavorites = theUser.getFavorites.iterator()
 
+    var listOfUserFavorMe = userProfileService.getUserWhoFavoritesUser(theUser).toIterator
 
     var favorites = scala.collection.mutable.ListBuffer[models.viewmodels.FavoriteForm]()
+    var favMe = scala.collection.mutable.ListBuffer[models.viewmodels.FavoriteForm]()
 
+    // me favorites others
     while(listOfFavorites.hasNext) {
       var cur = listOfFavorites.next()
       var fav : UserProfile = cur.favoritesUserProfile
@@ -548,8 +553,21 @@ if(userTags != null) {
        println("ObjectId : " + fav.objectId + ", email : " + fav.email)
     }
 
+    // favorites med
+    while(listOfUserFavorMe.hasNext) {
+      var cur = listOfUserFavorMe.next()
+
+      // add to return variable ....
+      favMe += models.viewmodels.FavoriteForm(cur.profileLinkName, cur.objectId.toString, cur.getOwner.objectId.toString)
+      println("ObjectId : " + cur.objectId + ", email : " + cur.email + ", LinkName: " + cur.profileLinkName)
+    }
+
+
+
+
+
     // return to page
-    Ok(views.html.profile.showListOfFavorites(favorites.toList))
+    Ok(views.html.profile.showListOfFavorites(favorites.toList, favMe.toList))
   }
 
 
