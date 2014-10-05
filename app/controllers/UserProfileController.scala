@@ -531,11 +531,21 @@ if(userTags != null) {
     var isLoggedIn = false
     var svar = ""
 
-    if (user == None || user == null) {
-      svar = "NO_USER"
-    }  else {
-      isLoggedIn = true
-      svar = "USER_OK"
+    var hasAccess =  Helpers.getUserFromRequest(request) match {
+      case Some(user) => true
+      case None => false
+    }
+
+    var loggedIdUserProfile : Option[models.UserProfile] =  Helpers.getUserFromRequest(request) match {
+      case Some(user) => Some(user.profiles.asScala.head)
+      case None => None
+    }
+
+    if(hasAccess == true) {
+      println("PROFILE_LINK_NAME : " + loggedIdUserProfile.get.profileLinkName)
+      svar = loggedIdUserProfile.get.profileLinkName
+    } else {
+      svar = "NO_USER_LOGGED_IN"
     }
 
     Ok(svar)

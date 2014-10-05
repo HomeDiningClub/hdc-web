@@ -4,18 +4,18 @@
     Mina favoriter
     <table>
     @for(i <- favorites) {
-            <tr>
-                <td><a href="@routes.UserProfileController.viewProfileByName(i.profileName).url">@i.profileName</a></td>
-            </tr>
-    }
-    </table>
+    <tr>
+        <td><a href="@routes.UserProfileController.viewProfileByName(i.profileName).url">@i.profileName</a></td>
+    </tr>
+}
+</table>
 
 Vilka har mig som favorit?
-    <table>
-    @for(f <- favMe) {
+<table>
+@for(f <- favMe) {
     <tr>
         <td><a href="@routes.UserProfileController.viewProfileByName(f.profileName).url">@f.profileName</a></td>
     </tr>
-    }
-    </table>
+}
+</table>
 </div>
