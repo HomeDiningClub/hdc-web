@@ -516,6 +516,49 @@ if(userTags != null) {
   }
 
 
+  // remove favorite
+  def isFavoriteToMe(userCredentialObjectId : String) = SecuredAction { implicit request =>
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+
+    var uuid : UUID = UUID.fromString(userCredentialObjectId)
+    var friendsUserCredential = userCredentialService.findById(uuid)
+
+    // todo calll new method to remove favorite
+
+
+    var isToSerach = friendsUserCredential match {
+      case Some(friendsUserCredential) => true
+      case None => false
+      case _ => false
+    }
+
+
+    var svar  = ""
+    var errorOcurs = false
+    var execAnwer  = false
+
+    if(isToSerach) {
+
+      try {
+        execAnwer = userProfileService.isFavoritesToMe(theUser, friendsUserCredential.get)
+      } catch{
+        case e: Exception => execAnwer = false
+      }
+
+
+      svar = execAnwer match {
+        case true => "YES"
+        case false => "NO"
+      }
+    } else {
+      svar = "NO"
+    }
+
+    Ok(svar)
+  }
+
+
+
 
 
   def testAction = SecuredAction  { implicit request =>

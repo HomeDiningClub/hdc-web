@@ -45,6 +45,8 @@ GET         /profile/favorite/add                                @controllers.Us
 # Remove favorite to userProfile
 GET         /profile/favorite/remove                             @controllers.UserProfileController.removeFavorite(userCredentialObjectId : String)
 
+GET         /profile/favorite/isFav                              @controllers.UserProfileController.isFavoriteToMe(userCredentialObjectId : String)
+
 GET         /profile/favorite/show                               @controllers.UserProfileController.listFavorites
 
 # Profile - Inbox

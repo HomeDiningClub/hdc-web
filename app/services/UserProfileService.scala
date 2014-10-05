@@ -74,6 +74,8 @@ class UserProfileService {
     theUser
   }
 
+
+
   @Transactional(readOnly = false)
   def removeFavorites(
                     theUser:  models.UserProfile,
@@ -99,6 +101,45 @@ class UserProfileService {
     }
 
     theUser
+  }
+
+
+
+
+  @Transactional(readOnly = true)
+  def isFavoritesToMe(
+                       theUser:  models.UserProfile,
+                       friendsUserCredential:  models.UserCredential
+                       ): Boolean = {
+
+    var isFriend      : Boolean = false
+    var profileLink   : Option[TaggedFavoritesToUserProfile] = None
+
+    if(friendsUserCredential!=None && friendsUserCredential!= null) {
+      var fUserProfile : UserProfile = friendsUserCredential.profiles.asScala.head
+
+      var jmfFriend = friendsUserCredential.objectId
+
+
+
+      var itter = theUser.getFavorites.iterator()
+      while(itter.hasNext) {
+        var tagProfile = itter.next()
+        if(tagProfile.favoritesUserProfile.getOwner.objectId.toString == jmfFriend.toString) {
+          profileLink = Some(tagProfile)
+        }
+      }
+
+    }
+      var isFavoriteTo =   profileLink  match {
+        case None => false
+        case null => false
+        case Some(profileLink) => true
+        case profileLink => true
+        case _    => false
+      }
+
+    isFavoriteTo
   }
 
 
