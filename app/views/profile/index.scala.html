@@ -13,15 +13,47 @@
         $(document).ready(function(){
 
         $("#addAsFavorite").click(function(){
-            $.get("/test/grund2?callingString=test2&call2=nu",function(data,status){
-            //alert("Data: " + data + "\nStatus: " + status);
+            $.get("/profile/favorite/isFav?userCredentialObjectId=@userProfile.getOwner().objectId",function(data,status){
+            if(data =="YES") {
+                $ ( "#result" ).text ( "Ja!" ) ;
+            } else {
+                $ ( "#result" ).text ("Nej!") ;
+            }
 
 
-                //if(data.size < 100) {
-                    $ ( "#result" ).text ( data ) ;
-                //}
+
+            });
+        });
+
+        $("#rf").click(function(){
+        $.get("/profile/favorite/remove?userCredentialObjectId=@userProfile.getOwner().objectId",function(data,status){
+        $( "#af" ).show();
+        $( "#rf" ).hide();
+         alert('Favorit borttagen!');
         });
         });
+
+        $("#af").click(function(){
+        $.get("/profile/favorite/add?userCredentialObjectId=@userProfile.getOwner().objectId",function(data,status){
+        $( "#af" ).hide();
+        $( "#rf" ).show();
+         alert('Favorit tillagd!')
+        });
+        });
+
+
+
+        $.get("/profile/favorite/isFav?userCredentialObjectId=@userProfile.getOwner().objectId",function(data,status){
+        if(data =="YES") {
+            $( "#af" ).hide();
+            $( "#rf" ).show();
+        } else {
+            $( "#af" ).show();
+            $( "#rf" ).hide();
+
+        }
+        });
+
         });
         </script>
     }
@@ -43,11 +75,23 @@
                                 @RatingController.renderUserRateForm(userProfile.getOwner, routes.UserProfileController.viewProfileByName(userProfile.profileLinkName).url)(request)
                                 @* Member id hidden for now:
                                 <div class="memberid clearfix"><p><strong>@Messages("profile.memberid.text")</strong>&nbsp;@userProfile.getOwner.objectId</p></div>*@
-                                <a href="@routes.UserProfileController.addFavorite(userProfile.getOwner.objectId.toString())" target="_blank"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;Lägg till som favorit</a>
+
+                                <a id="af">
+                                    <span class="glyphicon glyphicon-paperclip"></span>&nbsp;Lägg till som favorit
+                                </a>
+
+                                <a id="rf">
+                                    <span class="glyphicon glyphicon-paperclip"></span>&nbsp;Ta bort favorit
+                                </a>
+
+
                                 <a href="@routes.UserProfileController.listFavorites()">Visa favoriter</a>
 
                                 <a id="addAsFavorite">Add as favorite</a>
                                 <p id="result"></p>
+
+                                <br>
+                                <input type="text" size="40" value="@userProfile.getOwner().objectId">
 
                                 <div class="breadtext">
                                     @Html(userProfile.aboutMe)

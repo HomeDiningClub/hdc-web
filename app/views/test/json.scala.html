@@ -6,12 +6,13 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.1.11.1.min.js"></script>
         <script>
         $(document).ready(function(){
-        $("button").click(function(){
-        $.get("/test/grund2?callingString=test2",function(data,status){
-        alert("Data: " + data + "\nStatus: " + status);
-        $("#result" ).text(data);
-        });
-        });
+            $("button").click(function(){
+                $.get("/profile/favorite/isFav?userCredentialObjectId=932cb1bc-7676-4f7e-84a3-5ab4ed0ed9dc",function(data,status){
+                alert("Data: " + data + "\nStatus: " + status);
+                $("#result" ).text(data);
+                });
+            });
+
         });
         </script>
     </head>
@@ -19,5 +20,16 @@
 
         <button>Send an HTTP GET request to a page and get the result back</button>
         <p id="result"></p>
+
+        <br>
+
+        <p id="visaLista">
+            ############
+        </p>
+
+        <script language="JavaScript">
+
+        </script>
+
     </body>
 </html>
