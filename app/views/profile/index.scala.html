@@ -12,21 +12,8 @@
         <script>
         $(document).ready(function(){
 
-        $("#addAsFavorite").click(function(){
-            $.get("/profile/favorite/isFav?userCredentialObjectId=@userProfile.getOwner().objectId",function(data,status){
-            if(data =="YES") {
-                $ ( "#result" ).text ( "Ja!" ) ;
-            } else {
-                $ ( "#result" ).text ("Nej!") ;
-            }
-
-
-
-            });
-        });
-
         $("#rf").click(function(){
-        $.get("/profile/favorite/remove?userCredentialObjectId=@userProfile.getOwner().objectId",function(data,status){
+        $.get("/profile/favorite/remove?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
         $( "#af" ).show();
         $( "#rf" ).hide();
          alert('Favorit borttagen!');
@@ -34,7 +21,7 @@
         });
 
         $("#af").click(function(){
-        $.get("/profile/favorite/add?userCredentialObjectId=@userProfile.getOwner().objectId",function(data,status){
+        $.get("/profile/favorite/add?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
         $( "#af" ).hide();
         $( "#rf" ).show();
          alert('Favorit tillagd!')
@@ -43,15 +30,19 @@
 
 
 
-        $.get("/profile/favorite/isFav?userCredentialObjectId=@userProfile.getOwner().objectId",function(data,status){
+        $.get("/profile/favorite/isFav?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
         if(data =="YES") {
             $( "#af" ).hide();
             $( "#rf" ).show();
-        } else {
+        } else if(data == "NO") {
             $( "#af" ).show();
             $( "#rf" ).hide();
 
+        } else {
+            $( "#af" ).hide();
+            $( "#rf" ).hide();
         }
+
         });
 
         });
@@ -76,22 +67,18 @@
                                 @* Member id hidden for now:
                                 <div class="memberid clearfix"><p><strong>@Messages("profile.memberid.text")</strong>&nbsp;@userProfile.getOwner.objectId</p></div>*@
 
-                                <a id="af">
+                                <a id="af" hidden="true">
                                     <span class="glyphicon glyphicon-paperclip"></span>&nbsp;Lägg till som favorit
                                 </a>
 
-                                <a id="rf">
+                                <a id="rf" hidden="true">
                                     <span class="glyphicon glyphicon-paperclip"></span>&nbsp;Ta bort favorit
                                 </a>
 
 
                                 <a href="@routes.UserProfileController.listFavorites()">Visa favoriter</a>
 
-                                <a id="addAsFavorite">Add as favorite</a>
                                 <p id="result"></p>
-
-                                <br>
-                                <input type="text" size="40" value="@userProfile.getOwner().objectId">
 
                                 <div class="breadtext">
                                     @Html(userProfile.aboutMe)

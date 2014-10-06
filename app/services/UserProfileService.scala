@@ -132,11 +132,9 @@ class UserProfileService {
 
     }
       var isFavoriteTo =   profileLink  match {
-        case None => false
-        case null => false
-        case Some(profileLink) => true
-        case profileLink => true
-        case _    => false
+        case None         => false
+        case null         => false
+        case profileLink  => true
       }
 
     isFavoriteTo

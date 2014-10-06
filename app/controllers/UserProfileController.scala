@@ -554,6 +554,10 @@ if(userTags != null) {
       svar = "NO"
     }
 
+
+    println("isFavoriteToMe (" + userCredentialObjectId + ") = " + svar)
+
+
     Ok(svar)
   }
 
