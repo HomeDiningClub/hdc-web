@@ -179,6 +179,17 @@ profile.profilelinkname.isempty=Ett profilnamn måste vara valt!
 profile.memberid.text=MedlemsID:
 profile.county.text=Län:
 
+profile.tabs.food.name=Mat & Dryck
+profile.tabs.food.title=Mat & Dryck
+profile.tabs.blog.name=Blogg
+profile.tabs.blog.title=Blogg
+profile.tabs.ratings.name=Omdömen
+profile.tabs.ratings.title=Omdömen
+profile.tabs.inbox.name=Inbox
+profile.tabs.inbox.title=Inbox
+profile.tabs.favourites.name=Favoriter
+profile.tabs.favourites.title=Favoriter
+
 # Recipe
 recipe.title=Recept
 recipe.edit.index.header=Recept

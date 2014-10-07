@@ -26,6 +26,8 @@ For listing all indexes and constraints in neo4j-browser, following command is u
 List indices and constraints for specific label with:
 :schema ls -l :YourLabel
 
+Example when finding an item having two relations
+MATCH (a)-[c:`HAS_RECIPES`]->(b)<-[d:`HAS_RECIPES`]->(e) where a.objectId='a0734597-a649-4b3c-b627-532d9ac5f840' and e.objectId='f4b2a2cf-7ea2-4461-a596-8b8e0e8f1c93' Return a,b,c,d,e
 -----
 
 Some help when developing @Query()

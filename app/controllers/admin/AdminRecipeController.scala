@@ -61,7 +61,7 @@ class AdminRecipeController extends Controller with SecureSocial {
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
 
-    val currentUser: Option[UserCredential] = Helpers.getUserFromRequest
+    var currentUser: Option[UserCredential] = Helpers.getUserFromRequest
 
     contentForm.bindFromRequest.fold(
       errors => {
@@ -77,6 +77,7 @@ class AdminRecipeController extends Controller with SecureSocial {
               case None => None
               case Some(item) =>
                 item.setName(contentData.name)
+                currentUser = Some(item.getOwnerProfile.getOwner)
                 Some(item)
             }
           case None =>

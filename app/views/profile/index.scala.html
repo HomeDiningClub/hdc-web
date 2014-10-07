@@ -1,9 +1,10 @@
 @(userProfile: models.UserProfile,
-        menuItems: Seq[(String, String, String, String)],
+        menuItems: Seq[(String, String, String, String, Boolean)],
         tab1: String,
         tab2: String,
         tab3: String,
         tab4: String,
+        tab5: String,
         recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
         tagList: Option[List[models.profile.TagWord]] = None,
         isThisMyProfile: Boolean = false)(implicit request: RequestHeader)
@@ -76,8 +77,6 @@
                                 </a>
 
 
-                                <a href="@routes.UserProfileController.listFavorites()">Visa favoriter</a>
-
                                 <p id="result"></p>
 
                                 <div class="breadtext">
@@ -112,7 +111,7 @@
                         }
                     }
 
-                    <div class="panel panel-default">
+                    <div class="panel panel-default big-margin-top">
                         <div class="panel-body">
                             @shared.tagList(tagList, userProfile.getOwner.firstName())
                             <br>
@@ -132,7 +131,9 @@
                         <nav>
                             <ul class="nav nav-tabs">
                             @for(nav <- menuItems) {
-                                <li class="@nav._4"><a data-toggle="tab" href="#@nav._3" title="@nav._2">@nav._1</a></li>
+                                @if((nav._5 && isThisMyProfile) || !nav._5) {
+                                    <li class="@nav._4"><a data-toggle="tab" href="#@nav._3" title="@nav._2">@nav._1</a></li>
+                                }
                             }
                             </ul>
                         </nav>
@@ -163,6 +164,11 @@
                             <div class="tab-pane tab-hdc fade" id="@tab4">
                                 Tab4
                             </div>
+                            @if(isThisMyProfile) {
+                            <div class="tab-pane tab-hdc fade" id="@tab5">
+                                @FavoritesController.renderFavorites(userProfile)
+                            </div>
+                            }
                         </div>
 
                     </div>

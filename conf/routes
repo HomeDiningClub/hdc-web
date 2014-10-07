@@ -44,10 +44,8 @@ GET         /profile/favorite/add                                @controllers.Us
 
 # Remove favorite to userProfile
 GET         /profile/favorite/remove                             @controllers.UserProfileController.removeFavorite(userCredentialObjectId : String)
-
 GET         /profile/favorite/isFav                              @controllers.UserProfileController.isFavoriteToMe(userCredentialObjectId : String)
-
-GET         /profile/favorite/show                               @controllers.UserProfileController.listFavorites
+#GET         /profile/favorite/show                               @controllers.UserProfileController.listFavorites
 
 # Profile - Inbox
 GET         /inbox/show                                          controllers.MessageController.show
@@ -170,6 +168,7 @@ GET         /admin/release/deleteall                             @controllers.ad
 GET         /admin/file                                          @controllers.admin.AdminFileController.editIndex
 POST        /admin/file/add                                      @controllers.admin.AdminFileController.add
 GET         /admin/file/delete/:objectId                         @controllers.admin.AdminFileController.deleteImage(objectId: java.util.UUID)
+
 
 GET         /test/grund                                          @controllers.UserProfileController.testAction
 GET         /test/testsida                                       @controllers.UserProfileController.testsida

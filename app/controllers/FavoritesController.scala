@@ -1,0 +1,52 @@
+package controllers
+
+import models.{UserProfile, UserCredential}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.{Controller => SpringController}
+import play.api.mvc.{RequestHeader, Controller}
+import securesocial.core.SecureSocial
+import services.UserProfileService
+import scala.collection.JavaConverters._
+
+class FavoritesController extends Controller with SecureSocial {}
+
+@SpringController
+object FavoritesController extends Controller with SecureSocial {
+
+  // Services
+  @Autowired
+  var userProfileService: UserProfileService = _
+
+  // List favorites
+  def renderFavorites(userProfile: UserProfile) = {
+
+    var listOfFavorites = userProfile.getFavorites.iterator()
+    var listOfUserFavorMe = userProfileService.getUserWhoFavoritesUser(userProfile).toIterator
+    var favorites = scala.collection.mutable.ListBuffer[models.viewmodels.FavoriteForm]()
+    var favMe = scala.collection.mutable.ListBuffer[models.viewmodels.FavoriteForm]()
+
+    // me favorites others
+    while(listOfFavorites.hasNext) {
+      var cur = listOfFavorites.next()
+      var fav : UserProfile = cur.favoritesUserProfile
+
+      // add to return variable ....
+      favorites += models.viewmodels.FavoriteForm(fav.profileLinkName, fav.objectId.toString, fav.getOwner.objectId.toString)
+      println("ObjectId : " + fav.objectId + ", email : " + fav.email)
+    }
+
+    // favorites med
+    while(listOfUserFavorMe.hasNext) {
+      var cur = listOfUserFavorMe.next()
+
+      // add to return variable ....
+      favMe += models.viewmodels.FavoriteForm(cur.profileLinkName, cur.objectId.toString, cur.getOwner.objectId.toString)
+      println("ObjectId : " + cur.objectId + ", email : " + cur.email + ", LinkName: " + cur.profileLinkName)
+    }
+
+    // return partial view
+    views.html.profile.showListOfFavorites.render(favorites.toList, favMe.toList)
+  }
+
+
+}

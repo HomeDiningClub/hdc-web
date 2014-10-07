@@ -105,19 +105,19 @@ class UserProfileController extends Controller with SecureSocial {
 
 
   // Constants
-  val FOODANDBEVERAGE = "foodandbeverage-tab"
+  val FOOD = "food-tab"
   val BLOG = "blog-tab"
   val REVIEWS = "reviews-tab"
   val INBOX = "inbox-tab"
-  val FAVRITES = "favorites-tab"
+  val FAVOURITES = "favourites-tab"
 
-  // Link-name, title, link-href, class-name, active
-  val menuItemsList = Seq[(String,String,String,String)](
-    ("Mat & Dryck", "Mat & Dryck", FOODANDBEVERAGE, "active"),
-    ("Blogg", "Blogg", BLOG, ""),
-    ("Omdömen", "Omdömen", REVIEWS, ""),
-    ("Inbox", "Inbox", INBOX, ""),
-    ("Favoriter", "Favoriter", FAVRITES, "")
+  // Link-name, title, link-href, class-name, active, showOnlyOnMyProfile
+  def menuItemsList = Seq[(String,String,String,String,Boolean)](
+    (Messages("profile.tabs.food.name"), Messages("profile.tabs.food.title"), FOOD, "active", false),
+    (Messages("profile.tabs.blog.name"), Messages("profile.tabs.blog.title"), BLOG, "", false),
+    (Messages("profile.tabs.ratings.name"), Messages("profile.tabs.ratings.title"), REVIEWS, "", false),
+    (Messages("profile.tabs.inbox.name"), Messages("profile.tabs.inbox.title"), INBOX, "", true),
+    (Messages("profile.tabs.favourites.name"), Messages("profile.tabs.favourites.title"), FAVOURITES, "", true)
   )
 
 
@@ -202,7 +202,7 @@ class UserProfileController extends Controller with SecureSocial {
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) =>
         Ok(views.html.profile.index(profile,
-          menuItemsList,FOODANDBEVERAGE,BLOG,REVIEWS,INBOX,
+          menuItemsList,FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,
           recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner),
           tagWordService.findByProfileAndGroup(profile,"profile"),
           isThisMyProfile = isThisMyProfile(profile)))
@@ -625,44 +625,6 @@ if(userTags != null) {
     Ok(views.html.test.json("test"))
   }
 
-
-  // lista favorites
-  def listFavorites = SecuredAction { implicit request =>
-
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
-    var listOfFavorites = theUser.getFavorites.iterator()
-
-    var listOfUserFavorMe = userProfileService.getUserWhoFavoritesUser(theUser).toIterator
-
-    var favorites = scala.collection.mutable.ListBuffer[models.viewmodels.FavoriteForm]()
-    var favMe = scala.collection.mutable.ListBuffer[models.viewmodels.FavoriteForm]()
-
-    // me favorites others
-    while(listOfFavorites.hasNext) {
-      var cur = listOfFavorites.next()
-      var fav : UserProfile = cur.favoritesUserProfile
-
-      // add to return variable ....
-      favorites += models.viewmodels.FavoriteForm(fav.profileLinkName, fav.objectId.toString, fav.getOwner.objectId.toString)
-       println("ObjectId : " + fav.objectId + ", email : " + fav.email)
-    }
-
-    // favorites med
-    while(listOfUserFavorMe.hasNext) {
-      var cur = listOfUserFavorMe.next()
-
-      // add to return variable ....
-      favMe += models.viewmodels.FavoriteForm(cur.profileLinkName, cur.objectId.toString, cur.getOwner.objectId.toString)
-      println("ObjectId : " + cur.objectId + ", email : " + cur.email + ", LinkName: " + cur.profileLinkName)
-    }
-
-
-
-
-
-    // return to page
-    Ok(views.html.profile.showListOfFavorites(favorites.toList, favMe.toList))
-  }
 
 
 
