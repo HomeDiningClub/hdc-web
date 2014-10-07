@@ -517,43 +517,62 @@ if(userTags != null) {
 
 
   // remove favorite
-  def isFavoriteToMe(userCredentialObjectId : String) = SecuredAction { implicit request =>
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+  def isFavoriteToMe(userCredentialObjectId : String) = UserAwareAction { implicit request =>
 
-    var uuid : UUID = UUID.fromString(userCredentialObjectId)
-    var friendsUserCredential = userCredentialService.findById(uuid)
-
-    // todo calll new method to remove favorite
-
-
-    var isToSerach = friendsUserCredential match {
-      case Some(friendsUserCredential) => true
-      case None => false
-      case _ => false
-    }
-
-
-    var svar  = ""
+    var user = request.user
+    var isLoggedIn = false
+    var svar = ""
     var errorOcurs = false
     var execAnwer  = false
 
-    if(isToSerach) {
-
-      try {
-        execAnwer = userProfileService.isFavoritesToMe(theUser, friendsUserCredential.get)
-      } catch{
-        case e: Exception => execAnwer = false
-      }
-
-
-      svar = execAnwer match {
-        case true => "YES"
-        case false => "NO"
-      }
-    } else {
-      svar = "NO"
+    var hasAccess =  Helpers.getUserFromRequest(request) match {
+      case Some(user) => true
+      case None => false
     }
 
+    var theUser : Option[models.UserProfile] =  Helpers.getUserFromRequest(request) match {
+      case Some(user) => Some(user.profiles.asScala.head)
+      case None => None
+    }
+
+
+
+   // var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+
+    if(hasAccess) {
+
+      var uuid: UUID = UUID.fromString(userCredentialObjectId)
+      var friendsUserCredential = userCredentialService.findById(uuid)
+
+      var isToSerach = friendsUserCredential match {
+        case Some(friendsUserCredential) => true
+        case None => false
+        case _ => false
+      }
+
+
+
+
+      if (isToSerach) {
+
+        try {
+          execAnwer = userProfileService.isFavoritesToMe(theUser.get, friendsUserCredential.get)
+        } catch {
+          case e: Exception => execAnwer = false
+        }
+
+
+        svar = execAnwer match {
+          case true => "YES"
+          case false => "NO"
+        }
+      } else {
+        svar = "NO"
+      }
+
+    } else {
+      svar = "USER_NOT_LOGGED_IN"
+    }
 
     println("isFavoriteToMe (" + userCredentialObjectId + ") = " + svar)
 
