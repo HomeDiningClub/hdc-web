@@ -491,7 +491,7 @@ if(userTags != null) {
 
 
   // add favorite
-  def addFavorite(userCredentialObjectId : String) = SecuredAction { implicit request =>
+  def addFavorite(userCredentialObjectId : String) = SecuredAction(ajaxCall=true) { implicit request =>
     var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
 
     var uuid : UUID = UUID.fromString(userCredentialObjectId)
@@ -502,7 +502,7 @@ if(userTags != null) {
   }
 
   // remove favorite
-  def removeFavorite(userCredentialObjectId : String) = SecuredAction { implicit request =>
+  def removeFavorite(userCredentialObjectId : String) = SecuredAction(ajaxCall=true) { implicit request =>
     var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
 
     var uuid : UUID = UUID.fromString(userCredentialObjectId)
