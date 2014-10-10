@@ -1,2 +1,4 @@
-@(imagePath: String = routes.Assets.at("images/host/host-head-default-100x100.gif").url, cssClass: String = "")
-<div class="host-image"><img src="@imagePath" class="img-circle grayscale grayscale-fade @cssClass"></div>
+@(imagePath: String = routes.Assets.at("images/host/host-head-default-100x100.gif").url, cssClass: String = "", cssClassWrapper: String = "")
+@defining(if(imagePath.isEmpty) { routes.Assets.at("images/host/host-head-default-100x100.gif").url }else{ imagePath}){ imgP =>
+    <div class="host-image @cssClassWrapper"><img src="@imgP" class="img-circle grayscale grayscale-fade @cssClass"></div>
+}

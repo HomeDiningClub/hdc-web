@@ -55,8 +55,14 @@ class UserProfileController extends Controller with SecureSocial {
   @Autowired
   var userCredentialService : services.UserCredentialService = _
 
-  // Form
+  // Constants
+  val FOOD = "food-tab"
+  val BLOG = "blog-tab"
+  val REVIEWS = "reviews-tab"
+  val INBOX = "inbox-tab"
+  val FAVOURITES = "favourites-tab"
 
+  // Form
   val userProfileForm : play.api.data.Form[models.formdata.UserProfileForm]  = play.api.data.Form(
     mapping(
       "userName" -> text,
@@ -101,26 +107,6 @@ class UserProfileController extends Controller with SecureSocial {
     )
       (TagsData.apply) (TagsData.unapply)
   )
-
-
-
-  // Constants
-  val FOOD = "food-tab"
-  val BLOG = "blog-tab"
-  val REVIEWS = "reviews-tab"
-  val INBOX = "inbox-tab"
-  val FAVOURITES = "favourites-tab"
-
-  // Link-name, title, link-href, class-name, active, showOnlyOnMyProfile
-  def menuItemsList = Seq[(String,String,String,String,Boolean)](
-    (Messages("profile.tabs.food.name"), Messages("profile.tabs.food.title"), FOOD, "active", false),
-    (Messages("profile.tabs.blog.name"), Messages("profile.tabs.blog.title"), BLOG, "", false),
-    (Messages("profile.tabs.ratings.name"), Messages("profile.tabs.ratings.title"), REVIEWS, "", false),
-    (Messages("profile.tabs.inbox.name"), Messages("profile.tabs.inbox.title"), INBOX, "", true),
-    (Messages("profile.tabs.favourites.name"), Messages("profile.tabs.favourites.title"), FAVOURITES, "", true)
-  )
-
-
 
   def isCorrectPersonnummer(personnummer : String) : Boolean = {
     if(personnummer.size < 1) return true
@@ -202,7 +188,7 @@ class UserProfileController extends Controller with SecureSocial {
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) =>
         Ok(views.html.profile.index(profile,
-          menuItemsList,FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,
+          FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,
           recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner),
           tagWordService.findByProfileAndGroup(profile,"profile"),
           isThisMyProfile = isThisMyProfile(profile)))
@@ -395,7 +381,7 @@ if(userTags != null) {
 
 
 
-  println("county stored : [" +  theUser.county + "]")
+  //println("county stored : [" +  theUser.county + "]")
 
   try {
     println("county name: " + theUser.getLocations.iterator.next().county.name)

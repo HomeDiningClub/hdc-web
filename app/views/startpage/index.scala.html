@@ -2,7 +2,8 @@
         optionsFoodAreas: Option[Seq[(String,String)]],
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
         startPageBoxes: Option[List[models.viewmodels.StartPageBox]],
-        reviewBoxes: Option[List[models.viewmodels.ReviewBox]])(implicit request: RequestHeader)
+        reviewBoxes: Option[List[models.viewmodels.ReviewBox]],
+        asideNews: Option[List[models.content.ContentPage]])(implicit request: RequestHeader)
 
 
 @main(Messages("startpage.title")) {
@@ -71,21 +72,28 @@
             <div class="col-xs-12 col-md-3">
                 <aside>
                     <!-- Main intro -->
-                    <div class="panel panel-default panel-startpage-aside">
+                    <div class="panel panel-default panel-dropshadow panel-startpage-intro">
+                        @shared.img("images/general/hdc-pin-orange.png", alt = "", cssClass = "hdc-pin-orange")
                         <div class="panel-body">
                             <h1 class="aside-title">@Html(Messages("startpage.main-aside.header"))</h1>
-                            @Html(Messages("startpage.main-aside.body"))
+                            @Html(Messages("startpage.main-aside.body", shared.img("images/startpage/signatur-hl.png", alt = "", cssClass = "img-responsive signature")))
                         </div>
                     </div>
 
-                    <!-- News -->
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <h3 class="aside-title">@Html(Messages("startpage.main-aside.news.header"))</h3>
-                            @Html(Messages("startpage.main-aside.news.body"))
-                            @shared.img("/images/startpage/now-even-in-sweden.png", cssClass = "img-responsive")
-                        </div>
-                    </div>
+                    @if(asideNews.nonEmpty) {
+                        @for(content <- asideNews.get){
+                            <!-- Content -->
+                            <div class="panel panel-dropshadow panel-default panel-startpage-aside">
+                                <div class="panel-body">
+                                    @if(content.title.nonEmpty) {
+                                        <h3 class="aside-title">@content.title</h3>
+                                    }
+                                    @Html(content.preamble)
+                                    @Html(content.mainBody)
+                                </div>
+                            </div>
+                        }
+                    }
                 </aside>
             </div>
 
@@ -112,7 +120,8 @@
                     }
                 </div>
 
-                <!-- CTA -->
+                @if(utils.Helpers.getUserFromRequest.isEmpty) {
+                    <!-- CTA -->
                 <div class="row">
                     <div class="col-xs-12 big-margin-top panel-cta">
                         <div class="row">
@@ -121,6 +130,7 @@
                         </div>
                     </div>
                 </div>
+                }
 
                 <!-- Reviews -->
                 <div class="row">
@@ -138,7 +148,9 @@
                         @Html(Messages("startpage.main-content.body"))
                         <iframe style="margin:0 auto; display:block;" src="//player.vimeo.com/video/97540915?title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff&amp;autoplay=0" width="100%" height="259" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
-                        <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
+                        @if(utils.Helpers.getUserFromRequest.isEmpty) {
+                            <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
+                        }
                     </div>
                 </div>
 

@@ -4,7 +4,7 @@
     @for((box: models.viewmodels.RecipeBox,i) <- boxes.zipWithIndex){
         <div class="col-xs-12 col-sm-6 col-sm-offset-0 col-md-4 col-md-offset-0 col-recipe-boxes">
             <a href="@box.linkToRecipe" class="link-recipe-panel">
-                <div class="thumbnail panel-recipe">
+                <div class="thumbnail panel-recipe hover-green-dropshadow">
                     @if(box.mainImage.nonEmpty){<img src="@box.mainImage" class="img-responsive">}
                     <div class="body">
                         <h2>@box.name</h2>

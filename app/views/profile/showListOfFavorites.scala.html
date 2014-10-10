@@ -1,21 +1,39 @@
 @(favorites: List[models.viewmodels.FavoriteForm], favMe: List[models.viewmodels.FavoriteForm])
 
-<div class="panel-body">
-    Mina favoriter
-    <table>
-    @for(i <- favorites) {
-    <tr>
-        <td><a href="@routes.UserProfileController.viewProfileByName(i.profileName).url">@i.profileName</a></td>
-    </tr>
+@if(favorites.nonEmpty) {
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>@Messages("favorite.profile.my-favorites.header")</h3>
+        </div>
+        @for(i <- favorites) {
+            <div class="col-xs-12 col-md-6">
+                <a href="@routes.UserProfileController.viewProfileByName(i.profileName).url">
+                    <div class="favorite-box hover-green-dropshadow">
+                        @shared.hostImageCircle(i.profilePicture.getOrElse(""), "pull-left", "host-image-favorite")
+                        <span class="name">@i.userName</span><br>
+                        <em class="preamble">@i.profilePreAmble</em>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
 }
-</table>
 
-Vilka har mig som favorit?
-<table>
-@for(f <- favMe) {
-    <tr>
-        <td><a href="@routes.UserProfileController.viewProfileByName(f.profileName).url">@f.profileName</a></td>
-    </tr>
+@if(favorites.nonEmpty) {
+    <div class="row big-margin-top">
+        <div class="col-xs-12">
+            <h3>@Messages("favorite.profile.others-favorites.header")</h3>
+        </div>
+        @for(f <- favMe) {
+            <div class="col-xs-12 col-md-6">
+                <a href="@routes.UserProfileController.viewProfileByName(f.profileName).url">
+                    <div class="favorite-box hover-green-dropshadow">
+                        @shared.hostImageCircle(f.profilePicture.getOrElse(""), "pull-left", "host-image-favorite")
+                        <span class="name">@f.userName</span><br>
+                        <em class="preamble">@f.profilePreAmble</em>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
 }
-</table>
-</div>

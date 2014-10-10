@@ -1,8 +1,12 @@
 @(listOfTags: Option[List[models.profile.TagWord]], userName: String)
 
 @if(!listOfTags.isEmpty) {
-    <div class="tag-header"><strong>@Messages("profile.tags.header", userName)</strong></div>
-    @for(tag <- listOfTags.get){
-        <div class="tag"><span class="glyphicon glyphicon-tag"></span>&nbsp;@tag.tagName</div>
-    }
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="tag-header"><strong>@Messages("profile.tags.header", userName)</strong></div>
+        </div>
+        @for(tag <- listOfTags.get){
+            <div class="col-xs-6 tag"><span class="glyphicon glyphicon-tag"></span>&nbsp;@tag.tagName</div>
+        }
+    </div>
 }

@@ -11,13 +11,16 @@
 @hdc-green-g: 194;
 @hdc-green-b: 181;
 
+@hdc-dark-gray: #777;
 @hdc-gray: #a7a9ac;
 @hdc-light-gray: #f9f9f9;
 @hdc-gold: #a48b74;
 @hdc-black: #000;
 @hdc-red: #8E0000;
+@hdc-medium-light-green: lighten(@hdc-green, 20%);
 @hdc-light-green: lighten(@hdc-green, 39%);
 @hdc-orange: #ef7b3e;
+@hdc-light-orange: lighten(@hdc-orange,20%);
 
 @host-level-01-color: @hdc-green;
 @host-level-02-color: @hdc-black;
@@ -244,7 +247,13 @@ label{
   color:@hdc-red;
 }
 
-
+// Horizontal lines
+.hr-orange {
+  clear:both;
+  color: @hdc-orange;
+  background-color: @hdc-orange;
+  height: 1px;
+}
 
 // Buttons
 .btn-primary,
@@ -252,8 +261,17 @@ label{
 input[type="submit"],
 input[type="reset"]
 {
+
   margin-top:10px;
   margin-bottom:10px;
+}
+
+.btn-primary:focus,
+.btn:focus,
+input[type="submit"]:focus,
+input[type="reset"]:focus {
+  outline: 0;
+  border:1px solid @hdc-orange;
 }
 
 .btn-primary,
@@ -308,6 +326,12 @@ input[type="reset"]:hover
   margin: 0 auto;
 }
 
+// Panels
+.panel-dropshadow {
+  -webkit-box-shadow: 4px 4px 10px -7px rgba(166,166,166,1);
+  -moz-box-shadow: 4px 4px 10px -7px rgba(166,166,166,1);
+  box-shadow: 4px 4px 10px -7px rgba(166,166,166,1);
+}
 
 // Banners
 .col-banner
@@ -455,17 +479,17 @@ input[type="reset"]:hover
 
 
 // Likes
-.btn-group-likes
-{
-  padding-right: 20px;
+.btn-group-likes {
+  display: inline-block;
+  position: relative;
+  float:left;
 }
 .btn-hdc-like
 {
-  font-size: 12px;
-  font-weight: bold;
   color:@hdc-black;
   line-height:2em;
-  padding:5px 10px 5px 10px;
+  padding:4px 5px 4px 10px;
+  border:none;
 }
 .hdc-like-icon
 {
@@ -477,7 +501,7 @@ input[type="reset"]:hover
   background-image:url('/assets/images/icons/hdc-like-40x26.png');
   background-repeat: no-repeat;
   background-position: 0px 0px;
-  margin:0px 10px 0px 0px;
+  margin:0px 8px 0px 0px;
   padding:0px;
   float:left;
 }
@@ -530,6 +554,77 @@ input[type="reset"]:hover
   left: 2px;
   top: -7px;
 }
+
+.hr-like {
+  margin-top:20px;
+}
+
+// Facebook like
+.fb-like {
+  padding:19px 10px 5px 10px;
+
+}
+
+// Favorite
+.favorite-box {
+  border:1px solid @hdc-light-gray;
+  display: block;
+  padding: 5px 5px 5px 65px;
+  background-color: @hdc-light-green;
+  overflow: visible;
+  position: relative;
+  min-height: 80px;
+  margin-left: 30px;
+}
+.btn-favorite {
+  line-height:2em;
+  padding:4px 5px 4px 10px;
+  border:none;
+}
+.btn-favorite-active .glyphicon {
+  color:@hdc-orange;
+}
+.host-container .favorite-box .host-image-favorite {
+  position:absolute;
+  left:-23px;
+  top:10px;
+}
+.host-container .favorite-box .host-image-favorite img {
+  width:60px;
+  height:60px;
+  border-radius: 25%;
+  border-width: 1px;
+  margin:0px 13px 5px 0px;
+}
+.host-container .favorite-box .name {
+  font-size:16px;
+  display: inline-block;
+  margin-top: 6px;
+}
+.host-container .favorite-box .preamble {
+  font-size:12px;
+  color:@hdc-gray;
+  display: block;
+  margin-top:-3px;
+}
+.host-container .favorite-box .preamble:hover {
+  text-decoration: none !important;
+}
+
+
+// Animations
+.hover-green-dropshadow:hover {
+  -webkit-transition: all 200ms ease;
+  -moz-transition: all 200ms ease;
+  -o-transition: all 200ms ease;
+  transition: all 200ms ease;
+  -webkit-box-shadow: 0px 0px 10px -1px @hdc-green;
+  -moz-box-shadow: 0px 0px 10px -1px @hdc-green;
+  -ms-box-shadow: 0px 0px 10px -1px @hdc-green;
+  -o-box-shadow: 0px 0px 10px -1px @hdc-green;
+  box-shadow: 0px 0px 10px -1px @hdc-green;
+}
+
 
 // Header
 .header-container
@@ -790,22 +885,44 @@ input[type="reset"]:hover
 
 
 // Start page
-.panel-startpage-aside {
+.panel-startpage-intro {
   background-color: @hdc-light-gray;
+}
+.panel-startpage-intro .signature {
+  max-width:250px;
+  width:100%;
+}
+.panel-startpage-intro .panel-body {
+  padding-top: 50px;
+}
+.panel-startpage-aside .panel-body img {
+  max-width: 100%;
+  height:auto;
+  display: block;
+}
+.panel-startpage-intro h1.aside-title {
+  text-align: center;
+}
+.hdc-pin-orange {
+  position: absolute;
+  width: 60px;
+  top: -17px;
+  left: 39%;
+  z-index: 10;
 }
 h1.aside-title {
   font-size:20px;
   margin-top: 0px;
-  border-bottom:1px solid @hdc-green;
+  margin-bottom:10px;
 }
 h2.aside-title {
   margin-top: 0px;
-  border-bottom:1px solid @hdc-green;
+  margin-bottom:10px;
 }
 h3.aside-title {
   font-weight: bold;
   margin-top: 0px;
-  border-bottom:1px solid @hdc-green;
+  margin-bottom:10px;
 }
 .form-filter-startpage dl
 {
@@ -973,7 +1090,6 @@ h3.aside-title {
 //  width: calc( 99.9999999% - 15px ); /* css3 calculation */
 //}
 
-
 .panel-startpage .host-image
 {
   position: absolute;
@@ -985,14 +1101,14 @@ h3.aside-title {
 {
   background-color: @hdc-light-gray;
   padding:15px 5px 0px 10px;
-  padding-right:70px;
   z-index:50;
 }
 .panel-startpage h2
 {
   margin:0px;
-  font-size:1em;
-  color:@hdc-black;
+  font-size:1.2em;
+  font-weight:bold;
+  color:@hdc-dark-gray;
 }
 .panel-startpage hr
 {
@@ -1009,6 +1125,7 @@ h3.aside-title {
   font-size:0.9em;
   display: block;
   clear: both;
+  color:@hdc-black;
 }
 .panel-startpage .btn-primary
 {
@@ -1198,10 +1315,25 @@ h3.aside-title {
 {
   padding:0px;
 }
+// Profile Tabs
+.nav-tabs-profile > li > a
+{
+  color:@hdc-dark-gray;
+  border-top:1px solid @hdc-light-gray;
+  border-left:1px solid @hdc-light-gray;
+  border-right:1px solid @hdc-light-gray;
+}
+.nav-tabs-profile > li.active > a
+{
+  color:@hdc-orange;
+  font-weight: bold;
+}
 .tab-hdc
 {
   padding-top:20px;
+
 }
+// Profile Edit components
 .btn-edit-group {
   padding-bottom:0px;
   margin-bottom:20px;
@@ -1213,6 +1345,7 @@ h3.aside-title {
   display: inline-block;
   margin-bottom: 10px;
 }
+
 .tag .glyphicon-tag {
   color: @hdc-orange;
 }
@@ -1310,7 +1443,7 @@ h3.aside-title {
 }
 .recipe-carousel-thumbs .selected img
 {
-  background-color: #fff8b7;
+  border-color:@hdc-orange;
   z-index:100;
 }
 

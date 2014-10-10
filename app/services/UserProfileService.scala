@@ -378,10 +378,14 @@ class UserProfileService {
     var returnList: List[models.UserProfile] = Nil
 
     returnList = (filterTag, filterCounty) match {
-      case (Some(tw), Some(cnt)) => userProfileRepository.findByTagWordIdAndCountyId(tw.objectId, cnt.objectId).asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
-      case (Some(tw), None) => userProfileRepository.findByTagWordId(tw.objectId).asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
-      case (None, Some(cnt)) => userProfileRepository.findByCountyId(cnt.objectId).asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
-      case _ => userProfileRepository.findAll().asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
+      case (Some(tw), Some(cnt)) =>
+        userProfileRepository.findByTagWordIdAndCountyId(tw.objectId.toString, cnt.objectId.toString).asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
+      case (Some(tw), None) =>
+        userProfileRepository.findByTagWordId(tw.objectId).asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
+      case (None, Some(cnt)) =>
+        userProfileRepository.findByCountyId(cnt.objectId).asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
+      case _ =>
+        userProfileRepository.findAll().asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
     }
 
     returnList match {

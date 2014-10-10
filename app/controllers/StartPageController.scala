@@ -1,5 +1,6 @@
 package controllers
 
+import models.content.ContentPage
 import play.api.mvc._
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
@@ -8,7 +9,7 @@ import play.api.data.Forms._
 import models.viewmodels.{ReviewBox, StartPageBox, SearchStartPageForm}
 import securesocial.core.SecureSocial
 import org.springframework.beans.factory.annotation.Autowired
-import services.{RatingService, CountyService, TagWordService, UserProfileService}
+import services._
 import models.{UserCredential, UserProfile}
 import models.rating.RatesUserCredential
 import views.html.helper.{select, options}
@@ -31,6 +32,9 @@ class StartPageController extends Controller with SecureSocial {
 
   @Autowired
   var countyService : CountyService = _
+
+  @Autowired
+  var contentService : ContentService = _
 
   @Autowired
   var ratingService: RatingService = _
@@ -58,7 +62,8 @@ class StartPageController extends Controller with SecureSocial {
       optionsFoodAreas = getFoodAreas,
       optionsLocationAreas = getCounties,
       startPageBoxes = startPageBoxes,
-      reviewBoxes = getReviewBoxes
+      reviewBoxes = getReviewBoxes,
+      asideNews = contentService.getAsideNewsItems
     ))
   }
 
@@ -108,7 +113,6 @@ class StartPageController extends Controller with SecureSocial {
   }
 
 
-
   private def getStartPageBoxes(boxFilterTag: String, boxFilterCounty: String): Option[List[StartPageBox]] = {
 
     val fetchedTag: Option[TagWord] = boxFilterTag match {
@@ -134,8 +138,11 @@ class StartPageController extends Controller with SecureSocial {
               case null => ""
               case pfName => routes.UserProfileController.viewProfileByName(pfName).url
             },
-            fullName = userProfile.getOwner.fullName,
-            location = userProfile.county,
+            fullName = userProfile.getOwner.firstName,
+            location = userProfile.getLocations.asScala.headOption match {
+              case None => None
+              case Some(countyTag) => Some(countyTag.county.name)
+            },
             mainBody = None,
             mainImage = userProfile.getMainImage match {
               case null => None

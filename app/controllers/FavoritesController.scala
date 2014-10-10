@@ -30,8 +30,18 @@ object FavoritesController extends Controller with SecureSocial {
       var cur = listOfFavorites.next()
       var fav : UserProfile = cur.favoritesUserProfile
 
+      val userImage = fav.getAvatarImage match {
+        case null => None
+        case image => Some(image.getTransformByName("thumbnail").getUrl)
+      }
+
+      var preAmble = fav.aboutMeHeadline
+      if(preAmble.length > 50) {
+        preAmble.substring(0, 50) + "..."
+      }
+
       // add to return variable ....
-      favorites += models.viewmodels.FavoriteForm(fav.profileLinkName, fav.objectId.toString, fav.getOwner.objectId.toString)
+      favorites += models.viewmodels.FavoriteForm(fav.profileLinkName, fav.getOwner.firstName(), preAmble, userImage, fav.objectId.toString, fav.getOwner.objectId.toString)
       println("ObjectId : " + fav.objectId + ", email : " + fav.email)
     }
 
@@ -39,8 +49,18 @@ object FavoritesController extends Controller with SecureSocial {
     while(listOfUserFavorMe.hasNext) {
       var cur = listOfUserFavorMe.next()
 
+      val userImage = cur.getAvatarImage match {
+        case null => None
+        case image => Some(image.getTransformByName("thumbnail").getUrl)
+      }
+
+      var preAmble = cur.aboutMeHeadline
+      if(preAmble.length > 50) {
+        preAmble.substring(0, 50) + "..."
+      }
+
       // add to return variable ....
-      favMe += models.viewmodels.FavoriteForm(cur.profileLinkName, cur.objectId.toString, cur.getOwner.objectId.toString)
+      favMe += models.viewmodels.FavoriteForm(cur.profileLinkName, cur.getOwner.firstName(), preAmble, userImage, cur.objectId.toString, cur.getOwner.objectId.toString)
       println("ObjectId : " + cur.objectId + ", email : " + cur.email + ", LinkName: " + cur.profileLinkName)
     }
 

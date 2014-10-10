@@ -46,6 +46,14 @@ class ContentService {
 
 
   @Transactional(readOnly = true)
+  def getAsideNewsItems: Option[List[ContentPage]] = {
+    contentPageRepository.findByContentCategoriesAndVisibleInMenusAndContentState(Array(ContentCategoryEnums.ASIDE_STARTPAGE.toString),true,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
+      case null | Nil => None
+      case items => Some(items)
+    }
+  }
+
+  @Transactional(readOnly = true)
   def getMainMenuItems: Option[List[ContentPage]] = {
     contentPageRepository.findByContentCategoriesAndVisibleInMenusAndContentState(Array(ContentCategoryEnums.MAINMENU.toString),true,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
@@ -152,7 +160,8 @@ class ContentService {
     val returnItems: Seq[(String,String)] = List(
       (ContentCategoryEnums.MAINMENU.toString,ContentCategoryEnums.MAINMENU.toString),
       (ContentCategoryEnums.NEWS.toString,ContentCategoryEnums.NEWS.toString),
-      (ContentCategoryEnums.QUICKLINKS.toString,ContentCategoryEnums.QUICKLINKS.toString)
+      (ContentCategoryEnums.QUICKLINKS.toString,ContentCategoryEnums.QUICKLINKS.toString),
+      (ContentCategoryEnums.ASIDE_STARTPAGE.toString,ContentCategoryEnums.ASIDE_STARTPAGE.toString)
     )
     Some(returnItems)
   }

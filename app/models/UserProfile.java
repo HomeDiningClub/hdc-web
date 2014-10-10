@@ -26,7 +26,7 @@ import java.util.Calendar;
 @NodeEntity
 public class UserProfile extends AuditEntity implements IEditable {
 
-  public String county = "";
+  //public String county = "";
 
 
 /*

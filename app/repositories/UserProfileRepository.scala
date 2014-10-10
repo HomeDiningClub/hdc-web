@@ -8,12 +8,13 @@ import models.profile.TagWord
 import models.location.County
 import java.util.UUID
 
-
-trait  UserProfileRepository extends GraphRepository[UserProfile] {
+trait UserProfileRepository extends GraphRepository[UserProfile] {
 
   // Get all profiles matching a tag and a county
-  @Query("MATCH (userP:`UserProfile`)-[:`TAGGED_ON`]->(tw:`TagWord`) MATCH (userP:`UserProfile`)-[:`LOCATION_AT`]->(c:`County`) WHERE tw.objectId={0} AND c.objectId={1} RETURN userP")
-  def findByTagWordIdAndCountyId(tagWordId: UUID, countyId: UUID) : java.util.List[UserProfile]
+  //@Query("MATCH (userP:`UserProfile`)-[:`TAGGED_ON`]->(tw:`TagWord`) MATCH (userP:`UserProfile`)-[:`LOCATION_AT`]->(c:`County`) WHERE tw.objectId={0} AND c.objectId={1} RETURN userP")
+  //@Query("MATCH (c:`County`)<-[:`LOCATION_AT`]-(userP:`UserProfile`)-[:`TAGGED_ON`]->(tw:`TagWord`) WHERE tw.objectId={0} AND c.objectId={1} RETURN userP")
+  @Query("MATCH (c:`County`)<-[:`LOCATION_AT`]-(userP:`UserProfile`)-[:`TAGGED_ON`]->(tw:`TagWord`) WHERE tw.objectId={0} AND c.objectId={1} RETURN userP")
+  def findByTagWordIdAndCountyId(tagWordId: String, countyId: String) : java.util.List[UserProfile]
 
   // Get all profiles matching a tag
   @Query("MATCH (userP:`UserProfile`)-[:`TAGGED_ON`]->(tw:`TagWord`) WHERE tw.objectId={0} RETURN userP")

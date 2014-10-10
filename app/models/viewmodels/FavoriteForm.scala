@@ -1,3 +1,8 @@
 package models.viewmodels
 
-case class FavoriteForm(profileName : String, objectId : String, userCredObjectId : String)
+case class FavoriteForm(profileName : String,
+                        userName: String,
+                        profilePreAmble: String,
+                        profilePicture : Option[String],
+                        objectId : String,
+                        userCredObjectId : String)

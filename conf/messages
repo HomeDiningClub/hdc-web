@@ -60,7 +60,7 @@ person.lista=Lista personer (svenska)
 # Startpage
 startpage.title=Sveriges första riktiga klubb för alla riktigt matintresserade!
 startpage.main-aside.header=Home dining club
-startpage.main-aside.body=<p>Bjud hem nya vänner på middag och få betyg och omdömen på din kokkonst. Håll arrangemang för små och stora grupper. Ta betalt eller bjud! Det är upp till dig. Du kanske har den bästa Paellan i hela Stockholm. Varför inte låta folk få komma hem till dig och prova den?</p><p>Eller så är du bara intresserad av att läsa recept, eller äta hos andra. Upptäcka nya kulinariska höjder och lära känna andra lika matintresserade. Det här är tjänsten för dig!</p> <p><em>Henrik Larsson,<br>VD Home Dining Club</em></p>
+startpage.main-aside.body=<p>Bjud hem nya vänner på middag och få betyg och omdömen på din kokkonst. Håll arrangemang för små och stora grupper. Ta betalt eller bjud! Det är upp till dig. Du kanske har den bästa Paellan i hela Stockholm. Varför inte låta folk få komma hem till dig och prova den?</p><p>Eller så är du bara intresserad av att läsa recept, eller äta hos andra. Upptäcka nya kulinariska höjder och lära känna andra lika matintresserade. Det här är tjänsten för dig!</p> {0}<p><em>Henrik Larsson,<br>VD Home Dining Club</em></p>
 startpage.main-aside.news.header=Nu även i sverige!
 startpage.main-aside.news.body=
 startpage.main-content.header=Home Dining Club i korthet
@@ -77,7 +77,7 @@ startpage.filterform.counties=Välj län
 startpage.filterform.submit=Filtrera
 
 startpage.boxes.not-found=Kunde inte hitta några profiler som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
-
+startpage.boxes.location=<em>Finns i {0}</em>
 
 # ContentPages
 content.menu.header=Relaterad information
@@ -135,6 +135,14 @@ host-header.tooltip.text=Gå tillbaka till {0}
 # Like
 like.text=Gilla
 like.text.nr-of-likes={0}
+
+# Favorite
+favorite.add.text=Favorit
+favorite.add.title=Lägg till som favorit
+favorite.remove.text=Ta bort favorit
+favorite.remove.title=Ta bort som favorit
+favorite.profile.my-favorites.header=Mina favoriter
+favorite.profile.others-favorites.header=Vilka har mig som favorit?
 
 # Profile
 profile.title=Profil

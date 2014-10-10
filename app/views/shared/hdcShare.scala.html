@@ -1,6 +1,6 @@
 @(url: String, nrOfLikes: Int = 0)
-<div class="btn-group btn-group-likes">
-    <button type="button" class="btn btn-default btn-hdc-like" href="@url"><span class="hdc-like-icon"></span> @Messages("like.text")</button>
+<div class="btn-group-likes">
+    <button type="button" class="btn btn-default btn-hdc-like pull-left" href="@url"><span class="hdc-like-icon"></span> @Messages("like.text")</button>
     <div class="hdc-like-count-button">@Messages("like.text.nr-of-likes", nrOfLikes)</div>
     <div class="hdc-like-count-button-nub"><s></s><i></i></div>
 </div>

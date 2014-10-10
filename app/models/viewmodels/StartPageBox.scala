@@ -7,7 +7,7 @@ case class StartPageBox (
     objectId: Option[UUID],
     linkToProfile: String,
     fullName: String,
-    location: String,
+    location: Option[String],
     mainBody: Option[String],
     mainImage: Option[String],
     userImage: Option[String],
