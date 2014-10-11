@@ -32,7 +32,7 @@ GET         /profile/view-my-profile                             @controllers.Us
 GET         /profile/edit                                        @controllers.UserProfileController.edit
 POST        /profile/skicka                                      @controllers.UserProfileController.editSubmit
 #POST        /profile/skapa                                       @controllers.UserProfileController.save
-POST        /profile/spara                                       @controllers.UserProfileController.saveUserProfile
+#REFACT_ME POST        /profile/spara                                       @controllers.UserProfileController.saveUserProfile
 #GET         /profile/ny                                          @controllers.UserProfileController.skapaNyProfil
 #GET         /profile/find/:userName                              @controllers.UserProfileController.hamtaProfil(userName)
 GET         /profile/showtag                                     @controllers.UserProfileController.showTags

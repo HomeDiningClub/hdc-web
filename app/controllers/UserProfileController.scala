@@ -818,34 +818,4 @@ if(userTags != null) {
   }
 
 
-
-  def saveUserProfile = Action { implicit request =>
-      userProfileForm.bindFromRequest.fold(
-        errors => {
-
-          if(errors.hasErrors) {
-            println("Error in Form : "  + errors.toString)
-          }
-          println("#error#")
-          // Felaktigt ifyllt formulär
-          // Ok(views.html.profile.updateUserProfile(errors))
-          Ok("eror")
-        },
-        userProfileForm => {
-
-          // Spara UserProfile
-          // var userProfileData = form2Data(userProfile)
-          var userProfile : models.UserProfile = new models.UserProfile
-
-          //userProfileService.saveUserProfile(userProfile)
-
-          // Hämta värden
-          //val savedForm =  userProfileForm.fill()
-          // Ok(views.html.profile.updateUserProfile())
-          Ok(".............................................")
-        }
-      )
-  }
-
-
 }
