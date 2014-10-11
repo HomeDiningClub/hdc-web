@@ -94,12 +94,6 @@
                         </div>
                     </div>
 
-
-
-
-
-
-
                 </div>
                 <div class="col-xs-12 col-md-6">
 
@@ -175,11 +169,13 @@
 
                         @helper.checkbox(EnvDataForm("acceptTerms"),
                             'id -> "acceptTerms",
-                            '_label -> "Godkänner vilkoren",
+                            '_label -> Messages("profile.create.accept.label"),
                             '_showErrors -> true,
-                            '_help -> "Du måste acceptera villkoren för att bli medlem"
+                            '_help -> Messages("profile.create.accept.help")
                         )
-                        Jag godkänner villkoren
+                        <a href="@Messages("profile.create.accept.link")"
+                        target="_blank">
+                        @Messages("profile.create.accept.linktext")</a>
                         <br>
                         <input class="btn btn-primary pull-right" type="submit" value="@Messages("profile.create.save")">
                     </p>

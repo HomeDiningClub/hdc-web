@@ -183,6 +183,11 @@ profile.create.form.personnummer=Personnummer
 profile.create.form.personnummer.help=Personnummer ÅÅÅÅMMDDNNNN
 
 profile.create.save=Spara
+profile.create.accept.help=Du måste godkänna vilkoren för att bli medlem
+profile.create.accept.label=Godkänner vilkoren*
+profile.create.accept.link=/
+profile.create.accept.linktext=Läs mer ...
+
 profile.profilelinkname.isempty=Ett profilnamn måste vara valt!
 profile.memberid.text=MedlemsID:
 profile.county.text=Län:
