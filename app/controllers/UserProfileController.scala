@@ -94,11 +94,13 @@ class UserProfileController extends Controller with SecureSocial {
         "zipCode" -> text,
         "city" -> text,
         "phoneNumber" -> text,
-        "personnummer" -> text
+        "personnummer" -> text,
+        "acceptTerms"  -> boolean
       )
       (EnvData.apply) (EnvData.unapply)
         verifying ("Profilnamn måste vara unikt", f => isUniqueProfileName(f.name, f.name2))
         verifying ("Personnummer måste vara korrekt angivet", g => isCorrectPersonnummer(g.personnummer))
+        verifying ("Du måste acceptera vilkoren för att bli medlem", h => h.acceptTerms == true)
     )
 
   val tagForm = Form(
@@ -319,6 +321,7 @@ def edit = SecuredAction { implicit request =>
 
   var personnummer = theUser.getOwner.personNummer
 
+
   var countiesList = getCounties
 
   var countyItter = countiesList.iterator
@@ -406,7 +409,8 @@ if(userTags != null) {
     theUser.zipCode, // zip code
     theUser.city, // city
     theUser.phoneNumber, // phone number
-    personnummer // TODO
+    personnummer, // TODO
+    theUser.isTermsOfUseApprovedAccepted // isTermsOfUseApprovedAccepted
   )
 
   val nyForm =  AnvandareForm.fill(eData)
@@ -691,10 +695,17 @@ if(userTags != null) {
         var city                  : String = ""
         var phoneNumber           : String = ""
         var countyId              : String = ""
+        var acceptDemads          : Boolean = false
+
+
+        println("test");
 
 
         AnvandareForm.bindFromRequest.fold(
           errors => {
+
+            println("error ..." +errors.toString)
+
             BadRequest(views.html.profile.skapa(errors, optionsLocationAreas = getCounties))
 
           },
@@ -713,6 +724,8 @@ if(userTags != null) {
             countyId              = reqUserProfile.county
             println("????? county = " + reqUserProfile.county)
             println("Personnummer: " + reqUserProfile.personnummer)
+            acceptDemads = reqUserProfile.acceptTerms
+            println("acceptTerms :::  " + reqUserProfile.acceptTerms)
 
 
            val userCred = Helpers.getUserFromRequest.get
@@ -734,6 +747,8 @@ if(userTags != null) {
            theUser.zipCode              = zipCode
            theUser.streetAddress        = streetAddress
            theUser.phoneNumber          = phoneNumber
+           theUser.isTermsOfUseApprovedAccepted = acceptDemads
+           theUser.termsOfUseApproved = java.util.Calendar.getInstance()
 
 
 //        This part is not needed since tags or on it's own page now, activate this code if they are moved back

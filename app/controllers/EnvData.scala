@@ -10,5 +10,6 @@ case class EnvData(
         zipCode         : String,
         city            : String,
         phoneNumber     : String,
-        personnummer    : String
+        personnummer    : String,
+        acceptTerms     : Boolean
 )

@@ -49,6 +49,9 @@ public class UserProfile extends AuditEntity implements IEditable {
     public String providerId = "";
 */
 
+    public Calendar termsOfUseApproved = Calendar.getInstance();
+
+    public boolean  isTermsOfUseApprovedAccepted = false;
 
     public String fistName = "";
 

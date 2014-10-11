@@ -53,7 +53,8 @@ class AdminUserProfileController  extends Controller with SecureSocial {
       "zipCode" -> text,
       "city" -> text,
       "phoneNumber" -> text,
-      "personnummer" -> text
+      "personnummer" -> text,
+      "acceptTerms"  -> boolean
     )
     (EnvData.apply) (EnvData.unapply)
   )
