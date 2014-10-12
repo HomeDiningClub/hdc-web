@@ -49,6 +49,16 @@ public final class RelationshipTypesJava {
         public static final String Constant = "RATED_RECIPE";
     }
 
+    public final static class LIKES_USER implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "LIKES_USER";
+    }
+
+    public final static class LIKES_RECIPE implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "LIKES_RECIPE";
+    }
+
     public final static class HAS_RECIPES implements RelationshipType {
         public String name() { return Constant; }
         public static final String Constant = "HAS_RECIPES";

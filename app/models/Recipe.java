@@ -5,6 +5,7 @@ import models.content.ContentBase;
 import models.files.ContentFile;
 import models.modelconstants.RelationshipTypesJava;
 import models.rating.RatesRecipe;
+import models.like.*;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
@@ -46,6 +47,9 @@ public class Recipe extends ContentBase implements IEditable {
     @RelatedToVia(type = RelationshipTypesJava.RATED_RECIPE.Constant, direction = Direction.INCOMING)
     private Set<RatesRecipe> ratings;
 
+    // Like
+    @RelatedToVia(type = RelationshipTypesJava.LIKES_RECIPE.Constant, direction = Direction.INCOMING)
+    private Set<UserCredentialLikeRecipe> likes;
 
     // Getter & Setters
     public void setMainBody(String mainBody){
@@ -198,6 +202,35 @@ public class Recipe extends ContentBase implements IEditable {
 
         return this.ratings;
     }
+
+
+    // Like
+    @Fetch
+    public Set<UserCredentialLikeRecipe> getLikes() {
+        if(this.likes == null)
+            this.likes = new HashSet<>();
+
+        return this.likes;
+    }
+
+    public void addLike(UserCredentialLikeRecipe likeToAdd) {
+        if(this.likes == null)
+            this.likes = new HashSet<>();
+
+        this.likes.add(likeToAdd);
+    }
+
+    // Like count
+    public int getNrOfLikes() {
+        int count = 0;
+
+        if(this.getLikes() != null)
+            count = this.getLikes().size();
+
+        return count;
+    }
+
+
 
 
     // Constructors

@@ -1,6 +1,7 @@
 @(EnvDataForm: Form[controllers.EnvData],
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
-        editingProfile: Option[UserProfile] = None)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
+        editingProfile: Option[UserProfile] = None,
+        termsAndConditions: Option[models.content.ContentPage] = None)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
 @import helper.twitterBootstrap._
 
 @main(Messages("profile.title")){
@@ -164,24 +165,56 @@
 
                 </div>
 
-                <div class="col-xs-12">
-                    <p id="acceptBox" class="pull-right">
+                <div class="col-xs-12 text-center margin-top">
+                    @defining("<a data-toggle=\"modal\" href=\"#modalAcceptTerms\">" + Messages("profile.create.accept.link.text") + "&nbsp;<span class=\"glyphicon glyphicon-new-window\"></span></a>"){ linkToTerms =>
+                            @helper.checkbox(EnvDataForm("acceptTerms"),
+                                '_label -> Messages("profile.create.accept.label"),
+                                '_showErrors -> true,
+                                '_help -> "",
+                                'style -> "display:inline;"
+                            )
+                            @Html(Messages("profile.create.accept.help", linkToTerms))
+                    }
+                </div>
 
-                        @helper.checkbox(EnvDataForm("acceptTerms"),
-                            'id -> "acceptTerms",
-                            '_label -> Messages("profile.create.accept.label"),
-                            '_showErrors -> true,
-                            '_help -> Messages("profile.create.accept.help")
-                        )
-                        <a href="@Messages("profile.create.accept.link")"
-                        target="_blank">
-                        @Messages("profile.create.accept.linktext")</a>
-                        <br>
-                        <input class="btn btn-primary pull-right" type="submit" value="@Messages("profile.create.save")">
-                    </p>
+                <div class="col-xs-12">
+                    <input class="btn btn-primary pull-right" type="submit" value="@Messages("profile.create.save")">
                 </div>
                 }
             </div>
         </div>
     </div>
+
+
+
+    <!-- Modal acceptTerms-->
+    <div class="modal fade" id="modalAcceptTerms" tabindex="-1" role="dialog" aria-labelledby="modalAcceptTermsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">@Messages("profile.create.accept.modal.close")</span></button>
+                    <h4 class="modal-title" id="modalAcceptTermsLabel">
+                        @if(termsAndConditions.nonEmpty){
+                            @termsAndConditions.get.title
+                        }else{
+                            @Messages("profile.create.accept.modal.header")
+                        }
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    @if(termsAndConditions.nonEmpty){
+                        @Html(termsAndConditions.get.preamble)
+                        @Html(termsAndConditions.get.mainBody)
+                    }else{
+                        @Messages("profile.create.accept.modal.body")
+                    }
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">@Messages("profile.create.accept.modal.close")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 }

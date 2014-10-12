@@ -134,7 +134,9 @@ host-header.tooltip.text=Gå tillbaka till {0}
 
 # Like
 like.text=Gilla
+liked.text=Gillat
 like.text.nr-of-likes={0}
+like.already-liked.text=Du har redan gillat!
 
 # Favorite
 favorite.add.text=Favorit
@@ -183,10 +185,14 @@ profile.create.form.personnummer=Personnummer
 profile.create.form.personnummer.help=Personnummer ÅÅÅÅMMDDNNNN
 
 profile.create.save=Spara
-profile.create.accept.help=Du måste godkänna vilkoren för att bli medlem
-profile.create.accept.label=Godkänner vilkoren*
-profile.create.accept.link=/
-profile.create.accept.linktext=Läs mer ...
+
+profile.create.accept.label=Jag godkänner användarvillkoren
+profile.create.accept.help=(du måste {0} för att bli medlem)
+profile.create.accept.link.text=godkänna vilkoren
+
+profile.create.accept.modal.header=Användarvillkor
+profile.create.accept.modal.body=Userterms needs to be created, create a ContentPage with the category "TERMS".
+profile.create.accept.modal.close=Stäng
 
 profile.profilelinkname.isempty=Ett profilnamn måste vara valt!
 profile.memberid.text=MedlemsID:

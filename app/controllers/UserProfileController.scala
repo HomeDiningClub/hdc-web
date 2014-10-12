@@ -41,10 +41,13 @@ class UserProfileController extends Controller with SecureSocial {
   var userProfileService: UserProfileService = _
 
   @Autowired
-  var tagWordService : TagWordService = _
+  var tagWordService: TagWordService = _
 
   @Autowired
-  var countyService : CountyService = _
+  var contentService: ContentService = _
+
+  @Autowired
+  var countyService: CountyService = _
 
   @Autowired
   private var recipeService: RecipeService = _
@@ -414,7 +417,7 @@ if(userTags != null) {
   )
 
   val nyForm =  AnvandareForm.fill(eData)
-  Ok(views.html.profile.skapa(nyForm, optionsLocationAreas = getCounties, editingProfile = Some(theUser)))
+  Ok(views.html.profile.skapa(nyForm, optionsLocationAreas = getCounties, editingProfile = Some(theUser), termsAndConditions = contentService.getTermsAndConditions))
 
 
 }
@@ -473,9 +476,7 @@ if(userTags != null) {
     val nyForm =  tagForm.fill(tData)
 
 
-  //   Ok(views.html.profile.skapa(nyForm, retTagList, typ, optionsLocationAreas = getCounties))
     Ok(views.html.profile.tags(tagForm, retTagList, typ))
-  //Ok("test")
   }
 
 
@@ -706,7 +707,7 @@ if(userTags != null) {
 
             println("error ..." +errors.toString)
 
-            BadRequest(views.html.profile.skapa(errors, optionsLocationAreas = getCounties))
+            BadRequest(views.html.profile.skapa(errors, optionsLocationAreas = getCounties, termsAndConditions = contentService.getTermsAndConditions))
 
           },
           reqUserProfile => {

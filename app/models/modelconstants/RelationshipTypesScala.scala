@@ -49,6 +49,16 @@ object RelationshipTypesScala {
     def name(): String = Constant
   }
 
+  object LIKES_USER {
+    final val Constant = "LIKES_USER"
+    def name(): String = Constant
+  }
+
+  object LIKES_RECIPE {
+    final val Constant = "LIKES_RECIPE"
+    def name(): String = Constant
+  }
+
   object HAS_RECIPES {
     final val Constant = "HAS_RECIPES"
     def name(): String = Constant

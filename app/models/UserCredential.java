@@ -2,6 +2,8 @@ package models;
 
 import interfaces.IEditable;
 import models.base.AuditEntity;
+import models.like.UserCredentialLikeRecipe;
+import models.like.UserCredentialLikeUserCredential;
 import models.modelconstants.RelationshipTypesJava;
 import models.rating.RatesRecipe;
 import models.rating.RatesUserCredential;
@@ -88,7 +90,7 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     @RelatedTo(type = "IN_PROFILE", direction = Direction.OUTGOING)
     public Set<UserProfile> profiles;
 
-    // Rating
+    // Ratings
     @RelatedToVia(type = RelationshipTypesJava.RATED_USER.Constant, direction = Direction.INCOMING)
     private Set<RatesUserCredential> ratings;
 
@@ -97,6 +99,17 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
 
     @RelatedToVia(type = RelationshipTypesJava.RATED_RECIPE.Constant, direction = Direction.OUTGOING)
     private Set<RatesRecipe> hasRatedRecipes;
+
+    // Likes
+    @RelatedToVia(type = RelationshipTypesJava.LIKES_USER.Constant, direction = Direction.INCOMING)
+    private Set<UserCredentialLikeUserCredential> likes;
+
+    @RelatedToVia(type = RelationshipTypesJava.LIKES_USER.Constant, direction = Direction.OUTGOING)
+    private Set<UserCredentialLikeUserCredential> hasLikedUsers;
+
+    @RelatedToVia(type = RelationshipTypesJava.LIKES_RECIPE.Constant, direction = Direction.OUTGOING)
+    private Set<UserCredentialLikeRecipe> hasLikedRecipes;
+
 
     // Verify the object owner
     @Transient
@@ -158,6 +171,51 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
 
         return this.hasRatedRecipes;
     }
+
+
+    // Like
+    @Fetch
+    public Set<UserCredentialLikeUserCredential> getLikes() {
+        if(this.likes == null)
+            this.likes = new HashSet<>();
+
+        return this.likes;
+    }
+
+    @Fetch
+    public Set<UserCredentialLikeUserCredential> getHasLikedUsers() {
+        if(this.hasLikedUsers == null)
+            this.hasLikedUsers = new HashSet<>();
+
+        return this.hasLikedUsers;
+    }
+
+    @Fetch
+    public Set<UserCredentialLikeRecipe> getHasLikedRecipes() {
+        if(this.hasLikedRecipes == null)
+            this.hasLikedRecipes = new HashSet<>();
+
+        return this.hasLikedRecipes;
+    }
+
+    // Like count
+    public int getNrOfLikes() {
+        int count = 0;
+
+        if(this.getLikes() != null)
+            count = this.getLikes().size();
+
+        return count;
+    }
+
+    // Like add
+    public void addLike(UserCredentialLikeUserCredential likeToAdd) {
+        if(this.likes == null)
+            this.likes = new HashSet<>();
+
+        this.likes.add(likeToAdd);
+    }
+
 
 
     public UserCredential() {

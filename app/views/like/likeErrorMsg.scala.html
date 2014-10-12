@@ -1,0 +1,13 @@
+@(errorMsg: String, errorLevel: String)
+
+    <div class="well well-hdc">
+    @if(errorMsg.nonEmpty) {
+        @if(errorLevel == "error" || errorLevel == "warning") {
+            <div class="alert alert-@errorLevel">
+            @errorMsg
+            </div>
+        } else {
+            @errorMsg
+        }
+    }
+    </div>

@@ -130,32 +130,32 @@ img
 
 // Tooltips
 .hdc-tooltip + .tooltip > .tooltip-inner {
-  background-color: @hdc-orange;
+  background-color: #ffffff;
   color:#000;
 }
 .hdc-tooltip + .tooltip.top .tooltip-inner {
-  background-color: @hdc-orange;
+  background-color: #ffffff;
 }
 .hdc-tooltip + .tooltip.top .tooltip-arrow {
-  background-color: @hdc-orange;
+  background-color: #ffffff;
 }
 .hdc-tooltip + .tooltip.right .tooltip-inner {
-  background-color: @hdc-orange;
+  background-color: #ffffff;
 }
 .hdc-tooltip + .tooltip.right .tooltip-arrow {
-  border-right-color: @hdc-orange;
+  border-right-color: #ffffff;
 }
 .hdc-tooltip + .tooltip.bottom .tooltip-inner {
-  background-color: @hdc-orange;
+  background-color: #ffffff;
 }
 .hdc-tooltip + .tooltip.bottom .tooltip-arrow {
-  border-bottom-color: @hdc-orange;
+  border-bottom-color: #ffffff;
 }
 .hdc-tooltip + .tooltip.left .tooltip-inner {
-  background-color: @hdc-orange;
+  background-color: #ffffff;
 }
 .hdc-tooltip + .tooltip.left .tooltip-arrow {
-  border-left-color: @hdc-orange;
+  border-left-color: #ffffff;
 }
 
 // General wells
@@ -271,7 +271,7 @@ input[type="reset"]
 input[type="submit"]:focus,
 input[type="reset"]:focus {
   outline: 0;
-  border:1px solid @hdc-orange;
+  /*border:1px solid @hdc-orange;*/
 }
 
 .btn-primary,
@@ -498,7 +498,7 @@ input[type="reset"]:hover
   display: block;
   width:20px;
   height:26px;
-  background-image:url('/assets/images/icons/hdc-like-40x26.png');
+  background-image:url('/assets/images/icons/hdc-like-60x26.png');
   background-repeat: no-repeat;
   background-position: 0px 0px;
   margin:0px 8px 0px 0px;
@@ -507,7 +507,11 @@ input[type="reset"]:hover
 }
 .btn-hdc-like:hover .hdc-like-icon
 {
-  background-position: -20px 0px;
+  background-position: -40px 0px;
+}
+.btn-hdc-like-active .hdc-like-icon
+{
+  background-position: -40px 0px;
 }
 .hdc-like-count-button
 {
@@ -1409,6 +1413,15 @@ h3.aside-title {
 .col-recipe-boxes:nth-child(4)
 {
   clear:both;
+}
+
+// Profile - edit
+#acceptTerms_field label {
+  display: inline-block;
+}
+#acceptTerms_field .input {
+  margin-left:5px;
+  display: inline-block;
 }
 
 // Recipe carousel

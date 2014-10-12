@@ -1,0 +1,25 @@
+@(userLikesForm: Form[models.viewmodels.LikeForm], likedEarlierDate: Option[java.util.Date], nrOfLikes: Int = 0)(implicit request: RequestHeader)
+
+<div class="btn-group-likes">
+    @utils.Helpers.getUserFromRequest match {
+        case None => {
+            <a href="@securesocial.controllers.routes.LoginPage.login" class="btn btn-default btn-hdc-like pull-left"><span class="hdc-like-icon"></span>&nbsp;@Messages("like.text")</a>
+        }
+        case Some(currentUser) => {
+            @if(likedEarlierDate.nonEmpty) {
+                <button class="btn btn-default btn-hdc-like btn-hdc-like-active popover-trigger pull-left" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-container="body" data-content="@Messages("like.already-liked.text")"><span class="hdc-like-icon"></span>&nbsp;@Messages("liked.text")</button>
+            }else {
+               @if(userLikesForm.get.userLikesThisObjectId.nonEmpty) {
+                    @helper.form(action = routes.LikeController.likeSubmit(), 'style -> "display:inline;") {
+                        @helper.inputHidden(userLikesForm("userLikesThisObjectId"))
+                        @helper.inputHidden(userLikesForm("likeValue"))
+                        @helper.inputHidden(userLikesForm("likeType"))
+                        <button type="submit" class="btn btn-default btn-hdc-like pull-left"><span class="hdc-like-icon"></span>&nbsp;@Messages("like.text")</button>
+                    }
+                }
+            }
+        }
+    }
+    <div class="hdc-like-count-button">@Messages("like.text.nr-of-likes", nrOfLikes)</div>
+    <div class="hdc-like-count-button-nub"><s></s><i></i></div>
+</div>

@@ -80,7 +80,7 @@
 
 
                         <div class="col-xs-12 margin-top">
-                            @shared.hdcShare(url = request.uri)
+                            @LikeController.renderRecipeLikeForm(recipe)(request)
                             @shared.fbShare(url = request.uri)
                         </div>
                     </div>

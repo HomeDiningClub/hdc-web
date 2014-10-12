@@ -21,6 +21,9 @@ $(document).ready(function () {
     // Activate tooltips
    $(".host-level-icon,.host-header-link").tooltip();
 
+   // Activate popovers
+    $(".popover-trigger").popover();
+
 //   $(".btn-rate-popover").popover({
 //       trigger: "click",
 //       placement: "bottom",

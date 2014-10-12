@@ -47,7 +47,7 @@ class ContentService {
 
   @Transactional(readOnly = true)
   def getAsideNewsItems: Option[List[ContentPage]] = {
-    contentPageRepository.findByContentCategoriesAndVisibleInMenusAndContentState(Array(ContentCategoryEnums.ASIDE_STARTPAGE.toString),true,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
+    contentPageRepository.findByContentCategoriesAndContentState(Array(ContentCategoryEnums.ASIDE_STARTPAGE.toString),ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
       case items => Some(items)
     }
@@ -68,6 +68,15 @@ class ContentService {
       case items => Some(items)
     }
   }
+
+  @Transactional(readOnly = true)
+  def getTermsAndConditions: Option[ContentPage] = {
+    contentPageRepository.findByContentCategoriesAndContentState(Array(ContentCategoryEnums.TERMS.toString),ContentStateEnums.PUBLISHED.toString).asScala.toList match {
+      case null | Nil => None
+      case items => Some(items.head)
+    }
+  }
+
 
   @Transactional(readOnly = true)
   def getRelatedPages(objectId: UUID): Option[List[ContentPage]] = {
@@ -161,7 +170,8 @@ class ContentService {
       (ContentCategoryEnums.MAINMENU.toString,ContentCategoryEnums.MAINMENU.toString),
       (ContentCategoryEnums.NEWS.toString,ContentCategoryEnums.NEWS.toString),
       (ContentCategoryEnums.QUICKLINKS.toString,ContentCategoryEnums.QUICKLINKS.toString),
-      (ContentCategoryEnums.ASIDE_STARTPAGE.toString,ContentCategoryEnums.ASIDE_STARTPAGE.toString)
+      (ContentCategoryEnums.ASIDE_STARTPAGE.toString,ContentCategoryEnums.ASIDE_STARTPAGE.toString),
+      (ContentCategoryEnums.TERMS.toString,ContentCategoryEnums.TERMS.toString)
     )
     Some(returnItems)
   }

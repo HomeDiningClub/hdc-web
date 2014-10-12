@@ -75,7 +75,7 @@
                                             <a id="af" hidden="true" class="btn btn-default btn-favorite" title="@Messages("favorite.add.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.add.text")</a>
                                             <a id="rf" hidden="true" class="btn btn-default btn-favorite btn-favorite-active" title="@Messages("favorite.remove.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.remove.text")</a>
                                         </div>
-                                        @shared.hdcShare(url = request.uri)
+                                        @LikeController.renderUserLikeForm(userProfile.getOwner)(request)
                                         @shared.fbShare(url = request.uri)
                                     </div>
                                 </div>

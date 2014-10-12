@@ -68,6 +68,10 @@ GET         /recipe/delete/:objectId                             @controllers.Re
 # Rating
 POST        /rate/user                                           controllers.RatingController.rateSubmit
 
+# Like
+POST        /like/user                                           controllers.LikeController.likeSubmit
+
+
 # Login page
 GET         /login                                               securesocial.controllers.LoginPage.login
 GET         /logout                                              securesocial.controllers.LoginPage.logout

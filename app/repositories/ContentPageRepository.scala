@@ -11,6 +11,7 @@ trait ContentPageRepository extends GraphRepository[ContentPage] {
   def findByobjectId(objectId: UUID): ContentPage
   def findByRouteAndContentState(route: String, contentState: String): ContentPage
   def findByRouteAndContentCategoriesAndVisibleInMenusAndContentState(route: String, contentCategories: Array[String], visibleInMenus: Boolean, contentState: String): ContentPage
+  def findByContentCategoriesAndContentState(contentCategories: Array[String], contentState: String): java.util.List[ContentPage]
   def findByContentCategoriesAndVisibleInMenusAndContentState(contentCategories: Array[String], visibleInMenus: Boolean, contentState: String): java.util.List[ContentPage]
   def findByContentCategories(contentCategories: Array[String]): java.util.List[ContentPage]
 
