@@ -1,5 +1,4 @@
 @(userProfile: models.UserProfile,
-        menuItems: Seq[(String, String, String, String, Boolean)],
         tab1: String,
         tab2: String,
         tab3: String,
@@ -73,8 +72,7 @@
             $( "#rf" ).hide();
 
         } else {
-            $( "#af" ).hide();
-            $( "#rf" ).hide();
+            $( "#af,#rf,#afrf-wrapper" ).hide();
         }
 
         });
@@ -160,20 +158,24 @@
 
                     </div>
                 </div>
+                @if(!isThisMyProfile && userProfile.isUserHost) {
                 <div class="row">
-                    <div>
-                        @if(!isThisMyProfile && userProfile.isUserHost) {
-                            @HostController.renderHostForm(userProfile.getOwner)(request)
-                        }
+                    <div class="col-xs-12 col-md-12 big-margin-top">
+                        @HostController.renderHostForm(userProfile.getOwner)(request)
                     </div>
+                </div>
+                }
+                <div class="row">
                     <div class="col-xs-12 col-md-12 big-margin-top">
                         <nav>
-                            <ul class="nav nav-tabs">
-                            @for(nav <- menuItems) {
-                                @if((nav._5 && isThisMyProfile) || !nav._5) {
-                                    <li class="@nav._4"><a data-toggle="tab" href="#@nav._3" title="@nav._2">@nav._1</a></li>
+                            <ul class="nav nav-tabs nav-tabs-profile">
+                                <li class="active"><a data-toggle="tab" href="#@tab1" title="@Messages("profile.tabs.food.title")">@Messages("profile.tabs.food.name")</a></li>
+                                <li><a data-toggle="tab" href="#@tab2" title="@Messages("profile.tabs.blog.title")">@Messages("profile.tabs.blog.name")</a></li>
+                                <li><a data-toggle="tab" href="#@tab3" title="@Messages("profile.tabs.ratings.title")">@Messages("profile.tabs.ratings.name")</a></li>
+                                @if(isThisMyProfile) {
+                                    <li><a data-toggle="tab" href="#@tab4" title="@Messages("profile.tabs.inbox.title")">@Messages("profile.tabs.inbox.name")</a></li>
+                                    <li><a data-toggle="tab" href="#@tab5" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
                                 }
-                            }
                             </ul>
                         </nav>
 

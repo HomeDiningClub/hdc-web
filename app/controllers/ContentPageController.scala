@@ -33,9 +33,6 @@ class ContentPageController extends Controller with securesocial.core.SecureSoci
     contentService.findContentPageByRoute(contentName: String) match {
       case Some(item) =>
         val childPages = contentService.getAndMapRelatedPages(item.objectId)
-        if(item.title == "Om Oss")
-          Redirect(routes.AboutUsController.aboutUs())
-        else
           Ok(views.html.contentcolumns.onecolumn(urlTitle = item.title, menuList = childPages, column1Header = item.title, column1PreAmble = item.preamble, column1Body = item.mainBody))
       case None =>
         val errMess = "Cannot find content using name:" + contentName
