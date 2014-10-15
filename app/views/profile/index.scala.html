@@ -205,57 +205,14 @@
                             <div class="tab-pane tab-hdc fade" id="@tab4">
                                 @if(isThisMyProfile) {
 
-                                    @*
-                                    @for(messageRelation <- userProfile.getOwner.getGuest) {
+                                    @for(msg <- userProfile.getOwner.getMessages) {
 
-                                        @HostController.renderHostReplyForm(messageRelation.requestingGuest, messageRelation)(request)
-                                    }
-                                    *@
-
-                                    @for(msg <- userProfile.getOwner.getRequests) {
-                                        @HostController.renderHostReplyForm(msg)(request)
+                                            @HostController.renderHostReplyForm(msg)(request)
                                     }
 
-                                    @for(replies <- userProfile.getOwner.getResponses) {
-                                        <br/>
-                                        <table>
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Datum : </strong>
-                                                    </td>
-                                                    <td>
-                                                        @replies.getLastModifiedDate.format("yyyy-MM-dd HH:mm")
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Från : </strong>
-                                                    </td>
-                                                    <td>
-                                                        @replies.getOwner.firstName @replies.getOwner.lastName
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Svar : </strong>
-                                                    </td>
-                                                    <td>
-                                                        @replies.response
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <br/>
-                                    }
-
-                                    @*
-                                    @for(guest <- userProfile.getOwner.getHost) {
-                                        @if(guest.response.isEmpty == false) {
+                                    @for(msg <- userProfile.getOwner.getMessages) {
+                                        @if(msg.getOwner.equals(userProfile.getOwner)) {
+                                            <br/>
                                             <table>
                                                 <tbody>
                                                     <tr>
@@ -263,7 +220,7 @@
                                                             <strong>Datum : </strong>
                                                         </td>
                                                         <td>
-                                                        @guest.getLastModifiedDate.format("yyyy-MM-dd HH:mm")
+                                                            @msg.getCreatedDate.format("yyyy-MM-dd HH:mm")
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -271,7 +228,7 @@
                                                             <strong>Från : </strong>
                                                         </td>
                                                         <td>
-                                                            @guest.userWhoIsHosting.firstName @guest.userWhoIsHosting.lastName
+                                                            @msg.replyTo
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -279,7 +236,7 @@
                                                             <strong>Svar : </strong>
                                                         </td>
                                                         <td>
-                                                        @guest.response
+                                                            @msg.request
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -288,9 +245,11 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
+                                            <br/>
+
                                         }
                                     }
-                                    *@
+
                                 }
                             </div>
                             @if(isThisMyProfile) {
@@ -303,9 +262,6 @@
                     </div>
                 </div>
             </div>
-
-
-
 
             <!-- Banner -->
             <div class="col-xs-12 col-md-3 col-banner">

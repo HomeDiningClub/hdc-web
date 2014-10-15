@@ -4,7 +4,7 @@ import interfaces.IEditable;
 import models.base.AuditEntity;
 import models.files.ContentFile;
 import models.modelconstants.RelationshipTypesJava;
-import models.modelconstants.RolesJava;
+import models.modelconstants.UserLevelJava;
 import models.profile.TagWord;
 import models.location.County;
 import models.profile.TaggedFavoritesToUserProfile;
@@ -114,8 +114,8 @@ public class UserProfile extends AuditEntity implements IEditable {
 
         if(this.role == null) {
             this.role = new HashSet<>();
-            role.add(RolesJava.GUEST.Constant);
-            role.add(RolesJava.HOST.Constant);
+            role.add(UserLevelJava.GUEST.Constant);
+            role.add(UserLevelJava.HOST.Constant);
         }
 
         return this.role;
@@ -126,7 +126,7 @@ public class UserProfile extends AuditEntity implements IEditable {
     }
 
     public boolean isUserHost() {
-        if (role != null && ( role.contains(RolesJava.GUEST.Constant) && role.contains(RolesJava.HOST.Constant) ) )
+        if (role != null && ( role.contains(UserLevelJava.GUEST.Constant) && role.contains(UserLevelJava.HOST.Constant) ) )
             return  true;
         else
             return false;

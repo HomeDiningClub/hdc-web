@@ -9,13 +9,13 @@ object RelationshipTypesScala {
      def name(): String = Constant
    }
 
-  object  HOSTING {
-    final val Constant = "HOSTING"
+  object  MESSAGE {
+    final val Constant = "MESSAGE"
     def name(): String = Constant
   }
 
-  object  TEST {
-    final val Constant = "TEST"
+  object  RESPONSE {
+    final val Constant = "RESPONSE"
     def name(): String = Constant
   }
 

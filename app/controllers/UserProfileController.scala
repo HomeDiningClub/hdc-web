@@ -1,7 +1,7 @@
 package controllers
 
 // http://www.playframework.com/documentation/2.2.x/ScalaForms
-import models.modelconstants.RolesScala
+import models.modelconstants.UserLevelScala
 import models.profile.{TaggedFavoritesToUserProfile, TagWord, TaggedUserProfile}
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
@@ -337,8 +337,8 @@ def edit = SecuredAction { implicit request =>
   var host: String = ""
   var guest: String = ""
 
-  if (theUser.getRole.contains(RolesScala.HOST.Constant)) { host = RolesScala.HOST.Constant}
-  if (theUser.getRole.contains(RolesScala.GUEST.Constant)) { guest = RolesScala.GUEST.Constant}
+  if (theUser.getRole.contains(UserLevelScala.HOST.Constant)) { host = UserLevelScala.HOST.Constant}
+  if (theUser.getRole.contains(UserLevelScala.GUEST.Constant)) { guest = UserLevelScala.GUEST.Constant}
 
 
   val provider = request.user.identityId.providerId
@@ -738,16 +738,16 @@ if(userTags != null) {
 
             reqUserProfile.roleGuest match {
               case None =>
-                theUser.getRole.remove(RolesScala.GUEST.Constant)
+                theUser.getRole.remove(UserLevelScala.GUEST.Constant)
               case Some(item) =>
-                if(!theUser.getRole.contains(RolesScala.GUEST.Constant)) theUser.getRole.add(RolesScala.GUEST.Constant)
+                if(!theUser.getRole.contains(UserLevelScala.GUEST.Constant)) theUser.getRole.add(UserLevelScala.GUEST.Constant)
             }
 
             reqUserProfile.roleHost match {
               case None =>
-                theUser.getRole.remove(RolesScala.HOST.Constant)
+                theUser.getRole.remove(UserLevelScala.HOST.Constant)
               case Some(item) =>
-                if(!theUser.getRole.contains(RolesScala.HOST.Constant)) theUser.getRole.add(RolesScala.HOST.Constant)
+                if(!theUser.getRole.contains(UserLevelScala.HOST.Constant)) theUser.getRole.add(UserLevelScala.HOST.Constant)
             }
 
            var userCredentials =  theUser.getOwner

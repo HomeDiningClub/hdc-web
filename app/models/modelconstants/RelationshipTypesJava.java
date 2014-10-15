@@ -9,14 +9,14 @@ public final class RelationshipTypesJava {
         public static final String Constant = "REACHABLE_BY_ROCKET";
     }
 
-    public final  static  class  HOSTING implements  RelationshipType {
+    public final  static  class  MESSAGE implements  RelationshipType {
         public  String name() { return Constant; }
-        public  static  final  String Constant = "HOSTING";
+        public  static  final  String Constant = "MESSAGE";
     }
 
-    public final  static  class  TEST implements  RelationshipType {
+    public final  static  class  RESPONSE implements  RelationshipType {
         public  String name() { return Constant; }
-        public  static  final  String Constant = "TEST";
+        public  static  final  String Constant = "RESPONSE";
     }
 
     public final static class AVATAR_IMAGE implements RelationshipType {

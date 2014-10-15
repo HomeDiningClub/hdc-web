@@ -1,0 +1,39 @@
+@(hostForm: Form[models.viewmodels.MessageForm], userToBeHost: Option[models.UserCredential])(implicit request: RequestHeader)
+@import helper.twitterBootstrap._
+
+@views.html.host.hostMain() {
+    <div class="well well-hdc">
+        <h3>@Messages("mails.hosting.form.title") @userToBeHost.get.firstName @userToBeHost.get.lastName</h3>
+        <p><em>@Messages("mails.hosting.form.text")</em></p>
+
+        @utils.Helpers.getUserFromRequest match {
+            case None => {}
+            case Some(currentUser) => {
+                @if(hostForm.get.memberId.nonEmpty && !hostForm.get.hostId.toString.equalsIgnoreCase(currentUser.objectId.toString)){
+                    <div class="grade hdc-grade">
+                        @helper.form(action = routes.HostController.applyToHost(), 'class -> "form-horizontal") {
+                            <fieldset>
+                                @helper.inputTextHorizontal(hostForm("firstName"), 'readonly -> "readonly", '_label -> "Förnamn", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostForm("lastName"), 'readonly -> "readonly", '_label -> "Efternamn", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostForm("phone"), '_label -> "Telefon", 'required -> "required", 'class -> "col-sm-10", '_error -> hostForm.error("phone"))
+                                @helper.inputTextHorizontal(hostForm("date"), 'type -> "date", '_label -> "Datum", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostForm("time"), 'type -> "time", '_label -> "Tid", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostForm("numberOfGuests"), 'type -> "number", '_label -> "Antal", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostForm("request"), 'type -> "textarea", 'rows -> 6, 'required -> "required", '_label -> "Meddelande", 'class -> "col-sm-10", '_error -> hostForm.error("request"))
+                                @helper.inputHidden(hostForm("memberId"))
+                                @helper.inputHidden(hostForm("hostId"))
+                                @helper.inputHidden(hostForm("response"))
+                            </fieldset>
+                            <div class="form-actions">
+                                <input type="submit" class="btn btn-primary pull-right" value="@Messages("mails.hosting.send.request")">
+                            </div>
+                            <br/>
+                            <br/>
+                            <br/>
+                        }
+                    </div>
+                }
+            }
+        }
+    </div>
+}

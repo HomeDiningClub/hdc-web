@@ -1,0 +1,32 @@
+@(hostReplyForm: Form[models.viewmodels.MessageForm], owner: models.UserCredential, id: String)(implicit request: RequestHeader)
+@import helper.twitterBootstrap._
+
+@views.html.host.hostReplyMain(owner, hostReplyForm, id) {
+    <div class="well well-hdc">
+        @utils.Helpers.getUserFromRequest match {
+            case None => {}
+            case Some(currentUser) => {
+                <div class="grade hdc-grade">
+                    @helper.form(action = routes.HostController.replyToGuest(), 'class -> "form-horizontal") {
+
+                        @helper.textarea(hostReplyForm("response"), '_label -> "Svar", 'required -> "required", 'class -> "col-sm-10")
+                        @helper.inputHidden(hostReplyForm("memberId"))
+                        @helper.inputHidden(hostReplyForm("hostId"))
+
+                        @helper.inputHidden(hostReplyForm("firstName"))
+                        @helper.inputHidden(hostReplyForm("lastName"))
+                        @helper.inputHidden(hostReplyForm("phone"))
+                        @helper.inputHidden(hostReplyForm("date"))
+                        @helper.inputHidden(hostReplyForm("time"))
+                        @helper.inputHidden(hostReplyForm("numberOfGuests"))
+                        @helper.inputHidden(hostReplyForm("request"))
+                        @helper.inputHidden(hostReplyForm("createdDate"))
+
+                        <input type="submit" class="btn btn-primary" value="@Messages("mails.hosting.request.reply")">
+
+                    }
+                </div>
+            }
+        }
+    </div>
+}

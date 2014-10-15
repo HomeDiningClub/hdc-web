@@ -1,0 +1,31 @@
+@(field: Field, args: (Symbol,Any)*)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
+    @label = @{ args.toMap.get('_label).map(_.toString).getOrElse("") }
+    @rows = @{ args.toMap.get('rows).map(_.toString).getOrElse("1") }
+    @readonly = @{ args.toMap.get('readonly).map(_.toString).getOrElse("") }
+    @customType = @{ args.toMap.get('type).map(_.toString).getOrElse("text") }
+    @htmlArgs = @{ args.filter(arg => arg._1.name.startsWith("_") && arg._1 != 'id && arg._1 != '_label).toMap.filter(_._1 != 'type) }
+
+@if(customType.equals("textarea")) {
+    <div class="form-group @if(field.hasErrors) {has-error}">
+        <label class="col-sm-2 control-label" for="@field.id" >@label</label>
+        <div class="col-sm-10">
+            <textarea rows="@rows"
+            class="form-control"
+            id="@field.id"
+            name="@field.name" @play.api.templates.PlayMagic.toHtmlArgs(htmlArgs) >@field.value.getOrElse("")</textarea>
+            <span class="help-block">@{field.error.map { error => error.message }}</span>
+        </div>
+    </div>
+} else {
+    <div class="form-group @if(field.hasErrors) {has-error}">
+        <label class="col-sm-2 control-label" for="@field.id" >@label</label>
+        <div class="col-sm-10">
+            <input type="@customType"
+            class="form-control"
+            id="@field.id"
+            name="@field.name"
+            value="@field.value.getOrElse("")" @play.api.templates.PlayMagic.toHtmlArgs(htmlArgs) @readonly >
+            <span class="help-block">@{field.error.map { error => error.message }}</span>
+        </div>
+    </div>
+}

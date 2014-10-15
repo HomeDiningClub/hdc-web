@@ -8,7 +8,6 @@ import models.message.Message;
 import models.modelconstants.RelationshipTypesJava;
 import models.rating.RatesRecipe;
 import models.rating.RatesUserCredential;
-import models.message.MessagesReply;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
@@ -113,34 +112,19 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     private Set<UserCredentialLikeRecipe> hasLikedRecipes;
 
 //    Messages
-    @RelatedTo(type = "REQUEST", direction = Direction.INCOMING)
-    public Set<Message> requests;
+    @Fetch
+    @RelatedTo(type = "MESSAGES", direction = Direction.BOTH)
+    public Set<Message> messages;
 
     @Fetch
-    @RelatedTo(type = "RESPONSE", direction = Direction.OUTGOING)
-    public Set<MessagesReply> responses;
+    public Set<Message> getMessages() {
+        if (messages == null)
+            this.messages = new HashSet<>();
 
-    @Fetch
-    public Set<Message> getRequests() {
-        if (requests == null)
-            this.requests = new HashSet<>();
-
-        return  this.requests;
+        return  this.messages;
     }
-
-    @Fetch
-    public Set<MessagesReply> getResponses() {
-        if (responses == null)
-            this.responses = new HashSet<>();
-
-        return  this.responses;
-    }
-
-    public void setRequests(Set<Message> requests) {
-        this.requests = requests;
-    }
-    public void setResponses(Set<MessagesReply> responses) {
-        this.responses = responses;
+    public void setMessages(Set<Message> messages) {
+        this.messages = messages;
     }
 
     // Verify the object owner
