@@ -27,6 +27,10 @@ class UserCredentialService {
   @Autowired
   var userRoleRepository: UserRoleRepository = _
 
+  @Transactional(readOnly = true)
+  def fetchUserCredential(user: UserCredential): UserCredential = {
+    template.fetch(user)
+  }
 
   // Från databasen till SecureSocial
   // IdentityId = userId + providerId

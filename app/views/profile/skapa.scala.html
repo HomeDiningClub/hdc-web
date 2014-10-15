@@ -87,6 +87,31 @@
                             )
 
                             <hr>
+
+
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td class="col50">
+                                            @if(editingProfile.get.getRole.contains("VÄRD")) {
+                                                @helper.checkbox(EnvDataForm("roleHost"), '_label -> "Värd", 'checked -> editingProfile.get.roleChecked(EnvDataForm.get.roleHost.getOrElse("")).toString)
+                                            } else {
+                                                @helper.checkbox(EnvDataForm("roleHost"), '_label -> "Värd")
+                                            }
+                                        </td>
+                                        <td>
+                                            @if(editingProfile.get.getRole.contains("GÄST")) {
+                                                @helper.checkbox(EnvDataForm("roleGuest"), '_label -> "Gäst", 'checked -> editingProfile.get.roleChecked(EnvDataForm.get.roleGuest.getOrElse("")).toString)
+                                            } else {
+                                                @helper.checkbox(EnvDataForm("roleGuest"), '_label -> "Gäst")
+                                            }
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+                            <hr>
                             @helper.inputFile(EnvDataForm("mainimage"), '_label -> Messages("profile.create.form.main-image"))
                             @if(editingProfile.isDefined && editingProfile.get.getMainImage != null) {
                                 @shared.img(editingProfile.get.getMainImage.getTransformByName("thumbnail").getUrl) - @Messages("profile.create.form.main-image.existing")

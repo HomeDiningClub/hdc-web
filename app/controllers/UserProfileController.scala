@@ -1,7 +1,7 @@
 package controllers
 
 // http://www.playframework.com/documentation/2.2.x/ScalaForms
-
+import models.modelconstants.RolesScala
 import models.profile.{TaggedFavoritesToUserProfile, TagWord, TaggedUserProfile}
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,13 +41,13 @@ class UserProfileController extends Controller with SecureSocial {
   var userProfileService: UserProfileService = _
 
   @Autowired
-  var tagWordService: TagWordService = _
+  var tagWordService : TagWordService = _
 
   @Autowired
   var contentService: ContentService = _
 
   @Autowired
-  var countyService: CountyService = _
+  var countyService : CountyService = _
 
   @Autowired
   private var recipeService: RecipeService = _
@@ -58,14 +58,9 @@ class UserProfileController extends Controller with SecureSocial {
   @Autowired
   var userCredentialService : services.UserCredentialService = _
 
-  // Constants
-  val FOOD = "food-tab"
-  val BLOG = "blog-tab"
-  val REVIEWS = "reviews-tab"
-  val INBOX = "inbox-tab"
-  val FAVOURITES = "favourites-tab"
 
   // Form
+
   val userProfileForm : play.api.data.Form[models.formdata.UserProfileForm]  = play.api.data.Form(
     mapping(
       "userName" -> text,
@@ -86,25 +81,26 @@ class UserProfileController extends Controller with SecureSocial {
 
 // text.verifying("Inte ett unikt användarnamn", txt=>isNew(txt))
 
-    val AnvandareForm = Form(
-      mapping(
-        "name" -> text,
-        "name2" -> text,
-        "aboutmeheadline" -> text,
-        "aboutme" -> text,
-        "county" -> text,
-        "streetAddress" -> text,
-        "zipCode" -> text,
-        "city" -> text,
-        "phoneNumber" -> text,
-        "personnummer" -> text,
-        "acceptTerms"  -> boolean
-      )
-      (EnvData.apply) (EnvData.unapply)
-        verifying ("Profilnamn måste vara unikt", f => isUniqueProfileName(f.name, f.name2))
-        verifying ("Personnummer måste vara korrekt angivet", g => isCorrectPersonnummer(g.personnummer))
-        verifying ("Du måste acceptera vilkoren för att bli medlem", h => h.acceptTerms == true)
-    )
+  val AnvandareForm = Form(
+    mapping(
+      "name" -> text,
+      "name2" -> text,
+      "aboutmeheadline" -> text,
+      "aboutme" -> text,
+      "county" -> text,
+      "streetAddress" -> text,
+      "zipCode" -> text,
+      "city" -> text,
+      "phoneNumber" -> text,
+      "personnummer" -> text,
+      "acceptTerms"  -> boolean,
+      "roleHost" -> optional(text),
+      "roleGuest" -> optional(text)
+  )(EnvData.apply) (EnvData.unapply)
+    verifying ("Profilnamn måste vara unikt", f => isUniqueProfileName(f.name, f.name2))
+    verifying ("Personnummer måste vara korrekt angivet", g => isCorrectPersonnummer(g.personnummer))
+    verifying ("Du måste acceptera vilkoren för att bli medlem", h => h.acceptTerms == true)
+  )
 
   val tagForm = Form(
     mapping(
@@ -112,6 +108,26 @@ class UserProfileController extends Controller with SecureSocial {
     )
       (TagsData.apply) (TagsData.unapply)
   )
+
+
+
+  // Constants
+  val FOOD = "food-tab"
+  val BLOG = "blog-tab"
+  val REVIEWS = "reviews-tab"
+  val INBOX = "inbox-tab"
+  val FAVOURITES = "favourites-tab"
+
+  // Link-name, title, link-href, class-name, active, showOnlyOnMyProfile
+  def menuItemsList = Seq[(String,String,String,String,Boolean)](
+    (Messages("profile.tabs.food.name"), Messages("profile.tabs.food.title"), FOOD, "active", false),
+    (Messages("profile.tabs.blog.name"), Messages("profile.tabs.blog.title"), BLOG, "", false),
+    (Messages("profile.tabs.ratings.name"), Messages("profile.tabs.ratings.title"), REVIEWS, "", false),
+    (Messages("profile.tabs.inbox.name"), Messages("profile.tabs.inbox.title"), INBOX, "", true),
+    (Messages("profile.tabs.favourites.name"), Messages("profile.tabs.favourites.title"), FAVOURITES, "", true)
+  )
+
+
 
   def isCorrectPersonnummer(personnummer : String) : Boolean = {
     if(personnummer.size < 1) return true
@@ -193,7 +209,7 @@ class UserProfileController extends Controller with SecureSocial {
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) =>
         Ok(views.html.profile.index(profile,
-          FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,
+          menuItemsList,FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,
           recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner),
           tagWordService.findByProfileAndGroup(profile,"profile"),
           isThisMyProfile = isThisMyProfile(profile)))
@@ -324,13 +340,19 @@ def edit = SecuredAction { implicit request =>
 
   var personnummer = theUser.getOwner.personNummer
 
-
   var countiesList = getCounties
 
   var countyItter = countiesList.iterator
   while(countyItter.hasNext) {
     var nextCo = countyItter.next()
   }
+
+  //  Test
+  var host: String = ""
+  var guest: String = ""
+
+  if (theUser.getRole.contains(RolesScala.HOST.Constant)) { host = RolesScala.HOST.Constant}
+  if (theUser.getRole.contains(RolesScala.GUEST.Constant)) { guest = RolesScala.GUEST.Constant}
 
 
   val provider = request.user.identityId.providerId
@@ -387,7 +409,7 @@ if(userTags != null) {
 
 
 
-  //println("county stored : [" +  theUser.county + "]")
+  println("county stored : [" +  theUser.county + "]")
 
   try {
     println("county name: " + theUser.getLocations.iterator.next().county.name)
@@ -413,7 +435,9 @@ if(userTags != null) {
     theUser.city, // city
     theUser.phoneNumber, // phone number
     personnummer, // TODO
-    theUser.isTermsOfUseApprovedAccepted // isTermsOfUseApprovedAccepted
+    theUser.isTermsOfUseApprovedAccepted, // isTermsOfUseApprovedAccepted
+    Option(host),
+    Option(guest) // TODO
   )
 
   val nyForm =  AnvandareForm.fill(eData)
@@ -476,7 +500,9 @@ if(userTags != null) {
     val nyForm =  tagForm.fill(tData)
 
 
+  //   Ok(views.html.profile.skapa(nyForm, retTagList, typ, optionsLocationAreas = getCounties))
     Ok(views.html.profile.tags(tagForm, retTagList, typ))
+  //Ok("test")
   }
 
 
@@ -698,13 +724,8 @@ if(userTags != null) {
         var countyId              : String = ""
         var acceptDemads          : Boolean = false
 
-
-        println("test");
-
-
         AnvandareForm.bindFromRequest.fold(
           errors => {
-
             println("error ..." +errors.toString)
 
             BadRequest(views.html.profile.skapa(errors, optionsLocationAreas = getCounties, termsAndConditions = contentService.getTermsAndConditions))
@@ -732,6 +753,19 @@ if(userTags != null) {
            val userCred = Helpers.getUserFromRequest.get
            var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
+            reqUserProfile.roleGuest match {
+              case None =>
+                theUser.getRole.remove(RolesScala.GUEST.Constant)
+              case Some(item) =>
+                if(!theUser.getRole.contains(RolesScala.GUEST.Constant)) theUser.getRole.add(RolesScala.GUEST.Constant)
+            }
+
+            reqUserProfile.roleHost match {
+              case None =>
+                theUser.getRole.remove(RolesScala.HOST.Constant)
+              case Some(item) =>
+                if(!theUser.getRole.contains(RolesScala.HOST.Constant)) theUser.getRole.add(RolesScala.HOST.Constant)
+            }
 
            var userCredentials =  theUser.getOwner
 
@@ -748,8 +782,6 @@ if(userTags != null) {
            theUser.zipCode              = zipCode
            theUser.streetAddress        = streetAddress
            theUser.phoneNumber          = phoneNumber
-           theUser.isTermsOfUseApprovedAccepted = acceptDemads
-           theUser.termsOfUseApproved = java.util.Calendar.getInstance()
 
 
 //        This part is not needed since tags or on it's own page now, activate this code if they are moved back
@@ -816,6 +848,36 @@ if(userTags != null) {
 
       Redirect(routes.UserProfileController.edit())
     })
+  }
+
+
+
+  def saveUserProfile = Action { implicit request =>
+      userProfileForm.bindFromRequest.fold(
+        errors => {
+
+          if(errors.hasErrors) {
+            println("Error in Form : "  + errors.toString)
+          }
+          println("#error#")
+          // Felaktigt ifyllt formulär
+          // Ok(views.html.profile.updateUserProfile(errors))
+          Ok("eror")
+        },
+        userProfileForm => {
+
+          // Spara UserProfile
+          // var userProfileData = form2Data(userProfile)
+          var userProfile : models.UserProfile = new models.UserProfile
+
+          //userProfileService.saveUserProfile(userProfile)
+
+          // Hämta värden
+          //val savedForm =  userProfileForm.fill()
+          // Ok(views.html.profile.updateUserProfile())
+          Ok(".............................................")
+        }
+      )
   }
 
 

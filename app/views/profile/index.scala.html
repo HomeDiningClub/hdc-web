@@ -1,4 +1,5 @@
 @(userProfile: models.UserProfile,
+        menuItems: Seq[(String, String, String, String, Boolean)],
         tab1: String,
         tab2: String,
         tab3: String,
@@ -10,7 +11,40 @@
 
     @pageScripts= {
         <script>
-        $(document).ready(function(){
+            var showChar = 100;
+            var ellipsestext = "...";
+            var moretext = "mer";
+            var lesstext = "mindre";
+
+            $(document).ready(function(){
+
+
+            $('.more').each(function() {
+                var content = $(this).html();
+
+                if(content.length > showChar) {
+
+                    var c = content.substr(0, showChar);
+                    var h = content.substr(showChar-1, content.length - showChar);
+
+                    var html = c + '<span class="moreellipses">' + ellipsestext+ '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
+
+                    $(this).html(html);
+                }
+            });
+
+            $(".morelink").click(function(){
+                if($(this).hasClass("less")) {
+                    $(this).removeClass("less");
+                    $(this).html(moretext);
+                } else {
+                    $(this).addClass("less");
+                    $(this).html(lesstext);
+                }
+                    $(this).parent().prev().toggle();
+                    $(this).prev().toggle();
+                    return false;
+            });
 
         $("#rf").click(function(){
         $.get("/profile/favorite/remove?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
@@ -39,7 +73,8 @@
             $( "#rf" ).hide();
 
         } else {
-            $( "#af,#rf,#afrf-wrapper" ).hide();
+            $( "#af" ).hide();
+            $( "#rf" ).hide();
         }
 
         });
@@ -60,28 +95,21 @@
                         <section>
                             <article>
                                 <h1 class="page-header">@userProfile.getOwner.firstName</h1>
+                                <h2>@userProfile.aboutMeHeadline</h2>
                                 @shared.grade(inputId = "host-grade", initialValue = userProfile.getOwner.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = userProfile.getOwner.getNrOfRatings)
-                                @if(!isThisMyProfile) {
-                                    @RatingController.renderUserRateForm(userProfile.getOwner, routes.UserProfileController.viewProfileByName(userProfile.profileLinkName).url)(request)
-                                }
+                                @RatingController.renderUserRateForm(userProfile.getOwner, routes.UserProfileController.viewProfileByName(userProfile.profileLinkName).url)(request)
 
                                 @* Member id hidden for now:
                                 <div class="memberid clearfix"><p><strong>@Messages("profile.memberid.text")</strong>&nbsp;@userProfile.getOwner.objectId</p></div>*@
 
-                                <!-- Share / Like / Fav -->
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <div id="afrf-wrapper" class="btn-group-likes">
-                                            <a id="af" hidden="true" class="btn btn-default btn-favorite" title="@Messages("favorite.add.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.add.text")</a>
-                                            <a id="rf" hidden="true" class="btn btn-default btn-favorite btn-favorite-active" title="@Messages("favorite.remove.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.remove.text")</a>
-                                        </div>
-                                        @LikeController.renderUserLikeForm(userProfile.getOwner)(request)
-                                        @shared.fbShare(url = request.uri)
-                                    </div>
-                                </div>
-                                <hr class="hr-orange hr-like">
+                                <a id="af" hidden="true">
+                                    <span class="glyphicon glyphicon-paperclip"></span>&nbsp;Lägg till som favorit
+                                </a>
 
-                                <h2>@userProfile.aboutMeHeadline</h2>
+                                <a id="rf" hidden="true">
+                                    <span class="glyphicon glyphicon-paperclip"></span>&nbsp;Ta bort favorit
+                                </a>
+
 
                                 <p id="result"></p>
 
@@ -93,51 +121,59 @@
                     </div>
                     <div class="col-xs-12 col-md-6 big-margin-top">
 
-                        @userProfile.getMainImage match {
-                            case null => {}
-                            case image: models.files.ContentFile => {
-                                <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide host-image-gallery">
-                                        <!-- Slider carousel items -->
-                                    <div class="carousel-inner">
-                                        <div class="active item" data-slide-number="0">@shared.img(image.getTransformByName("normal").getUrl, cssClass = "img-responsive")</div>
-                                    </div>
-                                    @*<!-- Carousel nav controls -->*@
-                                    @*<a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>*@
-                                    @*<a class="carousel-control right hidden-md hidden-lg" href="#host-main-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>*@
-                                </div>
-                                @*<!-- Thumbnails, don't show responsive -->*@
-                                @*<ul class="host-main-carousel-thumbs list-inline hidden-xs hidden-sm">*@
-                                @*<li class="col-md-3"><a id="carousel-selector-0" class="selected">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</a></li>*@
-                                @*<li class="col-md-3"><a id="carousel-selector-1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</a></li>*@
-                                @*<li class="col-md-3"><a id="carousel-selector-2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</a></li>*@
-                                @*<li class="col-md-3"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</a></li>*@
-                                @*<li class="col-md-3"><a id="carousel-selector-4">@shared.img("images/host/image5.jpg", cssClass = "img-responsive")</a></li>*@
-                                @*</ul>*@
-                            }
-                        }
 
-                        <div class="panel panel-default panel-dropshadow big-margin-top">
-                            <div class="panel-body">
-                                @shared.tagList(tagList, userProfile.getOwner.firstName())
-                                <br>
-                                @if(userProfile.getLocations.iterator().hasNext()){
-                                    <strong>@Messages("profile.county.text")</strong> @userProfile.getLocations.iterator().next().county.name
-                                }
+                    @userProfile.getMainImage match {
+                        case null => {}
+                        case image: models.files.ContentFile => {
+                            <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide host-image-gallery">
+                                    <!-- Slider carousel items -->
+                                <div class="carousel-inner">
+                                    <div class="active item" data-slide-number="0">@shared.img(image.getTransformByName("normal").getUrl, cssClass = "img-responsive")</div>
+                                </div>
+                                @*<!-- Carousel nav controls -->*@
+                                @*<a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>*@
+                                @*<a class="carousel-control right hidden-md hidden-lg" href="#host-main-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>*@
                             </div>
+                            @*<!-- Thumbnails, don't show responsive -->*@
+                            @*<ul class="host-main-carousel-thumbs list-inline hidden-xs hidden-sm">*@
+                            @*<li class="col-md-3"><a id="carousel-selector-0" class="selected">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</a></li>*@
+                            @*<li class="col-md-3"><a id="carousel-selector-1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</a></li>*@
+                            @*<li class="col-md-3"><a id="carousel-selector-2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</a></li>*@
+                            @*<li class="col-md-3"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</a></li>*@
+                            @*<li class="col-md-3"><a id="carousel-selector-4">@shared.img("images/host/image5.jpg", cssClass = "img-responsive")</a></li>*@
+                            @*</ul>*@
+                        }
+                    }
+
+                    <div class="panel panel-default big-margin-top">
+                        <div class="panel-body">
+                            @shared.tagList(tagList, userProfile.getOwner.firstName())
+                            <br>
+                            @if(userProfile.getLocations.iterator().hasNext()){
+                                <strong>@Messages("profile.county.text")</strong> @userProfile.getLocations.iterator().next().county.name
+                            }
                         </div>
+                    </div>
+
+
+                    @shared.fbShare(url = request.uri)
+
                     </div>
                 </div>
                 <div class="row">
+                    <div>
+                        @if(!isThisMyProfile && userProfile.isUserHost) {
+                            @HostController.renderHostForm(userProfile.getOwner)(request)
+                        }
+                    </div>
                     <div class="col-xs-12 col-md-12 big-margin-top">
                         <nav>
-                            <ul class="nav nav-tabs nav-tabs-profile">
-                                <li class="active"><a data-toggle="tab" href="#@tab1" title="@Messages("profile.tabs.food.title")">@Messages("profile.tabs.food.name")</a></li>
-                                <li><a data-toggle="tab" href="#@tab2" title="@Messages("profile.tabs.blog.title")">@Messages("profile.tabs.blog.name")</a></li>
-                                <li><a data-toggle="tab" href="#@tab3" title="@Messages("profile.tabs.ratings.title")">@Messages("profile.tabs.ratings.name")</a></li>
-                                @if(isThisMyProfile) {
-                                    <li><a data-toggle="tab" href="#@tab4" title="@Messages("profile.tabs.inbox.title")">@Messages("profile.tabs.inbox.name")</a></li>
-                                    <li><a data-toggle="tab" href="#@tab5" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
+                            <ul class="nav nav-tabs">
+                            @for(nav <- menuItems) {
+                                @if((nav._5 && isThisMyProfile) || !nav._5) {
+                                    <li class="@nav._4"><a data-toggle="tab" href="#@nav._3" title="@nav._2">@nav._1</a></li>
                                 }
+                            }
                             </ul>
                         </nav>
 
@@ -165,7 +201,95 @@
                                 Tab3
                             </div>
                             <div class="tab-pane tab-hdc fade" id="@tab4">
-                                Tab4
+                                @if(isThisMyProfile) {
+
+                                    @*
+                                    @for(messageRelation <- userProfile.getOwner.getGuest) {
+
+                                        @HostController.renderHostReplyForm(messageRelation.requestingGuest, messageRelation)(request)
+                                    }
+                                    *@
+
+                                    @for(msg <- userProfile.getOwner.getRequests) {
+                                        @HostController.renderHostReplyForm(msg)(request)
+                                    }
+
+                                    @for(replies <- userProfile.getOwner.getResponses) {
+                                        <br/>
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Datum : </strong>
+                                                    </td>
+                                                    <td>
+                                                        @replies.getLastModifiedDate.format("yyyy-MM-dd HH:mm")
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Från : </strong>
+                                                    </td>
+                                                    <td>
+                                                        @replies.getOwner.firstName @replies.getOwner.lastName
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Svar : </strong>
+                                                    </td>
+                                                    <td>
+                                                        @replies.response
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <br/>
+                                    }
+
+                                    @*
+                                    @for(guest <- userProfile.getOwner.getHost) {
+                                        @if(guest.response.isEmpty == false) {
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Datum : </strong>
+                                                        </td>
+                                                        <td>
+                                                        @guest.getLastModifiedDate.format("yyyy-MM-dd HH:mm")
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Från : </strong>
+                                                        </td>
+                                                        <td>
+                                                            @guest.userWhoIsHosting.firstName @guest.userWhoIsHosting.lastName
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>Svar : </strong>
+                                                        </td>
+                                                        <td>
+                                                        @guest.response
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        }
+                                    }
+                                    *@
+                                }
                             </div>
                             @if(isThisMyProfile) {
                             <div class="tab-pane tab-hdc fade" id="@tab5">

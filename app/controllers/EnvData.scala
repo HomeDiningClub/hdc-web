@@ -11,5 +11,7 @@ case class EnvData(
         city            : String,
         phoneNumber     : String,
         personnummer    : String,
-        acceptTerms     : Boolean
+        acceptTerms     : Boolean,
+        roleHost        : Option[String],
+        roleGuest       : Option[String]
 )

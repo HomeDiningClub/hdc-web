@@ -9,9 +9,28 @@ object RelationshipTypesScala {
      def name(): String = Constant
    }
 
+  object  HOSTING {
+    final val Constant = "HOSTING"
+    def name(): String = Constant
+  }
+
+  object  TEST {
+    final val Constant = "TEST"
+    def name(): String = Constant
+  }
+
   object AVATAR_IMAGE {
     final val Constant = "AVATAR_IMAGE"
     def name(): String = Constant
+  }
+
+  object LIKES_USER {
+    final val Constant = "LIKES_USER"
+    def name(): String = Constant
+  }
+
+  object LIKES_RECIPE {
+    final val Constant = "LIKES_RECIPE"
   }
 
   object MAIN_IMAGE {
@@ -46,16 +65,6 @@ object RelationshipTypesScala {
 
   object RATED_RECIPE {
     final val Constant = "RATED_RECIPE"
-    def name(): String = Constant
-  }
-
-  object LIKES_USER {
-    final val Constant = "LIKES_USER"
-    def name(): String = Constant
-  }
-
-  object LIKES_RECIPE {
-    final val Constant = "LIKES_RECIPE"
     def name(): String = Constant
   }
 

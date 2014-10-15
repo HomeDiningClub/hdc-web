@@ -46,6 +46,8 @@ footer.text=© Home Dining Club AB
 footer.link.mail.href=mailto:info@homediningclub.se?Subject=Hej%20Home%20dining%20club
 footer.link.mail.title=Maila till info@homediningclub.se
 footer.link.mail.text=info@homediningclub.se
+mail.text.no.reply=no-reply@homediningclub.se
+mail.hdc.text=Du har fått ett nytt meddelande i din HDC inbox
 
 # Banner
 banner.header=Annons:
@@ -169,7 +171,7 @@ profile.create.form.area=Län
 profile.create.form.tagwords=Vad för typ av mat beskriver din matlagning bäst?
 profile.create.form.avatar-image=Fotografi på dig själv
 profile.create.form.avatar-image.existing=(välj en ny bild för att ersätta existerande bild)
-profile.create.form.main-image=Insperationsbild
+profile.create.form.main-image=Inspirationsbild
 profile.create.form.main-image.existing=(välj en ny bild för att ersätta existerande bild)
 
 profile.create.form.streetAddress=Gatuadress
@@ -522,3 +524,12 @@ mails.unknownEmail.body.maillink=admin@homediningclub.se
 mails.unknownEmail.body.mailtitle=admin@homediningclub.se
 
 mails.passwordResetOk.subject=Bekräftelse för lösenordsåterställning
+
+mails.hosting.form.title= Förfrågan till
+mails.hosting.form.text=
+mails.hosting.send.request=Skicka förfrågan
+mails.hosting.request.reply=Svara
+mails.hosting.request.read=Läs
+mails.hosting.send.request.host=Skicka en förfrågan till mig!
+mails.hosting.not.logged.in=Du är inte inloggad och kan inte skicka en förfrågan
+mails.hosting.from.request=Förfrågan från

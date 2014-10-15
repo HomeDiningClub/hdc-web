@@ -16,7 +16,8 @@ GET         /content/:contentName                                @controllers.Co
 #GET         /become-a-host/practical-info              @controllers.ContentPageController.practicalInfo
 #GET         /become-a-host/example-host-text           @controllers.ContentPageController.exampleHostText
 #GET         /references                                @controllers.ContentPageController.references
-#GET         /about-us                                  @controllers.ContentPageController.aboutUs
+GET         /about-us                                            @controllers.AboutUsController.aboutUs
+POST        /about-us                                            @controllers.AboutUsController.suggestFeatures
 #GET         /about-us/press                            @controllers.ContentPageController.press
 #GET         /about-us/user-terms-and-conditions        @controllers.ContentPageController.userTermsAndConditions
 #GET         /faq                                       @controllers.ContentPageController.faq
@@ -32,7 +33,7 @@ GET         /profile/view-my-profile                             @controllers.Us
 GET         /profile/edit                                        @controllers.UserProfileController.edit
 POST        /profile/skicka                                      @controllers.UserProfileController.editSubmit
 #POST        /profile/skapa                                       @controllers.UserProfileController.save
-#REFACT_ME POST        /profile/spara                                       @controllers.UserProfileController.saveUserProfile
+POST        /profile/spara                                       @controllers.UserProfileController.saveUserProfile
 #GET         /profile/ny                                          @controllers.UserProfileController.skapaNyProfil
 #GET         /profile/find/:userName                              @controllers.UserProfileController.hamtaProfil(userName)
 GET         /profile/showtag                                     @controllers.UserProfileController.showTags
@@ -71,6 +72,8 @@ POST        /rate/user                                           controllers.Rat
 # Like
 POST        /like/user                                           controllers.LikeController.likeSubmit
 
+POST        /apply/host                                          controllers.HostController.applyToHost
+POST        /reply/guest                                         controllers.HostController.replyToGuest
 
 # Login page
 GET         /login                                               securesocial.controllers.LoginPage.login
@@ -92,10 +95,6 @@ POST        /password                                            securesocial.co
 GET         /authenticate/:provider                              securesocial.controllers.ProviderController.authenticate(provider)
 POST        /authenticate/:provider                              securesocial.controllers.ProviderController.authenticateByPost(provider)
 GET         /not-authorized                                      securesocial.controllers.ProviderController.notAuthorized
-
-
-
-
 
 
 # TEST

@@ -9,9 +9,29 @@ public final class RelationshipTypesJava {
         public static final String Constant = "REACHABLE_BY_ROCKET";
     }
 
+    public final  static  class  HOSTING implements  RelationshipType {
+        public  String name() { return Constant; }
+        public  static  final  String Constant = "HOSTING";
+    }
+
+    public final  static  class  TEST implements  RelationshipType {
+        public  String name() { return Constant; }
+        public  static  final  String Constant = "TEST";
+    }
+
     public final static class AVATAR_IMAGE implements RelationshipType {
         public String name() { return Constant; }
         public static final String Constant = "AVATAR_IMAGE";
+    }
+
+    public final static class LIKES_USER implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "LIKES_USER";
+    }
+
+    public final static class LIKES_RECIPE implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "LIKES_RECIPE";
     }
 
     public final static class MAIN_IMAGE implements RelationshipType {
@@ -47,16 +67,6 @@ public final class RelationshipTypesJava {
     public final static class RATED_RECIPE implements RelationshipType {
         public String name() { return Constant; }
         public static final String Constant = "RATED_RECIPE";
-    }
-
-    public final static class LIKES_USER implements RelationshipType {
-        public String name() { return Constant; }
-        public static final String Constant = "LIKES_USER";
-    }
-
-    public final static class LIKES_RECIPE implements RelationshipType {
-        public String name() { return Constant; }
-        public static final String Constant = "LIKES_RECIPE";
     }
 
     public final static class HAS_RECIPES implements RelationshipType {

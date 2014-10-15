@@ -4,6 +4,7 @@ import interfaces.IEditable;
 import models.base.AuditEntity;
 import models.files.ContentFile;
 import models.modelconstants.RelationshipTypesJava;
+import models.modelconstants.RolesJava;
 import models.profile.TagWord;
 import models.location.County;
 import models.profile.TaggedFavoritesToUserProfile;
@@ -26,7 +27,7 @@ import java.util.Calendar;
 @NodeEntity
 public class UserProfile extends AuditEntity implements IEditable {
 
-  //public String county = "";
+  public String county = "";
 
 
 /*
@@ -88,6 +89,8 @@ public class UserProfile extends AuditEntity implements IEditable {
     @RelatedToVia(type = "TAGGED_ON")
     private Set<TaggedUserProfile> userProfileTag;
 
+    private Set<String> role;
+
     @RelatedToVia(type = "LOCATION_AT")
     private Set<TaggedLocationUserProfile> userLocationProfileTag;
 
@@ -106,6 +109,36 @@ public class UserProfile extends AuditEntity implements IEditable {
     @RelatedTo(type = RelationshipTypesJava.AVATAR_IMAGE.Constant, direction = Direction.OUTGOING)
     private ContentFile avatarImage;
 
+    @Fetch
+    public Set<String> getRole() {
+
+        if(this.role == null) {
+            this.role = new HashSet<>();
+            role.add(RolesJava.GUEST.Constant);
+            role.add(RolesJava.HOST.Constant);
+        }
+
+        return this.role;
+    }
+
+    public void setHost(Set<String> role) {
+        this.role = role;
+    }
+
+    public boolean isUserHost() {
+        if (role != null && ( role.contains(RolesJava.GUEST.Constant) && role.contains(RolesJava.HOST.Constant) ) )
+            return  true;
+        else
+            return false;
+    }
+
+    public String roleChecked(String r) {
+
+        if (role.contains(r))
+            return "checked";
+        else
+            return  "";
+    }
 
     @Fetch
     public ContentFile getMainImage() {

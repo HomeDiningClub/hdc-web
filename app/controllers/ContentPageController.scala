@@ -1,22 +1,30 @@
 package controllers
 
+import com.typesafe.plugin.MailerAPI
+import constants.FlashMsgConstants
+import enums.RoleEnums
+import play.api.data.Form
+import play.api.data.Forms._
 import play.api.mvc._
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
 import play.api.i18n.Messages
 import org.springframework.beans.factory.annotation.Autowired
 import services.{MailService, ContentService}
-import models.viewmodels.{MenuItem, AddContentForm}
+import models.viewmodels.{EmailAndName, AboutUsForm, MenuItem, AddContentForm}
 import play.api.Logger
 import java.util.UUID
 import models.content.ContentPage
-import scala.collection.mutable.ListBuffer
+import utils.authorization.WithRole
 
 @SpringController
 class ContentPageController extends Controller with securesocial.core.SecureSocial {
 
   @Autowired
   private var contentService: ContentService = _
+
+  @Autowired
+  private var mailService: MailService = _
 
   // Dynamic content
   def viewContentByName(contentName: String) = UserAwareAction { implicit request =>
@@ -25,7 +33,10 @@ class ContentPageController extends Controller with securesocial.core.SecureSoci
     contentService.findContentPageByRoute(contentName: String) match {
       case Some(item) =>
         val childPages = contentService.getAndMapRelatedPages(item.objectId)
-        Ok(views.html.contentcolumns.onecolumn(urlTitle = item.title, menuList = childPages, column1Header = item.title, column1PreAmble = item.preamble, column1Body = item.mainBody))
+        if(item.title == "Om Oss")
+          Redirect(routes.AboutUsController.aboutUs())
+        else
+          Ok(views.html.contentcolumns.onecolumn(urlTitle = item.title, menuList = childPages, column1Header = item.title, column1PreAmble = item.preamble, column1Body = item.mainBody))
       case None =>
         val errMess = "Cannot find content using name:" + contentName
         Logger.debug(errMess)

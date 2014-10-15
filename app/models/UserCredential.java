@@ -4,9 +4,11 @@ import interfaces.IEditable;
 import models.base.AuditEntity;
 import models.like.UserCredentialLikeRecipe;
 import models.like.UserCredentialLikeUserCredential;
+import models.message.Message;
 import models.modelconstants.RelationshipTypesJava;
 import models.rating.RatesRecipe;
 import models.rating.RatesUserCredential;
+import models.message.MessagesReply;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
@@ -90,7 +92,7 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     @RelatedTo(type = "IN_PROFILE", direction = Direction.OUTGOING)
     public Set<UserProfile> profiles;
 
-    // Ratings
+    // Rating
     @RelatedToVia(type = RelationshipTypesJava.RATED_USER.Constant, direction = Direction.INCOMING)
     private Set<RatesUserCredential> ratings;
 
@@ -110,6 +112,36 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     @RelatedToVia(type = RelationshipTypesJava.LIKES_RECIPE.Constant, direction = Direction.OUTGOING)
     private Set<UserCredentialLikeRecipe> hasLikedRecipes;
 
+//    Messages
+    @RelatedTo(type = "REQUEST", direction = Direction.INCOMING)
+    public Set<Message> requests;
+
+    @Fetch
+    @RelatedTo(type = "RESPONSE", direction = Direction.OUTGOING)
+    public Set<MessagesReply> responses;
+
+    @Fetch
+    public Set<Message> getRequests() {
+        if (requests == null)
+            this.requests = new HashSet<>();
+
+        return  this.requests;
+    }
+
+    @Fetch
+    public Set<MessagesReply> getResponses() {
+        if (responses == null)
+            this.responses = new HashSet<>();
+
+        return  this.responses;
+    }
+
+    public void setRequests(Set<Message> requests) {
+        this.requests = requests;
+    }
+    public void setResponses(Set<MessagesReply> responses) {
+        this.responses = responses;
+    }
 
     // Verify the object owner
     @Transient
@@ -147,31 +179,6 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
 
         this.ratings.add(ratingToAdd);
     }
-
-    @Fetch
-    public Set<RatesUserCredential> getRatings() {
-        if(this.ratings == null)
-            this.ratings = new HashSet<>();
-
-        return this.ratings;
-    }
-
-    @Fetch
-    public Set<RatesUserCredential> getHasRatedUsers() {
-        if(this.hasRatedUsers == null)
-            this.hasRatedUsers = new HashSet<>();
-
-        return this.hasRatedUsers;
-    }
-
-    @Fetch
-    public Set<RatesRecipe> getHasRatedRecipes() {
-        if(this.hasRatedRecipes == null)
-            this.hasRatedRecipes = new HashSet<>();
-
-        return this.hasRatedRecipes;
-    }
-
 
     // Like
     @Fetch
@@ -216,6 +223,29 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
         this.likes.add(likeToAdd);
     }
 
+    @Fetch
+    public Set<RatesUserCredential> getRatings() {
+        if(this.ratings == null)
+            this.ratings = new HashSet<>();
+
+        return this.ratings;
+    }
+
+    @Fetch
+    public Set<RatesUserCredential> getHasRatedUsers() {
+        if(this.hasRatedUsers == null)
+            this.hasRatedUsers = new HashSet<>();
+
+        return this.hasRatedUsers;
+    }
+
+    @Fetch
+    public Set<RatesRecipe> getHasRatedRecipes() {
+        if(this.hasRatedRecipes == null)
+            this.hasRatedRecipes = new HashSet<>();
+
+        return this.hasRatedRecipes;
+    }
 
 
     public UserCredential() {

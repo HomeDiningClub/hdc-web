@@ -28,6 +28,9 @@ object InstancedServices {
 
   @Autowired
   var nodeEntityService: NodeEntityService = _
+
+  @Autowired
+  var hostingService: MessageService = _
 }
 
 // Just here for default constructor, don't add code in this class!
