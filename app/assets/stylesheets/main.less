@@ -261,11 +261,22 @@ label{
 input[type="submit"],
 input[type="reset"]
 {
-
   margin-top:10px;
   margin-bottom:10px;
 }
 
+.btn-link {
+  color:@link-color;
+}
+.btn-link:active,
+.btn-link:hover,
+.btn-link:focus
+{
+  text-decoration: none;
+  color: @link-color-hover;
+}
+
+.btn-link:focus,
 .btn-primary:focus,
 .btn:focus,
 input[type="submit"]:focus,
@@ -477,7 +488,7 @@ input[type="reset"]:hover
   line-height:3.3em;
 }
 .btn-rate-popover {
-  margin-left:10px;
+  margin-top:7px;
 }
 .rate-popover h3 {
   margin-top:0px;

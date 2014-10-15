@@ -47,7 +47,7 @@ class ContentService {
 
   @Transactional(readOnly = true)
   def getAsideNewsItems: Option[List[ContentPage]] = {
-    contentPageRepository.findByContentCategoriesAndContentState(Array(ContentCategoryEnums.ASIDE_STARTPAGE.toString),ContentStateEnums.PUBLISHED.toString).asScala.toList match {
+    contentPageRepository.findByContentCategoriesAndContentState(ContentCategoryEnums.ASIDE_STARTPAGE.toString,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
       case items => Some(items)
     }
@@ -55,7 +55,7 @@ class ContentService {
 
   @Transactional(readOnly = true)
   def getMainMenuItems: Option[List[ContentPage]] = {
-    contentPageRepository.findByContentCategoriesAndVisibleInMenusAndContentState(Array(ContentCategoryEnums.MAINMENU.toString),true,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
+    contentPageRepository.findByContentCategoriesAndVisibleInMenusAndContentState(ContentCategoryEnums.MAINMENU.toString,true,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
       case items => Some(items)
     }
@@ -63,7 +63,7 @@ class ContentService {
 
   @Transactional(readOnly = true)
   def getQuickLinksItems: Option[List[ContentPage]] = {
-    contentPageRepository.findByContentCategoriesAndVisibleInMenusAndContentState(Array(ContentCategoryEnums.QUICKLINKS.toString),true,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
+    contentPageRepository.findByContentCategoriesAndVisibleInMenusAndContentState(ContentCategoryEnums.QUICKLINKS.toString,true,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
       case items => Some(items)
     }
@@ -71,7 +71,7 @@ class ContentService {
 
   @Transactional(readOnly = true)
   def getTermsAndConditions: Option[ContentPage] = {
-    contentPageRepository.findByContentCategoriesAndContentState(Array(ContentCategoryEnums.TERMS.toString),ContentStateEnums.PUBLISHED.toString).asScala.toList match {
+    contentPageRepository.findByContentCategoriesAndContentState(ContentCategoryEnums.TERMS.toString,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
       case items => Some(items.head)
     }

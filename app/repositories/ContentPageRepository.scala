@@ -10,12 +10,17 @@ trait ContentPageRepository extends GraphRepository[ContentPage] {
   // Auto-mapped by Spring
   def findByobjectId(objectId: UUID): ContentPage
   def findByRouteAndContentState(route: String, contentState: String): ContentPage
-  def findByRouteAndContentCategoriesAndVisibleInMenusAndContentState(route: String, contentCategories: Array[String], visibleInMenus: Boolean, contentState: String): ContentPage
-  def findByContentCategoriesAndContentState(contentCategories: Array[String], contentState: String): java.util.List[ContentPage]
-  def findByContentCategoriesAndVisibleInMenusAndContentState(contentCategories: Array[String], visibleInMenus: Boolean, contentState: String): java.util.List[ContentPage]
-  def findByContentCategories(contentCategories: Array[String]): java.util.List[ContentPage]
 
-//  @Query("MATCH (parPage)-[:`PARENT_PAGE`]->(childPage) WHERE parPage.objectId={0} OR childPage.objectId={0} RETURN cntPage")
-//  def findByParentPageObjectIdOrIsParentForObjectId(parentPageObjectId: UUID, isParentForObjectId: UUID): java.util.List[ContentPage]
+  @Query("MATCH (n:`ContentPage`) WHERE n.route = {0} AND HAS(n.contentCategories) AND {1} IN n.contentCategories AND n.visibleInMenus = {2} AND n.contentState = {3} RETURN n")
+  def findByRouteAndContentCategoriesAndVisibleInMenusAndContentState(route: String, contentCategory: String, visibleInMenus: Boolean, contentState: String): ContentPage
+
+  @Query("MATCH (n:`ContentPage`) WHERE HAS(n.contentCategories) AND {0} IN n.contentCategories AND n.contentState = {1} RETURN n")
+  def findByContentCategoriesAndContentState(contentCategory: String, contentState: String): java.util.List[ContentPage]
+
+  @Query("MATCH (n:`ContentPage`) WHERE HAS(n.contentCategories) AND {0} IN n.contentCategories AND n.visibleInMenus = {1} AND n.contentState = {2} RETURN n")
+  def findByContentCategoriesAndVisibleInMenusAndContentState(contentCategory: String, visibleInMenus: Boolean, contentState: String): java.util.List[ContentPage]
+
+  @Query("MATCH (n:`ContentPage`) WHERE HAS(n.contentCategories) AND {0} IN n.contentCategories RETURN n")
+  def findByContentCategories(contentCategory: String): java.util.List[ContentPage]
 
 }
