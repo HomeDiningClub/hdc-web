@@ -1,4 +1,4 @@
-@(hostReplyForm: Form[models.viewmodels.MessageForm], owner: models.UserCredential, id: String)(implicit request: RequestHeader)
+@(hostReplyForm: Form[models.viewmodels.MessageForm], owner: models.UserCredential, id: String, message: models.message.Message)(implicit request: RequestHeader)
 @import helper.twitterBootstrap._
 
 @views.html.host.hostReplyMain(owner, hostReplyForm, id) {
@@ -7,22 +7,121 @@
             case None => {}
             case Some(currentUser) => {
                 <div class="grade hdc-grade">
-                    @helper.form(action = routes.HostController.replyToGuest(), 'class -> "form-horizontal") {
+                    @helper.form(action = routes.MessagesController.replyToGuest()) {
+                        <fieldset>
 
-                        @helper.textarea(hostReplyForm("response"), '_label -> "Svar", 'required -> "required", 'class -> "col-sm-10")
-                        @helper.inputHidden(hostReplyForm("memberId"))
-                        @helper.inputHidden(hostReplyForm("hostId"))
+                            @if(hostReplyForm.get.messageType.getOrElse("").equalsIgnoreCase("REQUEST")) {
+                                @if(message.getResponse != null) {
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <strong>Svarat : </strong>
+                                                </td>
+                                                <td>
+                                                    @message.getResponse.request
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                }
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <strong>Datum : </strong>
+                                            </td>
+                                            <td>
+                                                @hostReplyForm.get.date.format("yyyy-MM-dd") @hostReplyForm.get.time.format("HH:mm")
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Antal Gäster : </strong>
+                                            </td>
+                                            <td>
+                                                @hostReplyForm.get.numberOfGuests
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Telefon : </strong>
+                                            </td>
+                                            <td>
+                                                @hostReplyForm.get.phone
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Meddelande : </strong>
+                                            </td>
+                                            <td>
+                                                @hostReplyForm.get.request
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br/>
+                                <div class="col-xs-12">
+                                    @helper.inputTextHorizontal(hostReplyForm("firstName"), '_label -> "Till", 'class -> "col-sm-10")
+                                    @helper.inputTextHorizontal(hostReplyForm("response"), 'type -> "textarea", 'rows -> 6, '_label -> "Svar", 'required -> "required", 'class -> "col-sm-10")
+                                </div>
 
-                        @helper.inputHidden(hostReplyForm("firstName"))
-                        @helper.inputHidden(hostReplyForm("lastName"))
-                        @helper.inputHidden(hostReplyForm("phone"))
-                        @helper.inputHidden(hostReplyForm("date"))
-                        @helper.inputHidden(hostReplyForm("time"))
-                        @helper.inputHidden(hostReplyForm("numberOfGuests"))
-                        @helper.inputHidden(hostReplyForm("request"))
-                        @helper.inputHidden(hostReplyForm("createdDate"))
+                                @*
+                                @helper.inputTextHorizontal(hostReplyForm("firstName"), '_label -> "Förnamn", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostReplyForm("lastName"), 'readonly -> "readonly", '_label -> "Efternamn", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostReplyForm("date"), 'readonly -> "readonly", 'type -> "date", '_label -> "Datum", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostReplyForm("time"), 'readonly -> "readonly", 'type -> "time", '_label -> "Tid", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostReplyForm("numberOfGuests"), 'readonly -> "readonly", 'type -> "number", '_label -> "Antal", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostReplyForm("phone"), 'readonly -> "readonly", '_label -> "Telefon", 'required -> "required", 'class -> "col-sm-10", '_error -> hostReplyForm.error("phone"))
+                                @helper.inputTextHorizontal(hostReplyForm("request"), 'readonly -> "readonly", 'type -> "textarea", 'rows -> 6, 'required -> "required", '_label -> "Meddelande", 'class -> "col-sm-10", '_error -> hostReplyForm.error("request"))
 
-                        <input type="submit" class="btn btn-primary" value="@Messages("mails.hosting.request.reply")">
+                                *@
+
+                                <div class="form-actions">
+                                    <input type="submit" class="btn btn-primary pull-right" value="@Messages("mails.hosting.request.reply")">
+                                </div>
+                            }
+
+                            @if(hostReplyForm.get.messageType.getOrElse("").equalsIgnoreCase("REPLY")){
+                                @if(message.getResponse != null) {
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <strong>Orginal : </strong>
+                                                </td>
+                                                <td>
+                                                    @message.response.request
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <strong>Svar : </strong>
+                                                </td>
+                                                <td>
+                                                    @hostReplyForm.get.request.getOrElse("")
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                }
+                            }
+                            @helper.inputHidden(hostReplyForm("firstName"))
+                            @helper.inputHidden(hostReplyForm("lastName"))
+                            @helper.inputHidden(hostReplyForm("messageType"))
+                            @helper.inputHidden(hostReplyForm("date"))
+                            @helper.inputHidden(hostReplyForm("time"))
+                            @helper.inputHidden(hostReplyForm("numberOfGuests"))
+                            @helper.inputHidden(hostReplyForm("phone"))
+                            @helper.inputHidden(hostReplyForm("request"))
+                            @helper.inputHidden(hostReplyForm("memberId"))
+                            @helper.inputHidden(hostReplyForm("hostId"))
+                            @helper.inputHidden(hostReplyForm("createdDate"))
+                        </fieldset>
+                        <br/>
+                        <br/>
 
                     }
                 </div>

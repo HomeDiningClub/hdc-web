@@ -12,6 +12,7 @@
             <textarea rows="@rows"
             class="form-control"
             id="@field.id"
+            @readonly
             name="@field.name" @play.api.templates.PlayMagic.toHtmlArgs(htmlArgs) >@field.value.getOrElse("")</textarea>
             <span class="help-block">@{field.error.map { error => error.message }}</span>
         </div>

@@ -10,7 +10,7 @@
 
     @pageScripts= {
         <script>
-            var showChar = 100;
+            var showChar = 50;
             var ellipsestext = "...";
             var moretext = "mer";
             var lesstext = "mindre";
@@ -124,7 +124,7 @@
 
                                 @* Send request *@
                                 @if(!isThisMyProfile && userProfile.isUserHost) {
-                                    @HostController.renderHostForm(userProfile.getOwner)(request)
+                                    @MessagesController.renderHostForm(userProfile.getOwner)(request)
                                 }
                             </article>
                         </section>
@@ -203,53 +203,57 @@
                                 Tab3
                             </div>
                             <div class="tab-pane tab-hdc fade" id="@tab4">
-                                @if(isThisMyProfile) {
+                                @if(isThisMyProfile && userProfile.getOwner.getMessages.nonEmpty) {
 
-                                    @for(msg <- userProfile.getOwner.getMessages) {
+                                    <table class="table inboxTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Från</th>
+                                                <th>Skickat</th>
+                                                <th>Datum</th>
+                                                <th>Meddelande</th>
+                                                <th>Expandera</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for(msg <- userProfile.getOwner.getMessages) {
+                                                @MessagesController.renderHostReplyForm(msg)(request)
+                                            }
+                                        </tbody>
+                                    </table>
 
-                                            @HostController.renderHostReplyForm(msg)(request)
-                                    }
+                                    @*
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Från</th>
+                                                <th>Datum</th>
+                                                <th>Meddelande</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for(msg <- userProfile.getOwner.getMessages) {
+                                                @if(msg.getOwner.equals(userProfile.getOwner)) {
 
-                                    @for(msg <- userProfile.getOwner.getMessages) {
-                                        @if(msg.getOwner.equals(userProfile.getOwner)) {
-                                            <br/>
-                                            <table>
-                                                <tbody>
                                                     <tr>
                                                         <td>
-                                                            <strong>Datum : </strong>
+                                                            @msg.sender
                                                         </td>
                                                         <td>
                                                             @msg.getCreatedDate.format("yyyy-MM-dd HH:mm")
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <strong>Från : </strong>
-                                                        </td>
-                                                        <td>
-                                                            @msg.replyTo
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <strong>Svar : </strong>
                                                         </td>
                                                         <td>
                                                             @msg.request
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td></td>
-                                                        <td></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <br/>
 
-                                        }
-                                    }
+                                                }
 
+                                            }
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                    *@
                                 }
                             </div>
                             @if(isThisMyProfile) {

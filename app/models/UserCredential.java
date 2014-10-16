@@ -111,9 +111,13 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     @RelatedToVia(type = RelationshipTypesJava.LIKES_RECIPE.Constant, direction = Direction.OUTGOING)
     private Set<UserCredentialLikeRecipe> hasLikedRecipes;
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
 //    Messages
     @Fetch
-    @RelatedTo(type = "MESSAGES", direction = Direction.BOTH)
+    @RelatedTo(type = RelationshipTypesJava.MESSAGE.Constant, direction = Direction.BOTH)
     public Set<Message> messages;
 
     @Fetch

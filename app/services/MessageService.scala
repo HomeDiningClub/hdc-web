@@ -4,6 +4,7 @@ import java.util
 import java.util.{UUID, Date, Set}
 
 import models.message.{Message}
+import models.modelconstants.RelationshipTypesScala
 import models.{UserCredential}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.annotation.Fetch
@@ -29,24 +30,25 @@ class MessageService {
   private var messageRepository: MessageRepository = _
 
   @Transactional(readOnly = false)
-  def createRequest(requestingUser: UserCredential, hostingUser: UserCredential, date: Date, time: Date, numberOfGuests: Int, request: String): Message = {
+  def createRequest(user: UserCredential, host: UserCredential, date: Date, time: Date, numberOfGuests: Int, request: String, phone: String): Message = {
 
     var msg: Message = new Message
-    msg.createMessage(date, time, numberOfGuests, request, template.fetch(requestingUser), "")
-    hostingUser.getMessages.add(saveMessage(msg))
+    msg.createMessage(date, time, numberOfGuests, request, template.fetch(user), template.fetch(host), user.firstName, host.firstName, RelationshipTypesScala.REQUEST.Constant, phone)
+    host.getMessages.add(saveMessage(msg))
 
-    userCredentialRepository.save(hostingUser)
+    userCredentialRepository.save(host)
 
     msg
   }
 
   @Transactional(readOnly = false)
-  def createResponse(user: UserCredential, guest: UserCredential, message: Message, response: String): Message = {
+  def createResponse(user: UserCredential, guest: UserCredential, message: Message, response: String, phone: String): Message = {
 
     var msg: Message = new Message
-    msg.createMessage(message.date, message.time, message.numberOfGuests, response, template.fetch(guest), (user.firstName + " " + user.lastName))
+    msg.createMessage(message.date, message.time, message.numberOfGuests, response, template.fetch(user), template.fetch(guest), user.firstName, guest.firstName, RelationshipTypesScala.REPLY.Constant, phone)
 
     message.response = msg
+    msg.response = message
 
     guest.getMessages.add(saveMessage(msg))
 
@@ -60,6 +62,11 @@ class MessageService {
   def saveMessage(newItem: Message): Message = {
     val newResult = messageRepository.save(newItem)
     newResult
+  }
+
+  @Transactional(readOnly = true)
+  def fetchMessage(message: Message): Message = {
+    template.fetch(message)
   }
 
   @Transactional(readOnly = false)

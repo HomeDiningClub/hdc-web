@@ -19,6 +19,26 @@ object RelationshipTypesScala {
     def name(): String = Constant
   }
 
+  object  INCOMING_MESSAGE {
+    final val Constant = "INCOMING_MESSAGE"
+    def name(): String = Constant
+  }
+
+  object  OUTGOING_MESSAGE {
+    final val Constant = "OUTGOING_MESSAGE"
+    def name(): String = Constant
+  }
+
+  object  REQUEST {
+    final val Constant = "REQUEST"
+    def name(): String = Constant
+  }
+
+  object  REPLY {
+    final val Constant = "REPLY"
+    def name(): String = Constant
+  }
+
   object AVATAR_IMAGE {
     final val Constant = "AVATAR_IMAGE"
     def name(): String = Constant

@@ -11,6 +11,7 @@ import models.{UserProfile, UserCredential}
 import models.viewmodels.{MessageForm, EmailAndName}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
+import play.Play
 import play.api.data.{Mapping, Form}
 import play.api.data.Forms._
 import play.api.i18n.Messages
@@ -19,14 +20,15 @@ import securesocial.core.SecureSocial
 import services.{MailService, MessageService, UserCredentialService}
 import utils.authorization.WithRole
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ListBuffer
 
 /**
  * Created by Tommy on 30/09/2014.
  */
-class HostController extends  Controller { }
+class MessagesController extends  Controller { }
 
 @SpringController
-object HostController extends  Controller with SecureSocial {
+object MessagesController extends  Controller with SecureSocial {
 
   @Autowired
   private var userCredentialService : UserCredentialService = _
@@ -50,6 +52,7 @@ object HostController extends  Controller with SecureSocial {
       "numberOfGuests" -> number,
       "request" -> optional(text),
       "response" -> optional(text),
+      "messageType" -> optional(text),
       "createdDate" -> optional(date("yyyy-MM-dd"))
     )(MessageForm.apply)(MessageForm.unapply)
   )
@@ -61,14 +64,15 @@ object HostController extends  Controller with SecureSocial {
 
       case Some(currentUser) =>
 
-        if (message.response != null || !message.owner.equals(currentUser)) {
+        if (message.recipient.equals(currentUser)) {
 
-          val hostReply = MessageForm.apply(message.getOwner().firstName, message.getOwner().lastName, "phone", Option(message.getOwner().objectId.toString),
-            Option(currentUser.objectId.toString), message.date, message.time, message.numberOfGuests, Option(message.request), Option(""),
+          val hostReply = MessageForm.apply(message.getOwner().firstName, message.getOwner().lastName, message.phone, Option(message.getOwner().objectId.toString),
+            Option(currentUser.objectId.toString), message.date, message.time, message.numberOfGuests, Option(message.request), Option(""), Option(message.`type`),
             Option(message.getCreatedDate))
 
-          views.html.host.replyGuest.render(messageFormMapping.fill(hostReply), message.owner, message.objectId.toString, request)
+          views.html.host.replyGuest.render(messageFormMapping.fill(hostReply), message.owner, message.objectId.toString, message, request)
         }
+
     }
   }
 
@@ -95,7 +99,7 @@ object HostController extends  Controller with SecureSocial {
               if(msg.request.equals(content.request.getOrElse(""))) {
 
                 // save here
-                messageService.createResponse(currentUser, receiver, msg, content.response.getOrElse(""))
+                messageService.createResponse(currentUser, receiver, msg, content.response.getOrElse(""), msg.phone)
 
                 val guest = EmailAndName(
                   name = currentUser.firstName() + " " + currentUser.lastName(),
@@ -107,7 +111,11 @@ object HostController extends  Controller with SecureSocial {
                   email = Messages("footer.link.mail.text")
                 )
 
-                mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text"), guest, hdc)
+
+
+//                val url = routes.UserProfileController.viewProfileByName(currentUser.firstName()).url
+
+                mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text") + currentUser.getFullName, guest, hdc)
 
               } else {
                 println("###### NOT EQUAL ######")
@@ -140,7 +148,7 @@ object HostController extends  Controller with SecureSocial {
           val format = new SimpleDateFormat("HH:mm")
           val currentTime = format.parse(format.format(new Date()))
 
-          val host = MessageForm.apply(currentUser.firstName(), currentUser.lastName(),"", Option(currentUser.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(new Date()))
+          val host = MessageForm.apply(currentUser.firstName(), currentUser.lastName(),"", Option(currentUser.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(""), Option(new Date()))
 
           views.html.host.applyHost.render(messageFormMapping.fill(host), Some(hostingUser), request)
         }
@@ -162,7 +170,7 @@ object HostController extends  Controller with SecureSocial {
             BadRequest(views.html.host.hostErrorMsg.render(Messages("rating.add.error"), "error"))
           case Some(hostingUser) => {
 
-            messageService.createRequest(currentUser, hostingUser, content.date, content.time, content.numberOfGuests, content.request.getOrElse(""))
+            messageService.createRequest(currentUser, hostingUser, content.date, content.time, content.numberOfGuests, content.request.getOrElse(""), content.phone)
 
             val guest = EmailAndName(
               name = currentUser.firstName() + " " + currentUser.lastName(),

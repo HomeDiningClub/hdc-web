@@ -47,7 +47,7 @@ footer.link.mail.href=mailto:info@homediningclub.se?Subject=Hej%20Home%20dining%
 footer.link.mail.title=Maila till info@homediningclub.se
 footer.link.mail.text=info@homediningclub.se
 mail.text.no.reply=no-reply@homediningclub.se
-mail.hdc.text=Du har fått ett nytt meddelande i din HDC inbox
+mail.hdc.text=Du har fått ett nytt meddelande i din HDC inbox från
 
 # Banner
 banner.header=Annons:

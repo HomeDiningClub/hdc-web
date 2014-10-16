@@ -19,6 +19,26 @@ public final class RelationshipTypesJava {
         public  static  final  String Constant = "RESPONSE";
     }
 
+    public final  static  class  INCOMING_MESSAGE implements  RelationshipType {
+        public  String name() { return Constant; }
+        public  static  final  String Constant = "INCOMING_MESSAGE";
+    }
+
+    public final  static  class  OUTGOING_MESSAGE implements  RelationshipType {
+        public  String name() { return Constant; }
+        public  static  final  String Constant = "OUTGOING_MESSAGE";
+    }
+
+    public final  static  class REQUEST implements  RelationshipType {
+        public  String name() { return Constant; }
+        public  static  final  String Constant = "REQUEST";
+    }
+
+    public final  static  class REPLY implements  RelationshipType {
+        public  String name() { return Constant; }
+        public  static  final  String Constant = "REPLY";
+    }
+
     public final static class AVATAR_IMAGE implements RelationshipType {
         public String name() { return Constant; }
         public static final String Constant = "AVATAR_IMAGE";

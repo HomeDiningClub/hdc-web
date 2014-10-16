@@ -1,52 +1,31 @@
 @(user: models.UserCredential, hostReplyForm: Form[models.viewmodels.MessageForm], id: String)(content: Html)(implicit request: RequestHeader)
 
-<table>
-    <tbody>
-        <tr>
-            <td><strong>Skickat : </strong>@hostReplyForm.get.createdDate.get.date.format("yyyy-MM-dd HH:mm")</td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><strong>Datum : </strong>@hostReplyForm.get.date.format("yyyy-MM-dd") @hostReplyForm.get.time.format(" HH:mm")</td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><strong>Från : </strong>@user.firstName @user.lastName</td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><strong>Antal : </strong>@hostReplyForm.get.numberOfGuests</td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                <strong>Meddelande :</strong>
-            </td>
-            <td>
-                <div id="msgDiv" class="comment more row">
-                    @hostReplyForm.get.request
-                </div>
-            </td>
-            <td>
-                <button id="expandBtn" class="btn btn-primary btn-sm pull-left btn-host-popover collapsed" data-toggle="collapse" data-target="#@id"><span class="glyphicon glyphicon-chevron-down"></span><span class="glyphicon glyphicon-chevron-up"></span></button>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <div class="row"><div id="@id" class="col-xs-12 host-popover collapse">@content</div></div>
-                <div class="clearfix"></div>
-            </td>
-            <td>
 
-            </td>
-        </tr>
-        <br />
-    </tbody>
-</table>
+
+<tr>
+    <td>
+       @user.firstName @user.lastName
+    </td>
+    <td>
+        @hostReplyForm.get.createdDate.get.date.format("yyyy-MM-dd HH:mm")
+    </td>
+    <td>
+        @hostReplyForm.get.date.format("yyyy-MM-dd") @hostReplyForm.get.time.format(" HH:mm")
+    </td>
+    <td>
+        @hostReplyForm.get.messageType.getOrElse("Meddelande")
+    </td>
+    <td>
+        <button id="expandBtn" class="btn btn-primary btn-sm pull-left btn-host-popover collapsed" data-toggle="collapse" data-target="#@id"><span class="glyphicon glyphicon-chevron-down"></span><span class="glyphicon glyphicon-chevron-up"></span></button>
+    </td>
+</tr>
+<tr class="inboxTable">
+    <td colspan="5">
+        <div class="row"><div id="@id" class="col-xs-8 host-popover collapse">@content</div></div>
+        <div class="clearfix"></div>
+    </td>
+</tr>
+
 
 
 

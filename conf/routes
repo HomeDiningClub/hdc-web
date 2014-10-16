@@ -72,8 +72,8 @@ POST        /rate/user                                           controllers.Rat
 # Like
 POST        /like/user                                           controllers.LikeController.likeSubmit
 
-POST        /apply/host                                          controllers.HostController.applyToHost
-POST        /reply/guest                                         controllers.HostController.replyToGuest
+POST        /apply/host                                          controllers.MessagesController.applyToHost
+POST        /reply/guest                                         controllers.MessagesController.replyToGuest
 
 # Login page
 GET         /login                                               securesocial.controllers.LoginPage.login

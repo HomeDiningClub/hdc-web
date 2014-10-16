@@ -16,6 +16,7 @@ case class MessageForm(
                             numberOfGuests: Int,
                             request: Option[String],
                             response: Option[String],
+                            messageType: Option[String],
                             createdDate: Option[Date]
                             )
 { }
