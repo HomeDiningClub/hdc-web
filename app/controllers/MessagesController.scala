@@ -112,10 +112,12 @@ object MessagesController extends  Controller with SecureSocial {
                 )
 
 
+                val baseUrl: String = routes.StartPageController.index().absoluteURL(false).dropRight(1)
+                val userUrl: String = routes.UserProfileController.viewProfileByName(receiver.firstName).url
 
-//                val url = routes.UserProfileController.viewProfileByName(currentUser.firstName()).url
+                val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>länk</a>"
 
-                mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text") + currentUser.getFullName, guest, hdc)
+                mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text") + appUrl, guest, hdc)
 
               } else {
                 println("###### NOT EQUAL ######")
@@ -187,7 +189,12 @@ object MessagesController extends  Controller with SecureSocial {
               email = hostingUser.emailAddress
             )
 
-            mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text"), host, hdc)
+            val baseUrl: String = routes.StartPageController.index().absoluteURL(false).dropRight(1)
+            val userUrl: String = routes.UserProfileController.viewProfileByName(hostingUser.firstName).url
+
+            val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>länk</a>"
+
+            mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text") + appUrl, host, hdc)
 
             Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName))
           }

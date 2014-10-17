@@ -3,13 +3,13 @@
 
 @main(Messages("about.title")) {
 
-    <div class="container maincontent-container">
-        <div class="row">
-            <div class="col-xs-12 col-md-9">
-                <h1 class="page-header">@Messages("aboutus.title")</h1>
-                <div class="row">
-                    <div class="col-xs-12 pull-right {col-md-12}">
-                        @helper.form(action=controllers.routes.AboutUsController.suggestFeatures(), 'class -> "form-horizontal") {
+        <div class="container maincontent-container">
+            <div class="row">
+                <div class="col-xs-12 col-md-9">
+                    <h1 class="page-header">@Messages("aboutus.title")</h1>
+                    <div class="row">
+                        <div class="col-xs-12 pull-right {col-md-12}">
+                        @helper.form(action = controllers.routes.AboutUsController.suggestFeatures(), 'class -> "form-horizontal") {
                             <fieldset>
                                 @helper.inputTextHorizontal(aboutUsForm("to"), '_label -> Messages("Till"), 'readonly -> "readonly", 'class -> "col-sm-10")
                                 @helper.inputTextHorizontal(aboutUsForm("name"), '_label -> Messages("Från"), 'readonly -> "readonly", 'class -> "col-sm-10")
@@ -21,14 +21,14 @@
                                 <button class="btn btn-primary pull-right" type="submit">@Messages("Skicka")</button>
                             </div>
                         }
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Banner -->
-            <div class="col-xs-12 col-md-3 col-banner">
+                    <!-- Banner -->
+                <div class="col-xs-12 col-md-3 col-banner">
                 @shared.banner()
+                </div>
             </div>
         </div>
-    </div>
 }
