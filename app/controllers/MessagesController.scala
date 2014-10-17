@@ -57,6 +57,17 @@ object MessagesController extends  Controller with SecureSocial {
     )(MessageForm.apply)(MessageForm.unapply)
   )
 
+  def markMessageAsRead(messageId : String) = SecuredAction(ajaxCall=true) { implicit request =>
+    var currentUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+
+    var msg = messageService.findById(UUID.fromString(messageId))
+
+    msg.read = "true"
+    messageService.saveMessage(msg)
+
+    Ok("Ok")
+  }
+
   def renderHostReplyForm(message: Message) = { implicit request: RequestHeader =>
 
     utils.Helpers.getUserFromRequest match {

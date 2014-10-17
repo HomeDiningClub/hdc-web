@@ -17,6 +17,15 @@
 
             $(document).ready(function(){
 
+            $(".expandBtn1").click(function(){
+
+                var btnArray = this.id.split("expandBtn_" );
+
+                $.get("/profile/mark?msgId=" + btnArray[1] + "&tid=" + new Date().toString(),function(data,status){
+                    $( "#chkMark_" + btnArray[1] ).show();
+                    $( "#mail_" + btnArray[1] ).hide();
+                });
+            });
 
             $('.more').each(function() {
                 var content = $(this).html();
@@ -47,11 +56,12 @@
 
         $("#rf").click(function(){
         $.get("/profile/favorite/remove?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
-        $( "#af" ).show();
-        $( "#rf" ).hide();
+            $( "#af" ).show();
+            $( "#rf" ).hide();
          alert('Favorit borttagen!');
         });
         });
+
 
         $("#af").click(function(){
         $.get("/profile/favorite/add?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
@@ -222,38 +232,6 @@
                                         </tbody>
                                     </table>
 
-                                    @*
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Från</th>
-                                                <th>Datum</th>
-                                                <th>Meddelande</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @for(msg <- userProfile.getOwner.getMessages) {
-                                                @if(msg.getOwner.equals(userProfile.getOwner)) {
-
-                                                    <tr>
-                                                        <td>
-                                                            @msg.sender
-                                                        </td>
-                                                        <td>
-                                                            @msg.getCreatedDate.format("yyyy-MM-dd HH:mm")
-                                                        </td>
-                                                        <td>
-                                                            @msg.request
-                                                        </td>
-                                                    </tr>
-
-                                                }
-
-                                            }
-                                        </tbody>
-                                    </table>
-                                    <br/>
-                                    *@
                                 }
                             </div>
                             @if(isThisMyProfile) {

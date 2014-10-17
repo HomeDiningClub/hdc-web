@@ -9,7 +9,7 @@
                     <h1 class="page-header">@Messages("aboutus.title")</h1>
                     <div class="row">
                         <div class="col-xs-12 pull-right {col-md-12}">
-                        @helper.form(action = controllers.routes.AboutUsController.suggestFeatures(), 'class -> "form-horizontal") {
+                        @helper.form(action = controllers.routes.AboutController.suggestFeatures) {
                             <fieldset>
                                 @helper.inputTextHorizontal(aboutUsForm("to"), '_label -> Messages("Till"), 'readonly -> "readonly", 'class -> "col-sm-10")
                                 @helper.inputTextHorizontal(aboutUsForm("name"), '_label -> Messages("Från"), 'readonly -> "readonly", 'class -> "col-sm-10")

@@ -1,6 +1,4 @@
-@(user: models.UserCredential, hostReplyForm: Form[models.viewmodels.MessageForm], id: String)(content: Html)(implicit request: RequestHeader)
-
-
+@(user: models.UserCredential, hostReplyForm: Form[models.viewmodels.MessageForm], msgId: String, read: String)(content: Html)(implicit request: RequestHeader)
 
 <tr>
     <td>
@@ -16,15 +14,33 @@
         @hostReplyForm.get.messageType.getOrElse("Meddelande")
     </td>
     <td>
-        <button id="expandBtn" class="btn btn-primary btn-sm pull-left btn-host-popover collapsed" data-toggle="collapse" data-target="#@id"><span class="glyphicon glyphicon-chevron-down"></span><span class="glyphicon glyphicon-chevron-up"></span></button>
+        <button id="expandBtn_@msgId" class="btn expandBtn1 btn-primary btn-sm pull-left btn-host-popover collapsed" data-toggle="collapse" data-target="#@msgId"><span class="glyphicon glyphicon-chevron-down"></span><span class="glyphicon glyphicon-chevron-up"></span></button>
     </td>
     <td>
-        <span hidden="true"  class="genericon genericon-mail"></span>
+
+        @if(read == null) {
+            <div id="mail_@msgId">
+                <span class="genericon genericon-mail"></span>
+            </div>
+            <div id="chkMark_@msgId" hidden="true">
+                <span class="genericon genericon-checkmark"></span>
+            </div>
+
+        }
+        @if(read != null && read.equals("true")) {
+            <div id="mail_@msgId" hidden="true">
+                <span class="genericon genericon-mail"></span>
+            </div>
+            <div id="chkMark_@msgId">
+                <span class="genericon genericon-checkmark"></span>
+            </div>
+        }
+
     </td>
 </tr>
 <tr class="inboxTable">
     <td colspan="5">
-        <div class="row"><div id="@id" class="col-xs-8 host-popover collapse">@content</div></div>
+        <div class="row"><div id="@msgId" class="col-xs-8 host-popover collapse">@content</div></div>
         <div class="clearfix"></div>
     </td>
 </tr>

@@ -18,4 +18,5 @@ public abstract class BaseMessage extends AuditEntity {
     public String sender;
     public String receiver;
     public String type;
+    public String read;
 }

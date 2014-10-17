@@ -47,6 +47,7 @@ class AboutUsController extends Controller with  securesocial.core.SecureSocial 
       ""
     )
 
+    views.html.about.about.render(mailForm.fill(mailViewForm), request)
     Ok(views.html.about.about.apply(mailForm.fill(mailViewForm)))
   }
 

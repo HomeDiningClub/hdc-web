@@ -16,8 +16,8 @@ GET         /content/:contentName                                @controllers.Co
 #GET         /become-a-host/practical-info              @controllers.ContentPageController.practicalInfo
 #GET         /become-a-host/example-host-text           @controllers.ContentPageController.exampleHostText
 #GET         /references                                @controllers.ContentPageController.references
-GET         /about-us                                            @controllers.AboutUsController.aboutUs
-POST        /about-us                                            @controllers.AboutUsController.suggestFeatures
+POST         /about-us                                            controllers.AboutController.aboutUs
+POST        /about-us                                            controllers.AboutController.suggestFeatures
 #GET         /about-us/press                            @controllers.ContentPageController.press
 #GET         /about-us/user-terms-and-conditions        @controllers.ContentPageController.userTermsAndConditions
 #GET         /faq                                       @controllers.ContentPageController.faq
@@ -47,6 +47,8 @@ GET         /profile/favorite/add                                @controllers.Us
 GET         /profile/favorite/remove                             @controllers.UserProfileController.removeFavorite(userCredentialObjectId : String)
 GET         /profile/favorite/isFav                              @controllers.UserProfileController.isFavoriteToMe(userCredentialObjectId : String)
 #GET         /profile/favorite/show                               @controllers.UserProfileController.listFavorites
+
+GET         /profile/mark                                        controllers.MessagesController.markMessageAsRead(msgId: String)
 
 # Profile - Inbox
 GET         /inbox/show                                          controllers.MessageController.show

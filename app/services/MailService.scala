@@ -1,7 +1,7 @@
 package services
 
 import java.util.Date
-import models.viewmodels.EmailAndName
+import models.viewmodels.{EmailAndName}
 import org.springframework.stereotype.Service
 import play.api.Play.current
 import com.typesafe.plugin._
@@ -21,6 +21,7 @@ class MailService {
 //  def getInstance: MailService = {
 //    INSTANCE
 //  }
+
 
   def createMail(subject: String, message: String, recipients: List[EmailAndName], bbc: List[EmailAndName], from: EmailAndName, replyTo: EmailAndName): MailerAPI = {
     val mail = use[MailerPlugin].email
@@ -94,8 +95,5 @@ class MailService {
     val returnStr: String = emailObject.name + "<" + emailObject.email + ">"
     returnStr
   }
-//  case class EmailAndName(
-//    name: String,
-//    email: String
-//  )
+
 }

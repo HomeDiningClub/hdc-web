@@ -1,7 +1,7 @@
-@(hostReplyForm: Form[models.viewmodels.MessageForm], owner: models.UserCredential, id: String, message: models.message.Message)(implicit request: RequestHeader)
+@(hostReplyForm: Form[models.viewmodels.MessageForm], owner: models.UserCredential, msgId: String, message: models.message.Message)(implicit request: RequestHeader)
 @import helper.twitterBootstrap._
 
-@views.html.host.hostReplyMain(owner, hostReplyForm, id) {
+@views.html.host.hostReplyMain(owner, hostReplyForm, msgId, message.read) {
     <div class="well well-hdc">
         @utils.Helpers.getUserFromRequest match {
             case None => {}
