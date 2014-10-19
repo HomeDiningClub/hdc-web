@@ -19,10 +19,26 @@
 $(document).ready(function () {
 
     // Activate tooltips
-   $(".host-level-icon,.host-header-link").tooltip();
+    $(".host-level-icon,.host-header-link").tooltip();
 
-   // Activate popovers
+    // Activate popovers
     $(".popover-trigger").popover();
+
+    // Collapse text if found
+    $(".truncate-text-review-boxes").collapser({
+        mode: "lines",
+        effect: "slide",
+        truncate: 3,
+        speed: 100,
+        showText: '<span class="glyphicon glyphicon-chevron-down"></span>&nbsp;',
+        hideText: '<span class="glyphicon glyphicon-chevron-up"></span>&nbsp;',
+        lockHide: false,
+        showClass: "truncate-text-show",
+        hideClass: "truncate-text-hide",
+        controlBtn: function(){
+            return $(this).parent().find('.more-text-ctrl');
+        }
+    });
 
 //   $(".btn-rate-popover").popover({
 //       trigger: "click",

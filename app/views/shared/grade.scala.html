@@ -5,6 +5,7 @@
         size: String = "xs",
         showClear: Boolean = false,
         showCaption: Boolean = false,
+        showCustomCaption: Boolean = false,
         cssClass: String = "",
         showNrOfRatings: Boolean = false,
         nrOfRatings: Int = 0)
@@ -18,5 +19,18 @@ http://plugins.krajee.com/star-rating/demo
 <div class="grade hdc-grade @cssClass">
     <input id="@inputId" type="number" class="rating" value="@initialValue" min="0" max="5" step="1" data-disabled="@disabled" data-show-caption="@showCaption" data-show-clear="@showClear" data-readonly="@readOnly" data-star-captions="" data-default-caption="{rating} @Messages("grade.rating-text")" data-size="@size">
     @if(showNrOfRatings){<div class="nr-of-ratings clearfix">@Messages("grade.nr-of-ratings", nrOfRatings)</div>}
+    @if(showCustomCaption){
+        <div class="rating-value-text">
+        @initialValue match {
+            case 0 => { @Messages("grade.rating.0") }
+            case 1 => { @Messages("grade.rating.1") }
+            case 2 => { @Messages("grade.rating.2") }
+            case 3 => { @Messages("grade.rating.3") }
+            case 4 => { @Messages("grade.rating.4") }
+            case 5 => { @Messages("grade.rating.5") }
+            case _ => { "" }
+        }
+        </div>
+    }
     @if(disabled != true && readOnly != true){<button class="btn btn-primary">@Messages("grade.submit")</button>}
 </div>

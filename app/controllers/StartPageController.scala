@@ -62,7 +62,7 @@ class StartPageController extends Controller with SecureSocial {
       optionsFoodAreas = getFoodAreas,
       optionsLocationAreas = getCounties,
       startPageBoxes = startPageBoxes,
-      reviewBoxes = getReviewBoxes,
+      reviewBoxes = ratingService.getReviewBoxes(true,8),
       asideNews = contentService.getAsideNewsItems
     ))
   }
@@ -158,24 +158,6 @@ class StartPageController extends Controller with SecureSocial {
     startPageBoxes
   }
 
-  private def getReviewBoxes: Option[List[ReviewBox]] = {
-    ratingService.findUserRatingByRatingValue(4) match {
-      case None => None
-      case Some(items) =>
-        Some{ items.take(4).map { ratingItem: RatesUserCredential =>
-          ReviewBox(
-            objectId = Some(ratingItem.objectId),
-            linkToProfile = ratingItem.userWhoIsRating.profiles.asScala.head.profileLinkName match {
-              case null => ""
-              case pfName => routes.UserProfileController.viewProfileByName(pfName).url
-            },
-            fullName = ratingItem.userWhoIsRating.fullName,
-            reviewText = Some(ratingItem.ratingComment),
-            userImage = ratingItem.userWhoIsRating.profiles.asScala.head.getAvatarImage.getTransformByName("thumbnail").getUrl,
-            rating = ratingItem.ratingValue)}
-        }
-    }
-  }
 
 
 }

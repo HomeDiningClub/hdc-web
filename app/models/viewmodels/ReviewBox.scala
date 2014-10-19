@@ -1,13 +1,16 @@
 package models.viewmodels
 
-import java.util.UUID
+import java.util.{Date, UUID}
 
 // Used on the Start page
 case class ReviewBox (
     objectId: Option[UUID],
     linkToProfile: String,
-    fullName: String,
+    firstName: String,
+    rankedName: String,
+    linkToRatedItem: String,
     reviewText: Option[String],
-    userImage: String,
+    ratedDate: Date,
+    userImage: Option[String],
     rating: Int
 )

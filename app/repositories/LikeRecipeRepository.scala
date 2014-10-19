@@ -1,11 +1,13 @@
 package repositories
 
 import models.like.UserCredentialLikeRecipe
-import org.springframework.data.neo4j.repository.GraphRepository
+import org.springframework.data.neo4j.repository.{RelationshipGraphRepository, GraphRepository}
 import java.util.UUID
 import java.util
 import models.{Recipe, UserCredential}
+import org.springframework.stereotype.Repository
 
+@Repository
 trait LikeRecipeRepository extends GraphRepository[UserCredentialLikeRecipe] {
 
   // Auto-mapped by Spring

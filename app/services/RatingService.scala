@@ -2,6 +2,8 @@ package services
 
 import java.util.UUID
 
+import controllers.routes
+import models.viewmodels.ReviewBox
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
@@ -10,6 +12,7 @@ import repositories._
 import models.rating.{RatesRecipe, RatesUserCredential}
 import models.{Recipe, UserCredential}
 import models.modelconstants.RelationshipTypesScala
+import utils.Helpers
 import scala.collection.JavaConverters._
 import scala.List
 
@@ -55,6 +58,15 @@ class RatingService {
       case listOfItems => Some(listOfItems)
     }
   }
+  @Transactional(readOnly = true)
+  def findUserRatingAll(orderByDate: Boolean = true): Option[List[RatesUserCredential]] = {
+    ratingUserCredentialRepository.findAll.asScala.toList.sortBy(rating => rating.getLastModifiedDate) match {
+      case null => None
+      case listOfItems => Some(listOfItems)
+    }
+  }
+
+
 
   // RatingRecipe
   @Transactional(readOnly = true)
@@ -106,6 +118,37 @@ class RatingService {
   @Transactional(readOnly = true)
   def doesUserTryToRateHimself(currentUser: UserCredential, userToBeRated: UserCredential): Boolean = {
     userToBeRated.objectId.toString.equalsIgnoreCase(currentUser.objectId.toString)
+  }
+
+
+  @Transactional(readOnly = true)
+  def getReviewBoxes(sortByDate: Boolean, takeTop: Int): Option[List[ReviewBox]] = {
+    this.findUserRatingAll(sortByDate) match {
+      case None =>
+        None
+      case Some(items) =>
+        Some{ items.take(takeTop).filter(r => !r.getUserWhoIsRating.profiles.isEmpty && r.getUserWhoIsRating.profiles.asScala.head.profileLinkName.nonEmpty).map { ratingItem: RatesUserCredential =>
+          val userWhoIsRatingProfile = ratingItem.getUserWhoIsRating.profiles.asScala.head
+          val itemRatedProfile = ratingItem.getUserRates.profiles.asScala.head
+          ReviewBox(
+            objectId = Some(ratingItem.objectId),
+            linkToProfile = routes.UserProfileController.viewProfileByName(userWhoIsRatingProfile.profileLinkName).url,
+            firstName = ratingItem.getUserWhoIsRating.firstName,
+            rankedName = itemRatedProfile.profileLinkName + "&nbsp;(" + ratingItem.getUserRates.firstName + ")",
+            linkToRatedItem = routes.UserProfileController.viewProfileByName(itemRatedProfile.profileLinkName).url,
+            reviewText = ratingItem.ratingComment match {
+              case "" | null => None
+              case content => Some(content)
+            },
+            ratedDate = ratingItem.getLastModifiedDate,
+            userImage = userWhoIsRatingProfile.getAvatarImage match {
+              case null => None
+              case image => Some(image.getTransformByName("thumbnail").getUrl)
+            },
+            rating = ratingItem.ratingValue)
+            }
+          }
+    }
   }
 
 
@@ -175,7 +218,6 @@ class RatingService {
 
 
 
-
   // UserRating
   @Transactional(readOnly = true)
   def findUserByRatingUser(user: UserCredential): Option[List[UserCredential]] = {
@@ -198,6 +240,8 @@ class RatingService {
       case listOfItems => Some(listOfItems)
     }
   }
+
+
 
   // RecipeRating
 

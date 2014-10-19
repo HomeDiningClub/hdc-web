@@ -157,6 +157,13 @@ class RecipeService {
     }
   }
 
+  // Fetching
+  @Transactional(readOnly = true)
+  def fetchRecipe(recipe: Recipe): Recipe = {
+    template.fetch(recipe)
+  }
+
+
   @Transactional(readOnly = false)
   def deleteAll {
     recipeRepository.deleteAll()

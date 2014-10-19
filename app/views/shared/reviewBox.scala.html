@@ -1,0 +1,27 @@
+@(boxes: List[models.viewmodels.ReviewBox] = Nil)
+
+@if(!boxes.isEmpty) {
+    <div class="col-xs-12">
+        <div class="reviews-list">
+        @for(box: models.viewmodels.ReviewBox <- boxes){
+            <div class="media">
+                <a href="@box.linkToProfile" class="host-image-link text-center" title="@Messages("reviewbox.linktoprofile", box.firstName)">
+                    @shared.hostImageCircle(box.userImage.getOrElse(""), cssClass = "host-image-review")
+                    <span>@box.firstName</span>
+                </a>
+                <div class="bubble"></div>
+                <div class="media-body">
+                    <a href="@box.linkToRatedItem" class="review-ranked-item-link">@Html(box.rankedName)</a>
+                    @shared.grade(inputId = "host-grade", initialValue = box.rating, showCustomCaption = true, disabled = true, size = "xxxs", cssClass = "pull-left")
+                    <em class="review-date">@box.ratedDate.format(Messages("reviewbox.date.rated.date-format"))</em>
+                    @if(box.reviewText.nonEmpty){
+                        <hr>
+                        <div class="review-text truncate-text-review-boxes">@box.reviewText.get</div>
+                        <a href="#" class="more-text-ctrl text-center" title="@Messages("reviewbox.show-hide-more-text")"></a>
+                    }
+                </div>
+            </div>
+        }
+        </div>
+    </div>
+}

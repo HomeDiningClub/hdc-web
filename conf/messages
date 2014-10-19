@@ -54,6 +54,9 @@ banner.header=Annons:
 
 # Reviews
 reviewbox.linktoprofile=Gå till {0} profilsida
+reviewbox.date.rated.date-format=yyyy-MM-dd
+reviewbox.date.rated.text={0} om {1}:
+reviewbox.show-hide-more-text=...
 
 # Content
 person.formular=Personliga inställningar (svenska)
@@ -80,6 +83,10 @@ startpage.filterform.submit=Filtrera
 
 startpage.boxes.not-found=Kunde inte hitta några profiler som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
 startpage.boxes.location=<em>Finns i {0}</em>
+
+startpage.reviews.users.header=Omdömen om värdar
+startpage.reviews.recipes.header=Omdömen om recept
+
 
 # ContentPages
 content.menu.header=Relaterad information
@@ -392,11 +399,12 @@ campaign.newsletterform.emailplaceholder=e-post address
 campaign.newsletterform.button.send=Skicka
 
 # Grade
-grade.rating.1=Undermåligt
-grade.rating.2=Skäligt
-grade.rating.3=Bra
-grade.rating.4=Utmärkt
-grade.rating.5=Superbt
+grade.rating.0="Undermåligt!"
+grade.rating.1="Dåligt"
+grade.rating.2="Skäligt"
+grade.rating.3="Bra"
+grade.rating.4="Utmärkt"
+grade.rating.5="Enastående!"
 grade.submit=Betygsätt
 grade.rating-text=stjärna(or)
 grade.nr-of-ratings=({0} betyg)

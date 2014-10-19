@@ -8,7 +8,7 @@ import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
 
 
-@RelationshipEntity(type = "RELATED_PAGE")
+@RelationshipEntity(type = RelationshipTypesJava.RELATED_PAGE.Constant)
 public class RelatedPage extends AbstractEntity {
 
     @Fetch

@@ -1,6 +1,6 @@
 package repositories
 
-import org.springframework.data.neo4j.repository.GraphRepository
+import org.springframework.data.neo4j.repository.{RelationshipGraphRepository, GraphRepository}
 import java.util.UUID
 import java.util
 import models.rating.RatesRecipe

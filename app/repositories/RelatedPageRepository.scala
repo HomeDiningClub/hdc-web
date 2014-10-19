@@ -1,6 +1,6 @@
 package repositories
 
-import org.springframework.data.neo4j.repository.GraphRepository
+import org.springframework.data.neo4j.repository.{RelationshipGraphRepository, GraphRepository}
 import models.content._
 import java.util.UUID
 import org.springframework.data.neo4j.annotation.Query

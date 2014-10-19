@@ -9,12 +9,12 @@ object RelationshipTypesScala {
      def name(): String = Constant
    }
 
-  object  MESSAGE {
+  object  MESSAGE extends RelationshipType {
     final val Constant = "MESSAGE"
     def name(): String = Constant
   }
 
-  object  RESPONSE {
+  object  RESPONSE extends RelationshipType {
     final val Constant = "RESPONSE"
     def name(): String = Constant
   }
@@ -39,81 +39,82 @@ object RelationshipTypesScala {
     def name(): String = Constant
   }
 
-  object AVATAR_IMAGE {
+  object AVATAR_IMAGE extends RelationshipType {
     final val Constant = "AVATAR_IMAGE"
     def name(): String = Constant
   }
 
-  object LIKES_USER {
+  object LIKES_USER extends RelationshipType {
     final val Constant = "LIKES_USER"
     def name(): String = Constant
   }
 
-  object LIKES_RECIPE {
+  object LIKES_RECIPE extends RelationshipType {
     final val Constant = "LIKES_RECIPE"
+    def name(): String = Constant
   }
 
-  object MAIN_IMAGE {
+  object MAIN_IMAGE extends RelationshipType  {
     final val Constant = "MAIN_IMAGE"
     def name(): String = Constant
   }
 
-  object RELATED_PAGE {
+  object RELATED_PAGE extends RelationshipType {
     final val Constant = "RELATED_PAGE"
     def name(): String = Constant
   }
 
-  object IN_ROLE {
+  object IN_ROLE extends RelationshipType {
     final val Constant = "IN_ROLE"
     def name(): String = Constant
   }
 
-   object OWNER {
+   object OWNER extends RelationshipType {
      final val Constant = "OWNER"
      def name(): String = Constant
    }
 
-  object IMAGES {
+  object IMAGES extends RelationshipType {
     final val Constant = "IMAGES"
     def name(): String = Constant
   }
 
-  object RATED_USER {
+  object RATED_USER extends RelationshipType {
     final val Constant = "RATED_USER"
     def name(): String = Constant
   }
 
-  object RATED_RECIPE {
+  object RATED_RECIPE extends RelationshipType {
     final val Constant = "RATED_RECIPE"
     def name(): String = Constant
   }
 
-  object HAS_RECIPES {
+  object HAS_RECIPES extends RelationshipType {
     final val Constant = "HAS_RECIPES"
     def name(): String = Constant
   }
 
-  object RECOMMENDED {
+  object RECOMMENDED extends RelationshipType {
      final val Constant = "RECOMMENDED"
      def name(): String = Constant
    }
 
-   object FILE_TRANSFORMATION {
+   object FILE_TRANSFORMATION extends RelationshipType {
      final val Constant = "FILE_TRANSFORMATION"
      def name(): String = Constant
    }
 
-   object CONTENT_STATE {
+   object CONTENT_STATE extends RelationshipType {
      final val Constant = "CONTENT_STATE"
      def name(): String = Constant
    }
 
-   object PROFILE_CREDENTIAL {
+   object PROFILE_CREDENTIAL extends RelationshipType {
      final val Constant = "PROFILE_CREDENTIAL"
      def name(): String = Constant
    }
 
-   object PROFILE_LOCATION {
+   object PROFILE_LOCATION extends RelationshipType {
      final val Constant = "PROFILE_LOCATION"
      def name(): String = Constant
    }

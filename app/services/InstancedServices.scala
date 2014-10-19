@@ -15,6 +15,9 @@ object InstancedServices {
   var userCredentialService: UserCredentialService = _
 
   @Autowired
+  var recipeService: RecipeService = _
+
+  @Autowired
   var userProfileService: UserProfileService = _
 
   @Autowired

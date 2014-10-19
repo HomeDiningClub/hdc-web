@@ -132,14 +132,13 @@
                 </div>
                 }
 
+                @if(reviewBoxes.nonEmpty){
                 <!-- Reviews -->
                 <div class="row">
-                    @if(!reviewBoxes.isEmpty){
-                        @for( a <- 1 to 10){
-                            @startpage.reviewBox(reviewBoxes.get)
-                        }
-                    }
+                        <h2 class="page-header">@Messages("startpage.reviews.users.header")</h2>
+                        @shared.reviewBox(reviewBoxes.get)
                 </div>
+                }
 
                 <div class="row margin-top row-border-bottom">
                     <!-- Video -->

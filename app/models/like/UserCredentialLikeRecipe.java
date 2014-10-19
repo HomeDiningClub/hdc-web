@@ -2,11 +2,12 @@ package models.like;
 
 import models.Recipe;
 import models.UserCredential;
+import models.modelconstants.RelationshipTypesJava;
 import org.springframework.data.neo4j.annotation.EndNode;
 import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
 
-@RelationshipEntity
+@RelationshipEntity(type = RelationshipTypesJava.LIKES_RECIPE.Constant)
 public class UserCredentialLikeRecipe extends BaseLike {
 
     @StartNode
