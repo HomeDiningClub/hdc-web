@@ -6,7 +6,7 @@
         tab5: String,
         recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
         tagList: Option[List[models.profile.TagWord]] = None,
-        isThisMyProfile: Boolean = false)(implicit request: RequestHeader)
+        isThisMyProfile: Boolean = false)(implicit request: RequestHeader, flash: Flash)
 
     @pageScripts= {
         <script>
@@ -131,9 +131,10 @@
                                 <div class="breadtext">
                                     @Html(userProfile.aboutMe)
                                 </div>
-
+                                @shared.flashmsg(flash)
                                 @* Send request *@
                                 @if(!isThisMyProfile && userProfile.isUserHost) {
+
                                     @MessagesController.renderHostForm(userProfile.getOwner)(request)
                                 }
                             </article>

@@ -5,6 +5,8 @@ import java.util
 import java.util.{Calendar, UUID, Date}
 
 import com.typesafe.plugin.MailerAPI
+import constants.FlashMsgConstants
+import controllers.SuggestController._
 import enums.RoleEnums
 import models.message.{Message}
 import models.{UserProfile, UserCredential}
@@ -97,46 +99,65 @@ object MessagesController extends  Controller with SecureSocial {
       },
       content => {
 
-        userCredentialService.findById(UUID.fromString(content.memberId.getOrElse(""))) match {
-          case None =>
+        if(content.response.isEmpty) {
 
-          case Some(receiver) =>
+          // check here
+          request.headers.get("Referer") match {
+            case Some(referrerUrl) =>
 
-            val msgItr:util.Iterator[Message] = currentUser.getMessages.iterator()
+              Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> (Messages("required field") + ": Svar"))
 
-            while (msgItr.hasNext) {
-              var msg: Message = msgItr.next()
+            case None =>
+              Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> Messages("rating.add.error"))
+          }
 
-              if(msg.request.equals(content.request.getOrElse(""))) {
+        } else {
 
-                // save here
-                messageService.createResponse(currentUser, receiver, msg, content.response.getOrElse(""), msg.phone)
+          userCredentialService.findById(UUID.fromString(content.memberId.getOrElse(""))) match {
+            case None =>
 
-                val guest = EmailAndName(
-                  name = currentUser.firstName() + " " + currentUser.lastName(),
-                  email = currentUser.emailAddress
-                )
+            case Some(receiver) =>
 
-                val hdc = EmailAndName(
-                  name = Messages("main.title"),
-                  email = Messages("footer.link.mail.text")
-                )
+              val msgItr:util.Iterator[Message] = currentUser.getMessages.iterator()
+
+              while (msgItr.hasNext) {
+                var msg: Message = msgItr.next()
+
+                if(msg.request.equals(content.request.getOrElse(""))) {
+
+                  // save here
+                  messageService.createResponse(currentUser, receiver, msg, content.response.getOrElse(""), msg.phone)
+
+                  val guest = EmailAndName(
+                    name = currentUser.firstName() + " " + currentUser.lastName(),
+                    email = currentUser.emailAddress
+                  )
+
+                  val hdc = EmailAndName(
+                    name = Messages("main.title"),
+                    email = Messages("footer.link.mail.text")
+                  )
 
 
-                val baseUrl: String = routes.StartPageController.index().absoluteURL(false).dropRight(1)
-                val userUrl: String = routes.UserProfileController.viewProfileByName(receiver.firstName).url
+                  val baseUrl: String = routes.StartPageController.index().absoluteURL(false).dropRight(1)
+                  val userUrl: String = routes.UserProfileController.viewProfileByName(receiver.firstName).url
 
-                val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>länk</a>"
+                  val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>länk</a>"
 
-                mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text") + appUrl, guest, hdc)
+                  mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text") + appUrl, guest, hdc)
 
-              } else {
-                println("###### NOT EQUAL ######")
+                } else {
+                  println("###### NOT EQUAL ######")
+                }
               }
-            }
+          }
+
+          Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName))
+
         }
 
-        Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName))
+
+
       }
 
     )
@@ -178,38 +199,59 @@ object MessagesController extends  Controller with SecureSocial {
       },
       content => {
 
-        userCredentialService.findById(UUID.fromString(content.hostId.getOrElse(""))) match {
-          case None =>
-            BadRequest(views.html.host.hostErrorMsg.render(Messages("rating.add.error"), "error"))
-          case Some(hostingUser) => {
+        if (content.request.isEmpty) {
 
-            messageService.createRequest(currentUser, hostingUser, content.date, content.time, content.numberOfGuests, content.request.getOrElse(""), content.phone)
+          request.headers.get("Referer") match {
+            case Some(referrerUrl) =>
 
-            val guest = EmailAndName(
-              name = currentUser.firstName() + " " + currentUser.lastName(),
-              email = currentUser.emailAddress
-            )
+              userCredentialService.findById(UUID.fromString(content.hostId.getOrElse(""))) match {
+                case Some(hostingUser) =>
+                  Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> (Messages("required field") + ": Meddelande"))
 
-            val hdc = EmailAndName(
-              name = Messages("main.title"),
-              email = Messages("footer.link.mail.text")
-            )
+              }
 
-            val host = EmailAndName(
-              name = hostingUser.firstName() + " " + hostingUser.lastName(),
-              email = hostingUser.emailAddress
-            )
-
-            val baseUrl: String = routes.StartPageController.index().absoluteURL(false).dropRight(1)
-            val userUrl: String = routes.UserProfileController.viewProfileByName(hostingUser.firstName).url
-
-            val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>länk</a>"
-
-            mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text") + appUrl, host, hdc)
-
-            Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName))
+            case None =>
+              Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> Messages("rating.add.error"))
           }
+
+        } else {
+
+          userCredentialService.findById(UUID.fromString(content.hostId.getOrElse(""))) match {
+            case None =>
+              BadRequest(views.html.host.hostErrorMsg.render(Messages("rating.add.error"), "error"))
+            case Some(hostingUser) => {
+
+              messageService.createRequest(currentUser, hostingUser, content.date, content.time, content.numberOfGuests, content.request.getOrElse(""), content.phone)
+
+              val guest = EmailAndName(
+                name = currentUser.firstName() + " " + currentUser.lastName(),
+                email = currentUser.emailAddress
+              )
+
+              val hdc = EmailAndName(
+                name = Messages("main.title"),
+                email = Messages("footer.link.mail.text")
+              )
+
+              val host = EmailAndName(
+                name = hostingUser.firstName() + " " + hostingUser.lastName(),
+                email = hostingUser.emailAddress
+              )
+
+              val baseUrl: String = routes.StartPageController.index().absoluteURL(false).dropRight(1)
+              val userUrl: String = routes.UserProfileController.viewProfileByName(hostingUser.firstName).url
+
+              val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>länk</a>"
+
+              mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text") + appUrl, host, hdc)
+
+              Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName))
+            }
+          }
+
         }
+
+
 
       }
 
