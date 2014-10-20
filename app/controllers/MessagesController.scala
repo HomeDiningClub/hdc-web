@@ -100,17 +100,7 @@ object MessagesController extends  Controller with SecureSocial {
       content => {
 
         if(content.response.isEmpty) {
-
-          // check here
-          request.headers.get("Referer") match {
-            case Some(referrerUrl) =>
-
-              Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> (Messages("required field") + ": Svar"))
-
-            case None =>
-              Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> Messages("rating.add.error"))
-          }
-
+            Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> (Messages("mails.error.no.reply")))
         } else {
 
           userCredentialService.findById(UUID.fromString(content.memberId.getOrElse(""))) match {
@@ -201,17 +191,10 @@ object MessagesController extends  Controller with SecureSocial {
 
         if (content.request.isEmpty) {
 
-          request.headers.get("Referer") match {
-            case Some(referrerUrl) =>
+          userCredentialService.findById(UUID.fromString(content.hostId.getOrElse(""))) match {
+            case Some(hostingUser) =>
+              Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> (Messages("mails.error.no.message")))
 
-              userCredentialService.findById(UUID.fromString(content.hostId.getOrElse(""))) match {
-                case Some(hostingUser) =>
-                  Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> (Messages("required field") + ": Meddelande"))
-
-              }
-
-            case None =>
-              Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> Messages("rating.add.error"))
           }
 
         } else {

@@ -79,15 +79,15 @@ object SuggestController extends Controller with SecureSocial {
             var errorMsg: String = ""
 
             if (subject_error.nonEmpty && message_error.nonEmpty) {
-              errorMsg = ": Ämne och Meddelande"
+              errorMsg = Messages("mails.features.incomplete")
             } else if(subject_error.nonEmpty) {
-              errorMsg = ": Ämne"
+              errorMsg = Messages("mails.features.incomplete.subject")
             } else {
-              errorMsg = ": Meddelande"
+              errorMsg = Messages("mails.features.incomplete.message")
             }
 
 
-            Redirect(referrerUrl, 302).flashing(FlashMsgConstants.Error -> (Messages("required field") + errorMsg))
+            Redirect(referrerUrl, 302).flashing(FlashMsgConstants.Error -> errorMsg)
           case None =>
             Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> Messages("rating.add.error"))
         }
