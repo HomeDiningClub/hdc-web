@@ -178,6 +178,44 @@
                                 '_error -> EnvDataForm.error("personnummer")
                             )
 
+
+                            <!--  New input -->
+                            @helper.inputRadioGroup(
+                                EnvDataForm("childFfriendly"),
+                                options = helper.options("JA"->"JA","NEJ"->"NEJ"),
+                                '_label -> "Barnvänligt",
+                                '_error -> EnvDataForm("husdjur").error.map(_.withMessage("Du måste svara på frågan om det är barnvänligt eller inte")))
+
+                            @helper.inputRadioGroup(
+                                EnvDataForm("handicapFriendly"),
+                                options = helper.options("JA"->"JA","NEJ"->"NEJ"),
+                                '_label -> "Handikappvänligt",
+                                '_error -> EnvDataForm("handicapFriendly").error.map(_.withMessage("Handikapvänligt (JA/NEJ)")))
+
+                            @helper.inputRadioGroup(
+                                EnvDataForm("havePets"),
+                                options = helper.options("JA"->"JA","NEJ"->"NEJ"),
+                                '_label -> "Husdjur finns?",
+                                '_error -> EnvDataForm("havePets").error.map(_.withMessage("Husdjur (JA/NEJ)")))
+
+                            @helper.inputRadioGroup(
+                                EnvDataForm("smoke"),
+                                options = helper.options("JA"->"JA","NEJ"->"NEJ"),
+                                '_label -> "Rökning tillåtet?",
+                                '_error -> EnvDataForm("smoke").error.map(_.withMessage("Rökare (JA/NEJ)")))
+
+
+                            @helper.inputRadioGroup(
+                                EnvDataForm("allkoholServing"),
+                                options = helper.options("Ta med eget"->"Ta med eget","Tillhandahålls"->"Tillhandahålls", "NEJ"->"Nej"),
+                                '_label -> "Alkohol",
+                                '_error -> EnvDataForm("allkoholServing").error.map(_.withMessage("Alkohol (Ta med eget/Tillhandahålls/Nej)")))
+
+
+                            <!-- New input -->
+
+
+
                             @if(!optionsLocationAreas.isEmpty) {
                                 @helper.select(EnvDataForm("county"),
                                     optionsLocationAreas.get,

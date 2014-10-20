@@ -126,6 +126,9 @@
 
                                 <h2>@userProfile.aboutMeHeadline</h2>
 
+
+
+
                                 <p id="result"></p>
 
                                 <div class="breadtext">
@@ -167,10 +170,19 @@
                         <div class="panel panel-default panel-dropshadow big-margin-top">
                             <div class="panel-body">
                                 @shared.tagList(tagList, userProfile.getOwner.firstName())
-                                <br>
-                                @if(userProfile.getLocations.iterator().hasNext()){
-                                    <strong>@Messages("profile.county.text")</strong> @userProfile.getLocations.iterator().next().county.name
+                                <br><strong>Namn:</strong> @userProfile.fistName
+                                <br><strong>Stad:</strong> @userProfile.city
+                                <br><strong>@if(userProfile.getLocations.iterator().hasNext()){
+                                <strong>@Messages("profile.county.text")</strong> @userProfile.getLocations.iterator().next().county.name
                                 }
+                                <br><strong>Barnvänligt:</strong> @userProfile.childFfriendly
+                                <br><strong>Handikapvänligt:</strong> @userProfile.handicapFriendly
+                                <br><strong>Husdjur:</strong> @userProfile.havePets
+                                <br><strong>Rökare :</strong> @userProfile.smoke
+                                <br><strong>Alkohol :</strong> @userProfile.allkoholServing
+
+
+
                             </div>
                         </div>
 

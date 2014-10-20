@@ -101,7 +101,12 @@ class UserProfileController extends Controller with SecureSocial {
       "personnummer" -> text,
       "acceptTerms"  -> boolean,
       "roleHost" -> optional(text),
-      "roleGuest" -> optional(text)
+      "roleGuest" -> optional(text),
+      "childFfriendly" -> optional(text),
+      "handicapFriendly" -> optional(text),
+      "havePets" -> optional(text),
+      "smoke" -> optional(text),
+      "allkoholServing" -> optional(text)
   )(EnvData.apply) (EnvData.unapply)
     verifying ("Profilnamn måste vara unikt", f => isUniqueProfileName(f.name, f.name2))
     verifying ("Personnummer måste vara korrekt angivet", g => isCorrectPersonnummer(g.personnummer))
@@ -423,7 +428,12 @@ if(userTags != null) {
     personnummer, // TODO
     theUser.isTermsOfUseApprovedAccepted, // isTermsOfUseApprovedAccepted
     Option(host),
-    Option(guest) // TODO
+    Option(guest), // TODO
+    Option(theUser.childFfriendly),
+    Option(theUser.handicapFriendly),
+    Option(theUser.havePets),
+    Option(theUser.smoke),
+    Option(theUser.allkoholServing)
   )
 
   val nyForm =  AnvandareForm.fill(eData)
@@ -584,8 +594,22 @@ if(userTags != null) {
 
 
 
-  def testAction = SecuredAction  { implicit request =>
-    Ok("Datum: " + DateTime.now())
+  def testAction = Action  { implicit request =>
+
+    var host = request.remoteAddress
+
+
+    var keys = request.headers.keys.iterator
+    var str : String = ""
+
+    while(keys.hasNext) {
+      var obj = keys.next()
+      str = str + "\n key = " + obj + " value= " + request.headers.apply(obj)
+    }
+
+    str = str + "\n Remote host : " + host
+
+    Ok("Datum: " + DateTime.now() + str)
   }
 
   // SecuredAction
@@ -618,10 +642,10 @@ if(userTags != null) {
 
   }
 
-  def testsida = SecuredAction { implicit request =>
+  def testsida = Action { implicit request =>
     println("test ...")
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
-    println("ProfileLink Name : " + theUser.profileLinkName)
+    //var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+    //println("ProfileLink Name : " + theUser.profileLinkName)
     Ok(views.html.test.json("test"))
   }
 
@@ -678,6 +702,27 @@ if(userTags != null) {
   }
 
 
+  def convYesToTrueElseToFalse(arg : String) : Boolean = arg match {
+    case "" => false
+    case "JA" => true
+    case "YES" => true
+    case "Yes" => true
+    case "Ja" => true
+    case _ => false
+  }
+
+
+  def convOptionStringToString(arg : Option[String]) : String = arg match {
+    case Some(arg) => arg
+    case _ => ""
+  }
+
+
+
+  def convBooleanTOYesOrNo(arg : Boolean) : String = arg match {
+    case true => "JA"
+    case false => "NEJ"
+  }
 
 
   // Save profile
@@ -707,6 +752,12 @@ if(userTags != null) {
         var countyId              : String = ""
         var acceptDemads          : Boolean = false
 
+        var childFfriendly        : String = ""
+        var handicapFriendly      : String = ""
+        var havePets              : String = ""
+        var smoke                 : String = ""
+        var allkoholServing       : String = ""
+
         AnvandareForm.bindFromRequest.fold(
           errors => {
             println("error ..." +errors.toString)
@@ -731,6 +782,15 @@ if(userTags != null) {
             println("Personnummer: " + reqUserProfile.personnummer)
             acceptDemads = reqUserProfile.acceptTerms
             println("acceptTerms :::  " + reqUserProfile.acceptTerms)
+
+            println("allkoholServing " + convOptionStringToString(reqUserProfile.allkoholServing))
+            println("smoke " + convOptionStringToString(reqUserProfile.smoke))
+
+            childFfriendly  = convOptionStringToString(reqUserProfile.childFfriendly)
+            handicapFriendly  = convOptionStringToString(reqUserProfile.handicapFriendly)
+            havePets  = convOptionStringToString(reqUserProfile.havePets)
+            smoke  = convOptionStringToString(reqUserProfile.smoke)
+            allkoholServing   = convOptionStringToString(reqUserProfile.allkoholServing)
 
 
            val userCred = Helpers.getUserFromRequest.get
@@ -765,6 +825,12 @@ if(userTags != null) {
            theUser.zipCode              = zipCode
            theUser.streetAddress        = streetAddress
            theUser.phoneNumber          = phoneNumber
+
+            theUser.childFfriendly = childFfriendly
+            theUser.handicapFriendly = handicapFriendly
+            theUser.havePets = havePets
+            theUser.smoke = smoke
+            theUser.allkoholServing = allkoholServing
 
 
 //        This part is not needed since tags or on it's own page now, activate this code if they are moved back

@@ -54,6 +54,19 @@ public class UserProfile extends AuditEntity implements IEditable {
 
     public boolean  isTermsOfUseApprovedAccepted = false;
 
+
+    public String childFfriendly = "";
+    public String handicapFriendly = "";
+    public String havePets = "";
+    public String smoke = "";
+    public String  allkoholServing = "";
+    public String  maxNoOfGuest = "";
+
+    public payCache String = "";
+    public paySwish String = "";
+    public payBankCard String = "";
+    public payIZettle String = "";
+
     public String fistName = "";
 
     public String lastName = "";
