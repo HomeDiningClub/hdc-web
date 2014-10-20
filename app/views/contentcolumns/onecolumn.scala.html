@@ -4,7 +4,22 @@
         column1Header: String = "",
         column1PreAmble: String = "",
         column1Body: String = "")(implicit request: RequestHeader)
+@*
+    @pageScripts= {
+        <script>
+            $(document).ready(function(){
 
+                $("#send_mail").click(function(){
+
+                    $.get("/abous-us/send",function(data,status){
+
+                    });
+                });
+
+            });
+        </script>
+    }
+*@
 @main(urlTitle) {
 
     <div class="container maincontent-container">

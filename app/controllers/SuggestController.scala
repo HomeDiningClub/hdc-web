@@ -1,15 +1,18 @@
 package controllers
 
+import constants.FlashMsgConstants
 import enums.RoleEnums
+import models.content.ContentPage
 import models.viewmodels.{EmailAndName, AboutUsForm}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
+import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.mvc.{RequestHeader, Controller}
 import securesocial.core.SecureSocial
-import services.MailService
+import services.{ContentService, MailService}
 import utils.authorization.WithRole
 import scala.collection.JavaConverters._
 
@@ -22,6 +25,8 @@ class SuggestController extends Controller with SecureSocial { }
 @SpringController
 object SuggestController extends Controller with SecureSocial {
 
+  @Autowired
+  private var contentService: ContentService = _
 
   @Autowired
   private var mailService: MailService = _
@@ -46,10 +51,11 @@ object SuggestController extends Controller with SecureSocial {
           Some(""),
           Messages("footer.link.mail.text"),
           (user.firstName() + " " + user.lastName()),
-          Messages("aboutus.suggestion"),
+          "",
           ""
         )
-        views.html.about.about.render(mailForm.fill(mailViewForm),request)
+
+        views.html.about.about.render(mailForm.fill(mailViewForm),request, flash)
       }
     }
 
@@ -63,9 +69,33 @@ object SuggestController extends Controller with SecureSocial {
 
     mailForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Messages("Subject") + " - " + Messages("No message")
-//        BadRequest(views.html.about.about.render(errors,request))
-        BadRequest(views.html.about.about.render(errors,request))
+
+        request.headers.get("Referer") match {
+          case Some(referrerUrl) =>
+
+            val subject_error = errors.error("subject")
+            val message_error = errors.error("message")
+
+            var errorMsg: String = ""
+
+            if (subject_error.nonEmpty && message_error.nonEmpty) {
+              errorMsg = ": Ämne och Meddelande"
+            } else if(subject_error.nonEmpty) {
+              errorMsg = ": Ämne"
+            } else {
+              errorMsg = ": Meddelande"
+            }
+
+
+            Redirect(referrerUrl, 302).flashing(FlashMsgConstants.Error -> (Messages("required field") + errorMsg))
+          case None =>
+            Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> Messages("rating.add.error"))
+        }
+
+
+
+//        val errorMessage = Messages("Subject") + " - " + Messages("No message")
+//        Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName))
       },
       contentData => {
 

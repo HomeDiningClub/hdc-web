@@ -16,7 +16,7 @@ GET         /content/:contentName                                @controllers.Co
 #GET         /become-a-host/practical-info              @controllers.ContentPageController.practicalInfo
 #GET         /become-a-host/example-host-text           @controllers.ContentPageController.exampleHostText
 #GET         /references                                @controllers.ContentPageController.references
-#GET         /about-us                                            @controllers.AboutController.aboutUs
+#GET         /about-us                                            controllers.SuggestController.aboutUs
 POST        /about-us                                            controllers.SuggestController.suggestFeatures
 #GET         /about-us/press                            @controllers.ContentPageController.press
 #GET         /about-us/user-terms-and-conditions        @controllers.ContentPageController.userTermsAndConditions
