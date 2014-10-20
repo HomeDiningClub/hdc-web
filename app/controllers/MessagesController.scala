@@ -161,7 +161,7 @@ object MessagesController extends  Controller with SecureSocial {
           val format = new SimpleDateFormat("HH:mm")
           val currentTime = format.parse(format.format(new Date()))
 
-          val host = MessageForm.apply(currentUser.firstName(), currentUser.lastName(),"", Option(currentUser.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(""), Option(new Date()))
+          val host = MessageForm.apply(currentUser.firstName(), currentUser.lastName(), currentUser.getPhone, Option(currentUser.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(""), Option(new Date()))
 
           views.html.host.applyHost.render(messageFormMapping.fill(host), Some(hostingUser), request)
         }

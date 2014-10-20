@@ -14,7 +14,7 @@
             id="@field.id"
             @readonly
             name="@field.name" @play.api.templates.PlayMagic.toHtmlArgs(htmlArgs) >@field.value.getOrElse("")</textarea>
-            <span class="help-block">@{field.error.map { error => error.message }}</span>
+            <span class="has-error">@{field.error.map { error => error.message }}</span>
         </div>
     </div>
 } else {
@@ -26,7 +26,7 @@
             id="@field.id"
             name="@field.name"
             value="@field.value.getOrElse("")" @play.api.templates.PlayMagic.toHtmlArgs(htmlArgs) @readonly >
-            <span class="help-block">@{field.error.map { error => error.message }}</span>
+            <span class="has-error">@{field.error.map { error => error.message }}</span>
         </div>
     </div>
 }

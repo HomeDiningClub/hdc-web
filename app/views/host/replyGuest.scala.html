@@ -1,6 +1,7 @@
 @(hostReplyForm: Form[models.viewmodels.MessageForm], owner: models.UserCredential, msgId: String, message: models.message.Message)(implicit request: RequestHeader)
 @import helper.twitterBootstrap._
 
+
 @views.html.host.hostReplyMain(owner, hostReplyForm, msgId, message.read) {
     <div class="well well-hdc">
         @utils.Helpers.getUserFromRequest match {
@@ -16,7 +17,7 @@
                                         <tbody>
                                             <tr>
                                                 <td>
-                                                    <strong>Svarat : </strong>
+                                                    <strong>@Messages("mails.inbox.header.replied") : </strong>
                                                 </td>
                                                 <td>
                                                     @message.getResponse.request
@@ -30,7 +31,7 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <strong>Datum : </strong>
+                                                <strong>@Messages("mails.inbox.header.date") : </strong>
                                             </td>
                                             <td>
                                                 @hostReplyForm.get.date.format("yyyy-MM-dd") @hostReplyForm.get.time.format("HH:mm")
@@ -38,7 +39,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <strong>Antal Gäster : </strong>
+                                                <strong>@Messages("mails.inbox.header.guest.number") : </strong>
                                             </td>
                                             <td>
                                                 @hostReplyForm.get.numberOfGuests
@@ -46,7 +47,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <strong>Telefon : </strong>
+                                                <strong>@Messages("mails.inbox.header.phone") : </strong>
                                             </td>
                                             <td>
                                                 @hostReplyForm.get.phone
@@ -54,7 +55,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <strong>Meddelande : </strong>
+                                                <strong>@Messages("mails.inbox.header.message") : </strong>
                                             </td>
                                             <td>
                                                 @hostReplyForm.get.request
@@ -90,7 +91,7 @@
                                         <tbody>
                                             <tr>
                                                 <td>
-                                                    <strong>Orginal : </strong>
+                                                    <strong>@Messages("mails.inbox.header.original") : </strong>
                                                 </td>
                                                 <td>
                                                     @message.response.request
@@ -98,7 +99,7 @@
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <strong>Svar : </strong>
+                                                    <strong>@Messages("mails.inbox.header.answer") : </strong>
                                                 </td>
                                                 <td>
                                                     @hostReplyForm.get.request.getOrElse("")

@@ -264,6 +264,17 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
         this.emailAddress   = email;
     }
 
+    public String getPhone() {
+
+        if (profiles != null) {
+            for(UserProfile profile : profiles) {
+                if(profile.phoneNumber != null && !profile.phoneNumber.isEmpty())
+                    return profile.phoneNumber;
+            }
+        }
+
+        return  "";
+    }
 
     // implements Identity
 

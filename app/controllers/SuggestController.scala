@@ -1,6 +1,5 @@
 package controllers
 
-import com.typesafe.plugin.MailerAPI
 import enums.RoleEnums
 import models.viewmodels.{EmailAndName, AboutUsForm}
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,17 +7,21 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
-import play.api.mvc._
+import play.api.mvc.{RequestHeader, Controller}
+import securesocial.core.SecureSocial
 import services.MailService
 import utils.authorization.WithRole
 import scala.collection.JavaConverters._
 
-
 /**
- * Created by Tommy on 29/09/2014.
+ * Created by Tommy on 17/10/2014.
  */
 @SpringController
-class AboutUsController extends Controller with  securesocial.core.SecureSocial {
+class SuggestController extends Controller with SecureSocial { }
+
+@SpringController
+object SuggestController extends Controller with SecureSocial {
+
 
   @Autowired
   private var mailService: MailService = _
@@ -31,27 +34,28 @@ class AboutUsController extends Controller with  securesocial.core.SecureSocial 
       "subject" -> nonEmptyText,
       "message" -> nonEmptyText
     )(AboutUsForm.apply)(AboutUsForm.unapply)
-    //      verifying ("subject får inte vara tomt", f => Option(f.subject).getOrElse("").isEmpty )
-    //      verifying ("message får inte vara tomt", f => Option(f.message).getOrElse("").isEmpty )
   )
 
-  def aboutUs = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
-    val currentUser = utils.Helpers.getUserFromRequest.get
+  def aboutUs = { implicit request: RequestHeader =>
+    val currentUser = utils.Helpers.getUserFromRequest
+    currentUser match {
+      case None =>
+        views.html.about.aboutNotLoggedIn() // No user, return nothing or something.
+      case Some(user) => {
+        val mailViewForm = AboutUsForm.apply(
+          Some(""),
+          Messages("footer.link.mail.text"),
+          (user.firstName() + " " + user.lastName()),
+          Messages("aboutus.suggestion"),
+          ""
+        )
+        views.html.about.about.render(mailForm.fill(mailViewForm),request)
+      }
+    }
 
-
-    val mailViewForm = AboutUsForm.apply(
-      Some(""),
-      Messages("footer.link.mail.text"),
-      (currentUser.firstName() + " " + currentUser.lastName()),
-      "",
-      ""
-    )
-
-    views.html.about.about.render(mailForm.fill(mailViewForm), request)
-    Ok(views.html.about.about.apply(mailForm.fill(mailViewForm)))
   }
 
-  def suggestFeatures = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
+  def suggestFeatures = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request =>
     val currentUser = utils.Helpers.getUserFromRequest.get
 
     var subject: String = ""
@@ -60,7 +64,8 @@ class AboutUsController extends Controller with  securesocial.core.SecureSocial 
     mailForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("Subject") + " - " + Messages("No message")
-        BadRequest(views.html.about.about(errors))
+//        BadRequest(views.html.about.about.render(errors,request))
+        BadRequest(views.html.about.about.render(errors,request))
       },
       contentData => {
 
@@ -80,7 +85,7 @@ class AboutUsController extends Controller with  securesocial.core.SecureSocial 
           email = Messages("footer.link.mail.text")
         )
 
-        mailService.createMailNoReply(subject, msg, recipient, from)
+//        mailService.createMailNoReply(subject, msg, recipient, from)
 
         Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName))
       }

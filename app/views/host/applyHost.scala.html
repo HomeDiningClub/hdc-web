@@ -15,10 +15,13 @@
                             <fieldset>
                                 @helper.inputTextHorizontal(hostForm("firstName"), 'readonly -> "readonly", '_label -> "Förnamn", 'class -> "col-sm-10")
                                 @helper.inputTextHorizontal(hostForm("lastName"), 'readonly -> "readonly", '_label -> "Efternamn", 'class -> "col-sm-10")
-                                @helper.inputTextHorizontal(hostForm("phone"), '_label -> "Telefon", 'required -> "required", 'class -> "col-sm-10", '_error -> "test")
+                                @helper.inputTextHorizontal(hostForm("phone"), '_label -> "Telefon", 'required -> "required", 'class -> "col-sm-10")
                                 @helper.inputTextHorizontal(hostForm("date"), 'type -> "date", '_label -> "Datum", 'class -> "col-sm-10")
+                                <br/>
                                 @helper.inputTextHorizontal(hostForm("time"), 'type -> "time", '_label -> "Tid", 'class -> "col-sm-10")
+                                <br/>
                                 @helper.inputTextHorizontal(hostForm("numberOfGuests"), 'type -> "number", '_label -> "Antal", 'class -> "col-sm-10")
+                                <br/>
                                 @helper.inputTextHorizontal(hostForm("request"), 'type -> "textarea", 'rows -> 6, 'required -> "required", '_label -> "Meddelande", 'class -> "col-sm-10", '_error -> hostForm.error("request"))
                                 @helper.inputHidden(hostForm("memberId"))
                                 @helper.inputHidden(hostForm("hostId"))

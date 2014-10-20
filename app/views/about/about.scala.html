@@ -1,34 +1,17 @@
 @(aboutUsForm: Form[models.viewmodels.AboutUsForm])(implicit request: RequestHeader)
 @import helper.twitterBootstrap._
 
-@main(Messages("about.title")) {
-
-        <div class="container maincontent-container">
-            <div class="row">
-                <div class="col-xs-12 col-md-9">
-                    <h1 class="page-header">@Messages("aboutus.title")</h1>
-                    <div class="row">
-                        <div class="col-xs-12 pull-right {col-md-12}">
-                        @helper.form(action = controllers.routes.AboutController.suggestFeatures) {
-                            <fieldset>
-                                @helper.inputTextHorizontal(aboutUsForm("to"), '_label -> Messages("Till"), 'readonly -> "readonly", 'class -> "col-sm-10")
-                                @helper.inputTextHorizontal(aboutUsForm("name"), '_label -> Messages("Från"), 'readonly -> "readonly", 'class -> "col-sm-10")
-                                @helper.inputTextHorizontal(aboutUsForm("subject"), '_label -> Messages("Ämne"))
-                                @helper.inputTextHorizontal(aboutUsForm("message"), 'type -> "textarea", 'rows -> 6, '_label -> Messages("Meddelande"), 'class -> "richtextuser", '_error -> aboutUsForm.error("message"))
-                            </fieldset>
-                            @helper.inputHidden(aboutUsForm("id"))
-                            <div class="form-actions">
-                                <button class="btn btn-primary pull-right" type="submit">@Messages("Skicka")</button>
-                            </div>
-                        }
-                        </div>
-                    </div>
-                </div>
-
-                    <!-- Banner -->
-                <div class="col-xs-12 col-md-3 col-banner">
-                @shared.banner()
-                </div>
-            </div>
+<div class="col-xs-8 pull-left {col-md-12}">
+    @helper.form(action = controllers.routes.SuggestController.suggestFeatures()) {
+        <fieldset>
+            @helper.inputTextHorizontal(aboutUsForm("to"), '_label -> Messages("Till"), 'readonly -> "readonly", 'class -> "col-sm-10")
+            @helper.inputTextHorizontal(aboutUsForm("name"), '_label -> Messages("Från"), 'readonly -> "readonly", 'class -> "col-sm-10")
+            @helper.inputTextHorizontal(aboutUsForm("subject"), '_label -> Messages("Ämne"), 'required -> "required")
+            @helper.inputTextHorizontal(aboutUsForm("message"), 'required -> "required", 'type -> "textarea", 'rows -> 6, '_label -> Messages("Meddelande"), 'class -> "richtextuser")
+        </fieldset>
+        @helper.inputHidden(aboutUsForm("id"))
+        <div class="form-actions">
+            <button class="btn btn-primary pull-right" type="submit">@Messages("Skicka")</button>
         </div>
-}
+    }
+</div>
