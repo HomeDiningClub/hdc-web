@@ -92,10 +92,6 @@ object SuggestController extends Controller with SecureSocial {
             Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> Messages("rating.add.error"))
         }
 
-
-
-//        val errorMessage = Messages("Subject") + " - " + Messages("No message")
-//        Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName))
       },
       contentData => {
 
@@ -115,7 +111,7 @@ object SuggestController extends Controller with SecureSocial {
           email = Messages("footer.link.mail.text")
         )
 
-//        mailService.createMailNoReply(subject, msg, recipient, from)
+        mailService.createMailNoReply(subject, msg, recipient, from)
 
         Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName))
       }
