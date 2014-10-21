@@ -32,7 +32,12 @@
         @hostReplyForm.get.date.format("yyyy-MM-dd") @hostReplyForm.get.time.format(" HH:mm")
     </td>
     <td>
-        @hostReplyForm.get.messageType.getOrElse("Meddelande")
+        @if(hostReplyForm.get.messageType.getOrElse("Meddelande").equals("REQUEST")){
+            @Messages("mails.inbox.request")
+        }
+        @if(hostReplyForm.get.messageType.getOrElse("Meddelande").equals("REPLY")){
+            @Messages("mails.inbox.reply")
+        }
     </td>
     <td>
         <button id="expandBtn_@msgId" class="btn expandBtn1 btn-primary btn-sm pull-left btn-host-popover collapsed" data-toggle="collapse" data-target="#@msgId"><span class="glyphicon glyphicon-chevron-down"></span><span class="glyphicon glyphicon-chevron-up"></span></button>
