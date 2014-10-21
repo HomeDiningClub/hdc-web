@@ -41,7 +41,6 @@ object MessagesController extends  Controller with SecureSocial {
   @Autowired
   private var mailService: MailService = _
 
-  // TEST
   val messageFormMapping = Form(
     mapping(
       "firstName" -> nonEmptyText,

@@ -8,44 +8,29 @@ import com.typesafe.plugin._
 import play.api.Logger
 import play.api.i18n.Messages
 
-import scala.collection.mutable.ListBuffer
-
 @Service
 class MailService {
-  //private final val INSTANCE: MailService = new MailService
-
-//  private def MailService() {
-//
-//  }
-
-//  def getInstance: MailService = {
-//    INSTANCE
-//  }
-
 
   def createMail(subject: String, message: String, recipients: List[EmailAndName], bbc: List[EmailAndName], from: EmailAndName, replyTo: EmailAndName): MailerAPI = {
     val mail = use[MailerPlugin].email
-//    val recipientsList: List[String] = null
-//    val bbcList: List[String] = null
-    var repList : ListBuffer[String] = ListBuffer()
+    val recipientsList: List[String] = null
+    val bbcList: List[String] = null
 
     mail.setSubject(subject)
 
     if (!recipients.isEmpty) {
       recipients.foreach{r =>
-//        recipientsList + buildNameAndEmailString(r).toString
-        repList += buildNameAndEmailString(r).toString
+        recipientsList + buildNameAndEmailString(r).toString
       }
-//      mail.setRecipient(recipientsList:_*)
-      val recipientsList = repList.result()
       mail.setRecipient(recipientsList:_*)
     }
-//    if (!bbc.isEmpty) {
-//      bbc.foreach{bbc =>
-//        bbcList + buildNameAndEmailString(bbc).toString
-//      }
-//      mail.setBcc(bbcList:_*)
-//    }
+
+    if (!bbc.isEmpty) {
+      bbc.foreach{bbc =>
+        bbcList + buildNameAndEmailString(bbc).toString
+      }
+      mail.setBcc(bbcList:_*)
+    }
 
     mail.setFrom(buildNameAndEmailString(from).toString)
     mail.setReplyTo(buildNameAndEmailString(replyTo).toString)
