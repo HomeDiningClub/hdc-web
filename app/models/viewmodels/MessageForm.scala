@@ -17,6 +17,7 @@ case class MessageForm(
                             request: Option[String],
                             response: Option[String],
                             messageType: Option[String],
-                            createdDate: Option[Date]
+                            createdDate: Option[Date],
+                            messageId: Option[String]
                             )
 { }

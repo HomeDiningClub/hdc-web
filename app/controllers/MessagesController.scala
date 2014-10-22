@@ -54,7 +54,8 @@ object MessagesController extends  Controller with SecureSocial {
       "request" -> optional(text),
       "response" -> optional(text),
       "messageType" -> optional(text),
-      "createdDate" -> optional(date("yyyy-MM-dd"))
+      "createdDate" -> optional(date("yyyy-MM-dd")),
+      "messageId" -> optional(text)
     )(MessageForm.apply)(MessageForm.unapply)
   )
 
@@ -80,7 +81,7 @@ object MessagesController extends  Controller with SecureSocial {
 
           val hostReply = MessageForm.apply(message.getOwner().firstName, message.getOwner().lastName, message.phone, Option(message.getOwner().objectId.toString),
             Option(currentUser.objectId.toString), message.date, message.time, message.numberOfGuests, Option(message.request), Option(""), Option(message.`type`),
-            Option(message.getCreatedDate))
+            Option(message.getCreatedDate), Option(message.objectId.toString))
 
           views.html.host.replyGuest.render(messageFormMapping.fill(hostReply), message.owner, message.objectId.toString, message, request)
         }
@@ -99,7 +100,7 @@ object MessagesController extends  Controller with SecureSocial {
       content => {
 
         if(content.response.isEmpty) {
-            Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName) + "#inbox-tab").flashing(FlashMsgConstants.Error -> (Messages("mails.error.no.reply")))
+            Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName) + "#inbox-tab#" + content.messageId).flashing(FlashMsgConstants.Error -> (Messages("mails.error.no.reply")))
         } else {
 
           userCredentialService.findById(UUID.fromString(content.memberId.getOrElse(""))) match {
@@ -168,7 +169,7 @@ object MessagesController extends  Controller with SecureSocial {
           val format = new SimpleDateFormat("HH:mm")
           val currentTime = format.parse(format.format(new Date()))
 
-          val host = MessageForm.apply(currentUser.firstName(), currentUser.lastName(), currentUser.getPhone, Option(currentUser.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(""), Option(new Date()))
+          val host = MessageForm.apply(currentUser.firstName(), currentUser.lastName(), currentUser.getPhone, Option(currentUser.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(""), Option(new Date()), Option(""))
 
           views.html.host.applyHost.render(messageFormMapping.fill(host), Some(hostingUser), request)
         }

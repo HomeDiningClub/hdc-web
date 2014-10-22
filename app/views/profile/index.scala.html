@@ -20,8 +20,11 @@
                 var url = document.location.toString();
                 if (url.match('#')) {
                     $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show') ;
+                    var msgId = url.split('#')[2 ].split("Some(")[1].substring(0, url.split('#')[2 ].split("Some(")[1 ].length -1);
+
+
+                    $('#expandBtn_' + msgId).click();
                 }
-                    //$('.nav-tabs a[href=#inbox-tab]').tab('show') ;
 
             $(".expandBtn1").click(function(){
 
