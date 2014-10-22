@@ -181,7 +181,7 @@
                                 @shared.tagList(tagList, userProfile.getOwner.firstName())
                                 <br><strong>Namn:</strong> @userProfile.fistName
                                 <br><strong>Stad:</strong> @userProfile.city
-                                <br><strong>@if(userProfile.getLocations.iterator().hasNext()){
+                                <br>@if(userProfile.getLocations.iterator().hasNext()){
                                 <strong>@Messages("profile.county.text")</strong> @userProfile.getLocations.iterator().next().county.name
                                 }
                                 <br><strong>Barnvänligt:</strong> @userProfile.childFfriendly
