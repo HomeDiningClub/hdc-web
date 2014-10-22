@@ -1,4 +1,5 @@
 @(EnvDataForm: Form[controllers.EnvData],
+        profileOpts : controllers.UserProfileOptValues,
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
         editingProfile: Option[UserProfile] = None,
         termsAndConditions: Option[models.content.ContentPage] = None)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
@@ -212,7 +213,28 @@
                                 '_error -> EnvDataForm("allkoholServing").error.map(_.withMessage("Alkohol (Ta med eget/Tillhandahålls/Nej)")))
 
 
-                            <!-- New input -->
+                            Betalning
+                            <br>Kontanter<input type="checkbox" name="payCache" value="Kontanter" @profileOpts.ispayCache>
+                            <br>Swish<input type="checkbox" name="paySwish" value="Swish" @profileOpts.ispaySwish>
+                            <br>Banköverföring<input type="checkbox" name="payBankCard" value="Banköverföring" @profileOpts.ispayBankCard>
+                            <br>IZettle<input type="checkbox" name="payIZettle" value="IZettle" @profileOpts.ispayIZettle>
+
+                            <br>Antal gäster
+                            <br>
+
+                            <select name="maxGuest">
+                                <option value="1" @profileOpts.maxGuestsSelected("1")>1</option>
+                                <option value="2" @profileOpts.maxGuestsSelected("2")>2</option>
+                                <option value="3" @profileOpts.maxGuestsSelected("3")>3</option>
+                                <option value="4" @profileOpts.maxGuestsSelected("4")>4</option>
+                                <option value="5" @profileOpts.maxGuestsSelected("5")>5</option>
+                                <option value="6" @profileOpts.maxGuestsSelected("6")>6</option>
+                                <option value="7" @profileOpts.maxGuestsSelected("7")>7</option>
+                                <option value="8" @profileOpts.maxGuestsSelected("8")>8</option>
+                            </select>
+
+
+                                <!-- New input -->
 
 
 

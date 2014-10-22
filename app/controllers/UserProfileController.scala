@@ -113,6 +113,20 @@ class UserProfileController extends Controller with SecureSocial {
     verifying ("Du måste acceptera vilkoren för att bli medlem", h => h.acceptTerms == true)
   )
 
+
+  val OptionsForm = Form(
+    mapping(
+    "payCache" -> optional(text),
+    "paySwish" -> optional(text),
+    "payBankCard" -> optional(text),
+    "payIZettle" -> optional(text),
+    "maxGuest" -> text
+  )
+  (UserProfileOptions.apply) (UserProfileOptions.unapply))
+
+
+
+
   val tagForm = Form(
     mapping(
       "quality" -> list(text)
@@ -436,11 +450,33 @@ if(userTags != null) {
     Option(theUser.allkoholServing)
   )
 
+  val uOptValues = new  UserProfileOptValues(
+    safeJava(theUser.payCache),
+    safeJava(theUser.paySwish),
+    safeJava(theUser.payBankCard),
+    safeJava(theUser.payIZettle),
+    safeJava(theUser.maxNoOfGuest)
+  )
+
+  println("to form varde : " + uOptValues.ispayBankCard)
+  println("to form is : " + uOptValues.ispayBankCard)
+
   val nyForm =  AnvandareForm.fill(eData)
-  Ok(views.html.profile.skapa(nyForm, optionsLocationAreas = getCounties, editingProfile = Some(theUser), termsAndConditions = contentService.getTermsAndConditions))
+  Ok(views.html.profile.skapa(nyForm,uOptValues, optionsLocationAreas = getCounties, editingProfile = Some(theUser), termsAndConditions = contentService.getTermsAndConditions))
 
 
 }
+
+  def safeJava(value : String) : String =  {
+    var outString : String = ""
+
+    if(value != null && value != None) {
+      outString = value
+    }
+
+    outString
+  }
+
 
 
   /** ******************************************************
@@ -758,11 +794,46 @@ if(userTags != null) {
         var smoke                 : String = ""
         var allkoholServing       : String = ""
 
+          var payBankCard               : String = ""
+          var payCache                  : String = ""
+          var payIZettle                : String = ""
+          var paySwish                  : String = ""
+          var numberOfGuest             : String = ""
+
+        OptionsForm.bindFromRequest.fold(
+         error => println("Error reading options "),
+        ok=>
+            {
+              println("OK .....")
+              println("a. " + ok.payBankCard.getOrElse("--"))
+              println("b. " + ok.payCache.getOrElse("--"))
+              println("c. " + ok.payIZettle.getOrElse("--"))
+              println("d. " + ok.paySwish.getOrElse("--"))
+              println("maxGuest : " + ok.maxGuest)
+
+              payBankCard = ok.payBankCard.getOrElse("")
+              payCache = ok.payCache.getOrElse("")
+              payIZettle = ok.payIZettle.getOrElse("")
+              paySwish = ok.paySwish.getOrElse("")
+              numberOfGuest = ok.maxGuest
+
+              println("OK. max : " +  numberOfGuest)
+            }
+        )
+
+
+    val uOptValues = new  UserProfileOptValues(
+      payCache, paySwish,
+      payBankCard, payIZettle,
+      numberOfGuest)
+
+
+
         AnvandareForm.bindFromRequest.fold(
           errors => {
             println("error ..." +errors.toString)
 
-            BadRequest(views.html.profile.skapa(errors, optionsLocationAreas = getCounties, termsAndConditions = contentService.getTermsAndConditions))
+            BadRequest(views.html.profile.skapa(errors,uOptValues, optionsLocationAreas = getCounties, termsAndConditions = contentService.getTermsAndConditions))
 
           },
           reqUserProfile => {
@@ -785,12 +856,18 @@ if(userTags != null) {
 
             println("allkoholServing " + convOptionStringToString(reqUserProfile.allkoholServing))
             println("smoke " + convOptionStringToString(reqUserProfile.smoke))
+           // println("payIZettle: " + convOptionStringToString(reqUserProfile.payIZettle))
+
+
 
             childFfriendly  = convOptionStringToString(reqUserProfile.childFfriendly)
             handicapFriendly  = convOptionStringToString(reqUserProfile.handicapFriendly)
             havePets  = convOptionStringToString(reqUserProfile.havePets)
             smoke  = convOptionStringToString(reqUserProfile.smoke)
             allkoholServing   = convOptionStringToString(reqUserProfile.allkoholServing)
+
+
+
 
 
            val userCred = Helpers.getUserFromRequest.get
@@ -831,6 +908,12 @@ if(userTags != null) {
             theUser.havePets = havePets
             theUser.smoke = smoke
             theUser.allkoholServing = allkoholServing
+
+            theUser.payBankCard = payBankCard
+            theUser.payCache = payCache
+            theUser.payIZettle = payIZettle
+            theUser.paySwish = paySwish
+            theUser.maxNoOfGuest = numberOfGuest
 
 
 //        This part is not needed since tags or on it's own page now, activate this code if they are moved back
