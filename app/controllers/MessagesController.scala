@@ -99,7 +99,7 @@ object MessagesController extends  Controller with SecureSocial {
       content => {
 
         if(content.response.isEmpty) {
-            Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> (Messages("mails.error.no.reply")))
+            Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName) + "#inbox-tab").flashing(FlashMsgConstants.Error -> (Messages("mails.error.no.reply")))
         } else {
 
           userCredentialService.findById(UUID.fromString(content.memberId.getOrElse(""))) match {
@@ -145,12 +145,9 @@ object MessagesController extends  Controller with SecureSocial {
 
         }
 
-
-
       }
 
     )
-
 
   }
 
