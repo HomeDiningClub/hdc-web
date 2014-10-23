@@ -53,6 +53,9 @@ class UserProfileController extends Controller with SecureSocial {
   private var recipeService: RecipeService = _
 
   @Autowired
+  private var ratingService: RatingService = _
+
+  @Autowired
   private var fileService: ContentFileService = _
 
   @Autowired
@@ -202,6 +205,8 @@ class UserProfileController extends Controller with SecureSocial {
         Ok(views.html.profile.index(profile,
           FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,
           recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner),
+          myReviewBoxes = ratingService.getMyUserReviews(true,profile.getOwner),
+          reviewBoxesAboutMe = ratingService.getUserReviewsAboutMe(true,profile.getOwner),
           tagWordService.findByProfileAndGroup(profile,"profile"),
           isThisMyProfile = isThisMyProfile(profile)))
       case None =>

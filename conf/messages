@@ -56,7 +56,8 @@ banner.header=Annons:
 reviewbox.linktoprofile=Gå till {0} profilsida
 reviewbox.date.rated.date-format=yyyy-MM-dd
 reviewbox.date.rated.text={0} om {1}:
-reviewbox.show-hide-more-text=...
+reviewbox.show-hide-more-text=Visa mer / mindre
+reviewbox.rated.object.text=Betygsätter:
 
 # Content
 person.formular=Personliga inställningar (svenska)
@@ -162,6 +163,9 @@ profile.title=Profil
 profile.button.recipe.add=Lägg till recept
 profile.tags.header={0} är intresserad av
 
+profile.reviews.reviews.aboutme.header=Omdömen om mig
+profile.reviews.reviews.aboutmyfood.header=Omdömen om min mat
+profile.reviews.myreviews.user.header=Vad jag har betygsatt
 
 profile.create.title=Din profil
 profile.create.text=Här skapar du din profil, den kommer andra medlemmar att se. Om du råkar missa att fylla i viss information så går det bra att redigera din profil senare, om du vill komplettera med mer information.

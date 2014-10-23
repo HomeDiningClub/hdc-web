@@ -8,7 +8,7 @@
                 @defining( if(box.mainImage.isDefined){ "style=\"background-image: url('" + box.mainImage.get + "')\"" } else { "" } ) { mainImage =>
                 <div class="thumbnail panel-startpage hover-green-dropshadow" @Html(mainImage)>
                     <div class="body">
-                        @shared.hostImageCircle(box.userImage.getOrElse(""))
+                        @shared.hostImageCircle(box.userImage.getOrElse(""),cssClassWrapper = "white-border drop-shadow")
                         <h2>@box.fullName</h2>
                         <hr>
                         @if(box.location.nonEmpty) {

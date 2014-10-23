@@ -10,9 +10,9 @@
                     <h2>@header</h2>
                 }
                     @if(avatarUrl.isEmpty){
-                        @shared.hostImageCircle()
+                        @shared.hostImageCircle(cssClassWrapper = "white-border drop-shadow")
                     }else{
-                        @shared.hostImageCircle(avatarUrl)
+                        @shared.hostImageCircle(avatarUrl, cssClassWrapper = "white-border drop-shadow")
                     }
                 @if(showLinkBack){
                 </a>

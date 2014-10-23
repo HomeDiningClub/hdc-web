@@ -77,7 +77,7 @@ object MessagesController extends  Controller with SecureSocial {
 
       case Some(currentUser) =>
 
-        if (message.recipient.equals(currentUser)) {
+        if (message.recipient != null && message.recipient.equals(currentUser)) {
 
           val hostReply = MessageForm.apply(message.getOwner().firstName, message.getOwner().lastName, message.phone, Option(message.getOwner().objectId.toString),
             Option(currentUser.objectId.toString), message.date, message.time, message.numberOfGuests, Option(message.request), Option(""), Option(message.`type`),

@@ -5,6 +5,8 @@
         tab4: String,
         tab5: String,
         recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
+        myReviewBoxes: Option[List[models.viewmodels.ReviewBox]] = None,
+        reviewBoxesAboutMe: Option[List[models.viewmodels.ReviewBox]] = None,
         tagList: Option[List[models.profile.TagWord]] = None,
         isThisMyProfile: Boolean = false)(implicit request: RequestHeader, flash: Flash)
 
@@ -232,7 +234,19 @@
                                 Tab2
                             </div>
                             <div class="tab-pane tab-hdc fade" id="@tab3">
-                                Tab3
+                                <!-- Reviews -->
+                                @if(reviewBoxesAboutMe.nonEmpty){
+                                    <div class="row">
+                                        <div class="col-xs-12"><h3>@Messages("profile.reviews.reviews.aboutme.header")</h3></div>
+                                        @shared.reviewBox(reviewBoxesAboutMe.get)
+                                    </div>
+                                }
+                                @if(myReviewBoxes.nonEmpty){
+                                    <div class="row big-margin-top">
+                                        <div class="col-xs-12"><h3>@Messages("profile.reviews.myreviews.user.header")</h3></div>
+                                        @shared.reviewBox(myReviewBoxes.get)
+                                    </div>
+                                }
                             </div>
                             <div class="tab-pane tab-hdc fade" id="@tab4">
                                 @if(isThisMyProfile && userProfile.getOwner.getMessages.nonEmpty) {

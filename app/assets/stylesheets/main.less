@@ -644,14 +644,12 @@ input[type="reset"]:hover
 }
 .host-container .favorite-box .host-image-favorite {
   position:absolute;
-  left:-23px;
-  top:10px;
+  left:-32px;
+  top:-2px;
 }
 .host-container .favorite-box .host-image-favorite img {
-  width:60px;
-  height:60px;
-  border-radius: 25%;
-  border-width: 1px;
+  width:80px;
+  height:80px;
   margin:0px 13px 5px 0px;
 }
 .host-container .favorite-box .name {
@@ -1262,7 +1260,7 @@ h3.aside-title {
   display: block;
   padding:0px 0px 0px 0px;
   width: 100%;
-  padding-right:13px;
+  max-width:90px;
 }
 .reviews-list .bubble {
   float:left;
@@ -1303,14 +1301,10 @@ h3.aside-title {
 .reviews-list .media:nth-child(2n) .host-image-link,
 .reviews-list .media:nth-child(2n) .host-image,
 .reviews-list .media:nth-child(2n) .host-image-review,
+.reviews-list .media:nth-child(2n) .host-image-link span,
 .reviews-list .media:nth-child(2n) .bubble
 {
   float:right;
-}
-.reviews-list .media:nth-child(2n) .host-image-link span
-{
-  padding-right:0px;
-  padding-left:13px;
 }
 .reviews-list .media:nth-child(2n) .host-image-review
 {
@@ -1321,6 +1315,9 @@ h3.aside-title {
   font-size:11px;
   display: block;
   clear: both;
+  position:absolute;
+  top:8px;
+  right:16px;
 }
 .reviews-list .review-text-header,
 .reviews-list .review-text,
@@ -1331,14 +1328,19 @@ h3.aside-title {
 }
 .reviews-list .media .review-ranked-item-link {
   position: relative;
-  display: block;
+  display: inline-block;
   font-weight: bold;
-  clear:both;
   color:@hdc-dark-gray;
 }
 .reviews-list .review-ranked-item-link:hover {
   color:@hdc-black;
   text-decoration: underline;
+}
+.reviews-list .media .grade {
+  position: relative;
+  margin: 23px 0px 4px 0px;
+  overflow: hidden;
+  clear:both;
 }
 .reviews-list .bubble {
   margin-top:15px;
@@ -1378,12 +1380,17 @@ h3.aside-title {
 }
 .reviews-list .more-text-ctrl {
   display: block;
+  text-align: center;
+  padding:5px 5px 0px 5px;
+  margin-top:-8px;
+  position: relative;
 }
 .reviews-list .more-text-ctrl span {
   color: @hdc-green;
 }
 .reviews-list .more-text-ctrl:hover {
   background-color: @hdc-semi-light-gray;
+  opacity: 0.5;
 }
 .reviews-list .more-text-ctrl:hover span {
   color: @hdc-orange;
@@ -1461,19 +1468,25 @@ h3.aside-title {
 }
 
 
-// Profile
-.host-image img
+// Host round image
+.host-image.white-border img
 {
-  display: block;
-//  z-index:100;
-  width: 100px;
-  height:100px;
-//  background-position: 50% 50%;
-//  background-repeat: no-repeat;
   border:3px solid #fff;
+}
+
+.host-image.drop-shadow img
+{
   box-shadow: 1px 1px 4px #444;
 }
-.host-container .host-image
+
+// Profile
+.host-container .host-header .host-image img
+{
+  display: block;
+  width: 100px;
+  height:100px;
+}
+.host-container .host-header .host-image
 {
   position: absolute;
   right:10px;

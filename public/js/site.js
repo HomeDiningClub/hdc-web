@@ -35,9 +35,11 @@ $(document).ready(function () {
         lockHide: false,
         showClass: "truncate-text-show",
         hideClass: "truncate-text-hide",
-        controlBtn: function(){
-            return $(this).parent().find('.more-text-ctrl');
-        }
+        controlBtn: "more-text-ctrl",
+        dynamic: false
+        //controlBtn: function(){
+        //    return $(this).parent().find('.more-text-ctrl');
+        //}
     });
 
 //   $(".btn-rate-popover").popover({

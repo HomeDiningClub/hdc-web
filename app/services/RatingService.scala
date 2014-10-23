@@ -38,30 +38,30 @@ class RatingService {
     ratingUserCredentialRepository.findByobjectId(objectId)
   }
   @Transactional(readOnly = true)
-  def findUserRatingByUserWhoIsRating(user: UserCredential): Option[List[RatesUserCredential]] = {
-    ratingUserCredentialRepository.findByuserWhoIsRating(user).iterator.asScala.toList match {
-      case null => None
+  def findUserRatingByUserWhoIsRating(user: UserCredential, orderByDate: Boolean = true): Option[List[RatesUserCredential]] = {
+    ratingUserCredentialRepository.findByuserWhoIsRating(user.objectId).iterator.asScala.toList.sortBy(rating => rating.getLastModifiedDate) match {
+      case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
   @Transactional(readOnly = true)
-  def findUserRatingByRatingValue(ratingValue: Int): Option[List[RatesUserCredential]] = {
-    ratingUserCredentialRepository.findByratingValue(ratingValue).iterator.asScala.toList match {
-      case null => None
+  def findUserRatingByRatingValue(ratingValue: Int, filterModifier: String, orderByDate: Boolean = true): Option[List[RatesUserCredential]] = {
+    ratingUserCredentialRepository.findByratingValue(ratingValue, filterModifier).iterator.asScala.toList.sortBy(rating => rating.getLastModifiedDate) match {
+      case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
   @Transactional(readOnly = true)
-  def findUserRatingByWhoGotRated(user: UserCredential): Option[List[RatesUserCredential]] = {
-    ratingUserCredentialRepository.findByuserRates(user).iterator.asScala.toList match {
-      case null => None
+  def findUserRatingByWhoGotRated(user: UserCredential, orderByDate: Boolean = true): Option[List[RatesUserCredential]] = {
+    ratingUserCredentialRepository.findByuserRates(user.objectId).iterator.asScala.toList.sortBy(rating => rating.getLastModifiedDate) match {
+      case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
   @Transactional(readOnly = true)
   def findUserRatingAll(orderByDate: Boolean = true): Option[List[RatesUserCredential]] = {
     ratingUserCredentialRepository.findAll.asScala.toList.sortBy(rating => rating.getLastModifiedDate) match {
-      case null => None
+      case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
@@ -75,21 +75,21 @@ class RatingService {
   }
   @Transactional(readOnly = true)
   def findRecipeRatingByUserWhoIsRating(user: UserCredential): Option[List[RatesRecipe]] = {
-    ratingRecipeRepository.findByuserWhoIsRating(user).iterator.asScala.toList match {
+    ratingRecipeRepository.findByuserWhoIsRating(user.objectId).iterator.asScala.toList match {
       case null => None
       case listOfItems => Some(listOfItems)
     }
   }
   @Transactional(readOnly = true)
-  def findRecipeRatingByRatingValue(ratingValue: Int): Option[List[RatesRecipe]] = {
-    ratingRecipeRepository.findByratingValue(ratingValue).iterator.asScala.toList match {
+  def findRecipeRatingByRatingValue(ratingValue: Int, filterModifier: String): Option[List[RatesRecipe]] = {
+    ratingRecipeRepository.findByratingValue(ratingValue,filterModifier).iterator.asScala.toList match {
       case null => None
       case listOfItems => Some(listOfItems)
     }
   }
   @Transactional(readOnly = true)
   def findRecipeRatingByWhatGotRated(recipe: Recipe): Option[List[RatesRecipe]] = {
-    ratingRecipeRepository.findByuserRates(recipe).iterator.asScala.toList match {
+    ratingRecipeRepository.findByuserRates(recipe.objectId).iterator.asScala.toList match {
       case null => None
       case listOfItems => Some(listOfItems)
     }
@@ -122,33 +122,60 @@ class RatingService {
 
 
   @Transactional(readOnly = true)
-  def getReviewBoxes(sortByDate: Boolean, takeTop: Int): Option[List[ReviewBox]] = {
+  def getUserReviewBoxesStartPage(sortByDate: Boolean, takeTop: Int): Option[List[ReviewBox]] = {
     this.findUserRatingAll(sortByDate) match {
       case None =>
         None
       case Some(items) =>
-        Some{ items.take(takeTop).filter(r => !r.getUserWhoIsRating.profiles.isEmpty && r.getUserWhoIsRating.profiles.asScala.head.profileLinkName.nonEmpty).map { ratingItem: RatesUserCredential =>
-          val userWhoIsRatingProfile = ratingItem.getUserWhoIsRating.profiles.asScala.head
-          val itemRatedProfile = ratingItem.getUserRates.profiles.asScala.head
-          ReviewBox(
-            objectId = Some(ratingItem.objectId),
-            linkToProfile = routes.UserProfileController.viewProfileByName(userWhoIsRatingProfile.profileLinkName).url,
-            firstName = ratingItem.getUserWhoIsRating.firstName,
-            rankedName = itemRatedProfile.profileLinkName + "&nbsp;(" + ratingItem.getUserRates.firstName + ")",
-            linkToRatedItem = routes.UserProfileController.viewProfileByName(itemRatedProfile.profileLinkName).url,
-            reviewText = ratingItem.ratingComment match {
-              case "" | null => None
-              case content => Some(content)
-            },
-            ratedDate = ratingItem.getLastModifiedDate,
-            userImage = userWhoIsRatingProfile.getAvatarImage match {
-              case null => None
-              case image => Some(image.getTransformByName("thumbnail").getUrl)
-            },
-            rating = ratingItem.ratingValue)
-            }
-          }
+        buildUserReviewBoxes(items.take(takeTop))
     }
+  }
+
+  @Transactional(readOnly = true)
+  def getMyUserReviews(sortByDate: Boolean, user: UserCredential): Option[List[ReviewBox]] = {
+    this.findUserRatingByUserWhoIsRating(user,sortByDate) match {
+      case None =>
+        None
+      case Some(items) =>
+        buildUserReviewBoxes(items)
+    }
+  }
+
+  @Transactional(readOnly = true)
+  def getUserReviewsAboutMe(sortByDate: Boolean, user: UserCredential): Option[List[ReviewBox]] = {
+    this.findUserRatingByWhoGotRated(user,sortByDate) match {
+      case None =>
+        None
+      case Some(items) =>
+        buildUserReviewBoxes(items)
+    }
+  }
+
+
+
+  @Transactional(readOnly = true)
+  def buildUserReviewBoxes(list: List[RatesUserCredential]): Option[List[ReviewBox]] = {
+      Some{ list.filter(r => !r.getUserWhoIsRating.profiles.isEmpty && r.getUserWhoIsRating.profiles.asScala.head.profileLinkName.nonEmpty).map { ratingItem: RatesUserCredential =>
+        val userWhoIsRatingProfile = ratingItem.getUserWhoIsRating.profiles.asScala.head
+        val itemRatedProfile = ratingItem.getUserRates.profiles.asScala.head
+        ReviewBox(
+          objectId = Some(ratingItem.objectId),
+          linkToProfile = routes.UserProfileController.viewProfileByName(userWhoIsRatingProfile.profileLinkName).url,
+          firstName = ratingItem.getUserWhoIsRating.firstName,
+          rankedName = itemRatedProfile.profileLinkName + "&nbsp;(" + ratingItem.getUserRates.firstName + ")",
+          linkToRatedItem = routes.UserProfileController.viewProfileByName(itemRatedProfile.profileLinkName).url,
+          reviewText = ratingItem.ratingComment match {
+            case "" | null => None
+            case content => Some(content)
+          },
+          ratedDate = ratingItem.getLastModifiedDate,
+          userImage = userWhoIsRatingProfile.getAvatarImage match {
+            case null => None
+            case image => Some(image.getTransformByName("thumbnail").getUrl)
+          },
+          rating = ratingItem.ratingValue)
+          }
+        }
   }
 
 
