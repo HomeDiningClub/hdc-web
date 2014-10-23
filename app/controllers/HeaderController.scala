@@ -112,7 +112,7 @@ object HeaderController extends Controller with SecureSocial {
       retMenuItemsList.appendAll(menuItemsList.get)
 
     retMenuItemsList.prepend(defMenuItem01)
-    retMenuItemsList.append(defMenuItem02)
+    //retMenuItemsList.append(defMenuItem02)
     retMenuItemsList.append(defMenuItem03)
     retMenuItemsList.append(defMenuItem04)
 
