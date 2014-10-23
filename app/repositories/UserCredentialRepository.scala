@@ -19,7 +19,7 @@ trait UserCredentialRepository extends GraphRepository[UserCredential]
   def findByuserId(userId : String) : UserCredential
   def findByuserId(userId : String, providerId: String) : UserCredential
 
-  // Rating
+  // Rating Users
   def findByratingsUserWhoIsRating(userWhoIsRating: UserCredential): util.List[UserCredential]
   def findByratingsUserRates(userRates: UserCredential): util.List[UserCredential]
   def findByratingsRatingValue(ratingValue: Int): util.List[UserCredential]

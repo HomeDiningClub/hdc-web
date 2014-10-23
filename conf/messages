@@ -163,9 +163,12 @@ profile.title=Profil
 profile.button.recipe.add=Lägg till recept
 profile.tags.header={0} är intresserad av
 
-profile.reviews.reviews.aboutme.header=Omdömen om mig
-profile.reviews.reviews.aboutmyfood.header=Omdömen om min mat
-profile.reviews.myreviews.user.header=Vad jag har betygsatt
+profile.reviews.reviews.aboutme.header=Omdömen om mig:
+profile.reviews.reviews.aboutme.username.header=Omdömen om {0}:
+profile.reviews.reviews.aboutmyfood.header=...och om min mat:
+profile.reviews.reviews.aboutmyfood.username.header=...och {0}s mat:
+profile.reviews.myreviews.user.header=Mina omdömen om värdar/gäster:
+profile.reviews.myreviews.food.header=Mina omdömen om recept:
 
 profile.create.title=Din profil
 profile.create.text=Här skapar du din profil, den kommer andra medlemmar att se. Om du råkar missa att fylla i viss information så går det bra att redigera din profil senare, om du vill komplettera med mer information.

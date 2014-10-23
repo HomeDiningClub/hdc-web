@@ -62,7 +62,7 @@ class StartPageController extends Controller with SecureSocial {
       optionsFoodAreas = getFoodAreas,
       optionsLocationAreas = getCounties,
       startPageBoxes = startPageBoxes,
-      reviewBoxes = ratingService.getUserReviewBoxesStartPage(true,8),
+      reviewBoxes = ratingService.getUserReviewBoxesStartPage(8),
       asideNews = contentService.getAsideNewsItems
     ))
   }

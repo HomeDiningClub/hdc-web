@@ -219,8 +219,10 @@ class UserProfileController extends Controller with SecureSocial {
         Ok(views.html.profile.index(profile,
           FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,
           recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner),
-          myReviewBoxes = ratingService.getMyUserReviews(true,profile.getOwner),
-          reviewBoxesAboutMe = ratingService.getUserReviewsAboutMe(true,profile.getOwner),
+          myReviewBoxes = ratingService.getMyUserReviews(profile.getOwner),
+          myRecipeReviewBoxes = ratingService.getMyUserReviewsAboutFood((profile.getOwner)),
+          reviewBoxesAboutMyFood = ratingService.getUserReviewsAboutMyFood(profile.getOwner),
+          reviewBoxesAboutMe = ratingService.getUserReviewsAboutMe(profile.getOwner),
           tagWordService.findByProfileAndGroup(profile,"profile"),
           isThisMyProfile = isThisMyProfile(profile)))
       case None =>
