@@ -124,7 +124,8 @@ class UserProfileController extends Controller with SecureSocial {
     //"roleGuest" -> optional(text),
     "roleHost" -> optional(text),
     "maxGuest" -> text,
-    "minGuest" -> text
+    "minGuest" -> text,
+    "quality" -> list(text)
   )
   (UserProfileOptions.apply) (UserProfileOptions.unapply))
 
@@ -284,9 +285,9 @@ class UserProfileController extends Controller with SecureSocial {
 
   /****************************************************************************************************
    Show userProfile for edit
-
-
-   */
+   display profile data for the current user to be changed
+   my profile
+   ****************************************************************************************************/
 
 
 def edit = SecuredAction { implicit request =>
@@ -364,14 +365,6 @@ if(userTags != null) {
   val retTagList = tagList.toList.sortBy(tw => tw.name)
 
 
-
-
-
-
-
-
-  //println("county stored : [" +  theUser.county + "]")
-
   try {
     println("county name: " + theUser.getLocations.iterator.next().county.name)
     locationId = theUser.getLocations.iterator.next().county.objectId.toString
@@ -419,7 +412,10 @@ if(userTags != null) {
   println("to form is : " + uOptValues.ispayBankCard)
 
   val nyForm =  AnvandareForm.fill(eData)
-  Ok(views.html.profile.skapa(nyForm,uOptValues, optionsLocationAreas = getCounties, editingProfile = Some(theUser), termsAndConditions = contentService.getTermsAndConditions))
+  Ok(views.html.profile.skapa(nyForm,uOptValues,
+    retTagList, typ,
+    optionsLocationAreas = getCounties,
+    editingProfile = Some(theUser), termsAndConditions = contentService.getTermsAndConditions))
 
 
 }
@@ -729,6 +725,11 @@ if(userTags != null) {
 
     println("************************ save profile *********************************************")
 
+    // My UserProfile
+    val userCred = Helpers.getUserFromRequest.get
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+
+
 
     //var service = new services.UserProfileService()
 
@@ -740,7 +741,10 @@ if(userTags != null) {
 
         // add all new tags
 
-        var map:Map[String,String] = Map()
+
+        val typ = new models.Types                      // all tags selected
+        var map: Map[String, String] = Map()            // to update tags in user profile
+
         var aboutMeHeadlineText   : String = ""
         var aboutMeText           : String = ""
         var profileLinkName       : String = ""
@@ -789,6 +793,14 @@ if(userTags != null) {
               numberOfGuest = ok.maxGuest
               minGuest = ok.minGuest
               println("OK. max : " +  numberOfGuest)
+
+              for(tags<-ok.quality) {
+                typ.addVald(tags)
+                map += (tags -> tags)
+              }
+
+
+
             }
         )
 
@@ -798,13 +810,36 @@ if(userTags != null) {
       payBankCard, payIZettle, roleGuest, roleHost,
       numberOfGuest, minGuest)
 
+      // Handle tags from form ...
 
+
+
+        // Fetch all tags
+        var d = tagWordService.listByGroupOption("profile")
+        var l : Long = 0
+        var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
+
+        if(d.isDefined){
+          for(theTag <- d.get) {
+            var newType : models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l+"]" )
+            l = l + 1
+            println(theTag.tagName)
+            tagList.add(newType)
+          }
+        }
+    // Sort & List
+    val retTagList = tagList.toList.sortBy(tw => tw.name)
+
+
+      // Handle tags end ...
 
         AnvandareForm.bindFromRequest.fold(
           errors => {
             println("error ..." +errors.toString)
 
-            BadRequest(views.html.profile.skapa(errors,uOptValues, optionsLocationAreas = getCounties, termsAndConditions = contentService.getTermsAndConditions))
+            BadRequest(views.html.profile.skapa(errors,uOptValues,
+              retTagList, typ,
+              optionsLocationAreas = getCounties, termsAndConditions = contentService.getTermsAndConditions))
 
           },
           reqUserProfile => {
@@ -841,8 +876,6 @@ if(userTags != null) {
 
 
 
-           val userCred = Helpers.getUserFromRequest.get
-           var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
             // Gäst och värd
 
@@ -976,7 +1009,8 @@ if(userTags != null) {
               }
           }
 
-          userProfileService.saveUserProfile(theUser)
+          userProfileService.updateUserProfileTags(theUser, d, map)
+          //userProfileService.saveUserProfile(theUser)
 
       Redirect(routes.UserProfileController.edit())
     })

@@ -8,7 +8,8 @@ case class UserProfileOptions (
   //roleGuest       : Option[String],
   roleHost        : Option[String],
   maxGuest : String,
-  minGuest : String
+  minGuest : String,
+  quality  : List[String]
                                 )
 
 
