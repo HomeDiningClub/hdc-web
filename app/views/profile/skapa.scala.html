@@ -113,7 +113,15 @@
                         <div class="panel-heading">@Messages("profile.create.header.food")</div>
                         <div class="panel-body">
 
-                            <a href="@routes.UserProfileController.showTags()">Edit tags</a>
+                             <!-- Tags -->
+
+                            @for(t <- element) {
+                                <input type="checkbox" id="@t.name" name="@t.v" value="@t.name" @klass.getString(t.name)>
+                                &nbsp;
+                                <label for="@t.name" class="notbold">@t.name</label><br>
+                            }
+
+                            <!-- Tags -->
 
                         </div>
                     </div>
@@ -147,6 +155,14 @@
                                 '_error -> EnvDataForm.error("city")
                             )
 
+                            @if(!optionsLocationAreas.isEmpty) {
+                                @helper.select(EnvDataForm("county"),
+                                    optionsLocationAreas.get,
+                                    '_label -> Messages("profile.create.form.area"),
+                                    '_error -> EnvDataForm.error("county")
+                                )
+                            }
+
 
                             @helper.inputText(EnvDataForm("phoneNumber"),
                                 'id -> "phoneNumber",
@@ -163,6 +179,17 @@
                                 '_help -> Messages("profile.create.form.personnummer.help"),
                                 '_error -> EnvDataForm.error("personnummer")
                             )
+
+
+                        </div>
+                    </div>
+
+
+
+                        <div class="panel-heading">Värd</div>
+                        <div class="panel-body">
+
+
 
 
                             <!--  New input -->
@@ -224,25 +251,6 @@
                             </select>
 
                            <!-- New input -->
-
-                           <!-- Tags -->
-                            <br>
-                            @for(t <- element) {
-                                <input type="checkbox" id="@t.name" name="@t.v" value="@t.name" @klass.getString(t.name)>
-                                &nbsp;
-                                <label for="@t.name" class="notbold">@t.name</label><br>
-                            }
-
-                           <!-- Tags -->
-
-
-                            @if(!optionsLocationAreas.isEmpty) {
-                                @helper.select(EnvDataForm("county"),
-                                    optionsLocationAreas.get,
-                                    '_label -> Messages("profile.create.form.area"),
-                                    '_error -> EnvDataForm.error("county")
-                                )
-                            }
                         </div>
                     </div>
 
