@@ -90,27 +90,11 @@
                             <hr>
 
 
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td class="col50">
-                                            @if(editingProfile.get.getRole.contains("VÄRD")) {
-                                                @helper.checkbox(EnvDataForm("roleHost"), '_label -> "Värd", 'checked -> editingProfile.get.roleChecked(EnvDataForm.get.roleHost.getOrElse("")).toString)
-                                            } else {
-                                                @helper.checkbox(EnvDataForm("roleHost"), '_label -> "Värd")
-                                            }
-                                        </td>
-                                        <td>
-                                            @if(editingProfile.get.getRole.contains("GÄST")) {
-                                                @helper.checkbox(EnvDataForm("roleGuest"), '_label -> "Gäst", 'checked -> editingProfile.get.roleChecked(EnvDataForm.get.roleGuest.getOrElse("")).toString)
-                                            } else {
-                                                @helper.checkbox(EnvDataForm("roleGuest"), '_label -> "Gäst")
-                                            }
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <!-- Gäst och värd -->
+                            <br>Gäst<input type="checkbox" name="roleGuest" value="GÄST" @profileOpts.isroleGuest>
+                            <br>Värd<input type="checkbox" name="roleHost" value="VÄRD" @profileOpts.isroleHost>
 
+                            <!-- Gäst och värd -->
 
                             <hr>
                             @helper.inputFile(EnvDataForm("mainimage"), '_label -> Messages("profile.create.form.main-image"))
@@ -184,33 +168,33 @@
                             @helper.inputRadioGroup(
                                 EnvDataForm("childFfriendly"),
                                 options = helper.options("JA"->"JA","NEJ"->"NEJ"),
-                                '_label -> "Barnvänligt",
-                                '_error -> EnvDataForm("husdjur").error.map(_.withMessage("Du måste svara på frågan om det är barnvänligt eller inte")))
+                                '_label -> "Barnvänligt"
+                            )
 
                             @helper.inputRadioGroup(
                                 EnvDataForm("handicapFriendly"),
-                                options = helper.options("JA"->"JA","NEJ"->"NEJ"),
-                                '_label -> "Handikappvänligt",
-                                '_error -> EnvDataForm("handicapFriendly").error.map(_.withMessage("Handikapvänligt (JA/NEJ)")))
+                                options = helper.options("Ja"->"Ja","Nej"->"Nej"),
+                                '_label -> "Handikappvänligt"
+                            )
 
                             @helper.inputRadioGroup(
                                 EnvDataForm("havePets"),
-                                options = helper.options("JA"->"JA","NEJ"->"NEJ"),
-                                '_label -> "Husdjur finns?",
-                                '_error -> EnvDataForm("havePets").error.map(_.withMessage("Husdjur (JA/NEJ)")))
+                                options = helper.options("Ja"->"Ja","Nej"->"Nej"),
+                                '_label -> "Husdjur finns?"
+                            )
 
                             @helper.inputRadioGroup(
                                 EnvDataForm("smoke"),
-                                options = helper.options("JA"->"JA","NEJ"->"NEJ"),
-                                '_label -> "Rökning tillåtet?",
-                                '_error -> EnvDataForm("smoke").error.map(_.withMessage("Rökare (JA/NEJ)")))
+                                options = helper.options("Ja"->"Ja","Nej"->"Nej"),
+                                '_label -> "Rökning tillåtet?"
+                            )
 
 
                             @helper.inputRadioGroup(
                                 EnvDataForm("allkoholServing"),
-                                options = helper.options("Ta med eget"->"Ta med eget","Tillhandahålls"->"Tillhandahålls", "NEJ"->"Nej"),
-                                '_label -> "Alkohol",
-                                '_error -> EnvDataForm("allkoholServing").error.map(_.withMessage("Alkohol (Ta med eget/Tillhandahålls/Nej)")))
+                                options = helper.options("Ta med eget"->"Ta med eget","Tillhandahålls"->"Tillhandahålls", "Nej"->"Nej"),
+                                '_label -> "Alkohol"
+                            )
 
 
                             Betalning

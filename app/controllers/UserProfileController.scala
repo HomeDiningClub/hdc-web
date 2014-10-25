@@ -103,8 +103,6 @@ class UserProfileController extends Controller with SecureSocial {
       "phoneNumber" -> text,
       "personnummer" -> text,
       "acceptTerms"  -> boolean,
-      "roleHost" -> optional(text),
-      "roleGuest" -> optional(text),
       "childFfriendly" -> optional(text),
       "handicapFriendly" -> optional(text),
       "havePets" -> optional(text),
@@ -123,6 +121,8 @@ class UserProfileController extends Controller with SecureSocial {
     "paySwish" -> optional(text),
     "payBankCard" -> optional(text),
     "payIZettle" -> optional(text),
+    "roleGuest" -> optional(text),
+    "roleHost" -> optional(text),
     "maxGuest" -> text
   )
   (UserProfileOptions.apply) (UserProfileOptions.unapply))
@@ -338,11 +338,13 @@ def createTags = Action { implicit request =>
   }
 
 
+  /****************************************************************************************************
+   Show userProfile for edit
 
 
+   */
 
 
-// Edit Profile
 def edit = SecuredAction { implicit request =>
 
 
@@ -365,6 +367,9 @@ def edit = SecuredAction { implicit request =>
 
   if (theUser.getRole.contains(UserLevelScala.HOST.Constant)) { host = UserLevelScala.HOST.Constant}
   if (theUser.getRole.contains(UserLevelScala.GUEST.Constant)) { guest = UserLevelScala.GUEST.Constant}
+
+  println("HOST : " + host)
+  println("GUEST : " + guest)
 
 
   val provider = request.user.identityId.providerId
@@ -448,8 +453,6 @@ if(userTags != null) {
     theUser.phoneNumber, // phone number
     personnummer, // TODO
     theUser.isTermsOfUseApprovedAccepted, // isTermsOfUseApprovedAccepted
-    Option(host),
-    Option(guest), // TODO
     Option(theUser.childFfriendly),
     Option(theUser.handicapFriendly),
     Option(theUser.havePets),
@@ -462,6 +465,8 @@ if(userTags != null) {
     safeJava(theUser.paySwish),
     safeJava(theUser.payBankCard),
     safeJava(theUser.payIZettle),
+    safeJava(guest),
+    safeJava(host),
     safeJava(theUser.maxNoOfGuest)
   )
 
@@ -768,7 +773,13 @@ if(userTags != null) {
   }
 
 
-  // Save profile
+  /** **************************************************************************************************
+    Save UserProfile
+
+
+   ***************************************************************************************************/
+
+
   def editSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
     println("************************ save profile *********************************************")
@@ -805,6 +816,8 @@ if(userTags != null) {
           var payCache                  : String = ""
           var payIZettle                : String = ""
           var paySwish                  : String = ""
+          var roleGuest                 : String= ""
+          var roleHost                  : String = ""
           var numberOfGuest             : String = ""
 
         OptionsForm.bindFromRequest.fold(
@@ -816,12 +829,16 @@ if(userTags != null) {
               println("b. " + ok.payCache.getOrElse("--"))
               println("c. " + ok.payIZettle.getOrElse("--"))
               println("d. " + ok.paySwish.getOrElse("--"))
+              println("e.GUEST "  + ok.roleGuest.getOrElse("--"))
+              println("f.HOST "   + ok.roleHost.getOrElse("--"))
               println("maxGuest : " + ok.maxGuest)
 
               payBankCard = ok.payBankCard.getOrElse("")
               payCache = ok.payCache.getOrElse("")
               payIZettle = ok.payIZettle.getOrElse("")
               paySwish = ok.paySwish.getOrElse("")
+              roleGuest = ok.roleGuest.getOrElse("")
+              roleHost = ok.roleHost.getOrElse("")
               numberOfGuest = ok.maxGuest
 
               println("OK. max : " +  numberOfGuest)
@@ -831,7 +848,7 @@ if(userTags != null) {
 
     val uOptValues = new  UserProfileOptValues(
       payCache, paySwish,
-      payBankCard, payIZettle,
+      payBankCard, payIZettle, roleGuest, roleHost,
       numberOfGuest)
 
 
@@ -880,12 +897,35 @@ if(userTags != null) {
            val userCred = Helpers.getUserFromRequest.get
            var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
 
+            // Gäst och värd
+
+
+            uOptValues.isBooleanSelectedGuest match {
+              case true =>
+                if(!theUser.getRole.contains(UserLevelScala.GUEST.Constant)) theUser.getRole.add(UserLevelScala.GUEST.Constant)
+              case false =>
+                theUser.getRole.remove(UserLevelScala.GUEST.Constant)
+            }
+
+            /*
             reqUserProfile.roleGuest match {
               case None =>
                 theUser.getRole.remove(UserLevelScala.GUEST.Constant)
               case Some(item) =>
                 if(!theUser.getRole.contains(UserLevelScala.GUEST.Constant)) theUser.getRole.add(UserLevelScala.GUEST.Constant)
             }
+            */
+
+            uOptValues.isBooleanSelectedHost match {
+              case true =>
+                if(!theUser.getRole.contains(UserLevelScala.HOST.Constant)) theUser.getRole.add(UserLevelScala.HOST.Constant)
+              case false =>
+                theUser.getRole.remove(UserLevelScala.HOST.Constant)
+            }
+
+
+
+            /*
 
             reqUserProfile.roleHost match {
               case None =>
@@ -893,6 +933,8 @@ if(userTags != null) {
               case Some(item) =>
                 if(!theUser.getRole.contains(UserLevelScala.HOST.Constant)) theUser.getRole.add(UserLevelScala.HOST.Constant)
             }
+            */
+
 
            var userCredentials =  theUser.getOwner
 

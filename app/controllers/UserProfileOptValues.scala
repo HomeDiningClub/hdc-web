@@ -5,6 +5,8 @@ class UserProfileOptValues(
   var paySwish      : String,
   var payBankCard   : String,
   var payIZettle    : String,
+  var roleGuest     : String,
+  var roleHost      : String,
   var numberOfGuest : String)
 {
 
@@ -32,6 +34,17 @@ class UserProfileOptValues(
       selectedString
     }
 
+  def isBooleanSelected(value : String) : Boolean = {
+
+    var isSelected : Boolean = false
+
+    if(value.size > 0) {
+      isSelected = true
+    }
+    isSelected
+  }
+
+
     def ispayCache : String = {
       isVald(payCache)
     }
@@ -47,6 +60,25 @@ class UserProfileOptValues(
   def ispayIZettle : String = {
     isVald(payIZettle)
   }
+
+  def isroleGuest : String = {
+    isVald(roleGuest)
+  }
+
+  def isBooleanSelectedGuest : Boolean = {
+    isBooleanSelected(roleGuest)
+  }
+
+
+  def isroleHost : String = {
+    isVald(roleHost)
+  }
+
+  def isBooleanSelectedHost : Boolean = {
+    isBooleanSelected(roleHost)
+  }
+
+
 
   def getnumberOfGuest : String = {
     numberOfGuest

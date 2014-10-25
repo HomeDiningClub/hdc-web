@@ -12,8 +12,6 @@ case class EnvData(
         phoneNumber     : String,
         personnummer    : String,
         acceptTerms     : Boolean,
-        roleHost        : Option[String],
-        roleGuest       : Option[String],
         childFfriendly  :Option[String],
         handicapFriendly:Option[String],
         havePets        :Option[String],
