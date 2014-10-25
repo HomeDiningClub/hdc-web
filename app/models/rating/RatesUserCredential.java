@@ -10,20 +10,24 @@ import services.InstancedServices;
 public class RatesUserCredential extends BaseRating {
 
     @StartNode
+    @Fetch
     public UserCredential userWhoIsRating;
 
     @EndNode
+    @Fetch
     public UserCredential userRates;
 
     public UserCredential getUserWhoIsRating() {
-        return InstancedServices.userCredentialService().fetchUserCredential(userWhoIsRating);
+        return this.userWhoIsRating;
     }
 
     public UserCredential getUserRates() {
-        return InstancedServices.userCredentialService().fetchUserCredential(userRates);
+        return this.userRates;
     }
 
-    public RatesUserCredential rate(int ratingValue, String ratingComment, String userRaterIP) {
+    public RatesUserCredential rate(UserCredential userWhoIsRating, UserCredential userRates, int ratingValue, String ratingComment, String userRaterIP) {
+        this.userWhoIsRating = userWhoIsRating;
+        this.userRates = userRates;
         this.userRaterIP = userRaterIP;
         this.ratingValue = ratingValue;
         this.ratingComment = ratingComment;

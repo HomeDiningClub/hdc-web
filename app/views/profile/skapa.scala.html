@@ -89,15 +89,6 @@
                             )
 
                             <hr>
-
-
-                            <!-- Gäst och värd -->
-
-                            <br>Jag vill vara värd &nbsp; <input type="checkbox" name="roleHost" value="VÄRD" @profileOpts.isroleHost>
-
-                            <!-- Gäst och värd -->
-
-                            <hr>
                             @helper.inputFile(EnvDataForm("mainimage"), '_label -> Messages("profile.create.form.main-image"))
                             @if(editingProfile.isDefined && editingProfile.get.getMainImage != null) {
                                 @shared.img(editingProfile.get.getMainImage.getTransformByName("thumbnail").getUrl) - @Messages("profile.create.form.main-image.existing")
@@ -183,14 +174,17 @@
 
                         </div>
                     </div>
+                </div>
 
+                <div class="col-xs-12">
 
-
+                    <div class="panel panel-default">
                         <div class="panel-heading">Värd</div>
                         <div class="panel-body">
+                            <!-- Gäst och värd -->
+                            Jag vill vara värd &nbsp; <input type="checkbox" name="roleHost" value="VÄRD" @profileOpts.isroleHost>
 
-
-
+                            <hr>
 
                             <!--  New input -->
                             @helper.inputRadioGroup(
@@ -253,7 +247,6 @@
                            <!-- New input -->
                         </div>
                     </div>
-
                 </div>
 
                 <div class="col-xs-12 text-center margin-top">

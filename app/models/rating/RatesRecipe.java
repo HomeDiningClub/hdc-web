@@ -13,22 +13,24 @@ import services.InstancedServices;
 public class RatesRecipe extends BaseRating {
 
     @StartNode
+    @Fetch
     public UserCredential userWhoIsRating;
 
     @EndNode
+    @Fetch
     public Recipe userRates;
 
-
     public UserCredential getUserWhoIsRating() {
-        return InstancedServices.userCredentialService().fetchUserCredential(userWhoIsRating);
+        return this.userWhoIsRating;
     }
 
     public Recipe getUserRates() {
-        return InstancedServices.recipeService().fetchRecipe(userRates);
+        return this.userRates;
     }
 
-
-    public RatesRecipe rate(int ratingValue, String ratingComment, String userRaterIP) {
+    public RatesRecipe rate(UserCredential userWhoIsRating, Recipe userRates, int ratingValue, String ratingComment, String userRaterIP) {
+        this.userWhoIsRating = userWhoIsRating;
+        this.userRates = userRates;
         this.userRaterIP = userRaterIP;
         this.ratingValue = ratingValue;
         this.ratingComment = ratingComment;

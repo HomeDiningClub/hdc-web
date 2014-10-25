@@ -106,6 +106,7 @@ public class UserProfile extends AuditEntity implements IEditable {
     private Set<String> role;
 
     @RelatedToVia(type = "LOCATION_AT")
+    @Fetch
     private Set<TaggedLocationUserProfile> userLocationProfileTag;
 
     @RelatedToVia(type="FAVORITE_USER")

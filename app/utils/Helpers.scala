@@ -26,6 +26,16 @@ object Helpers {
       None
   }
 
+  def startPerfLog(): Long = {
+    System.currentTimeMillis
+  }
+
+  def endPerfLog(name: String, startTime: Long): Unit ={
+    val endTime = System.currentTimeMillis
+    val requestTime = endTime - startTime
+    Logger.info(name + ":" + requestTime.toString)
+  }
+
   def isUserAdmin(checkUser: Identity): Boolean = {
       new WithRole(RoleEnums.ADMIN).isAuthorized(checkUser) match {
         case true => true

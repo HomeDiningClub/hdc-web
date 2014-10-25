@@ -209,7 +209,8 @@ class UserProfileController extends Controller with SecureSocial {
     if(curUser.profiles.asScala.head.profileLinkName.isEmpty) {
       Redirect(routes.UserProfileController.edit()).flashing(FlashMsgConstants.Error -> Messages("profile.profilelinkname.isempty"))
     }else{
-      Redirect(routes.UserProfileController.viewProfileByName(curUser.profiles.asScala.head.profileLinkName))
+      Redirect(routes.StartPageController.index())
+      //Redirect(routes.UserProfileController.viewProfileByName(curUser.profiles.asScala.head.profileLinkName))
     }
   }
 
@@ -218,15 +219,24 @@ class UserProfileController extends Controller with SecureSocial {
     // Try getting the profile from name, if failure show 404
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) =>
+
+        val recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner)
+        val myReviewBoxes = ratingService.getMyUserReviews(profile.getOwner)
+        val myRecipeReviewBoxes = ratingService.getMyUserReviewsAboutFood(profile.getOwner)
+        val reviewBoxesAboutMyFood = ratingService.getUserReviewsAboutMyFood(profile.getOwner)
+        val reviewBoxesAboutMe = ratingService.getUserReviewsAboutMe(profile.getOwner)
+        val tags = tagWordService.findByProfileAndGroup(profile,"profile")
+        val isThisMyProfileValue = isThisMyProfile(profile)
+
         Ok(views.html.profile.index(profile,
           FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,
-          recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner),
-          myReviewBoxes = ratingService.getMyUserReviews(profile.getOwner),
-          myRecipeReviewBoxes = ratingService.getMyUserReviewsAboutFood((profile.getOwner)),
-          reviewBoxesAboutMyFood = ratingService.getUserReviewsAboutMyFood(profile.getOwner),
-          reviewBoxesAboutMe = ratingService.getUserReviewsAboutMe(profile.getOwner),
-          tagWordService.findByProfileAndGroup(profile,"profile"),
-          isThisMyProfile = isThisMyProfile(profile)))
+          recipeBoxes = recipeBoxes,
+          myReviewBoxes = myReviewBoxes,
+          myRecipeReviewBoxes = myRecipeReviewBoxes,
+          reviewBoxesAboutMyFood = reviewBoxesAboutMyFood,
+          reviewBoxesAboutMe = reviewBoxesAboutMe,
+          tagList = tags,
+          isThisMyProfile = isThisMyProfileValue))
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
         Logger.debug(errMess)

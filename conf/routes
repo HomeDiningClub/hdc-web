@@ -17,11 +17,13 @@ GET         /content/:contentName                                @controllers.Co
 #GET         /become-a-host/example-host-text           @controllers.ContentPageController.exampleHostText
 #GET         /references                                @controllers.ContentPageController.references
 #GET         /about-us                                            controllers.SuggestController.aboutUs
-POST        /about-us                                            controllers.SuggestController.suggestFeatures
 #GET         /about-us/press                            @controllers.ContentPageController.press
 #GET         /about-us/user-terms-and-conditions        @controllers.ContentPageController.userTermsAndConditions
 #GET         /faq                                       @controllers.ContentPageController.faq
 #GET         /contact                                   @controllers.ContentPageController.contact
+
+# Suggest feature
+POST        /suggest-feature                                     controllers.SuggestController.suggestFeatures
 
 # Campaign
 GET         /newsletter                                          @controllers.CampaignController.index
@@ -102,6 +104,8 @@ GET         /not-authorized                                      securesocial.co
 # TEST
 #GET         /profile/loggain                                    @controllers.UserProfileController.login
 #GET         /worlds                                             @controllers.test.WorldController.index
+#GET         /perftest                                             @controllers.test.PerformanceTestController.index
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                        controllers.Assets.at(path="/public", file)
