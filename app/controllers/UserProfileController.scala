@@ -123,7 +123,8 @@ class UserProfileController extends Controller with SecureSocial {
     "payIZettle" -> optional(text),
     //"roleGuest" -> optional(text),
     "roleHost" -> optional(text),
-    "maxGuest" -> text
+    "maxGuest" -> text,
+    "minGuest" -> text
   )
   (UserProfileOptions.apply) (UserProfileOptions.unapply))
 
@@ -410,7 +411,8 @@ if(userTags != null) {
     safeJava(theUser.payIZettle),
     safeJava(guest),
     safeJava(host),
-    safeJava(theUser.maxNoOfGuest)
+    safeJava(theUser.maxNoOfGuest),
+    safeJava(theUser.minNoOfGuest)
   )
 
   println("to form varde : " + uOptValues.ispayBankCard)
@@ -762,6 +764,7 @@ if(userTags != null) {
           var roleGuest                 : String= ""
           var roleHost                  : String = ""
           var numberOfGuest             : String = ""
+          var minGuest                  : String = ""
 
         OptionsForm.bindFromRequest.fold(
          error => println("Error reading options "),
@@ -775,6 +778,7 @@ if(userTags != null) {
              // println("e.GUEST "  + ok.roleGuest.getOrElse("--"))
               println("f.HOST "   + ok.roleHost.getOrElse("--"))
               println("maxGuest : " + ok.maxGuest)
+              println("minGuest : " + ok.minGuest)
 
               payBankCard = ok.payBankCard.getOrElse("")
               payCache = ok.payCache.getOrElse("")
@@ -783,7 +787,7 @@ if(userTags != null) {
               //roleGuest = ok.roleGuest.getOrElse("")
               roleHost = ok.roleHost.getOrElse("")
               numberOfGuest = ok.maxGuest
-
+              minGuest = ok.minGuest
               println("OK. max : " +  numberOfGuest)
             }
         )
@@ -792,7 +796,7 @@ if(userTags != null) {
     val uOptValues = new  UserProfileOptValues(
       payCache, paySwish,
       payBankCard, payIZettle, roleGuest, roleHost,
-      numberOfGuest)
+      numberOfGuest, minGuest)
 
 
 
@@ -909,6 +913,7 @@ if(userTags != null) {
             theUser.payIZettle = payIZettle
             theUser.paySwish = paySwish
             theUser.maxNoOfGuest = numberOfGuest
+            theUser.minNoOfGuest = uOptValues.minGuest
 
 
 //        This part is not needed since tags or on it's own page now, activate this code if they are moved back

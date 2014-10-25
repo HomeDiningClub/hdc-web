@@ -61,6 +61,7 @@ public class UserProfile extends AuditEntity implements IEditable {
     public String smoke = "";
     public String  allkoholServing = "";
     public String  maxNoOfGuest = "";
+    public String  minNoOfGuest = "";
 
     public String payCache      = "";
     public String paySwish      = "";

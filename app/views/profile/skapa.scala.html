@@ -203,20 +203,24 @@
                             <br>Banköverföring<input type="checkbox" name="payBankCard" value="Banköverföring" @profileOpts.ispayBankCard>
                             <br>IZettle<input type="checkbox" name="payIZettle" value="IZettle" @profileOpts.ispayIZettle>
 
-                            <br>Antal gäster
+
+
+                            <br>Minst antal gäster i gruppen
+                            <br>
+                            <select name="minGuest">
+                            @for(col <- List.range(1,11)) {
+                                <option value="@col" @profileOpts.minGuestsSelected(col.toString)>@col</option>
+                            }
+                            </select>
+
+                            <br>Maximalt antal gäster
                             <br>
 
                             <select name="maxGuest">
-                                <option value="1" @profileOpts.maxGuestsSelected("1")>1</option>
-                                <option value="2" @profileOpts.maxGuestsSelected("2")>2</option>
-                                <option value="3" @profileOpts.maxGuestsSelected("3")>3</option>
-                                <option value="4" @profileOpts.maxGuestsSelected("4")>4</option>
-                                <option value="5" @profileOpts.maxGuestsSelected("5")>5</option>
-                                <option value="6" @profileOpts.maxGuestsSelected("6")>6</option>
-                                <option value="7" @profileOpts.maxGuestsSelected("7")>7</option>
-                                <option value="8" @profileOpts.maxGuestsSelected("8")>8</option>
+                            @for(col <- List.range(1,21)) {
+                                <option value="@col" @profileOpts.maxGuestsSelected(col.toString)>@col</option>
+                            }
                             </select>
-
 
                                 <!-- New input -->
 

@@ -7,7 +7,8 @@ case class UserProfileOptions (
   payIZettle : Option[String],
   //roleGuest       : Option[String],
   roleHost        : Option[String],
-  maxGuest : String
+  maxGuest : String,
+  minGuest : String
                                 )
 
 

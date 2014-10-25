@@ -7,7 +7,8 @@ class UserProfileOptValues(
   var payIZettle    : String,
   var roleGuest     : String,
   var roleHost      : String,
-  var numberOfGuest : String)
+  var numberOfGuest : String,
+  var minGuest      : String                           )
 {
 
     def maxGuestsSelected(value : String) : String = {
@@ -23,7 +24,22 @@ class UserProfileOptValues(
     }
 
 
-    def isVald(value : String) : String = {
+  def minGuestsSelected(value : String) : String = {
+
+    var defSelected = "selected"
+    var isThisSelected = ""
+
+    if(value == minGuest ){
+      isThisSelected = defSelected
+    }
+
+    isThisSelected
+  }
+
+
+
+
+  def isVald(value : String) : String = {
 
       var defSelected    : String = "CHECKED"
       var selectedString : String = ""
@@ -78,10 +94,12 @@ class UserProfileOptValues(
     isBooleanSelected(roleHost)
   }
 
-
-
   def getnumberOfGuest : String = {
     numberOfGuest
+  }
+
+  def getmMinNumberOfGuest : String = {
+    minGuest
   }
 
 
