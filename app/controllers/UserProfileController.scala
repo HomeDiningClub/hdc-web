@@ -258,63 +258,6 @@ class UserProfileController extends Controller with SecureSocial {
   }
 
 
-def createTags = Action { implicit request =>
-
-  // MATCH (b:TagWord) RETURN b
-  // MATCH (b:TagWord) delete b
-
-
-  // create userPrifile
-  var u: models.UserProfile = new models.UserProfile
-  u.aboutMe = "test"
-
-  println("start ....")
-  //  userProfileService.saveUserProfile(u)
-
-
-  tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "test")
-  tagWordService.createTag("Amerikanskt", "Amerikanskt", "quality[0]", "profile")
-  tagWordService.createTag("Italienskt", "Italienskt", "quality[1]", "profile")
-  tagWordService.createTag("Franskt", "Franskt", "quality[2]", "profile")
-  tagWordService.createTag("Asiatiskt", "Asiatiskt", "quality[3]", "profile")
-  tagWordService.createTag("Svensk husman", "Svensk husman", "quality[4]", "profile")
-  tagWordService.createTag("Mellanöstern", "Mellanöstern", "quality[5]", "profile")
-  tagWordService.createTag("Vegetarisk", "Vegetarisk", "quality[6]", "profile")
-  tagWordService.createTag("RAW-food", "RAW-food", "quality[7]", "profile")
-  tagWordService.createTag("LCHF", "LCHF", "quality[8]", "profile")
-  tagWordService.createTag("Koscher", "Koscher", "quality[9]", "profile")
-  tagWordService.createTag("Vilt", "Vilt", "quality[10]", "profile")
-  tagWordService.createTag("Kött", "Kött", "quality[11]", "profile")
-  tagWordService.createTag("Fisk och skaldjur", "Fisk och skaldjur", "quality[12]", "profile")
-  tagWordService.createTag("Lyx", "Lyx", "quality[13]", "profile")
-  tagWordService.createTag("Budget", "Budget", "quality[14]", "profile")
-  tagWordService.createTag("Barnvänligt", "Barnvänligt", "quality[15]", "profile")
-  tagWordService.createTag("Friluftsmat", "Friluftsmat", "quality[16]", "profile")
-  tagWordService.createTag("Drycker", "Drycker", "quality[17]", "profile")
-  tagWordService.createTag("Efterrätter", "Efterrätter", "quality[18]", "profile")
-  tagWordService.createTag("Bakverk", "Bakverk", "quality[19]", "profile")
-
-
-  val lista = tagWordService.listByGroupOption("profile")
-  var v: StringBuilder = new StringBuilder
-
-
-  if(lista.isDefined){
-    for (a <- lista.get) {
-      v.append("\n")
-      v.append(a.tagName)
-      v.append(", ")
-      v.append(a.tagId)
-      v.append(", ")
-      v.append(a.orderId)
-    }
-  }
-
-
- Ok(v.toString())
-}
-
-
   private def getCounties: Option[Seq[(String,String)]] = {
     val counties: Option[Seq[(String,String)]] = countyService.getListOfAll match {
       case Some(counties) =>

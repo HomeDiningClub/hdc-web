@@ -57,7 +57,7 @@ GET         /inbox/display                                       controllers.Mes
 POST        /inbox/saveit                                        controllers.MessageController.saveit
 
 # New profile
-GET         /prodata/skapa                                       @controllers.UserProfileController.createTags
+#GET         /prodata/skapa                                       @controllers.UserProfileController.createTags
 #GET         /prodata/test                                        @controllers.UserProfileController.test
 
 # Recipe
