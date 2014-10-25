@@ -121,7 +121,7 @@ class UserProfileController extends Controller with SecureSocial {
     "paySwish" -> optional(text),
     "payBankCard" -> optional(text),
     "payIZettle" -> optional(text),
-    "roleGuest" -> optional(text),
+    //"roleGuest" -> optional(text),
     "roleHost" -> optional(text),
     "maxGuest" -> text
   )
@@ -829,7 +829,7 @@ if(userTags != null) {
               println("b. " + ok.payCache.getOrElse("--"))
               println("c. " + ok.payIZettle.getOrElse("--"))
               println("d. " + ok.paySwish.getOrElse("--"))
-              println("e.GUEST "  + ok.roleGuest.getOrElse("--"))
+             // println("e.GUEST "  + ok.roleGuest.getOrElse("--"))
               println("f.HOST "   + ok.roleHost.getOrElse("--"))
               println("maxGuest : " + ok.maxGuest)
 
@@ -837,7 +837,7 @@ if(userTags != null) {
               payCache = ok.payCache.getOrElse("")
               payIZettle = ok.payIZettle.getOrElse("")
               paySwish = ok.paySwish.getOrElse("")
-              roleGuest = ok.roleGuest.getOrElse("")
+              //roleGuest = ok.roleGuest.getOrElse("")
               roleHost = ok.roleHost.getOrElse("")
               numberOfGuest = ok.maxGuest
 
@@ -899,22 +899,25 @@ if(userTags != null) {
 
             // Gäst och värd
 
-
-            uOptValues.isBooleanSelectedGuest match {
-              case true =>
-                if(!theUser.getRole.contains(UserLevelScala.GUEST.Constant)) theUser.getRole.add(UserLevelScala.GUEST.Constant)
-              case false =>
-                theUser.getRole.remove(UserLevelScala.GUEST.Constant)
-            }
+            // The user are allways guest
+            if(!theUser.getRole.contains(UserLevelScala.GUEST.Constant)) theUser.getRole.add(UserLevelScala.GUEST.Constant)
 
             /*
-            reqUserProfile.roleGuest match {
-              case None =>
-                theUser.getRole.remove(UserLevelScala.GUEST.Constant)
-              case Some(item) =>
-                if(!theUser.getRole.contains(UserLevelScala.GUEST.Constant)) theUser.getRole.add(UserLevelScala.GUEST.Constant)
-            }
-            */
+           uOptValues.isBooleanSelectedGuest match {
+             case true =>
+               if(!theUser.getRole.contains(UserLevelScala.GUEST.Constant)) theUser.getRole.add(UserLevelScala.GUEST.Constant)
+             case false =>
+               theUser.getRole.remove(UserLevelScala.GUEST.Constant)
+           }
+
+
+           reqUserProfile.roleGuest match {
+             case None =>
+               theUser.getRole.remove(UserLevelScala.GUEST.Constant)
+             case Some(item) =>
+               if(!theUser.getRole.contains(UserLevelScala.GUEST.Constant)) theUser.getRole.add(UserLevelScala.GUEST.Constant)
+           }
+           */
 
             uOptValues.isBooleanSelectedHost match {
               case true =>
