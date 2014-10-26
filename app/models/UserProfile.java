@@ -221,7 +221,7 @@ public class UserProfile extends AuditEntity implements IEditable {
 
         TaggedFavoritesToUserProfile taggedFavoritesToUserProfile = new
                 TaggedFavoritesToUserProfile(this, userProfile,
-                cal.get(Calendar.MILLISECOND));
+                cal.getTimeInMillis());
        userFriendsProfileTag.add(taggedFavoritesToUserProfile);
 
         // check if it is not to many favorites when remove the oldest ...
