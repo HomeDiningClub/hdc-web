@@ -64,9 +64,7 @@ public class Message extends  BaseMessage {
     }
 
 
-    public UserCredential getOwner() {
-        return InstancedServices.userCredentialService().fetchUserCredential(owner);
-    }
+    public UserCredential getOwner() { return InstancedServices.userCredentialService().fetchUserCredential(owner); }
     public UserCredential getRecipient() { return InstancedServices.userCredentialService().fetchUserCredential(recipient); }
 //    public Message getResponse() { return InstancedServices.messageService().fetchMessage(response); }
 }

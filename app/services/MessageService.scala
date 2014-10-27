@@ -33,7 +33,7 @@ class MessageService {
   def createRequest(user: UserCredential, host: UserCredential, date: Date, time: Date, numberOfGuests: Int, request: String, phone: String): Message = {
 
     var msg: Message = new Message
-    msg.createMessage(date, time, numberOfGuests, request, template.fetch(user), template.fetch(host), user.firstName, host.firstName, RelationshipTypesScala.REQUEST.Constant, phone)
+    msg.createMessage(date, time, numberOfGuests, request, user, host, user.firstName, host.firstName, RelationshipTypesScala.REQUEST.Constant, phone)
     host.getMessages.add(saveMessage(msg))
 
     userCredentialRepository.save(host)
@@ -45,7 +45,7 @@ class MessageService {
   def createResponse(user: UserCredential, guest: UserCredential, message: Message, response: String, phone: String): Message = {
     // message variabel är orginal meddelandet som man svarar på
     var msg: Message = new Message
-    msg.createMessage(message.date, message.time, message.numberOfGuests, response, template.fetch(user), template.fetch(guest), user.firstName, guest.firstName, RelationshipTypesScala.REPLY.Constant, phone)
+    msg.createMessage(message.date, message.time, message.numberOfGuests, response, user, guest, user.firstName, guest.firstName, RelationshipTypesScala.REPLY.Constant, phone)
 
     guest.getMessages.add(saveMessage(msg))
 

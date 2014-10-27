@@ -116,7 +116,6 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     }
 
 //    Messages
-    @Fetch
     @RelatedTo(type = RelationshipTypesJava.MESSAGE.Constant, direction = Direction.BOTH)
     public Set<Message> messages;
 
