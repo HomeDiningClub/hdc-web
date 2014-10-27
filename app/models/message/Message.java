@@ -63,8 +63,16 @@ public class Message extends  BaseMessage {
         this.responses = responses;
     }
 
+    @Fetch
+    public UserCredential getOwner() {
+//        return InstancedServices.userCredentialService().fetchUserCredential(owner);
+        return owner;
+    }
 
-    public UserCredential getOwner() { return InstancedServices.userCredentialService().fetchUserCredential(owner); }
-    public UserCredential getRecipient() { return InstancedServices.userCredentialService().fetchUserCredential(recipient); }
+    @Fetch
+    public UserCredential getRecipient() {
+//        return InstancedServices.userCredentialService().fetchUserCredential(recipient);
+        return recipient;
+    }
 //    public Message getResponse() { return InstancedServices.messageService().fetchMessage(response); }
 }
