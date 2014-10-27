@@ -119,8 +119,8 @@ object MessagesController extends  Controller with SecureSocial {
                   messageService.createResponse(currentUser, receiver, msg, content.response.getOrElse(""), msg.phone)
 
                   val guest = EmailAndName(
-                    name = currentUser.firstName() + " " + currentUser.lastName(),
-                    email = currentUser.emailAddress
+                    name = receiver.firstName() + " " + receiver.lastName(),
+                    email = receiver.emailAddress
                   )
 
                   val hdc = EmailAndName(
