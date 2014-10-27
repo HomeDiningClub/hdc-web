@@ -43,15 +43,13 @@ class MessageService {
 
   @Transactional(readOnly = false)
   def createResponse(user: UserCredential, guest: UserCredential, message: Message, response: String, phone: String): Message = {
-
+    // message variabel är orginal meddelandet som man svarar på
     var msg: Message = new Message
     msg.createMessage(message.date, message.time, message.numberOfGuests, response, template.fetch(user), template.fetch(guest), user.firstName, guest.firstName, RelationshipTypesScala.REPLY.Constant, phone)
 
-    message.response = msg
-    msg.response = message
-
     guest.getMessages.add(saveMessage(msg))
 
+    message.addResponse(msg);
     saveMessage(message)
 
     userCredentialRepository.save(guest)
