@@ -108,7 +108,7 @@ object RatingController extends Controller with SecureSocial {
 
     ratingForm.bindFromRequest.fold(
       errors => {
-        request.headers.get("referrer") match {
+        request.headers.get("Referer") match {
           case Some(referrerUrl) =>
             Redirect(referrerUrl, 302).flashing(FlashMsgConstants.Error -> Messages("rating.add.error"))
           case None =>
