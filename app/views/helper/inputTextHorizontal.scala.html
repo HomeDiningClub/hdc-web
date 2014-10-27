@@ -1,5 +1,6 @@
 @(field: Field, args: (Symbol,Any)*)(implicit handler: helper.FieldConstructor, lang: play.api.i18n.Lang)
     @label = @{ args.toMap.get('_label).map(_.toString).getOrElse("") }
+    @labelClass = @{ args.toMap.get('_labelClass).map(_.toString).getOrElse("col-sm-3") }
     @rows = @{ args.toMap.get('rows).map(_.toString).getOrElse("1") }
     @readonly = @{ args.toMap.get('readonly).map(_.toString).getOrElse("") }
     @customType = @{ args.toMap.get('type).map(_.toString).getOrElse("text") }
@@ -7,7 +8,7 @@
 
 @if(customType.equals("textarea")) {
     <div class="form-group @if(field.hasErrors) {has-error}">
-        <label class="col-sm-3 control-label" for="@field.id" >@label</label>
+        <label class="@labelClass control-label" for="@field.id" >@label</label>
         <div class="col-sm-9">
             <textarea rows="@rows"
             class="form-control"
@@ -19,7 +20,7 @@
     </div>
 } else {
     <div class="form-group @if(field.hasErrors) {has-error}">
-        <label class="col-sm-3 control-label" for="@field.id" >@label</label>
+        <label class="@labelClass control-label" for="@field.id" >@label</label>
         <div class="col-sm-9">
             <input type="@customType"
             class="form-control"

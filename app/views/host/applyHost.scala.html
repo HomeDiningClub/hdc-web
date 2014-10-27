@@ -1,5 +1,4 @@
 @(hostForm: Form[models.viewmodels.MessageForm], userToBeHost: Option[models.UserCredential])(implicit request: RequestHeader)
-@import helper.twitterBootstrap._
 
 @views.html.host.hostMain() {
     <div class="well well-hdc">
@@ -13,16 +12,16 @@
                     <div class="grade hdc-grade">
                         @helper.form(action = routes.MessagesController.applyToHost()) {
                             <fieldset>
-                                @helper.inputTextHorizontal(hostForm("firstName"), 'readonly -> "readonly", '_label -> "Förnamn", 'class -> "col-sm-10")
-                                @helper.inputTextHorizontal(hostForm("lastName"), 'readonly -> "readonly", '_label -> "Efternamn", 'class -> "col-sm-10")
-                                @helper.inputTextHorizontal(hostForm("phone"), '_label -> "Telefon", 'required -> "required", 'class -> "col-sm-10")
-                                @helper.inputTextHorizontal(hostForm("date"), 'type -> "date", '_label -> "Datum", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostForm("firstName"), 'readonly -> "readonly", '_label -> "Förnamn", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
+                                @helper.inputTextHorizontal(hostForm("lastName"), 'readonly -> "readonly", '_label -> "Efternamn", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
+                                @helper.inputTextHorizontal(hostForm("phone"), '_label -> "Telefon", 'required -> "required", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
+                                @helper.inputTextHorizontal(hostForm("date"), 'type -> "date", '_label -> "Datum för event", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
                                 <br/>
-                                @helper.inputTextHorizontal(hostForm("time"), 'type -> "time", '_label -> "Tid", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostForm("time"), 'type -> "time", '_label -> "Tid", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
                                 <br/>
-                                @helper.inputTextHorizontal(hostForm("numberOfGuests"), 'type -> "number", '_label -> "Antal", 'class -> "col-sm-10")
+                                @helper.inputTextHorizontal(hostForm("numberOfGuests"), 'type -> "number", '_label -> "Antal personer", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
                                 <br/>
-                                @helper.inputTextHorizontal(hostForm("request"), 'type -> "textarea", 'rows -> 6, 'required -> "required", '_label -> "Meddelande", 'class -> "col-sm-10", '_error -> hostForm.error("request"))
+                                @helper.inputTextHorizontal(hostForm("request"), 'type -> "textarea", 'rows -> 6, 'required -> "required", '_label -> "Meddelande", 'class -> "col-sm-8", '_labelClass -> "col-sm-5", '_error -> hostForm.error("request"))
                                 @helper.inputHidden(hostForm("memberId"))
                                 @helper.inputHidden(hostForm("hostId"))
                                 @helper.inputHidden(hostForm("response"))

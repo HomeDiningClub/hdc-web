@@ -17,7 +17,9 @@
                         @if(!column1Body.isEmpty){ <div class="content-body">@Html(column1Body)</div> }
                     </div>
                     @contentcolumns.columnitems.menu(asideHeader = menuHeader, asideMenu = menuList)
-                    @SuggestController.aboutUs(request)
+                    @if(urlTitle.equalsIgnoreCase(Messages("aboutus.title"))) {
+                        @SuggestController.aboutUs(request)
+                    }
                 </div>
             </div>
 
