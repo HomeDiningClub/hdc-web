@@ -1,4 +1,4 @@
-@(title: String, headerVisible: Boolean = true, footerVisible: Boolean = true, footerScripts: Html = Html(""))(content: Html)(implicit request: RequestHeader)
+@(title: String, headerVisible: Boolean = true, footerVisible: Boolean = true, footerScripts: Html = Html(""), headerCss: Html = Html(""))(content: Html)(implicit request: RequestHeader)
 <!DOCTYPE html>
 
 <html lang="@Messages("main.language")">
@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")" />
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.min.css")">
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")">
+        @headerCss
     </head>
     <body>
         <div id="wrap">
