@@ -269,6 +269,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     var userId = userCredential.userId
 
+    // only done if login is done by username and password
     if(userCredential.providerId.equalsIgnoreCase("userpass"))
     {
       userId = userCredential.userId.toLowerCase()
@@ -328,6 +329,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       userProfile.keyIdentity = userProfile.userIdentity + "_" + userProfile.providerIdentity
 
       userCredential.userId = userId // lowercase
+      userCredential.emailAddress = userCredential.emailAddress.toLowerCase // lowcase
 
       var storedUserProfile = InstancedServices.userProfileService.saveUserProfile(userProfile)
       InstancedServices.userCredentialService.addUserProfile(userCredential, storedUserProfile)
@@ -383,9 +385,6 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
 
   }
-
-
-
 
 
 
