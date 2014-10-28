@@ -155,7 +155,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       finns = false
       idNo = null
       graphId = -1L
-    } else if(user.objectId != null && userId.equals(user.userId) && providerId.equals(user.providerId)) {
+    } else if(user.objectId != null && userId.equalsIgnoreCase(user.userId) && providerId.equalsIgnoreCase(user.providerId)) {
       finns = true
       idNo = user.objectId
       graphId = user.graphId
@@ -239,7 +239,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   // Fetch user by emailAddress and providerId
   @Transactional(readOnly = true)
   def getUserByEmailAndProvider(emailAddress: String, providerId: String) :  UserCredential =  {
-    var user = InstancedServices.userCredentialService.userCredentialRepository.findByemailAddressAndProviderId(emailAddress, providerId)
+    var lowerCaseEmailAddress = emailAddress.toLowerCase
+    var user = InstancedServices.userCredentialService.userCredentialRepository.findByemailAddressAndProviderId(lowerCaseEmailAddress, providerId)
     return user
   }
 
