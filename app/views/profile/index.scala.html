@@ -158,7 +158,6 @@
                     </div>
                     <div class="col-xs-12 col-md-6 big-margin-top">
                         @userProfile.getMainImage match {
-                            case null => {}
                             case image: models.files.ContentFile => {
                                 <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide host-image-gallery">
                                         <!-- Slider carousel items -->
@@ -177,6 +176,11 @@
                                 @*<li class="col-md-3"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</a></li>*@
                                 @*<li class="col-md-3"><a id="carousel-selector-4">@shared.img("images/host/image5.jpg", cssClass = "img-responsive")</a></li>*@
                                 @*</ul>*@
+                            }
+                            case _ => {
+                                <div class="host-image-gallery">
+                                    @shared.img("images/profile/profile-default-main-image.jpg", cssClass = "img-responsive")
+                                </div>
                             }
                         }
 

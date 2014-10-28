@@ -25,6 +25,20 @@ class AdminFileController extends Controller with SecureSocial {
   }
 
   def add = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
+
+    request.body.file("files[]").map {
+      files =>
+        fileService.uploadFile(files, Helpers.getUserFromRequest.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.adminImages, isAdminFile = true) match {
+          case Some(value) => Redirect(controllers.admin.routes.AdminFileController.editIndex()).flashing(FlashMsgConstants.Success -> {
+            "File uploaded successfully:" + value.name
+          })
+          case None => BadRequest(views.html.admin.file.index()).flashing(FlashMsgConstants.Error -> "Something went wrong during upload, make sure it is a valid file (jpg,png,gif) and is less than 2MB.")
+        }
+    }.getOrElse {
+      BadRequest(views.html.admin.file.index()).flashing(FlashMsgConstants.Error -> "No file selected")
+    }
+
+
       request.body.file("file").map {
         file =>
           fileService.uploadFile(file, Helpers.getUserFromRequest.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.adminImages, isAdminFile = true) match {
