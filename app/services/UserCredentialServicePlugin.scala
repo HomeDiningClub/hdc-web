@@ -267,6 +267,14 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   @Transactional(readOnly = false)
   def createOrUpdateUser(userCredential: UserCredential): UserCredential = {
 
+    var userId = userCredential.userId
+
+    if(userCredential.providerId.equalsIgnoreCase("userpass"))
+    {
+      userId = userCredential.userId.toLowerCase()
+    }
+
+
     // check if the same userId and providerId is already stored in the database
     val exitsUser = exists(userCredential.userId, userCredential.providerId)
 
@@ -274,72 +282,56 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     var modUserCredential: UserCredential = findByUserIdAndProviderId(userCredential.userId, userCredential.providerId)
 
     if(exitsUser._2 == true) {
+
         // User is already stored in the database, when update
-        println("update id: " + userCredential.objectId + "email : " + userCredential.emailAddress)
+        var itRoles = modUserCredential.roles.iterator()
+        while(itRoles.hasNext) {
+          var rol = itRoles.next()
+        }
 
-      println("objectId = " + modUserCredential.objectId)
-      println("graphId = " + modUserCredential.graphId)
-
-      println("reles : ")
-      var itRoles = modUserCredential.roles.iterator()
-      while(itRoles.hasNext) {
-        var rol = itRoles.next()
-        println("Role : " + rol.name)
-      }
-
-       var profileItter = modUserCredential.profiles.iterator()
-      if(profileItter.hasNext)
-      {
-        var theProfile = profileItter.next()
-        println("UserProfile=UserId : " + theProfile.userIdentity)
-        println("UserProfile=firstname :" + theProfile.fistName)
-      }
+        var profileItter = modUserCredential.profiles.iterator()
+        if(profileItter.hasNext)
+        {
+          var theProfile = profileItter.next()
+        }
 
 
-      modUserCredential.oAuth1InfoToken         = userCredential.oAuth1InfoToken
-      modUserCredential.oAuth1InfoSecret        = userCredential.oAuth1InfoSecret
-      modUserCredential.oAuth2InfoAccessToken   = userCredential.oAuth2InfoAccessToken
-      modUserCredential.oAuth2InfoExpiresIn     = userCredential.oAuth2InfoExpiresIn
-      modUserCredential.oAuth2InfoRefreshToken  = userCredential.oAuth2InfoRefreshToken
-      modUserCredential.oAuth2InfoTokenType     = userCredential.oAuth2InfoTokenType
-      modUserCredential.password                = userCredential.password
-      modUserCredential.authMethod              = userCredential.authMethod
-      modUserCredential.firstName               = userCredential.firstName
-      modUserCredential.lastName                =  userCredential.lastName
-      modUserCredential.fullName                = userCredential.fullName
-      modUserCredential.salt                    = userCredential.salt
-      modUserCredential.hasher                  = userCredential.hasher
+        modUserCredential.oAuth1InfoToken         = userCredential.oAuth1InfoToken
+        modUserCredential.oAuth1InfoSecret        = userCredential.oAuth1InfoSecret
+        modUserCredential.oAuth2InfoAccessToken   = userCredential.oAuth2InfoAccessToken
+        modUserCredential.oAuth2InfoExpiresIn     = userCredential.oAuth2InfoExpiresIn
+        modUserCredential.oAuth2InfoRefreshToken  = userCredential.oAuth2InfoRefreshToken
+        modUserCredential.oAuth2InfoTokenType     = userCredential.oAuth2InfoTokenType
+        modUserCredential.password                = userCredential.password
+        modUserCredential.authMethod              = userCredential.authMethod
+        modUserCredential.firstName               = userCredential.firstName
+        modUserCredential.lastName                =  userCredential.lastName
+        modUserCredential.fullName                = userCredential.fullName
+        modUserCredential.salt                    = userCredential.salt
+        modUserCredential.hasher                  = userCredential.hasher
+
+     // personnummer is not given here
      // modUserCredential.personNummer            = userCredential.personNummer
+
         var newUserCredential                   = saveUser(modUserCredential)
         return newUserCredential
 
     } else {
-
-        println("create userCredential, UserId : " + userCredential.userId)
         // Add default group
         InstancedServices.userCredentialService.addRole(userCredential, RoleEnums.USER)
-
         var userProfile : UserProfile = new UserProfile()
-
-
-      println("#####################################")
-      println("UserProfile graphId : " + userProfile.graphId )
-      println("UserProfile objectId: " + userProfile.objectId)
-      println("#####################################")
 
       userProfile.userIdentity = userCredential.userId
       userProfile.providerIdentity = userCredential.providerId
       userProfile.fistName = userCredential.firstName
       userProfile.lastName = userCredential.lastName
       userProfile.keyIdentity = userProfile.userIdentity + "_" + userProfile.providerIdentity
+
+      userCredential.userId = userId // lowercase
+
       var storedUserProfile = InstancedServices.userProfileService.saveUserProfile(userProfile)
       InstancedServices.userCredentialService.addUserProfile(userCredential, storedUserProfile)
-
-        var newUserCredential = saveUser(userCredential)
-
-
-
-
+      var newUserCredential = saveUser(userCredential)
 
         return newUserCredential
     }
@@ -358,18 +350,10 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     if(exitsUser._2 == true) {
       // User is already stored in the database, when update
-      println("update id: " + userCredential.objectId + "email : " + userCredential.emailAddress)
-
-      println("objectId = " + modUserCredential.objectId)
-      println("graphId = " + modUserCredential.graphId)
-
-      println("reles : ")
       var itRoles = modUserCredential.roles.iterator()
       while(itRoles.hasNext) {
         var rol = itRoles.next()
-        println("Role : " + rol.name)
       }
-
 
       modUserCredential.oAuth1InfoToken         = userCredential.oAuth1InfoToken
       modUserCredential.oAuth1InfoSecret        = userCredential.oAuth1InfoSecret
@@ -391,8 +375,6 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       return newUserCredential
 
     } else {
-
-      println("create userCredential, UserId : " + userCredential.userId)
       // Add default group
       InstancedServices.userCredentialService.addRole(userCredential, role)
       var newUserCredential = saveUser(userCredential)
