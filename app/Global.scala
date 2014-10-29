@@ -30,8 +30,9 @@ object Global extends GlobalSettings {
    */
   override def onStart(app: Application) {
     Logger.info("Application has started")
+
     // Needed for embedded DB
-    ctx.start()
+    //ctx.start()
   }
 
   /**
@@ -42,10 +43,10 @@ object Global extends GlobalSettings {
     Logger.info("Application shutdown...")
 
     //Needed for embedded DB
-    val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate])
-    neoTemplate.getGraphDatabaseService.shutdown()
-    ctx.stop()
-    ctx.close() //- May or may not be needed
+    //val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate])
+    //neoTemplate.getGraphDatabaseService.shutdown()
+    //ctx.stop()
+    //ctx.close() //- May or may not be needed
   }
 
   // Disable filter for now

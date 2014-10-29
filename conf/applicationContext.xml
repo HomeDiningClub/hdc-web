@@ -18,8 +18,7 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
 
 
     <!-- Neo4j Local data store configuration: -->
-    <!-- <neo4j:config storeDir="graph.db" base-package="com.example.domain"/> -->
-    <neo4j:config storeDirectory="/neo4j/hdc-web.db" base-package="models" />
+    <!-- <neo4j:config storeDirectory="/neo4j/hdc-web.db" base-package="models" /> -->
 
 
 
@@ -42,13 +41,13 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
     -->
 
     <!-- Working Rest config -->
-    <!--<neo4j:config graphDatabaseService="graphDatabaseService" base-package="models" />-->
+    <neo4j:config graphDatabaseService="graphDatabaseService" base-package="models" />
 
-    <!--<bean id="graphDatabaseService" class="org.springframework.data.neo4j.rest.SpringRestGraphDatabase">-->
-        <!--<constructor-arg index="0" value="${NEO4J_REST_URL}" />-->
-        <!--<constructor-arg index="1" value="${NEO4J_LOGIN}" />-->
-        <!--<constructor-arg index="2" value="${NEO4J_PASSWORD}" />-->
-    <!--</bean>-->
+    <bean id="graphDatabaseService" class="org.springframework.data.neo4j.rest.SpringRestGraphDatabase">
+        <constructor-arg index="0" value="${NEO4J_REST_URL}" />
+        <constructor-arg index="1" value="${NEO4J_LOGIN}" />
+        <constructor-arg index="2" value="${NEO4J_PASSWORD}" />
+    </bean>
 
 
     <!-- Base config for DB -->
