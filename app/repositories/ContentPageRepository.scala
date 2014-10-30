@@ -8,7 +8,9 @@ import java.util.UUID
 trait ContentPageRepository extends GraphRepository[ContentPage] {
 
   // Auto-mapped by Spring
+  @Query("MATCH (n:`ContentPage`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): ContentPage
+
   def findByRouteAndContentState(route: String, contentState: String): ContentPage
 
   @Query("MATCH (n:`ContentPage`) WHERE n.route = {0} AND HAS(n.contentCategories) AND {1} IN n.contentCategories AND n.visibleInMenus = {2} AND n.contentState = {3} RETURN n")

@@ -9,6 +9,7 @@ import models.rating.RatesUserCredential
 trait RatingUserCredentialRepository extends GraphRepository[RatesUserCredential] {
 
   // Auto-mapped by Spring
+  @Query("MATCH (n:`RatesUserCredential`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): RatesUserCredential
 
   @Query("MATCH (a)-[ratings:`RATED_USER`]->(b) RETURN ratings")

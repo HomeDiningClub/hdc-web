@@ -11,6 +11,7 @@ import models.{Recipe, UserCredential}
 trait RatingRecipeRepository extends GraphRepository[RatesRecipe] {
 
   // Auto-mapped by Spring
+  @Query("MATCH (n:`RatesRecipe`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): RatesRecipe
 
   @Query("MATCH (a)-[ratings:`RATED_RECIPE`]->(b) RETURN ratings")

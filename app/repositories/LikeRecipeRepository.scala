@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository
 
 trait LikeRecipeRepository extends GraphRepository[UserCredentialLikeRecipe] {
 
+  @Query("MATCH (n:`UserCredentialLikeRecipe`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): UserCredentialLikeRecipe
 
   @Query("MATCH (a)-[likes:`LIKES_RECIPE`]->(b) RETURN likes")

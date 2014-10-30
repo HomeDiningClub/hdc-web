@@ -10,6 +10,7 @@ import java.util
 trait TagWordRepository extends GraphRepository[TagWord] {
 
   // Auto-mapped by Spring
+  @Query("MATCH (n:`TagWord`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): TagWord
 
   // Auto-mapped by Spring

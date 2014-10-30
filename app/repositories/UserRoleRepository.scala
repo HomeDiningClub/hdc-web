@@ -8,8 +8,10 @@ import java.util.UUID
 
 trait UserRoleRepository extends GraphRepository[UserRole] {
 
-  // Auto-mapped by Spring
+  @Query("MATCH (n:`UserRole`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): UserRole
+
+  @Query("MATCH (n:`UserRole`) WHERE n.name={0} RETURN n")
   def findByname(name: String): UserRole
 
 }

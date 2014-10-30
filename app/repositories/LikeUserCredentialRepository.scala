@@ -9,6 +9,7 @@ import models.UserCredential
 
 trait LikeUserCredentialRepository extends GraphRepository[UserCredentialLikeUserCredential] {
 
+  @Query("MATCH (n:`UserCredentialLikeUserCredential`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): UserCredentialLikeUserCredential
 
   @Query("MATCH (a)-[likes:`LIKES_USER`]->(b) RETURN likes")

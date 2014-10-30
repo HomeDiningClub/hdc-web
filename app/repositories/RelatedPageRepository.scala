@@ -8,7 +8,9 @@ import org.springframework.data.neo4j.annotation.Query
 trait RelatedPageRepository extends GraphRepository[RelatedPage] {
 
   // Auto-mapped by Spring
+  @Query("MATCH (n:`RelatedPage`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): RelatedPage
+
   def findByrelatedFrom(contentPage: ContentPage): java.util.List[RelatedPage]
   def findByrelatedFromObjectId(objectId: UUID): java.util.List[RelatedPage]
   def findByrelatedTo(contentPage: ContentPage): java.util.List[RelatedPage]
