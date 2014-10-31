@@ -1,20 +1,5 @@
 package services
 
-// Get UserCredential
-// MATCH (a:UserCredential) RETURN a
-// MATCH (a:UserCredential) RETURN a.providerId, a.lastName, a.firstName, a.emailAddress
-
-// Gooogle
-// MATCH (a:UserCredential {providerId:'google'}) RETURN a.providerId, a.lastName, a.firstName, a.emailAddress
-// facebook
-// MATCH (a:UserCredential {providerId:'facebook'}) RETURN a.providerId, a.lastName, a.firstName, a.emailAddress
-
-// Fetch all nodes
-// MATCH (tom) RETURN tom
-
-// Delete all nodes
-// MATCH (tom) DELETE tom
-
 import _root_.java.util.UUID
 import enums.RoleEnums
 import enums.RoleEnums.RoleEnums
@@ -59,7 +44,9 @@ import securesocial.core.providers.utils.BCryptPasswordHasher
 class UserCredentialServicePlugin (application: Application) extends UserServicePlugin(application) {
 
   private var tokens = Map[String, Token]()
-  var users = Map[String, Identity]()
+  var users = Map[String, UserCredential]()
+
+  var isUserCacheON : Boolean = true
 
 
   /** *
@@ -69,37 +56,40 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     * @return
     */
   def find(id: IdentityId): Option[UserCredential] = {
-
-    // check databaseId and true/false
-    val existsUser = exists(id.userId, id.providerId)
-
-    // Fetch user
-    //var uc  = getuser(id.userId, id.providerId)
-    // var uc = findByEmailAndProvider(id.userId, id.providerId)
+    var log : Long = utils.Helpers.startPerfLog()
     var uc =  findByUserIdAndProviderId(id.userId, id.providerId)
 
+    utils.Helpers.endPerfLog("UserCredentialServicePlugin - find with id: " + id.userId, log)
 
-    if(existsUser._2){
-      return Some(uc)
-    }
+   if(uc != null && uc != None) {
+     Some(uc)
+   } else {
+     None
+   }
 
-    None
   }
 
 
-  /**
-   * Fetch by email and providerId (facebook/google/....)
-   * @param email email
-   * @param providerId provider for exampel facebook, google
-   * @return UserCredential
-   */
+
   def findByEmailAndProvider(email: String, providerId: String): Option[UserCredential] = {
 
-    val uc : Option[UserCredential] = Some(getUserByEmailAndProvider(email, providerId))
-    val exitsUser = exists(email, providerId)
+    var log : Long = utils.Helpers.startPerfLog()
+
+    val uc : Option[UserCredential] = Some(getUserByEmailAndProvider(email.toLowerCase, providerId))
+
+    var isFoundEmail : Boolean = false
+    if(uc == null || uc == None) {
+      isFoundEmail = false
+    } else {
+      isFoundEmail = true
+    }
+
+    //val exitsUser = exists(email, providerId)
+
+    utils.Helpers.endPerfLog("findByEmailAndProvider - find with id: " + email, log)
 
 
-    if(exitsUser._2 == true){
+    if(isFoundEmail){
 
       return uc
 
@@ -117,8 +107,10 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     * @return
     */
   def save(user: Identity): Identity = {
+    var log : Long = utils.Helpers.startPerfLog()
     val userCredential : UserCredential = InstancedServices.userCredentialService.socialUser2UserCredential(user)
     val userCredential2 = createOrUpdateUser(userCredential)
+    utils.Helpers.endPerfLog("save - find with id: " + user.email, log)
     userCredential2
   }
 
@@ -134,6 +126,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
   @Transactional(readOnly = true)
   def exists(userId: String, providerId: String) :  (UUID, Boolean, Long) = {
+
+    var log : Long = utils.Helpers.startPerfLog()
 
     var user = findByUserIdAndProviderId(userId, providerId)
     var finns : Boolean = false
@@ -165,63 +159,16 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       graphId = -1L
     }
 
+    utils.Helpers.endPerfLog("exists - find with id: " + userId, log)
+
     val t = (idNo, finns, graphId)
     t
   }
 
 
 
-  /***
-  * Return the UserCredentials with the userId and providerId by
-  * first fetching on userid and filter out the right providerid
-  * assures that it is online one answer
-  */
-  /*
-  @Transactional(readOnly = true)
-  def getUserById(userId: String, providerId: String) :  UserCredential = {
 
-    var userCredential : UserCredential = new UserCredential()
-    val list = getUserById(userId).filter(p=>p.providerId.equalsIgnoreCase(providerId))
 
-    println("Number of userids : " +list.size)
-
-    if(list.size > 0) {
-      userCredential = list.head
-      println("FirstName : " + userCredential.firstName())
-      println("UserId : " + userCredential.identityId().userId)
-      println("ProviderId : " + userCredential.identityId().providerId)
-    }
-
-    userCredential
-  }
-*/
-
-  /***
-   * Get the credetials for one userid
-   */
-  /*
-  @Transactional(readOnly = true)
-  def getUserById(userId: String) :  List[UserCredential] =  {
-
-    val list : ListBuffer[UserCredential] = new ListBuffer[UserCredential]()
-
-    var userCredentialIndex: Index[Node] = InstancedServices.userCredentialService.template.getIndex(classOf[UserCredential],"userId")
-    var hits = userCredentialIndex.query("userId", userId)
-
-    var nods = hits.iterator()
-    var id : Long = 0
-
-      while(nods.hasNext) {
-            id = nods.next().getId
-            var node : UserCredential = new UserCredential()
-            // Fetch by id
-            node = InstancedServices.userCredentialService.userCredentialRepository.findOne(id)
-            list += node
-      }
-
-    list.toList
-  }
-*/
 
 
   /**
@@ -232,7 +179,23 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    */
   @Transactional(readOnly = true)
   def findByUserIdAndProviderId(userId: String, providerId: String) :  UserCredential =  {
-    var user = InstancedServices.userCredentialService.userCredentialRepository.findByuserIdAndProviderId(userId,providerId)
+
+    var mUserId : String = userId.toLowerCase
+
+  // search in user cache
+    var u = findUserCache(userId, providerId)
+
+    if(u != null && u != None && u.get != null && u.get != None && isUserCacheON) {
+      return u.get
+    }
+
+    var user = InstancedServices.userCredentialService.userCredentialRepository.findByuserIdAndProviderId(mUserId,providerId)
+
+    if(user != null && user != None && isUserCacheON) {
+      addUserCache(user)
+    }
+
+
     return user
   }
 
@@ -240,7 +203,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   @Transactional(readOnly = true)
   def getUserByEmailAndProvider(emailAddress: String, providerId: String) :  UserCredential =  {
     var lowerCaseEmailAddress = emailAddress.toLowerCase
-    var user = InstancedServices.userCredentialService.userCredentialRepository.findByemailAddressAndProviderId(lowerCaseEmailAddress, providerId)
+   // var user = InstancedServices.userCredentialService.userCredentialRepository.findByemailAddressAndProviderId(lowerCaseEmailAddress, providerId)
+   var user = InstancedServices.userCredentialService.userCredentialRepository.findByemailAddressAndProviderId2(lowerCaseEmailAddress, providerId)
     return user
   }
 
@@ -267,6 +231,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   @Transactional(readOnly = false)
   def createOrUpdateUser(userCredential: UserCredential): UserCredential = {
 
+    var log : Long = utils.Helpers.startPerfLog()
+
     var userId = userCredential.userId
 
     // only done if login is done by username and password
@@ -277,12 +243,21 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
 
     // check if the same userId and providerId is already stored in the database
-    val exitsUser = exists(userCredential.userId, userCredential.providerId)
+   // val exitsUser = exists(userCredential.userId, userCredential.providerId)
 
     // creates the return type
     var modUserCredential: UserCredential = findByUserIdAndProviderId(userCredential.userId, userCredential.providerId)
 
-    if(exitsUser._2 == true) {
+    var userExits : Boolean = false
+    if(modUserCredential == null || modUserCredential == None) {
+      userExits = false
+    } else {
+      userExits = true
+    }
+
+
+
+    if(userExits) {
 
         // User is already stored in the database, when update
         var itRoles = modUserCredential.roles.iterator()
@@ -315,6 +290,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
      // modUserCredential.personNummer            = userCredential.personNummer
 
         var newUserCredential                   = saveUser(modUserCredential)
+
+      utils.Helpers.endPerfLog("createOrUpdateUser - update", log)
         return newUserCredential
 
     } else {
@@ -335,6 +312,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       InstancedServices.userCredentialService.addUserProfile(userCredential, storedUserProfile)
       var newUserCredential = saveUser(userCredential)
 
+
+      utils.Helpers.endPerfLog("createOrUpdateUser insert", log)
         return newUserCredential
     }
 
@@ -343,6 +322,8 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
   @Transactional(readOnly = false)
   def addRole(userCredential: UserCredential, role: RoleEnums): UserCredential = {
+
+    var log : Long = utils.Helpers.startPerfLog()
 
     // check if the same userId and providerId is already stored in the database
     val exitsUser = exists(userCredential.userId, userCredential.providerId)
@@ -374,12 +355,15 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       InstancedServices.userCredentialService.addRole(userCredential, role)
 
       var newUserCredential                   = saveUser(modUserCredential)
+
+      utils.Helpers.endPerfLog("addRole", log)
       return newUserCredential
 
     } else {
       // Add default group
       InstancedServices.userCredentialService.addRole(userCredential, role)
       var newUserCredential = saveUser(userCredential)
+      utils.Helpers.endPerfLog("addRole", log)
       return newUserCredential
     }
 
@@ -397,6 +381,11 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    */
   @Transactional(readOnly = false)
   private def saveUser(userCredential: UserCredential): UserCredential = {
+
+    // cache ...
+    if(isUserCacheON) {
+      deleteUserCache(userCredential.userId, userCredential.providerId)
+    }
     val modUser = InstancedServices.userCredentialService.userCredentialRepository.save(userCredential)
     modUser
   }
@@ -429,6 +418,21 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     tokens = tokens.filter(!_._2.isExpired)
   }
 
+
+  def addUserCache(user : UserCredential) {
+    var key : String = user.userId.toLowerCase + "-" + user.providerId
+    users += (key->user)
+  }
+
+  def deleteUserCache(userId : String, providerId: String) {
+    var key : String = userId.toLowerCase + "-" + providerId
+     users -= key
+  }
+
+  def findUserCache(userId : String, providerId: String) : Option[UserCredential] = {
+    var key : String = userId.toLowerCase + "-" + providerId
+    users.get(key)
+  }
 
 
 }
