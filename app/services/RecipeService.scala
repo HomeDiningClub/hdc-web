@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
 import repositories._
 import models.{UserProfile, UserCredential, Recipe}
 import scala.collection.JavaConverters._
@@ -13,6 +14,8 @@ import java.util.UUID
 import models.viewmodels.RecipeBox
 import controllers.routes
 import utils.Helpers
+
+import scala.collection.mutable.ListBuffer
 
 @Service
 class RecipeService {
@@ -92,8 +95,62 @@ class RecipeService {
     }
   }
 
+  def parseDouble(s: String) = try { Some(s.toDouble) } catch { case _ => None }
+
   @Transactional(readOnly = true)
   def getRecipeBoxes(user: UserCredential): Option[List[RecipeBox]] = {
+
+
+    println("before .....")
+
+    var list = recipeRepository.findReceipies(user.emailAddress)
+    var itter = list.iterator()
+    var recipeList : ListBuffer[RecipeBox] = new ListBuffer[RecipeBox]
+
+
+    println("efter .....")
+
+    while(itter.hasNext()) {
+
+      var obj = itter.next()
+
+      println("LinkName : " + obj.getLinkName())
+      println("Name : " + obj.getName())
+      println("ObjectId : " + obj.getobjectId())
+      println("PreAmble : " + obj.getpreAmble())
+      println("profileLinkname : " + obj.getprofileLinkName())
+      var v = obj.getRating() match {
+        case null => "0.0"
+        case _ => obj.getRating()
+      }
+      println("Rating : " + v)
+
+      var dDot = v.indexOf(".")
+      println(" . = " +dDot)
+      var dCom = v.indexOf(",")
+      println(" , = " +dCom)
+
+      var str:String = v.substring(0, dDot)
+
+
+      println("rate : " + str.toInt)
+
+      var linkToRecipe = obj.getprofileLinkName() match {
+        case null | "" => "#"
+        case link => routes.RecipePageController.viewRecipeByNameAndProfile(obj.getprofileLinkName(), obj.getName()).url
+      }
+
+      var recipe = RecipeBox(None, obj.getLinkName(),obj.getName(), Some(obj.getpreAmble()),None,str.toInt)
+      recipeList += recipe
+    }
+    println("ok .....")
+
+    val startPageBoxes: List[RecipeBox] = recipeList.toList
+
+    // recipeLinkName
+    // profileLinkName
+
+/*
     val startPageBoxes: List[RecipeBox] = this.getListOwnedBy(user) match {
       case None => List.empty
       case Some(items) => items.map {
@@ -122,7 +179,7 @@ class RecipeService {
             recipeRating = 0)
       }
     }
-
+*/
     if(startPageBoxes.isEmpty)
       None
     else
