@@ -26,7 +26,7 @@ trait RecipeRepository extends GraphRepository[Recipe] {
   )*/
 
   @Query(
-  "match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)" +
+  "match (tag {userId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)" +
   " optional match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)" +
   " optional match (r)-[:IMAGES]-(recipeImages:`ContentFile`)" +
   " optional match (r)-[g]-(ux:UserCredential)" +

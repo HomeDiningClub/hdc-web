@@ -148,6 +148,8 @@ class RecipeService {
 
         var recipe = RecipeBox(None, obj.getLinkName(), obj.getName(), Some(obj.getpreAmble()), None, str.toInt)
         recipeList += recipe
+      } else {
+        println("Not to view " + obj.getUserId())
       }
     }
     println("ok .....")
