@@ -100,6 +100,8 @@ class RecipeService {
   @Transactional(readOnly = true)
   def getRecipeBoxes(user: UserCredential): Option[List[RecipeBox]] = {
 
+    println("user : " + user.userId)
+
 
     println("before .....")
 
@@ -114,34 +116,39 @@ class RecipeService {
 
       var obj = itter.next()
 
-      println("LinkName : " + obj.getLinkName())
-      println("Name : " + obj.getName())
-      println("ObjectId : " + obj.getobjectId())
-      println("PreAmble : " + obj.getpreAmble())
-      println("profileLinkname : " + obj.getprofileLinkName())
-      var v = obj.getRating() match {
-        case null => "0.0"
-        case _ => obj.getRating()
+      if (obj.getUserId() == user.userId) {
+
+        println("LinkName : " + obj.getLinkName())
+        println("Name : " + obj.getName())
+        println("ObjectId : " + obj.getobjectId())
+        println("PreAmble : " + obj.getpreAmble())
+        println("profileLinkname : " + obj.getprofileLinkName())
+        println("userId : " + obj.getUserId())
+
+        var v = obj.getRating() match {
+          case null => "0.0"
+          case _ => obj.getRating()
+        }
+        println("Rating : " + v)
+
+        var dDot = v.indexOf(".")
+        println(" . = " + dDot)
+        var dCom = v.indexOf(",")
+        println(" , = " + dCom)
+
+        var str: String = v.substring(0, dDot)
+
+
+        println("rate : " + str.toInt)
+
+        var linkToRecipe = obj.getprofileLinkName() match {
+          case null | "" => "#"
+          case link => routes.RecipePageController.viewRecipeByNameAndProfile(obj.getprofileLinkName(), obj.getName()).url
+        }
+
+        var recipe = RecipeBox(None, obj.getLinkName(), obj.getName(), Some(obj.getpreAmble()), None, str.toInt)
+        recipeList += recipe
       }
-      println("Rating : " + v)
-
-      var dDot = v.indexOf(".")
-      println(" . = " +dDot)
-      var dCom = v.indexOf(",")
-      println(" , = " +dCom)
-
-      var str:String = v.substring(0, dDot)
-
-
-      println("rate : " + str.toInt)
-
-      var linkToRecipe = obj.getprofileLinkName() match {
-        case null | "" => "#"
-        case link => routes.RecipePageController.viewRecipeByNameAndProfile(obj.getprofileLinkName(), obj.getName()).url
-      }
-
-      var recipe = RecipeBox(None, obj.getLinkName(),obj.getName(), Some(obj.getpreAmble()),None,str.toInt)
-      recipeList += recipe
     }
     println("ok .....")
 

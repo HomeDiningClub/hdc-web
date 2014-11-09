@@ -34,7 +34,7 @@ trait RecipeRepository extends GraphRepository[Recipe] {
   " where tag.emailAddress={0}" +
   " return avg(g.ratingValue), r.name, r.preAmble, r.objectId," +
   " COLLECT(recipeImages.objectId)," +
-  " COLLECT(mainImage.objectId), uc.profileLinkName, r.recipeLinkName"
+  " COLLECT(mainImage.objectId), uc.profileLinkName, r.recipeLinkName, tag.userId"
   )
   def findReceipies(emailAddress: String) : util.List[RecipeData]
 
@@ -72,6 +72,10 @@ trait RecipeRepository extends GraphRepository[Recipe] {
     // COLLECT(mainImage.objectId)
     @ResultColumn("COLLECT(mainImage.objectId)")
     def getMainImage() : String
+
+    // tag.userId
+    @ResultColumn("tag.userId")
+    def getUserId() : String
   }
 
 
