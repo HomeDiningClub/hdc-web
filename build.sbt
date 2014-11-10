@@ -25,6 +25,7 @@ libraryDependencies ++= Seq(
   "org.neo4j" % "neo4j" % "2.1.4" excludeAll(ExclusionRule(organization = "org.neo4j", name="neo4j-kernel")),
   "org.neo4j" % "neo4j-kernel" % "2.1.4" % "test" classifier "tests" classifier "",
   "org.neo4j" % "neo4j-rest-graphdb" % "2.0.1",
+  "org.neo4j" % "neo4j-backup" % "2.1.4",
   "com.sun.jersey" % "jersey-core" % "1.9",
   "com.typesafe" %% "play-plugins-util" % "2.2.0",
   "com.typesafe" %% "play-plugins-mailer" % "2.2.0",
