@@ -118,6 +118,7 @@ class RecipeService {
 
       if (obj.getUserId() == user.userId) {
 
+        println("##################################################")
         println("LinkName : " + obj.getLinkName())
         println("Name : " + obj.getName())
         println("ObjectId : " + obj.getobjectId())
@@ -132,15 +133,11 @@ class RecipeService {
         println("Rating : " + v)
 
         var dDot = v.indexOf(".")
-        println(" . = " + dDot)
-        var dCom = v.indexOf(",")
-        println(" , = " + dCom)
-
         var str: String = v.substring(0, dDot)
 
+        println("Rating (Int) : " + str.toInt)
 
-        println("rate : " + str.toInt)
-
+        println("##################################################")
         var linkToRecipe = obj.getprofileLinkName() match {
           case null | "" => "#"
           case link => routes.RecipePageController.viewRecipeByNameAndProfile(obj.getprofileLinkName(), obj.getName()).url

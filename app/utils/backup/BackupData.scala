@@ -1,6 +1,9 @@
 package utils.backup
 
 import java.io.File
+//import org.neo4j.backup.OnlineBackup
+
+
 
 object BackupData {
 
@@ -14,9 +17,17 @@ object BackupData {
     var backupPath              : File    = new File(BACKUP_PATH)
     val DATABAS_SERVER_NAME_IP  : String  = "127.0.0.1"
 
+    try {
 
-   //   val backup = OnlineBackup.from( DATABAS_SERVER_NAME_IP )
-   // backup.full( backupPath.getPath() );
+      //val backup = OnlineBackup.from( DATABAS_SERVER_NAME_IP )
+      // backup.full( backupPath.getPath() );
+
+    } catch {
+      case e: Exception => {
+        println(e.getMessage)
+      }
+    }
+
 
 
   }
