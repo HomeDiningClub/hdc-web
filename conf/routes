@@ -178,6 +178,9 @@ GET         /admin/file                                          @controllers.ad
 POST        /admin/file/add                                      @controllers.admin.AdminFileController.add
 GET         /admin/file/delete/:objectId                         @controllers.admin.AdminFileController.deleteImage(objectId: java.util.UUID)
 
+GET         /admin/backupjobb/list                               @controllers.admin.AdminBackupController.listAllBackupJobs
+GET         /admin/backupjobb/backup                             @controllers.admin.AdminBackupController.doBackup
+
 
 GET         /test/grund                                          @controllers.UserProfileController.testAction
 GET         /test/testsida                                       @controllers.UserProfileController.testsida

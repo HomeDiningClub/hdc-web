@@ -1,0 +1,13 @@
+@()(implicit flash: Flash)
+
+<h1>Backup information</h1>
+<table>
+    <tr>
+     <td>Servernam</td>
+     <td>@play.Play.application().configuration().getString("backup.servernameorip")</td>
+    </tr>
+    <tr>
+        <td>Backup directory</td>
+        <td>@play.Play.application().configuration().getString("backup.dir")</td>
+    </tr>
+</table>

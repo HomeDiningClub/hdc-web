@@ -3,6 +3,7 @@ package utils.backup
 import java.io.File
 
 import org.neo4j.backup.OnlineBackup
+import play.api
 
 
 object BackupData {
@@ -20,21 +21,22 @@ object BackupData {
     // backup bath
     // server ip or name
 
-    val BACKUP_PATH             : String = "D:/neo4j-enterprise-1.9.4/data/backup/"
-    var backupPath              : File    = new File(BACKUP_PATH)
-    val DATABAS_SERVER_NAME_IP  : String  = "127.0.0.1"
+      var BACKUP_PATH             : Option[String] = api.Play.current.configuration.getString("backup.dir")
+      var backupPath              : File    = new File(BACKUP_PATH.getOrElse(""))
+      val DATABAS_SERVER_NAME_IP  : Option[String]  = api.Play.current.configuration.getString("backup.servernameorip")
 
-    try {
+      try
+      {
 
-      val backup = OnlineBackup.from( DATABAS_SERVER_NAME_IP )
+      //  val backup = OnlineBackup.from( DATABAS_SERVER_NAME_IP.getOrElse("localhost") )
 
-      backup.full( backupPath.getPath() );
+      //  backup.full( backupPath.getPath() )
 
-    } catch {
-      case e: Exception => {
-        println(e.getMessage)
+      } catch {
+        case e: Exception => {
+          println(e.getMessage)
+        }
       }
-    }
 
     }
 
