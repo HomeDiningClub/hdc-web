@@ -32,11 +32,19 @@ object BackupData {
 
         backup.full( backupPath.getPath() )
 
+
+
       } catch {
         case e: Exception => {
           println(e.getMessage)
         }
       }
+      finally
+      {
+        // your scala code here, such as to close a database connection
+        isRunning = false
+      }
+
 
     }
 
