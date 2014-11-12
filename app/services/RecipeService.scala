@@ -100,17 +100,9 @@ class RecipeService {
   @Transactional(readOnly = true)
   def getRecipeBoxes(user: UserCredential): Option[List[RecipeBox]] = {
 
-    println("user : " + user.userId)
-
-
-    println("before .....")
-
-    var list = recipeRepository.findReceipies(user.emailAddress)
+    var list = recipeRepository.findReceipies(user.userId)
     var itter = list.iterator()
     var recipeList : ListBuffer[RecipeBox] = new ListBuffer[RecipeBox]
-
-
-    println("efter .....")
 
     while(itter.hasNext()) {
 
@@ -130,12 +122,12 @@ class RecipeService {
           case null => "0.0"
           case _ => obj.getRating()
         }
-        println("Rating : " + v)
 
-        var dDot = v.indexOf(".")
-        var str: String = v.substring(0, dDot)
+        // convert string to double, round to Int and convert to Int
+        var ratingValue : Int = v.toDouble.round.toInt
 
-        println("Rating (Int) : " + str.toInt)
+
+        println("Rating (Int) : " + ratingValue)
 
         println("##################################################")
         var linkToRecipe = obj.getprofileLinkName() match {
@@ -143,13 +135,13 @@ class RecipeService {
           case link => routes.RecipePageController.viewRecipeByNameAndProfile(obj.getprofileLinkName(), obj.getName()).url
         }
 
-        var recipe = RecipeBox(None, obj.getLinkName(), obj.getName(), Some(obj.getpreAmble()), None, str.toInt)
+        var recipe = RecipeBox(None, obj.getLinkName(), obj.getName(), Some(obj.getpreAmble()), None, ratingValue)
         recipeList += recipe
       } else {
         println("Not to view " + obj.getUserId())
       }
     }
-    println("ok .....")
+
 
     val startPageBoxes: List[RecipeBox] = recipeList.toList
 
