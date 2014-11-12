@@ -28,9 +28,9 @@ object BackupData {
       try
       {
 
-      //  val backup = OnlineBackup.from( DATABAS_SERVER_NAME_IP.getOrElse("localhost") )
+        val backup = OnlineBackup.from( DATABAS_SERVER_NAME_IP.getOrElse("localhost") )
 
-      //  backup.full( backupPath.getPath() )
+        backup.full( backupPath.getPath() )
 
       } catch {
         case e: Exception => {
