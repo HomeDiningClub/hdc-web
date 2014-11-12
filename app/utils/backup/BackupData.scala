@@ -1,15 +1,22 @@
 package utils.backup
 
 import java.io.File
-//import org.neo4j.backup.OnlineBackup
 
+import org.neo4j.backup.OnlineBackup
 
 
 object BackupData {
 
+  var isRunning : Boolean = false
 
-  def backup_data()
+
+  def makeFullBackup()
   {
+
+    if(isRunning == false) {
+
+      isRunning = true
+
     // backup bath
     // server ip or name
 
@@ -19,8 +26,9 @@ object BackupData {
 
     try {
 
-      //val backup = OnlineBackup.from( DATABAS_SERVER_NAME_IP )
-      // backup.full( backupPath.getPath() );
+      val backup = OnlineBackup.from( DATABAS_SERVER_NAME_IP )
+
+      backup.full( backupPath.getPath() );
 
     } catch {
       case e: Exception => {
@@ -28,7 +36,7 @@ object BackupData {
       }
     }
 
-
+    }
 
   }
 
