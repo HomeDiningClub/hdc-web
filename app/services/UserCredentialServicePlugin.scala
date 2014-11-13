@@ -79,10 +79,17 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
     var isFoundEmail : Boolean = false
     if(uc == null || uc == None) {
+      // null or None
+      isFoundEmail = false
+    } else if(uc.get == null) {
+      // Some(null)
       isFoundEmail = false
     } else {
       isFoundEmail = true
     }
+
+
+
 
     //val exitsUser = exists(email, providerId)
 
