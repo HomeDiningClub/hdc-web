@@ -1,6 +1,10 @@
+import java.text.SimpleDateFormat
+import java.util.Calendar
+
 import controllers.routes
 import enums.RoleEnums
 import org.springframework.data.neo4j.support.Neo4jTemplate
+import play.api.libs.concurrent.Akka
 import play.api.mvc.Handler
 import play.api.Application
 import play.api.GlobalSettings
@@ -13,6 +17,9 @@ import utils.authorization.WithRole
 import utils.Helpers
 import utils.requests.NormalizedRequest
 import utils.filters.GlobalLoggingFilter
+import play.api.libs.concurrent.Execution.Implicits._
+import scala.concurrent.duration._
+import play.api.Play.current
 /*
 import play.filters.gzip.GzipFilter
 import play.filters.csrf.CSRFFilter
@@ -33,7 +40,16 @@ object Global extends GlobalSettings {
 
     // Needed for embedded DB
     ctx.start()
+
+    Akka.system.scheduler.schedule(1.minutes, 24.hour) {
+      println("Backup started ... ")
+      utils.backup.BackupData.makeFullBackup()
+     val today = Calendar.getInstance().getTime()
+      val dateFormat = new SimpleDateFormat("HH:mm:ss.SS")
+      println("Backup done : " + dateFormat.format(today))
+    }
   }
+
 
   /**
    * Sync the context lifecycle with Play's.
