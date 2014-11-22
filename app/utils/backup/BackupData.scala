@@ -40,6 +40,12 @@ object BackupData {
         doNothing = true
       }
 
+      // 20 Mbyte free space
+      if(!freeSpace(BACKUP_PATH.getOrElse(""), 20)) {
+        println("Error No memory left to make a backup")
+        doNothing = true
+      }
+
 
       if (!doNothing) {
         try {
@@ -63,6 +69,24 @@ object BackupData {
       }
     }
   }
+
+
+
+  def freeSpace(folder: String, megaByte : Integer) : Boolean = {
+
+    val toMegaByte : Long =  (1024 * 1024)
+
+    // todo use paramter value
+    var dir : File  = new File(folder)
+
+    var freeSpace   : Long = dir.getFreeSpace / toMegaByte
+    var usableSpace : Long = dir.getUsableSpace / toMegaByte
+
+    usableSpace > megaByte
+  }
+
+
+
 
   def getFolder(backupPath : String) : File = {
 
