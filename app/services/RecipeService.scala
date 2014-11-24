@@ -2,6 +2,7 @@ package services
 
 import models.files.ContentFile
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -100,7 +101,11 @@ class RecipeService {
   @Transactional(readOnly = true)
   def getRecipeBoxes(user: UserCredential): Option[List[RecipeBox]] = {
 
-    var list = recipeRepository.findReceipies(user.userId)
+    // with out paging
+    //var list = recipeRepository.findReceipies(user.userId)
+    // 0 curren page, 6 number of recepies for eache page
+    //todo activate paging chooice 0, 1, 2, 3
+    var list = recipeRepository.findReceipiesOnPage(user.userId,new PageRequest(0, 6))
     var itter = list.iterator()
     var recipeList : ListBuffer[RecipeBox] = new ListBuffer[RecipeBox]
 

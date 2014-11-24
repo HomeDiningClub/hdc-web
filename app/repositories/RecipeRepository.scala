@@ -1,5 +1,7 @@
 package repositories
 
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.annotation.{Query, ResultColumn, MapResult}
 import org.springframework.data.neo4j.repository.GraphRepository
 import models.{UserProfile, UserCredential, Recipe}
@@ -77,6 +79,19 @@ trait RecipeRepository extends GraphRepository[Recipe] {
     @ResultColumn("tag.userId")
     def getUserId() : String
   }
+
+  @Query(
+    "match (tag {userId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)" +
+      " optional match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)" +
+      " optional match (r)-[:IMAGES]-(recipeImages:`ContentFile`)" +
+      " optional match (r)-[g]-(ux:UserCredential)" +
+      " optional match (uc)-[f:`MAIN_IMAGE`]-(mainImage:`ContentFile`)" +
+      " where tag.emailAddress={0}" +
+      " return avg(g.ratingValue), r.name, r.preAmble, r.objectId," +
+      " COLLECT(recipeImages.objectId)," +
+      " COLLECT(mainImage.objectId), uc.profileLinkName, r.recipeLinkName, tag.userId"
+  )
+  def findReceipiesOnPage(emailAddress: String, pageable : Pageable) : Page[RecipeData]
 
 
 
