@@ -41,7 +41,7 @@ object Global extends GlobalSettings {
     // Needed for embedded DB
     ctx.start()
 
-    Akka.system.scheduler.schedule(1.minutes, 24.hour) {
+    Akka.system.scheduler.schedule(1.minutes, 12.hour) {
       println("Backup started ... ")
       utils.backup.BackupData.makeFullBackup()
      val today = Calendar.getInstance().getTime()
