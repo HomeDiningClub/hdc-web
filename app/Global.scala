@@ -41,13 +41,16 @@ object Global extends GlobalSettings {
     // Needed for embedded DB
     ctx.start()
 
-    Akka.system.scheduler.schedule(1.minutes, 12.hour) {
+    // every 12 houre store data from the register to file
+    Akka.system.scheduler.schedule(12.hour, 12.hour) {
       println("Backup started ... ")
       utils.backup.BackupData.makeFullBackup()
      val today = Calendar.getInstance().getTime()
       val dateFormat = new SimpleDateFormat("HH:mm:ss.SS")
       println("Backup done : " + dateFormat.format(today))
     }
+
+
   }
 
 

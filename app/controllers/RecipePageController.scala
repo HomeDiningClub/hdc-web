@@ -1,7 +1,9 @@
 package controllers
 
 import models.files.ContentFile
+import models.jsonmodels.RecipeBoxJSON
 import org.springframework.stereotype.{Controller => SpringController}
+import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
 import securesocial.core.SecureSocial
 import models.{UserCredential, Recipe}
@@ -21,6 +23,7 @@ import models.viewmodels.{RecipeBox, RecipeForm}
 import utils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ListBuffer
 
 @SpringController
 class RecipePageController extends Controller with SecureSocial {
@@ -37,6 +40,11 @@ class RecipePageController extends Controller with SecureSocial {
 
   def viewRecipeByNameAndProfile(profileName: String, recipeName: String) = UserAwareAction { implicit request =>
 
+    println("###############################")
+    println("profileName = " + profileName)
+    println("recipeName = " + recipeName)
+    println("###############################")
+
     // Try getting the recipe from name, if failure show 404
     recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
       case Some(recipe) =>
@@ -46,6 +54,70 @@ class RecipePageController extends Controller with SecureSocial {
             Logger.debug(errMess)
             BadRequest(errMess)
         }
+  }
+
+
+  def viewRecipeByNameAndProfilePageJSON(profileName: String, recipeName: String, page: Int) = UserAwareAction { implicit request =>
+
+    var list: ListBuffer[RecipeBoxJSON] = new ListBuffer[RecipeBoxJSON]
+    var t: Option[List[RecipeBox]] = None
+
+    println("profileLinkName(IN) : " + profileName)
+
+
+    userProfileService.findByprofileLinkName(profileName) match {
+      case Some(profile) => {
+
+        println("profileLinkName(IN) : " + profileName)
+        println("ProfileLinkName : " + profile.profileLinkName)
+
+        try {
+          t = recipeService.getRecipeBoxesPage(profile.getOwner, page)
+        } catch {
+         case  ex: Exception => println("Error")
+        }
+
+      }
+
+    }
+
+
+    try
+    {
+
+      // loop ....
+
+      t match {
+        case Some(t) => {
+          for (e: RecipeBox <- t) {
+            list  += RecipeBoxJSON(e.objectId.toString, e.linkToRecipe, e.name, e.preAmble.getOrElse(""), e.mainImage.getOrElse(""), e.recipeRating.toString)
+          }
+        }
+      }
+
+     // ...
+
+    } catch {
+      case ex: Exception => println("Error 2")
+    }
+
+    Ok(convertRecipiesToJson(list))
+  }
+
+
+  def convertRecipiesToJson(jsonCase: Seq[RecipeBoxJSON]): JsValue = Json.toJson(jsonCase)
+
+  def viewRecipeByNameAndProfilePage(profileName: String, recipeName: String, page: Int) = UserAwareAction { implicit request =>
+
+    // Try getting the recipe from name, if failure show 404
+    recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
+      case Some(recipe) =>
+        Ok(views.html.recipe.recipe(recipe, recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), isThisMyRecipe = isThisMyRecipe(recipe)))
+      case None =>
+        val errMess = "Cannot find recipe using name:" + recipeName + " and profileName:" + profileName
+        Logger.debug(errMess)
+        BadRequest(errMess)
+    }
   }
 
 

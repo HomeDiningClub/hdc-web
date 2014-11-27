@@ -189,6 +189,68 @@ class RecipeService {
       Some(startPageBoxes)
   }
 
+
+  @Transactional(readOnly = true)
+  def getRecipeBoxesPage(user: UserCredential, pageNo: Integer): Option[List[RecipeBox]] = {
+
+    // with out paging
+    //var list = recipeRepository.findReceipies(user.userId)
+    // 0 curren page, 6 number of recepies for eache page
+    //todo activate paging chooice 0, 1, 2, 3
+    var list = recipeRepository.findReceipiesOnPage(user.userId,new PageRequest(pageNo, 6))
+    var itter = list.iterator()
+    var recipeList : ListBuffer[RecipeBox] = new ListBuffer[RecipeBox]
+
+    while(itter.hasNext()) {
+
+      var obj = itter.next()
+
+      if (obj.getUserId() == user.userId) {
+
+        println("##################################################")
+        println("LinkName : " + obj.getLinkName())
+        println("Name : " + obj.getName())
+        println("ObjectId : " + obj.getobjectId())
+        println("PreAmble : " + obj.getpreAmble())
+        println("profileLinkname : " + obj.getprofileLinkName())
+        println("userId : " + obj.getUserId())
+
+        var v = obj.getRating() match {
+          case null => "0.0"
+          case _ => obj.getRating()
+        }
+
+        // convert string to double, round to Int and convert to Int
+        var ratingValue : Int = v.toDouble.round.toInt
+
+
+        println("Rating (Int) : " + ratingValue)
+
+        println("##################################################")
+        var linkToRecipe = obj.getprofileLinkName() match {
+          case null | "" => "#"
+          case link => routes.RecipePageController.viewRecipeByNameAndProfile(obj.getprofileLinkName(), obj.getName()).url
+        }
+
+        var recipe = RecipeBox(None, obj.getLinkName(), obj.getName(), Some(obj.getpreAmble()), None, ratingValue)
+        recipeList += recipe
+      } else {
+        println("Not to view " + obj.getUserId())
+      }
+    }
+
+
+    val startPageBoxes: List[RecipeBox] = recipeList.toList
+
+    if(startPageBoxes.isEmpty)
+      None
+    else
+      Some(startPageBoxes)
+  }
+
+
+
+
   @Transactional(readOnly = true)
   def getListOwnedBy(user: UserCredential): Option[List[Recipe]] = {
     recipeRepository.findByownerProfileOwner(user).iterator.asScala.toList match {

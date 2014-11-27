@@ -64,6 +64,7 @@ POST        /inbox/saveit                                        controllers.Mes
 
 # Recipe
 GET         /profile/view/:profileName/recipe/:recipeName        @controllers.RecipePageController.viewRecipeByNameAndProfile(profileName: String, recipeName: String)
+GET         /recipe/json/recipeListJson                         @controllers.RecipePageController.viewRecipeByNameAndProfilePageJSON(profileName: String, recipeName: String, page: Int)
 #GET         /recipe/view/:recipeName                             @controllers.RecipePageController.viewRecipeByName(recipeName: String)
 GET         /recipe/add                                          @controllers.RecipePageController.add
 POST        /recipe/add                                          @controllers.RecipePageController.addSubmit
