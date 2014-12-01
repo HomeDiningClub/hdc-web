@@ -17,22 +17,26 @@ var antal = 0;
 
 
 
-   myArr.push("<table>");
+   myArr.push("<table width='100%'>");
     $.each(data,function(key,value) {
         antal = antal + 1;
     var l = "";
     if(antal == 1){
         l = l + "<tr>";
     }
-    l = l + "<td width='30%'><a href='linktoRecipe' class='link-recipe-panel'>";
+    l = l + "<td width='30%'><a href='http://" + value.linkToRecipe + "' class='link-recipe-panel'>";
     l = l + "<div class='thumbnail panel-recipe hover-green-dropshadow'>";
     l = l + "<div class='body'>";
+    l = l + "<img src='" + value.mainImage + "' class='img-responsive'>";
     l = l + "<h2>" + value.name + "</h2>";
     l = l + "<div class='preamble'>" + value.preAmble + "</div>";
-    l = l + "<button onclick='linkToRecipe' ";
+    l = l + "<button onclick='http://" + value.linkToRecipe + "' ";
     l = l + "class='btn btn-primary btn-xs btn-link-to-recipe pull-right'>Visa recept</button>";
     l = l + "</div></div>";
     l = l + "</a><td>";
+
+
+
 
     if(antal == 3) {
         l = l + "</tr>";
@@ -64,12 +68,13 @@ var antal = 0;
         if(antal == 1){
         l = l + "<tr>";
         }
-        l = l + "<td width='30%'><a href='linktoRecipe' class='link-recipe-panel'>";
+        l = l + "<td width='30%'><a href='http://" + value.linkToRecipe + "' class='link-recipe-panel'>";
         l = l + "<div class='thumbnail panel-recipe hover-green-dropshadow'>";
         l = l + "<div class='body'>";
+        l = l + "<img src='" + value.mainImage + "' class='img-responsive'>";
         l = l + "<h2>" + value.name + "</h2>";
         l = l + "<div class='preamble'>" + value.preAmble + "</div>";
-        l = l + "<button onclick='linkToRecipe' ";
+        l = l + "<button onclick='http://" + value.linkToRecipe + "' ";
         l = l + "class='btn btn-primary btn-xs btn-link-to-recipe pull-right'>Visa recept</button>";
         l = l + "</div></div>";
         l = l + "</a><td>";
@@ -112,12 +117,13 @@ var antal = 0;
         if(antal == 1){
         l = l + "<tr>";
         }
-        l = l + "<td width='30%'><a href='linktoRecipe' class='link-recipe-panel'>";
+        l = l + "<td width='30%'><a href='http://" + value.linkToRecipe + "' class='link-recipe-panel'>";
         l = l + "<div class='thumbnail panel-recipe hover-green-dropshadow'>";
         l = l + "<div class='body'>";
+        l = l + "<img src='" + value.mainImage + "' class='img-responsive'>";
         l = l + "<h2>" + value.name + "</h2>";
         l = l + "<div class='preamble'>" + value.preAmble + "</div>";
-        l = l + "<button onclick='linkToRecipe' ";
+        l = l + "<button onclick='http://" + value.linkToRecipe + "' ";
         l = l + "class='btn btn-primary btn-xs btn-link-to-recipe pull-right'>Visa recept</button>";
         l = l + "</div></div>";
         l = l + "</a><td>";

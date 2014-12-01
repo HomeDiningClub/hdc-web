@@ -62,6 +62,7 @@ class RecipePageController extends Controller with SecureSocial {
     var list: ListBuffer[RecipeBoxJSON] = new ListBuffer[RecipeBoxJSON]
     var t: Option[List[RecipeBox]] = None
 
+
     println("profileLinkName(IN) : " + profileName)
 
 
@@ -90,7 +91,10 @@ class RecipePageController extends Controller with SecureSocial {
       t match {
         case Some(t) => {
           for (e: RecipeBox <- t) {
-            list  += RecipeBoxJSON(e.objectId.toString, e.linkToRecipe, e.name, e.preAmble.getOrElse(""), e.mainImage.getOrElse(""), e.recipeRating.toString)
+
+            var link : String = request.host + controllers.routes.RecipePageController.viewRecipeByNameAndProfile(profileName, e.linkToRecipe).toString()
+            // e.linkToRecipe
+            list  += RecipeBoxJSON(e.objectId.toString, link, e.name, e.preAmble.getOrElse(""), e.mainImage.getOrElse(""), e.recipeRating.toString)
           }
         }
       }
