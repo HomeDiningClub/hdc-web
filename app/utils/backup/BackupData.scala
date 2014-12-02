@@ -52,7 +52,9 @@ object BackupData {
 
           val backup = OnlineBackup.from(DATABAS_SERVER_NAME_IP.getOrElse("localhost"))
 
-          backup.full(backupPath.getPath())
+         // backup.full(backupPath.getPath())
+          backup.backup(backupPath.getPath())
+
 
 
         } catch {
