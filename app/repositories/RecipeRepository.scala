@@ -2,7 +2,7 @@ package repositories
 
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Page
-import org.springframework.data.neo4j.annotation.{Query, ResultColumn, MapResult}
+import org.springframework.data.neo4j.annotation.{QueryResult, Query, ResultColumn, MapResult}
 import org.springframework.data.neo4j.repository.GraphRepository
 import models.{UserProfile, UserCredential, Recipe}
 import java.util.UUID
@@ -40,7 +40,8 @@ trait RecipeRepository extends GraphRepository[Recipe] {
   )
   def findReceipies(emailAddress: String) : util.List[RecipeData]
 
-  @MapResult
+  //@MapResult
+  @QueryResult
   trait RecipeData {
 
     // uc.profileLinkName

@@ -79,6 +79,7 @@ class RecipePageController extends Controller with SecureSocial {
         }
 
       }
+      case None => {}
 
     }
 
@@ -97,6 +98,7 @@ class RecipePageController extends Controller with SecureSocial {
             list  += RecipeBoxJSON(e.objectId.toString, link, e.name, e.preAmble.getOrElse(""), e.mainImage.getOrElse(""), e.recipeRating.toString)
           }
         }
+        case None => {}
       }
 
      // ...
