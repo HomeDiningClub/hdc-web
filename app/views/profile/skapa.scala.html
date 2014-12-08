@@ -22,7 +22,7 @@
                 @if(EnvDataForm.hasGlobalErrors) {
                     <div class="alert alert-error">
                         <a class="close" data-dismiss="alert">×</a>
-                        Profilen innehåller felaktig värden
+                        @Messages("profile.form.unacceptedcontent")
                         @for(v <-EnvDataForm.globalErrors){
                         <br> @v.message
                         }
@@ -227,7 +227,7 @@
 
 
 
-                            <br>Minst antal gäster i gruppen
+                            <br>@Messages("profile.groupsize.min")
                             <br>
                             <select name="minGuest">
                             @for(col <- List.range(1,11)) {
@@ -235,7 +235,7 @@
                             }
                             </select>
 
-                            <br>Maximalt antal gäster
+                            <br>@Messages("profile.groupsize.max")
                             <br>
 
                             <select name="maxGuest">

@@ -109,9 +109,9 @@ class UserProfileController extends Controller with SecureSocial {
       "smoke" -> optional(text),
       "allkoholServing" -> optional(text)
   )(EnvData.apply) (EnvData.unapply)
-    verifying ("Profilnamn måste vara unikt", f => isUniqueProfileName(f.name, f.name2))
-    verifying ("Personnummer måste vara korrekt angivet", g => isCorrectPersonnummer(g.personnummer))
-    verifying ("Du måste acceptera vilkoren för att bli medlem", h => h.acceptTerms == true)
+    verifying (Messages("profile.control.unique"), f => isUniqueProfileName(f.name, f.name2))
+    verifying (Messages("profile.personalidentitynumber.unique"), g => isCorrectPersonnummer(g.personnummer))
+    verifying (Messages("profile.approve.memberterms"), h => h.acceptTerms == true)
   )
 
 
