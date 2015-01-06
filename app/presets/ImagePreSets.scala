@@ -1,9 +1,11 @@
-package presets
+/*
 
+package presets
 import models.files.FileTransformation
 import constants.FileTransformationConstants
 
 object ImagePreSets {
+
 
   def adminImages: List[FileTransformation] = {
     List[FileTransformation](
@@ -44,4 +46,6 @@ object ImagePreSets {
     )
   }
 
+
 }
+*/

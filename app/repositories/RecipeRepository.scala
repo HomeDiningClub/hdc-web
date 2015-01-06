@@ -28,17 +28,16 @@ trait RecipeRepository extends GraphRepository[Recipe] {
   )*/
 
   @Query(
-  "match (tag {userId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)" +
+  "match (tag {objectId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)" +
   " optional match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)" +
   " optional match (r)-[:IMAGES]-(recipeImages:`ContentFile`)" +
   " optional match (r)-[g]-(ux:UserCredential)" +
-  " optional match (uc)-[f:`MAIN_IMAGE`]-(mainImage:`ContentFile`)" +
-  " where tag.emailAddress={0}" +
-  " return avg(g.ratingValue), r.name, r.preAmble, r.objectId," +
-  " COLLECT(recipeImages.objectId)," +
-  " COLLECT(mainImage.objectId), uc.profileLinkName, r.recipeLinkName, tag.userId"
+  " optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`)" +
+  " return avg(g.ratingValue), r.name, r.preAmble, r.mainBody, r.objectId," +
+  " COLLECT(recipeImages.storeId) as RecipeImages," +
+  " COLLECT(mainImage.storeId) as MainImage, uc.profileLinkName, r.recipeLinkName, tag.userId"
   )
-  def findReceipies(emailAddress: String) : util.List[RecipeData]
+  def findRecipes(userObjectId: String) : util.List[RecipeData]
 
   //@MapResult
   @QueryResult
@@ -64,38 +63,39 @@ trait RecipeRepository extends GraphRepository[Recipe] {
     @ResultColumn("r.preAmble")
     def getpreAmble() : String
 
+    // r.mainBody
+    @ResultColumn("r.mainBody")
+    def getMainBody() : String
+
     // avg(g.ratingValue)
     @ResultColumn("avg(g.ratingValue)")
     def getRating() : String
 
-    // COLLECT(recipeImages.objectId)
-    @ResultColumn("COLLECT(recipeImages.objectId)")
-    def getRecipeImage() : String
+    // COLLECT(recipeImages.storeId)
+    @ResultColumn("RecipeImages")
+    def getRecipeImage() : util.List[String]
 
-    // COLLECT(mainImage.objectId)
-    @ResultColumn("COLLECT(mainImage.objectId)")
-    def getMainImage() : String
+    // COLLECT(mainImage.storeId)
+    @ResultColumn("MainImage")
+    def getMainImage() : util.List[String]
 
     // tag.userId
     @ResultColumn("tag.userId")
     def getUserId() : String
+
   }
 
   @Query(
-    "match (tag {userId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)" +
+    "match (tag {objectId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)" +
       " optional match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)" +
       " optional match (r)-[:IMAGES]-(recipeImages:`ContentFile`)" +
       " optional match (r)-[g]-(ux:UserCredential)" +
-      " optional match (uc)-[f:`MAIN_IMAGE`]-(mainImage:`ContentFile`)" +
-      " where tag.emailAddress={0}" +
-      " return avg(g.ratingValue), r.name, r.preAmble, r.objectId," +
-      " COLLECT(recipeImages.objectId)," +
-      " COLLECT(mainImage.objectId), uc.profileLinkName, r.recipeLinkName, tag.userId"
+      " optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`)" +
+      " return avg(g.ratingValue), r.name, r.preAmble, r.mainBody, r.objectId," +
+      " COLLECT(recipeImages.storeId) as RecipeImages," +
+      " COLLECT(mainImage.storeId) as MainImage, uc.profileLinkName, r.recipeLinkName, tag.userId"
   )
-  def findReceipiesOnPage(emailAddress: String, pageable : Pageable) : Page[RecipeData]
-
-
-
+  def findRecipesOnPage(userObjectId: String, pageable : Pageable) : Page[RecipeData]
 
   def findByrecipeLinkName(recipeLinkName: String): Recipe
   def findByownerProfileProfileLinkNameAndRecipeLinkName(profileLinkName: String, recipeLinkName: String): Recipe

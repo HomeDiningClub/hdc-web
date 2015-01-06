@@ -53,6 +53,15 @@ RETURN COUNT(*)
 --
 
 --
+match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)
+optional match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe)
+optional match (r)-[:IMAGES]-(recipeImages:`ContentFile`)
+optional match (uc)-[f:`MAIN_IMAGE`]-(mainImage:`ContentFile`)
+where tag.emailAddress='fredrik.trott@gmail.com'
+return avg(f.ratingValue) as rate, r.name, r.preAmble, r.objectId, COLLECT(recipeImages) as recipeImages, COLLECT(mainImage) as avatarImage
+--
+
+--
 (http://refcardz.dzone.com/refcardz/core-spring-data)
 Logical keyword	Keyword expressions
 AFTER	After, IsAfter (date types only)
@@ -66,7 +75,7 @@ GREATER_THAN	GreaterThan, IsGreaterThan (comparable types only)
 GREATER_THAN_EQUALS	GreaterThanEqual, IsGreaterThanEqual (compüarable types only)
 IN	In, IsIn (expects collection or array parameter)
 IS	Is, Equals, (or no keyword at all)
-IS_NOT_NULL	NotNull, IsNotNull
+    IS_NOT_NULL	NotNull, IsNotNull
 IS_NULL	Null, IsNull
 LESS_THAN	LessThan, IsLessThan (comparable types)
 LESS_THAN_GREATER	LessThanGreater, IsLessThanGreater (comparable types only)

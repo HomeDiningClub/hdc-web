@@ -9,19 +9,6 @@ GET         /                                                    @controllers.St
 # Content pages
 GET         /content/:contentName                                @controllers.ContentPageController.viewContentByName(contentName: String)
 
-#GET         /how-does-it-work                          @controllers.ContentPageController.howDoesItWork
-#GET         /become-a-member                           @controllers.ContentPageController.becomeAMember
-#GET         /become-a-member/the-perfect-guest         @controllers.ContentPageController.thePerfectGuest
-#GET         /become-a-host                             @controllers.ContentPageController.becomeAHost
-#GET         /become-a-host/practical-info              @controllers.ContentPageController.practicalInfo
-#GET         /become-a-host/example-host-text           @controllers.ContentPageController.exampleHostText
-#GET         /references                                @controllers.ContentPageController.references
-#GET         /about-us                                            controllers.SuggestController.aboutUs
-#GET         /about-us/press                            @controllers.ContentPageController.press
-#GET         /about-us/user-terms-and-conditions        @controllers.ContentPageController.userTermsAndConditions
-#GET         /faq                                       @controllers.ContentPageController.faq
-#GET         /contact                                   @controllers.ContentPageController.contact
-
 # Suggest feature
 POST        /suggest-feature                                     controllers.SuggestController.suggestFeatures
 
@@ -64,7 +51,7 @@ POST        /inbox/saveit                                        controllers.Mes
 
 # Recipe
 GET         /profile/view/:profileName/recipe/:recipeName        @controllers.RecipePageController.viewRecipeByNameAndProfile(profileName: String, recipeName: String)
-GET         /recipe/json/recipeListJson                         @controllers.RecipePageController.viewRecipeByNameAndProfilePageJSON(profileName: String, recipeName: String, page: Int)
+GET         /recipe/recipelist.json                              @controllers.RecipePageController.viewRecipeByNameAndProfilePageJSON(profileName: String ?= "", page: Int ?= 0)
 #GET         /recipe/view/:recipeName                             @controllers.RecipePageController.viewRecipeByName(recipeName: String)
 GET         /recipe/add                                          @controllers.RecipePageController.add
 POST        /recipe/add                                          @controllers.RecipePageController.addSubmit
@@ -111,8 +98,25 @@ GET         /not-authorized                                      securesocial.co
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                        controllers.Assets.at(path="/public", file)
 
+# IMAGE
+GET         /listimages.json                                     @controllers.ImageController.listImages(selected: String ?= "")
+GET         /previmages.json                                     @controllers.ImageController.previewImages(selected: String ?= "")
+POST        /uploadimage.json                                    @controllers.ImageController.uploadImageSubmit
 
-
+# Resources File / Image
+GET         /dynassets/at/*file                                  @controllers.ImageController.at(file)
+GET         /dynassets/auto/:width/:height/*file                 @controllers.ImageController.auto(file, width: Int, height: Int)
+GET         /dynassets/crop/:width/:height/*file                 @controllers.ImageController.crop(file, width: Int, height: Int)
+GET         /dynassets/imgch/thumb/*file                         @controllers.ImageController.imgChooserThumb(file)
+GET         /dynassets/user/mini/*file                           @controllers.ImageController.userMini(file)
+GET         /dynassets/user/thumb/*file                          @controllers.ImageController.userThumb(file)
+GET         /dynassets/recipe/thumb/*file                        @controllers.ImageController.recipeThumb(file)
+GET         /dynassets/recipe/box/*file                          @controllers.ImageController.recipeBox(file)
+GET         /dynassets/recipe/normal/*file                       @controllers.ImageController.recipeNormal(file)
+GET         /dynassets/profile/thumb/*file                       @controllers.ImageController.profileThumb(file)
+GET         /dynassets/profile/box/*file                         @controllers.ImageController.profileBox(file)
+GET         /dynassets/profile/normal/*file                      @controllers.ImageController.profileNormal(file)
+GET         /dynassets/profile/big/*file                         @controllers.ImageController.profileBig(file)
 
 
 # ADMIN - Index

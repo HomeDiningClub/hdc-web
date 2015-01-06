@@ -1,49 +1,13 @@
 @(nameOfConfig: String = null)
 @import controllers.admin.AdminFileListController
 
-@css = {
-    <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
-    <link rel="stylesheet" href="@routes.Assets.at("js/libs/jquery-file-upload-9.8.0/css/jquery.fileupload.css")">
-    <link rel="stylesheet" href="@routes.Assets.at("js/libs/jquery-file-upload-9.8.0/css/jquery.fileupload-ui.css")">
-    <!-- CSS adjustments for browsers with JavaScript disabled -->
-    <noscript><link rel="stylesheet" href="@routes.Assets.at("js/libs/jquery-file-upload-9.8.0/css/jquery.fileupload-noscript.css")"></noscript>
-    <noscript><link rel="stylesheet" href="@routes.Assets.at("js/libs/jquery-file-upload-9.8.0/css/jquery.fileupload-ui-noscript.css")"></noscript>
-
-}
-
-@scripts = {
-    <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
-    <script src="@routes.Assets.at("js/libs/jquery-file-upload-9.8.0/js/vendor/jquery.ui.widget.js")"></script>
-    <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
-    <script src="@routes.Assets.at("js/libs/jquery-file-upload-9.8.0/js/jquery.iframe-transport.js")"></script>
-    <!-- The basic File Upload plugin -->
-    <script src="@routes.Assets.at("js/libs/jquery-file-upload-9.8.0/js/jquery.fileupload.js")"></script>
-    <!-- The File Upload processing plugin -->
-    <script src="@routes.Assets.at("js/libs/jquery-file-upload-9.8.0/js/jquery.fileupload-process.js")"></script>
-    <!-- The File Upload image preview & resize plugin -->
-    <script src="@routes.Assets.at("js/libs/jquery-file-upload-9.8.0/js/jquery.fileupload-image.js")"></script>
-    <!-- The File Upload user interface plugin -->
-    <script src="@routes.Assets.at("js/libs/jquery-file-upload-9.8.0/js/jquery.fileupload-ui.js")"></script>
-    <!-- The main application script -->
-    <script src="@routes.Assets.at("js/libs/jquery-file-upload-9.8.0/js/main.js")"></script>
-
-}
-
-@mainedit(Messages("admin.file.title"), footerScripts = scripts, headerCss = css) {
+@mainedit(Messages("admin.file.title")) {
     <div class="row">
         <div class="col-xs-12">
             <h1>@Messages("admin.file.upload.header")</h1>
             @views.html.admin.file.uploadform()
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-xs-12">
-            <h1>@Messages("admin.file.upload.header")</h1>
-            @views.html.admin.file.uploadformajax()
-        </div>
-    </div>
-
 
     <div class="row">
         <div class="col-xs-12">

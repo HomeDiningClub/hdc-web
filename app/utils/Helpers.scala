@@ -63,4 +63,13 @@ object Helpers {
   def randomBetween(lowerBound: Int, upperBound: Int): Int = {
     Random.nextInt(upperBound - lowerBound) + lowerBound
   }
+
+
+  def titleCase(s: String) = {
+    if (s != null && s.length > 0) {
+      s.head.toUpper + s.tail.toLowerCase
+    }else{
+      s
+    }
+  }
 }

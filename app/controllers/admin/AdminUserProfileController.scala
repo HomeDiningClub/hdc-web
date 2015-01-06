@@ -59,7 +59,9 @@ class AdminUserProfileController  extends Controller with SecureSocial {
       "handicapFriendly" -> optional(text),
       "havePets" -> optional(text),
       "smoke" -> optional(text),
-      "allkoholServing" -> optional(text)
+      "allkoholServing" -> optional(text),
+      "mainimage" -> optional(text),
+      "avatarimage" -> optional(text)
     )
     (EnvData.apply) (EnvData.unapply)
   )

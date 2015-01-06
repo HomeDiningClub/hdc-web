@@ -1,6 +1,6 @@
 @(recipe: models.Recipe,
         recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
-        isThisMyRecipe: Boolean = false)(implicit request: RequestHeader)
+        isThisMyRecipe: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
 @import scala.collection.JavaConverters._
 @import utils.Helpers
 
@@ -15,11 +15,12 @@
     <div class="container host-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                @defining(if(recipe.getOwnerProfile.getAvatarImage != null){recipe.getOwnerProfile.getAvatarImage.getTransformByName("thumbnail").getUrl}else{""}) { avatarUrl =>
+                @defining(if(recipe.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(recipe.getOwnerProfile.getAvatarImage.getStoreId).url}else{""}) { avatarUrl =>
                     @views.html.profile.profileHeader(recipe.getOwnerProfile.profileLinkName, avatarUrl, true)
                 }
                 <div class="row">
                     <div class="col-xs-12 big-margin-top">
+                        @shared.flashmsg(flash)
                         <h1 class="page-header">@recipe.getName</h1>
                     </div>
                     <div class="col-xs-12 col-md-4">
@@ -48,10 +49,10 @@
                                     <div id="recipe-carousel" data-ride="carousel" data-interval="4000" class="carousel slide hdc-carousel host-image-gallery">
                                             <!-- Slider carousel items -->
                                         <div class="carousel-inner">
-                                            <div class="active item" data-slide-number="0">@shared.img(image.getTransformByName("normal").getUrl, cssClass = "img-responsive")</div>
+                                            <div class="active item set-height crop-height" data-slide-number="0">@shared.img(routes.ImageController.recipeNormal(image.getStoreId).url, cssClass = "img-responsive")</div>
                                             @if(recipeImages.nonEmpty) {
                                                 @for((recipeImage,i) <- recipeImages.zipWithIndex) {
-                                                    <div class="item" data-slide-number="@(i+1)">@shared.img(recipeImage.getTransformByName("normal").getUrl, cssClass = "img-responsive")</div>
+                                                    <div class="item set-height crop-height" data-slide-number="@(i+1)">@shared.img(routes.ImageController.recipeNormal(recipeImage.getStoreId).url, cssClass = "img-responsive")</div>
                                                 }
                                             }
                                         </div>
@@ -64,11 +65,11 @@
                                         <!-- Thumbnails, don't show responsive -->
                                         <ul class="recipe-carousel-thumbs list-inline hidden-xs hidden-sm">
                                             <li class="col-md-3">
-                                                <a id="carousel-selector-0">@shared.img(image.getTransformByName("thumbnail").getUrl, cssClass = "img-responsive polaroid", cssStyle = rotateCss(-8,8))</a>
+                                                <a id="carousel-selector-0">@shared.img(routes.ImageController.recipeThumb(image.getStoreId).url, cssClass = "img-responsive polaroid", cssStyle = rotateCss(-8,8))</a>
                                             </li>
                                             @if(recipeImages.nonEmpty) {
                                                 @for((recipeImage,i) <- recipeImages.zipWithIndex) {
-                                                    <li class="col-md-3"><a id="carousel-selector-@(i+1)">@shared.img(recipeImage.getTransformByName("thumbnail").getUrl, cssClass = "img-responsive polaroid", cssStyle = rotateCss(-8,8))</a></li>
+                                                    <li class="col-md-3"><a id="carousel-selector-@(i+1)">@shared.img(routes.ImageController.recipeThumb(recipeImage.getStoreId).url, cssClass = "img-responsive polaroid", cssStyle = rotateCss(-8,8))</a></li>
                                                 }
                                             }
                                         </ul>

@@ -49,7 +49,7 @@ class ContentService {
   def getAsideNewsItems: Option[List[ContentPage]] = {
     contentPageRepository.findByContentCategoriesAndContentState(ContentCategoryEnums.ASIDE_STARTPAGE.toString,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
-      case items => Some(items)
+      case items => Some(items.sortBy(i => i.name))
     }
   }
 
@@ -57,7 +57,7 @@ class ContentService {
   def getMainMenuItems: Option[List[ContentPage]] = {
     contentPageRepository.findByContentCategoriesAndVisibleInMenusAndContentState(ContentCategoryEnums.MAINMENU.toString,true,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
-      case items => Some(items)
+      case items => Some(items.sortBy(i => i.name))
     }
   }
 

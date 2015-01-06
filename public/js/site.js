@@ -24,6 +24,9 @@ $(document).ready(function () {
     // Activate popovers
     $(".popover-trigger").popover();
 
+    // Disable any disabled tabs
+    $(".nav .disabled>a").on("click", function(e) { e.preventDefault(); return false; });
+
     // Collapse text if found
     if($(".truncate-text-review-boxes").length){
         $(".truncate-text-review-boxes").collapser({
@@ -53,11 +56,22 @@ $(document).ready(function () {
 //   });
 
 
+    // Override Bootstrap tab click to include focusing on tabs
+    // disable old listener
+    // Not working?
+/*
+    $('body').off('click.tab.data-api');
+
+    // attach new listener
+    $('body').on('click.scrolling-tabs', '[data-toggle="tab"], [data-toggle="pill"]', function (e) {
+        //e.preventDefault()
+        $(this).tab('show')
+    });
+    */
+
     // Disable double click
-    $(document).ready(function(){
-        $("*").dblclick(function(e){
-            e.preventDefault();
-        });
+    $("*").dblclick(function(e){
+        e.preventDefault();
     });
 
     // Clicking on carousel thumbnails
@@ -145,3 +159,20 @@ $(document).ready(function () {
     });
 
 });
+
+
+function isGuid(expression){
+    if (expression != "undefined"){
+        return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(expression);
+    }
+    return false;
+}
+
+function isInList(value, list) {
+    for (var i = 0; i < list.length; i++) {
+        if (list[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}

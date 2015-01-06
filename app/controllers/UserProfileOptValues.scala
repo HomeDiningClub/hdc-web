@@ -8,7 +8,7 @@ class UserProfileOptValues(
   var roleGuest     : String,
   var roleHost      : String,
   var numberOfGuest : String,
-  var minGuest      : String                           )
+  var minGuest      : String)
 {
 
     def maxGuestsSelected(value : String) : String = {

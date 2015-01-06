@@ -62,10 +62,10 @@ object Global extends GlobalSettings {
     Logger.info("Application shutdown...")
 
     //Needed for embedded DB
-      val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate])
-      neoTemplate.getGraphDatabaseService.shutdown()
-      ctx.stop()
-      ctx.close() //- May or may not be needed
+    val neoTemplate:Neo4jTemplate = ctx.getBean(classOf[Neo4jTemplate])
+    neoTemplate.getGraphDatabaseService.shutdown()
+    ctx.stop()
+    ctx.close() //- May or may not be needed
   }
 
   // Disable filter for now

@@ -3,10 +3,11 @@
         element: List[Type], klass: Types,
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
         editingProfile: Option[UserProfile] = None,
-        termsAndConditions: Option[models.content.ContentPage] = None)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
+        termsAndConditions: Option[models.content.ContentPage] = None,
+        extraValues: models.viewmodels.EditProfileExtraValues)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
 @import helper.twitterBootstrap._
 
-@main(Messages("profile.title")){
+@main(Messages("profile.title"), footerHtml = file.modalImages.render()){
 
     <div class="container">
         <div class="row">
@@ -28,244 +29,233 @@
                         }
                     </div>
                 }
+            </div>
+        </div>
+        <div class="row">
+            @helper.form(action = routes.UserProfileController.editSubmit(), 'enctype -> "multipart/form-data"){
+            <div class="col-xs-12">
+                <nav>
+                    <ul class="nav nav-tabs nav-tabs-profile">
+                        <li class="active"><a data-toggle="tab" href="#profile-tab-name" title="@Messages("profile.create.tabs.profile-name.food.title")">@Messages("profile.create.tabs.profile-name.food.name")</a></li>
+                        <li><a data-toggle="tab" href="#profile-tab-about-me" title="@Messages("profile.create.tabs.about-me.title")">@Messages("profile.create.tabs.about-me.name")</a></li>
+                        <li><a data-toggle="tab" href="#profile-tab-food" title="@Messages("profile.create.tabs.food.title")">@Messages("profile.create.tabs.food.name")</a></li>
+                        <li><a data-toggle="tab" href="#profile-tab-personal-info" title="@Messages("profile.create.tabs.personal-information.title")">@Messages("profile.create.tabs.personal-information.name")</a></li>
+                        <li><a data-toggle="tab" href="#profile-tab-host" title="@Messages("profile.create.tabs.host.title")">@Messages("profile.create.tabs.host.name")</a></li>
+                    </ul>
+                </nav>
+            </div>
 
+            <div class="tab-content">
+                <div class="tab-pane tab-hdc fade in active" id="profile-tab-name">
+                    <div class="col-xs-12">
+                        <h3 class="lead">@Messages("profile.create.header.profile-name")</h3>
+                        @helper.inputText(EnvDataForm("name"),
+                            'id -> "name",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.profilename"),
+                            '_help -> Messages("profile.create.form.profilename.required"),
+                            '_error -> EnvDataForm.error("name")
+                        )
+                        @Html(Messages("profile.create.form.profilename.help"))
 
-                @helper.form(action = routes.UserProfileController.editSubmit(), 'enctype -> "multipart/form-data") {
-                <div class="col-xs-12 col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">@Messages("profile.create.header.profile-name")</div>
-                        <div class="panel-body">
-                            @helper.inputText(EnvDataForm("name"),
-                                'id -> "name",
-                                '_showErrors -> true,
-                                '_label -> Messages("profile.create.form.profilename"),
-                                '_help -> Messages("profile.create.form.profilename.required"),
-                                '_error -> EnvDataForm.error("name")
-                            )
-                            <div class="alert alert-info">@Html(Messages("profile.create.form.profilename.help"))</div>
-
-                            @helper.inputHidden(EnvDataForm("name2"),
-                                'id -> "name",
-                                '_showErrors -> true,
-                                '_label -> Messages("profile.create.form.profilename"),
-                                '_help -> "",
-                                '_error -> EnvDataForm.error("name")
-                            )
-                        </div>
-                    </div>
-
-
-
-                    <div class="panel panel-default">
-                        <div class="panel-heading">@Messages("profile.create.header.about-me")</div>
-                        <div class="panel-body">
-
-                            @helper.inputText(EnvDataForm("aboutmeheadline"),
-                                'id -> "aboutmeheadline",
-                                '_showErrors -> true,
-                                '_label -> Messages("profile.create.form.aboutmeheadline"),
-                                '_help -> Messages("profile.create.form.aboutmeheadline.help"),
-                                '_error -> EnvDataForm.error("aboutmeheadline")
-                            )
-
-                            <hr>
-
-                            @helper.inputFile(EnvDataForm("avatarimage"), '_label -> Messages("profile.create.form.avatar-image"))
-                            @if(editingProfile.isDefined && editingProfile.get.getAvatarImage != null) {
-                                @shared.hostImageCircle(editingProfile.get.getAvatarImage.getTransformByName("thumbnail").getUrl) - @Messages("profile.create.form.avatar-image.existing")
-                            }else{
-                                @shared.hostImageCircle()
-                            }
-
-                            <hr>
-
-                            @helper.textarea(EnvDataForm("aboutme"),
-                                'id -> "aboutme",
-                                '_showErrors -> true,
-                                'class -> "richtextuser",
-                                '_label -> Messages("profile.create.form.aboutme"),
-                                '_help -> Messages("profile.create.form.aboutme.help"),
-                                '_error -> EnvDataForm.error("aboutme")
-                            )
-
-                            <hr>
-                            @helper.inputFile(EnvDataForm("mainimage"), '_label -> Messages("profile.create.form.main-image"))
-                            @if(editingProfile.isDefined && editingProfile.get.getMainImage != null) {
-                                @shared.img(editingProfile.get.getMainImage.getTransformByName("thumbnail").getUrl) - @Messages("profile.create.form.main-image.existing")
-                            }
-
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-xs-12 col-md-6">
-
-                    <div class="panel panel-default">
-                        <div class="panel-heading">@Messages("profile.create.header.food")</div>
-                        <div class="panel-body">
-
-                             <!-- Tags -->
-
-                            @for(t <- element) {
-                                <input type="checkbox" id="@t.name" name="@t.v" value="@t.name" @klass.getString(t.name)>
-                                &nbsp;
-                                <label for="@t.name" class="notbold">@t.name</label><br>
-                            }
-
-                            <!-- Tags -->
-
-                        </div>
-                    </div>
-
-                    <div class="panel panel-default">
-                        <div class="panel-heading">@Messages("profile.create.header.personal-information")</div>
-                        <div class="panel-body">
-
-
-                            @helper.inputText(EnvDataForm("streetAddress"),
-                                'id -> "streetAddress",
-                                '_showErrors -> true,
-                                '_label -> Messages("profile.create.form.streetAddress"),
-                                '_help -> Messages("profile.create.form.streetAddress.help"),
-                                '_error -> EnvDataForm.error("streetAddress")
-                            )
-
-                            @helper.inputText(EnvDataForm("zipCode"),
-                                'id -> "zipCode",
-                                '_showErrors -> true,
-                                '_label -> Messages("profile.create.form.zipCode"),
-                                '_help -> Messages("profile.create.form.zipCode.help"),
-                                '_error -> EnvDataForm.error("zipCode")
-                            )
-
-                            @helper.inputText(EnvDataForm("city"),
-                                'id -> "city",
-                                '_showErrors -> true,
-                                '_label -> Messages("profile.create.form.city"),
-                                '_help -> Messages("profile.create.form.city.help"),
-                                '_error -> EnvDataForm.error("city")
-                            )
-
-                            @if(!optionsLocationAreas.isEmpty) {
-                                @helper.select(EnvDataForm("county"),
-                                    optionsLocationAreas.get,
-                                    '_label -> Messages("profile.create.form.area"),
-                                    '_error -> EnvDataForm.error("county")
-                                )
-                            }
-
-
-                            @helper.inputText(EnvDataForm("phoneNumber"),
-                                'id -> "phoneNumber",
-                                '_showErrors -> true,
-                                '_label -> Messages("profile.create.form.phoneNumber"),
-                                '_help -> Messages("profile.create.form.phoneNumber.help"),
-                                '_error -> EnvDataForm.error("phoneNumber")
-                            )
-
-                            @helper.inputText(EnvDataForm("personnummer"),
-                                'id -> "phoneNumber",
-                                '_showErrors -> true,
-                                '_label -> Messages("profile.create.form.personnummer"),
-                                '_help -> Messages("profile.create.form.personnummer.help"),
-                                '_error -> EnvDataForm.error("personnummer")
-                            )
-
-
-                        </div>
+                        @helper.inputHidden(EnvDataForm("name2"),
+                            'id -> "name",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.profilename"),
+                            '_help -> "",
+                            '_error -> EnvDataForm.error("name")
+                        )
                     </div>
                 </div>
 
-                <div class="col-xs-12">
+                <div class="tab-pane tab-hdc fade" id="profile-tab-about-me">
+                    <div class="col-xs-12">
+                        <h3 class="lead">@Messages("profile.create.header.about-me")</h3>
 
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Värd</div>
-                        <div class="panel-body">
-                            <!-- Gäst och värd -->
-                            Jag vill vara värd &nbsp; <input type="checkbox" name="roleHost" value="VÄRD" @profileOpts.isroleHost>
+                        @helper.inputText(EnvDataForm("aboutmeheadline"),
+                            'id -> "aboutmeheadline",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.aboutmeheadline"),
+                            '_help -> Messages("profile.create.form.aboutmeheadline.help"),
+                            '_error -> EnvDataForm.error("aboutmeheadline")
+                        )
 
-                            <hr>
-
-                            <!--  New input -->
-                            @helper.inputRadioGroup(
-                                EnvDataForm("childFfriendly"),
-                                options = helper.options("Ja"->"Ja","Nej"->"Nej"),
-                                '_label -> "Barnvänligt"
-                            )
-
-                            @helper.inputRadioGroup(
-                                EnvDataForm("handicapFriendly"),
-                                options = helper.options("Ja"->"Ja","Nej"->"Nej"),
-                                '_label -> "Handikappvänligt"
-                            )
-
-                            @helper.inputRadioGroup(
-                                EnvDataForm("havePets"),
-                                options = helper.options("Ja"->"Ja","Nej"->"Nej"),
-                                '_label -> "Husdjur finns?"
-                            )
-
-                            @helper.inputRadioGroup(
-                                EnvDataForm("smoke"),
-                                options = helper.options("Ja"->"Ja","Nej"->"Nej"),
-                                '_label -> "Rökning tillåtet?"
-                            )
+                        <hr>
+                        <label>@Messages("profile.create.form.avatar-image")</label><br>
+                        @file.previewField(previewId = "inputchooseavatarimg", Messages("profile.create.form.avatar-image-preview"), blnShowText = false, prePopulatedWith = extraValues.avatarImagePrev)
+                        @file.openModalButton(btnId = "btnchooseavatarimg", inputSelector = "inputchooseavatarimg", selectorMaxItems = extraValues.avatarImageMaxNr, btnText = Messages("profile.create.form.avatar-image-btn"))
+                        @helper.inputHidden(EnvDataForm("avatarimage"), 'id -> "inputchooseavatarimg")
+                        <hr>
 
 
-                            @helper.inputRadioGroup(
-                                EnvDataForm("allkoholServing"),
-                                options = helper.options("Ta med eget"->"Ta med eget","Tillhandahålls"->"Tillhandahålls", "Nej"->"Nej"),
-                                '_label -> "Alkohol"
-                            )
+                        @helper.textarea(EnvDataForm("aboutme"),
+                            'id -> "aboutme",
+                            '_showErrors -> true,
+                            'class -> "richtextuser",
+                            '_label -> Messages("profile.create.form.aboutme"),
+                            '_help -> Messages("profile.create.form.aboutme.help"),
+                            '_error -> EnvDataForm.error("aboutme")
+                        )
 
-
-                            Betalning
-                            <br>@Messages("profile.payment.cash")&nbsp;<input type="checkbox" name="payCache" value="Kontanter" @profileOpts.ispayCache>
-                            <br>@Messages("profile.payment.Swish")&nbsp;<input type="checkbox" name="paySwish" value="Swish" @profileOpts.ispaySwish>
-                            <br>@Messages("profile.payment.banktransfer")&nbsp;<input type="checkbox" name="payBankCard" value="Banköverföring" @profileOpts.ispayBankCard>
-                            <br>@Messages("profile.payment.izettle")&nbsp;<input type="checkbox" name="payIZettle" value="IZettle" @profileOpts.ispayIZettle>
-
-
-
-                            <br>@Messages("profile.groupsize.min")
-                            <br>
-                            <select name="minGuest">
-                            @for(col <- List.range(1,11)) {
-                                <option value="@col" @profileOpts.minGuestsSelected(col.toString)>@col</option>
-                            }
-                            </select>
-
-                            <br>@Messages("profile.groupsize.max")
-                            <br>
-
-                            <select name="maxGuest">
-                            @for(col <- List.range(1,21)) {
-                                <option value="@col" @profileOpts.maxGuestsSelected(col.toString)>@col</option>
-                            }
-                            </select>
-
-                           <!-- New input -->
-                        </div>
+                        <hr>
+                        <label>@Messages("profile.create.form.main-image")</label><br>
+                        @file.previewField(previewId = "inputchoosemainimage", Messages("profile.create.form.main-image-preview"), blnShowText = false, prePopulatedWith = extraValues.mainImagePrev)
+                        @file.openModalButton(btnId = "btnchoosemainimage", inputSelector = "inputchoosemainimage", selectorMaxItems = extraValues.mainImageMaxNr, btnText = Messages("profile.create.form.main-image-btn"))
+                        @helper.inputHidden(EnvDataForm("mainimage"), 'id -> "inputchoosemainimage")
                     </div>
                 </div>
 
-                <div class="col-xs-12 text-center margin-top">
-                    @defining("<a data-toggle=\"modal\" href=\"#modalAcceptTerms\">" + Messages("profile.create.accept.link.text") + "&nbsp;<span class=\"glyphicon glyphicon-new-window\"></span></a>"){ linkToTerms =>
-                            @helper.checkbox(EnvDataForm("acceptTerms"),
-                                '_label -> Messages("profile.create.accept.label"),
-                                '_showErrors -> true,
-                                '_help -> "",
-                                'style -> "display:inline;"
-                            )
-                            @Html(Messages("profile.create.accept.help", linkToTerms))
-                    }
+                <div class="tab-pane tab-hdc fade" id="profile-tab-food">
+                    <div class="col-xs-12">
+                        <h3 class="lead">@Messages("profile.create.header.food")</h3>
+                        <!-- Tags -->
+                        @for(t <- element) {
+                            <input type="checkbox" id="@t.name" name="@t.v" value="@t.name" @klass.getString(t.name)>
+                            &nbsp;
+                            <label for="@t.name" class="notbold">@t.name</label><br>
+                        }
+                    </div>
                 </div>
 
-                <div class="col-xs-12">
-                    <input class="btn btn-primary pull-right" type="submit" value="@Messages("profile.create.save")">
+                <div class="tab-pane tab-hdc fade" id="profile-tab-personal-info">
+                    <div class="col-xs-12">
+                        <h3 class="lead">@Messages("profile.create.header.personal-information")</h3>
+                        @helper.inputText(EnvDataForm("streetAddress"),
+                            'id -> "streetAddress",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.streetAddress"),
+                            '_help -> Messages("profile.create.form.streetAddress.help"),
+                            '_error -> EnvDataForm.error("streetAddress")
+                        )
+
+                        @helper.inputText(EnvDataForm("zipCode"),
+                            'id -> "zipCode",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.zipCode"),
+                            '_help -> Messages("profile.create.form.zipCode.help"),
+                            '_error -> EnvDataForm.error("zipCode")
+                        )
+
+                        @helper.inputText(EnvDataForm("city"),
+                            'id -> "city",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.city"),
+                            '_help -> Messages("profile.create.form.city.help"),
+                            '_error -> EnvDataForm.error("city")
+                        )
+
+                        @if(!optionsLocationAreas.isEmpty) {
+                            @helper.select(EnvDataForm("county"),
+                                optionsLocationAreas.get,
+                                '_label -> Messages("profile.create.form.area"),
+                                '_error -> EnvDataForm.error("county")
+                            )
+                        }
+
+
+                        @helper.inputText(EnvDataForm("phoneNumber"),
+                            'id -> "phoneNumber",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.phoneNumber"),
+                            '_help -> Messages("profile.create.form.phoneNumber.help"),
+                            '_error -> EnvDataForm.error("phoneNumber")
+                        )
+
+                        @helper.inputText(EnvDataForm("personnummer"),
+                            'id -> "personnummer",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.personnummer"),
+                            '_help -> Messages("profile.create.form.personnummer.help"),
+                            '_error -> EnvDataForm.error("personnummer")
+                        )
+                    </div>
                 </div>
+
+                <div class="tab-pane tab-hdc fade" id="profile-tab-host">
+                    <div class="col-xs-12">
+                        <h3 class="lead">@Messages("profile.create.header.host")</h3>
+                        <!-- Gäst och värd -->
+                        <input type="checkbox" name="roleHost" id="roleHost" value="VÄRD" @profileOpts.isroleHost>&nbsp;<label for="roleHost">@Messages("profile.create.form.host")</label>
+
+                        <hr>
+
+                        <!--  New input -->
+                        @helper.inputRadioGroup(
+                            EnvDataForm("childFfriendly"),
+                            options = helper.options("Ja"->Messages("profile.create.form.host.yes"),"Nej"->Messages("profile.create.form.host.no")),
+                            '_label -> Messages("profile.create.form.host.childfriendly")
+                        )
+
+                        @helper.inputRadioGroup(
+                            EnvDataForm("handicapFriendly"),
+                            options = helper.options("Ja"->Messages("profile.create.form.host.yes"),"Nej"->Messages("profile.create.form.host.no")),
+                            '_label -> Messages("profile.create.form.host.handicapfriendly")
+                        )
+
+                        @helper.inputRadioGroup(
+                            EnvDataForm("havePets"),
+                            options = helper.options("Ja"->Messages("profile.create.form.host.yes"),"Nej"->Messages("profile.create.form.host.no")),
+                            '_label -> Messages("profile.create.form.host.pets")
+                        )
+
+                        @helper.inputRadioGroup(
+                            EnvDataForm("smoke"),
+                            options = helper.options("Ja"->Messages("profile.create.form.host.yes"),"Nej"->Messages("profile.create.form.host.no")),
+                            '_label -> Messages("profile.create.form.host.smoking")
+                        )
+
+
+                        @helper.inputRadioGroup(
+                            EnvDataForm("allkoholServing"),
+                            options = helper.options("Ta med eget"->Messages("profile.create.form.host.alcohol.option1"),"Tillhandahålls"->Messages("profile.create.form.host.alcohol.option2"), "Nej"->Messages("profile.create.form.host.alcohol.option3")),
+                            '_label -> Messages("profile.create.form.host.alcohol")
+                        )
+                        <br><br>
+
+                        <h4>@Messages("profile.create.form.host.payment.header")</h4>
+                        <div class="well well-hdc">
+                            <input type="checkbox" id="payCache" name="payCache" value="Kontanter" @profileOpts.ispayCache>&nbsp;<label for="payCache">@Messages("profile.payment.cash")</label><br>
+                            <input type="checkbox" id="paySwish" name="paySwish" value="Swish" @profileOpts.ispaySwish>&nbsp;<label for="paySwish">@Messages("profile.payment.Swish")</label><br>
+                            <input type="checkbox" id="payBankCard" name="payBankCard" value="Banköverföring" @profileOpts.ispayBankCard>&nbsp;<label for="payBankCard">@Messages("profile.payment.banktransfer")</label><br>
+                            <input type="checkbox" id="payIZettle" name="payIZettle" value="IZettle" @profileOpts.ispayIZettle>&nbsp;<label for="payIZettle">@Messages("profile.payment.izettle")</label><br>
+                        </div>
+
+
+                        <select name="minGuest" id="minGuest">
+                        @for(col <- List.range(1,11)) {
+                            <option value="@col" @profileOpts.minGuestsSelected(col.toString)>@col</option>
+                        }
+                        </select>
+                        <label for="minGuest">@Messages("profile.groupsize.min")</label><br>
+
+                        <select name="maxGuest" id="maxGuest">
+                        @for(col <- List.range(1,21)) {
+                            <option value="@col" @profileOpts.maxGuestsSelected(col.toString)>@col</option>
+                        }
+                        </select>
+                        <label for="maxGuest">@Messages("profile.groupsize.max")</label><br>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-12 text-center margin-top">
+                <hr>
+                @defining("<a data-toggle=\"modal\" href=\"#modalAcceptTerms\">" + Messages("profile.create.accept.link.text") + "&nbsp;<span class=\"glyphicon glyphicon-new-window\"></span></a>"){ linkToTerms =>
+                        @helper.checkbox(EnvDataForm("acceptTerms"),
+                            '_label -> Messages("profile.create.accept.label"),
+                            '_showErrors -> true,
+                            '_help -> "",
+                            'style -> "display:inline;"
+                        )
+                        @Html(Messages("profile.create.accept.help", linkToTerms))
                 }
             </div>
+
+            <div class="col-xs-12">
+                <input class="btn btn-primary pull-right" type="submit" value="@Messages("profile.create.save")">
+            </div>
+            }
         </div>
     </div>
 

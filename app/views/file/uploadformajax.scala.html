@@ -1,0 +1,42 @@
+@(uploadResult: Option[String] = None)
+
+
+        @helper.form(action = routes.ImageController.uploadImageSubmit(), 'id -> "fileupload", 'enctype -> "multipart/form-data", 'accept -> "image/png") {
+            <div class="row">
+                <div class="col-xs-12 col-md-2">
+                    <!-- The fileinput-button span is used to style the file input field as button -->
+                    <span class="btn btn-primary fileinput-button">
+                        <span>@Messages("file.button.select-files")</span>
+                        <input id="fileuploadinput" type="file" name="files" data-url="@controllers.routes.ImageController.uploadImageSubmit()" multiple>
+                    </span>
+                </div>
+
+                <div class="col-xs-12 col-md-10">
+                    <!-- The global progress bar -->
+                    <div id="progress" class="progress progress-hdc">
+                        <div class="progress-bar progress-bar-success"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The container for the uploaded files -->
+            <div id="files" class="row files"></div>
+
+            <button id="clear-queue-button" type="reset" style="display: none;" class="btn btn-warning cancel">
+                <i class="glyphicon glyphicon-trash"></i>
+                <span>@Messages("file.button.remove-queue")</span>
+            </button>
+
+            <button id="upload-button" type="button" style="display: none;" class="btn btn-success">
+                <i class="glyphicon glyphicon-upload"></i>
+                <span>@Messages("file.button.upload-all")</span>
+            </button>
+
+            <!-- The container for success files -->
+            <div id="success-files" class="well well-hdc" style="display: none;">
+                <span>@Messages("file.successfully-uploaded")</span>
+                <ul class="files">
+                </ul>
+                <span class="done-message" style="display: none;">@Html(Messages("file.done-message"))</span>
+            </div>
+        }

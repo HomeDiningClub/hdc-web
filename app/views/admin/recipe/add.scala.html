@@ -10,24 +10,16 @@
                 <fieldset>
                     @helper.inputText(recipeForm("recipename"), '_label -> Messages("admin.recipe.add.name"), '_help -> Messages("admin.recipe.add.name.validation"))
                     @helper.textarea(recipeForm("recipepreamble"), '_label -> Messages("admin.recipe.add.preamble"), '_help -> Messages("admin.recipe.add.preamble.validation"), '_class -> "recipe-addedit-form-preamble")
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            @helper.inputFile(recipeForm("recipemainimage"), '_label -> Messages("admin.recipe.add.main-image"))
-                            @if(editingRecipe.isDefined && editingRecipe.get.getMainImage != null) {
-                                @shared.img(editingRecipe.get.getMainImage.getTransformByName("thumbnail").getUrl) - @Messages("admin.recipe.add.image.existing")
-                            }
-                        </div>
-                    </div>
-                    @defining(List(1,2,3,4,5)){ items =>
-                        @for(i <- items) {
-                            <div class="panel panel-default">
-                                <div class="panel-body">
-                                    @helper.inputFile(recipeForm("recipeimage" + i), '_label -> Messages("admin.recipe.add.image", i))
-                                    @if(sortedImages.isDefined && sortedImages.get.isDefinedAt(i)) {
-                                        @shared.img(sortedImages.get(i).getTransformByName("thumbnail").getUrl) - @Messages("admin.recipe.add.image.existing")
-                                    }
-                                </div>
-                            </div>
+                    <label>@Messages("admin.recipe.add.main-image")</label><br>
+                    @* Editing disabled for now *@
+                    @if(editingRecipe.nonEmpty && editingRecipe.get.getMainImage != null) {
+                        @shared.img(routes.ImageController.recipeNormal(editingRecipe.get.getMainImage.getStoreId).url)<br>
+                    }
+                    @if(sortedImages.nonEmpty) {
+                        <label>@Messages("admin.recipe.add.images")</label><br>
+                        @for(item <- sortedImages.get) {
+                            @* Editing disabled for now *@
+                            @shared.img(routes.ImageController.recipeThumb(item.getStoreId).url)<br>
                         }
                     }
                     @helper.textarea(recipeForm("recipebody"), '_label -> Messages("admin.recipe.add.body"), 'class -> "richtext")

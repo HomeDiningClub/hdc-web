@@ -42,24 +42,24 @@ object HeaderController extends Controller with SecureSocial {
     // Quick links
     var quickLinkTitle: String = ""
     // Name, Title, Href, Class, Extra HTML
-    val quickLinkList: Seq[(String,String,Call,String,String)] = Helpers.getUserFromRequest(request) match {
+    val quickLinkList: Seq[(String,String,String,String,String)] = Helpers.getUserFromRequest(request) match {
       case Some(user) =>
         quickLinkTitle = Messages("header.link.host-profile-header", "<span class=\"hidden-xs\">" + user.fullName() + "</span>")
-        val menu = collection.mutable.Buffer[(String,String,Call,String,String)](
-          (Messages("header.link.host-profile"), Messages("header.link.host-profile"), routes.UserProfileController.viewProfileByLoggedInUser(), "", ""),
-          (Messages("header.link.host-profile-edit"), Messages("header.link.host-profile-edit"), routes.UserProfileController.edit(), "", ""),
-          (Messages("header.link.inbox"), Messages("header.link.inbox"), routes.UserProfileController.viewProfileByLoggedInUser(), "", "<span class=\"badge\">0</span>")
+        val menu = collection.mutable.Buffer[(String,String,String,String,String)](
+          (Messages("header.link.host-profile"), Messages("header.link.host-profile"), routes.UserProfileController.viewProfileByLoggedInUser().url, "", ""),
+          (Messages("header.link.host-profile-edit"), Messages("header.link.host-profile-edit"), routes.UserProfileController.edit().url, "", ""),
+          (Messages("header.link.inbox"), Messages("header.link.inbox"), routes.UserProfileController.viewProfileByLoggedInUser().url + "#inbox-tab", "", "") //Removed until we fetch nr of messages: "<span class=\"badge\">0</span>")
         )
 
         if(Helpers.isUserAdmin(user))
-          menu.append((Messages("header.link.admin"), Messages("header.link.admin"), admin.routes.AdminController.index(), "", ""))
+          menu.append((Messages("header.link.admin"), Messages("header.link.admin"), admin.routes.AdminController.index().url, "", ""))
 
-        menu.append((Messages("header.link.logout"), Messages("header.link.logout"), securesocial.controllers.routes.LoginPage.logout(), "", ""))
+        menu.append((Messages("header.link.logout"), Messages("header.link.logout"), securesocial.controllers.routes.LoginPage.logout().url, "", ""))
         menu.toSeq
       case None =>
-        Seq[(String,String,Call,String,String)](
-          (Messages("header.link.become-member"), Messages("header.link.become-member"), securesocial.controllers.routes.LoginPage.login, "hidden-xs", ""),
-          (Messages("header.link.login"), Messages("header.link.login"), securesocial.controllers.routes.LoginPage.login, "", "")
+        Seq[(String,String,String,String,String)](
+          (Messages("header.link.become-member"), Messages("header.link.become-member"), securesocial.controllers.routes.LoginPage.login.url, "hidden-xs", ""),
+          (Messages("header.link.login"), Messages("header.link.login"), securesocial.controllers.routes.LoginPage.login.url, "", "")
         )
     }
 

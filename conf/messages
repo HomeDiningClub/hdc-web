@@ -52,6 +52,8 @@ mail.hdc.text=Du har fått ett nytt meddelande i din HomeDiningClub inbox från
 # Banner
 banner.header=Annons:
 
+
+
 # Reviews
 reviewbox.linktoprofile=Gå till {0} profilsida
 reviewbox.date.rated.date-format=yyyy-MM-dd
@@ -172,23 +174,42 @@ profile.reviews.myreviews.food.header=Mina omdömen om recept:
 
 profile.create.title=Din profil
 profile.create.text=Här skapar du din profil, den kommer andra medlemmar att se. Om du råkar missa att fylla i viss information så går det bra att redigera din profil senare, om du vill komplettera med mer information.
+
 profile.create.header.profile-name=Profilnamn
+profile.create.tabs.profile-name.food.name=Profilnamn
+profile.create.tabs.profile-name.food.title=Profilnamn
+
 profile.create.header.about-me=Beskriv dig själv
-profile.create.header.food=Beskriv din mat
+profile.create.tabs.about-me.name=Om mig
+profile.create.tabs.about-me.title=Om mig
+
+profile.create.header.food=Vilka val matchar din matlagning bäst?
+profile.create.tabs.food.name=Min mat
+profile.create.tabs.food.title=Min mat
+
 profile.create.header.personal-information=Personlig information
+profile.create.tabs.personal-information.name=Personligt
+profile.create.tabs.personal-information.title=Personligt
+
+profile.create.header.host=Hur ser ditt värdskap ut?
+profile.create.tabs.host.name=Värd
+profile.create.tabs.host.title=Värd
+
 profile.create.form.profilename=Profilnamn
 profile.create.form.profilename.required=*
 profile.create.form.profilename.help=<strong>Viktig information</strong><br>Detta namn kommer att användas för att identifiera din profilsida. <br>Denna måste vara unik. Vi kommer ta bort ÅÄÖ, punkter, / eller andra tecken förutom bindestreck.<br><br><strong>Exempel:</strong><br>linda-larsson<br>henriksrestaurang<br>den-goda-maten
-profile.create.form.aboutmeheadline=En rubrik om dig och din mat
+profile.create.form.aboutmeheadline=Rubrik om dig och din mat
 profile.create.form.aboutmeheadline.help=
 profile.create.form.aboutme=Beskriv dig själv och din mat
 profile.create.form.aboutme.help=En kortare beskrivning av dig som är synlig på din profil
 profile.create.form.area=Län
 profile.create.form.tagwords=Vad för typ av mat beskriver din matlagning bäst?
 profile.create.form.avatar-image=Fotografi på dig själv
-profile.create.form.avatar-image.existing=(välj en ny bild för att ersätta existerande bild)
+profile.create.form.avatar-image-btn=Välj ett porträtt
+profile.create.form.avatar-image-preview=Förhandsgranskning
 profile.create.form.main-image=Inspirationsbild
-profile.create.form.main-image.existing=(välj en ny bild för att ersätta existerande bild)
+profile.create.form.main-image-btn=Välj en bild
+profile.create.form.main-image-preview=Förhandsgranskning
 
 profile.create.form.streetAddress=Gatuadress
 profile.create.form.streetAddress.help=Gatuadress måste inte anges
@@ -202,7 +223,21 @@ profile.create.form.phoneNumber.help=Mobilnummer eller telefonnummer
 profile.create.form.personnummer=Personnummer
 profile.create.form.personnummer.help=Personnummer ÅÅÅÅMMDDNNNN
 
+profile.create.form.host=Jag vill vara värd
+profile.create.form.host.childfriendly=Barnvänligt
+profile.create.form.host.handicapfriendly=Handikappvänligt
+profile.create.form.host.pets=Finns husdjur?
+profile.create.form.host.smoking=Rökning tillåtet?
+profile.create.form.host.alcohol=Alkohol
+profile.create.form.host.alcohol.option1=Ta med eget
+profile.create.form.host.alcohol.option2=Tillhandahålls
+profile.create.form.host.alcohol.option3=Nej
+profile.create.form.host.yes=Ja
+profile.create.form.host.no=Nej
+
+profile.create.form.host.payment.header=Betalning
 profile.create.save=Spara
+profile.create.saved-successfully=Din profil sparades
 
 profile.create.accept.label=Jag godkänner användarvillkoren
 profile.create.accept.help=(du måste {0} för att bli medlem)
@@ -227,6 +262,32 @@ profile.tabs.inbox.title=Inbox
 profile.tabs.favourites.name=Favoriter
 profile.tabs.favourites.title=Favoriter
 
+profile.blog.tab.body=Här kommer alla värdar att kunna skriva och blogga om sin mat och sina intressen.
+
+profile.firstname.label=Namn:
+profile.city.label=Stad:
+profile.control.unique=Profilnamn måste vara unikt
+profile.personalidentitynumber.unique=Personnummer måste vara korrekt angivet
+profile.approve.memberterms=Du måste acceptera vilkoren för att bli medlem
+profile.groupsize.min=Minst antal gäster i gruppen
+profile.groupsize.max=Maximalt antal gäster
+profile.form.unacceptedcontent=Profilen innehåller felaktig värden
+profile.payment.label=Betalning:
+profile.options.childFfriendly.label=Barnvänligt
+profile.options.handicapFriendly.label=Handikappvänligt
+profile.options.havePets.label=Husdjur finns?
+profile.options.smoke.label=Rökning tillåtet?
+profile.options.allkoholServing.label=Alkohol
+profile.nr-of-guests.label=Antal gäster:
+profile.nr-of-guests.to=till
+profile.payment.cash=Kontanter
+profile.payment.Swish=Swish
+profile.payment.banktransfer=Banköverföring
+profile.payment.izettle=IZettle
+profile.yes=Ja
+profile.no=Nej
+
+
 # Recipe
 recipe.title=Recept
 recipe.edit.index.header=Recept
@@ -235,11 +296,16 @@ recipe.edit.add.name=Namn
 recipe.edit.add.preamble=Inledningstext
 recipe.edit.add.preamble.validation=(Max längd 255)
 recipe.edit.add.main-image=Huvudbild
-recipe.edit.add.main-image.existing=(Välj en ny bild för att ersätta existerande bild)
-recipe.edit.add.image=Bild {0}
+recipe.edit.add.main-image-preview=Förhandsgranskning
+recipe.edit.add.main-image-btn=Välj huvudbild
+
+recipe.edit.add.images=Fler bilder (max {0} st)
+recipe.edit.add.images-preview=Förhandsgranskning
+recipe.edit.add.images-btn=Välj fler bilder
+
 recipe.edit.add.body=Huvudtext
 recipe.edit.add.name.validation=(Tvingande, max längd 255)
-recipe.add.success=Recept sparat: {0}
+recipe.add.success=Sparat recept:{0}
 recipe.add.error=Formuläret innehåller något fel, vad god korrigera innan vi kan spara.
 recipe.delete.success=Recept borttaget
 recipe.delete.error=Kunde inte ta bort recept
@@ -251,6 +317,36 @@ recipe.button.edit=Redigera recept
 
 # Recipe box
 recipe.box.button=Se hela receptet
+recipe.box.button.next=Nästa sida
+recipe.box.button.previous=Föreg. sida
+
+# File Chooser / File upload
+file.button.choose-files-default=Välj bild(er)..
+file.preview.title-default=Förhandsgranskning
+file.button.upload-all=Ladda upp
+file.button.select-files=Välj filer..
+file.button.remove-queue=Töm lista
+file.successfully-uploaded=Följande filer har laddats upp:
+file.done-message=<strong>Klar!</strong><br> Titta under fliken <strong><a href="#" onclick="$(''a[href=#modal-image-grid-tab]'').tab(''show'');" title="Bilder">Bilder</a></strong> för att se dina nya filer.
+
+
+image-chooser.title=Mediabibliotek
+image-chooser.abort=Avbryt
+image-chooser.save=Spara / Välj
+image-chooser.max-items-part1=Du kan max välja
+image-chooser.max-items-part2=bild(er)
+image-chooser.no-images=Du har inga bilder, ladda upp några under fliken "Ladda upp".
+
+image-chooser.preview-images-label=Valda bilder
+image-chooser.no-preview-images=Du har inte valt några bilder, ladda upp några under fliken "Ladda upp", eller välj i listan.
+image-chooser.preview-images-nr-of-items={0}/{1}
+
+image-chooser.tabs.image-grid.name=Bilder
+image-chooser.tabs.image-grid.title=Bilder
+image-chooser.tabs.video-grid.name=Video (kommer)
+image-chooser.tabs.video-grid.title=Video (kommer snart för guldmedlemmar)
+image-chooser.tabs.upload.title=Ladda upp
+image-chooser.tabs.upload.name=Ladda upp
 
 # Admin - Start
 admin.title=Administration
@@ -320,8 +416,7 @@ admin.recipe.add.route=Sökväg
 admin.recipe.add.preamble=Inledningstext
 admin.recipe.add.preamble.validation=(Max längd 255)
 admin.recipe.add.main-image=Huvudbild
-admin.recipe.add.image=Bild {0}
-admin.recipe.add.image.existing=(välj en ny bild för att ersätta existerande bild)
+admin.recipe.add.images=Bilder
 admin.recipe.add.body=Huvudtext
 admin.recipe.add.name.validation=(Tvingande, max längd 255)
 admin.recipe.list.header=Lista av recept
@@ -567,20 +662,3 @@ mails.error.no.reply=Required field : Svar måste vara ifyllt
 mails.features.incomplete=Required field : Ämne och Meddelande
 mails.features.incomplete.subject=Required field : Ämne
 mails.features.incomplete.message=Required field : Meddelande
-profile.control.unique=Profilnamn måste vara unikt
-profile.personalidentitynumber.unique=Personnummer måste vara korrekt angivet
-profile.approve.memberterms=Du måste acceptera vilkoren för att bli medlem
-profile.groupsize.min=Minst antal gäster i gruppen
-profile.groupsize.max=Maximalt antal gäster
-profile.form.unacceptedcontent=Profilen innehåller felaktig värden
-profile.options.childFfriendly.label=Barnvänligt
-profile.options.handicapFriendly.label=Handikappvänligt
-profile.options.havePets.label=Husdjur finns?
-profile.options.smoke.label=Rökning tillåtet?
-profile.options.allkoholServing.label=Alkohol
-profile.payment.cash=Kontanter
-profile.payment.Swish=Swish
-profile.payment.banktransfer=Banköverföring
-profile.payment.izettle=IZettle
-profile.yes=Ja
-profile.no=Nej

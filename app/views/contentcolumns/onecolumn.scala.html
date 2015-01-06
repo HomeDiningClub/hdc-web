@@ -15,15 +15,14 @@
                         @if(!column1Header.isEmpty){ <h1 class="page-header">@column1Header</h1> }
                         @if(!column1PreAmble.isEmpty){ <div class="lead">@Html(column1PreAmble)</div> }
                         @if(!column1Body.isEmpty){ <div class="content-body">@Html(column1Body)</div> }
+                        @if(urlTitle.equalsIgnoreCase(Messages("aboutus.title"))) {
+                            @SuggestController.aboutUs(request)
+                        }
                     </div>
                     @contentcolumns.columnitems.menu(asideHeader = menuHeader, asideMenu = menuList)
-                    @if(urlTitle.equalsIgnoreCase(Messages("aboutus.title"))) {
-                        @SuggestController.aboutUs(request)
-                    }
                 </div>
             </div>
-
-                <!-- Banner -->
+            <!-- Banner -->
             <div class="col-xs-12 col-md-3 col-banner">
             @shared.banner()
             </div>

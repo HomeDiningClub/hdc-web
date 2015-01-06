@@ -108,7 +108,7 @@
     <div class="container host-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                @defining(if(userProfile.getAvatarImage != null){userProfile.getAvatarImage.getTransformByName("thumbnail").getUrl}else{""}){ avatarUrl =>
+                @defining(if(userProfile.getAvatarImage != null){controllers.routes.ImageController.userThumb(userProfile.getAvatarImage.getStoreId).url}else{""}){ avatarUrl =>
                     @views.html.profile.profileHeader(userProfile.profileLinkName, avatarUrl, false)
                 }
                 <div class="row">
@@ -162,7 +162,7 @@
                                 <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide host-image-gallery">
                                         <!-- Slider carousel items -->
                                     <div class="carousel-inner">
-                                        <div class="active item" data-slide-number="0">@shared.img(image.getTransformByName("normal").getUrl, cssClass = "img-responsive")</div>
+                                        <div class="active crop-height item" data-slide-number="0">@shared.img(routes.ImageController.profileNormal(image.getStoreId).url, cssClass = "img-responsive")</div>
                                     </div>
                                     @*<!-- Carousel nav controls -->*@
                                     @*<a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>*@
@@ -187,18 +187,29 @@
                         <div class="panel panel-default panel-dropshadow big-margin-top">
                             <div class="panel-body">
                                 @shared.tagList(tagList, userProfile.getOwner.firstName())
-                                <br><strong>Namn:</strong> @userProfile.fistName
-                                <br><strong>Stad:</strong> @userProfile.city
+                                <br><strong>@Messages("profile.firstname.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.fistName)</span>
+                                <br><strong>@Messages("profile.city.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.city)</span>
                                 <br>@if(userProfile.getLocations.iterator().hasNext()){
-                                <strong>@Messages("profile.county.text")</strong> @userProfile.getLocations.iterator().next().county.name
+                                <strong>@Messages("profile.county.text")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.getLocations.iterator().next().county.name)</span>
                                 }
-                                <br><strong>Barnvänligt:</strong> @userProfile.childFfriendly
-                                <br><strong>Handikapvänligt:</strong> @userProfile.handicapFriendly
-                                <br><strong>Husdjur:</strong> @userProfile.havePets
-                                <br><strong>Rökare :</strong> @userProfile.smoke
-                                <br><strong>Alkohol :</strong> @userProfile.allkoholServing
-                                <br><strong>Betalning  :</strong> @userProfile.payBankCard @userProfile.payCache @userProfile.payIZettle @userProfile.paySwish
-                                <br><strong>Antal gäster :</strong> @userProfile.minNoOfGuest - @userProfile.maxNoOfGuest
+                                <br><strong>@Messages("profile.options.childFfriendly.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.childFfriendly)</span>
+                                <br><strong>@Messages("profile.options.handicapFriendly.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.handicapFriendly)</span>
+                                <br><strong>@Messages("profile.options.havePets.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.havePets)</span>
+                                <br><strong>@Messages("profile.options.smoke.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.smoke)</span>
+                                <br><strong>@Messages("profile.options.allkoholServing.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.allkoholServing)</span>
+                                <br><strong>@Messages("profile.payment.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.payBankCard) @utils.Helpers.titleCase(userProfile.payCache) @utils.Helpers.titleCase(userProfile.payIZettle) @utils.Helpers.titleCase(userProfile.paySwish)</span>
+                                <br><strong>@Messages("profile.nr-of-guests.label")</strong> <span class="sentence-case">
+                                    @{userProfile.minNoOfGuest match {
+                                        case "" | null => { 1 }
+                                        case minGuests => { minGuests }
+                                    }}
+                                @Messages("profile.nr-of-guests.to")
+                                    @{userProfile.maxNoOfGuest match {
+                                        case "" | null => { 4 }
+                                        case maxGuests => { maxGuests }
+                                    }}
+                                    personer
+                                </span>
 
 
                             </div>
@@ -211,7 +222,9 @@
                         <nav>
                             <ul class="nav nav-tabs nav-tabs-profile">
                                 <li class="active"><a data-toggle="tab" href="#@tab1" title="@Messages("profile.tabs.food.title")">@Messages("profile.tabs.food.name")</a></li>
-                                <li><a data-toggle="tab" href="#@tab2" title="@Messages("profile.tabs.blog.title")">@Messages("profile.tabs.blog.name")</a></li>
+                                @if(userProfile.isUserHost) {
+                                    <li><a data-toggle="tab" href="#@tab2" title="@Messages("profile.tabs.blog.title")">@Messages("profile.tabs.blog.name")</a></li>
+                                }
                                 <li><a data-toggle="tab" href="#@tab3" title="@Messages("profile.tabs.ratings.title")">@Messages("profile.tabs.ratings.name")</a></li>
                                 @if(isThisMyProfile) {
                                     <li><a data-toggle="tab" href="#@tab4" title="@Messages("profile.tabs.inbox.title")">@Messages("profile.tabs.inbox.name")</a></li>
@@ -232,14 +245,14 @@
                                 }
                                 </div>
                                 @if(recipeBoxes.nonEmpty){
-                                    <div class="row">
-                                        @recipe.recipeBox(recipeBoxes.get, userProfile.profileLinkName)
-                                    </div>
+                                    @recipe.recipeBox(userProfile.profileLinkName)
                                 }
                             </div>
-                            <div class="tab-pane tab-hdc fade" id="@tab2">
-                                Tab2
-                            </div>
+                            @if(userProfile.isUserHost) {
+                                <div class="tab-pane tab-hdc fade" id="@tab2">
+                                @Messages("profile.blog.tab.body")
+                                </div>
+                            }
                             <div class="tab-pane tab-hdc fade" id="@tab3">
                                 @if(reviewBoxesAboutMe.nonEmpty){
                                     <!-- Reviews about user -->

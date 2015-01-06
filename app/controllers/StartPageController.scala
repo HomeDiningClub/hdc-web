@@ -146,11 +146,11 @@ class StartPageController extends Controller with SecureSocial {
             mainBody = None,
             mainImage = userProfile.getMainImage match {
               case null => None
-              case image => Some(image.getTransformByName("box").getUrl)
+              case image => Some(routes.ImageController.profileBox(image.getStoreId).url)
             },
             userImage = userProfile.getAvatarImage match {
               case null => None
-              case image => Some(image.getTransformByName("thumbnail").getUrl)
+              case image => Some(routes.ImageController.userThumb(image.getStoreId).url)
             },
             userRating = userProfile.getOwner.getAverageRating)
       })

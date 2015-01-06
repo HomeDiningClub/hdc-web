@@ -86,8 +86,7 @@ class RecipeService {
     }
   }
 
-  // This code is ugly as hell, but replaces an earlier image
-  // Remodel to JSON-delete etc in the future
+  // Get sorted images
   def getSortedRecipeImages(recipe: Recipe): Option[List[ContentFile]] = {
     recipe.getRecipeImages.asScala match {
       case Nil => None
@@ -96,149 +95,82 @@ class RecipeService {
     }
   }
 
-  def parseDouble(s: String) = try { Some(s.toDouble) } catch { case _ => None }
+  def convertToCommaSepStringOfObjectIds(listOfFiles: Option[List[ContentFile]]): Option[String] = {
+    listOfFiles match {
+      case None => None
+      case Some(items) =>
+        Some(items.map(_.objectId).mkString(","))
+    }
+  }
+
+  def parseDouble(s: String) = try { Some(s.toDouble) } catch { case _ : Throwable => None }
 
   @Transactional(readOnly = true)
   def getRecipeBoxes(user: UserCredential): Option[List[RecipeBox]] = {
-
-    // with out paging
-    //var list = recipeRepository.findReceipies(user.userId)
-    // 0 curren page, 6 number of recepies for eache page
-    //todo activate paging chooice 0, 1, 2, 3
-    var list = recipeRepository.findReceipiesOnPage(user.userId,new PageRequest(0, 6))
-    var itter = list.iterator()
-    var recipeList : ListBuffer[RecipeBox] = new ListBuffer[RecipeBox]
-
-    while(itter.hasNext()) {
-
-      var obj = itter.next()
-
-      if (obj.getUserId() == user.userId) {
-
-        println("##################################################")
-        println("LinkName : " + obj.getLinkName())
-        println("Name : " + obj.getName())
-        println("ObjectId : " + obj.getobjectId())
-        println("PreAmble : " + obj.getpreAmble())
-        println("profileLinkname : " + obj.getprofileLinkName())
-        println("userId : " + obj.getUserId())
-
-        var v = obj.getRating() match {
-          case null => "0.0"
-          case _ => obj.getRating()
-        }
-
-        // convert string to double, round to Int and convert to Int
-        var ratingValue : Int = v.toDouble.round.toInt
-
-
-        println("Rating (Int) : " + ratingValue)
-
-        println("##################################################")
-        var linkToRecipe = obj.getprofileLinkName() match {
-          case null | "" => "#"
-          case link => routes.RecipePageController.viewRecipeByNameAndProfile(obj.getprofileLinkName(), obj.getName()).url
-        }
-
-        var recipe = RecipeBox(None, obj.getLinkName(), obj.getName(), Some(obj.getpreAmble()), None, ratingValue)
-        recipeList += recipe
-      } else {
-        println("Not to view " + obj.getUserId())
-      }
-    }
-
-
-    val startPageBoxes: List[RecipeBox] = recipeList.toList
-
-    // recipeLinkName
-    // profileLinkName
-
-/*
-    val startPageBoxes: List[RecipeBox] = this.getListOwnedBy(user) match {
-      case None => List.empty
-      case Some(items) => items.map {
-        recipeItem: Recipe =>
-          RecipeBox(
-            objectId = Some(recipeItem.objectId),
-            linkToRecipe = recipeItem.getLink match {
-              case null | "" => "#"
-              case link => routes.RecipePageController.viewRecipeByNameAndProfile(user.profiles.iterator.next.profileLinkName,link).url
-            },
-            name = recipeItem.getName,
-            preAmble = recipeItem.getPreAmble match {
-              case "" | null =>
-                var retBody = Helpers.removeHtmlTags(recipeItem.getMainBody)
-
-                if (retBody.length > 125)
-                  retBody = retBody.substring(0, 125) + "..."
-
-                Some(retBody)
-              case content => Some(content)
-            },
-            mainImage = recipeItem.getMainImage match {
-              case null => None
-              case item => Some(item.getTransformByName("box").getUrl)
-            },
-            recipeRating = 0)
-      }
-    }
-*/
-    if(startPageBoxes.isEmpty)
-      None
-    else
-      Some(startPageBoxes)
+    // Without paging
+    this.getRecipeBoxesPage(user, 0)
   }
-
 
   @Transactional(readOnly = true)
   def getRecipeBoxesPage(user: UserCredential, pageNo: Integer): Option[List[RecipeBox]] = {
 
-    // with out paging
-    //var list = recipeRepository.findReceipies(user.userId)
-    // 0 curren page, 6 number of recepies for eache page
-    //todo activate paging chooice 0, 1, 2, 3
-    var list = recipeRepository.findReceipiesOnPage(user.userId,new PageRequest(pageNo, 6))
-    var itter = list.iterator()
+    // With paging
+    // 0 current page, 6 number of recipes for each page
+    // TODO - Activate paging choice 0, 1, 2, 3
+
+    val list = recipeRepository.findRecipesOnPage(user.objectId.toString, new PageRequest(pageNo, 6))
+    val iterator = list.iterator()
     var recipeList : ListBuffer[RecipeBox] = new ListBuffer[RecipeBox]
 
-    while(itter.hasNext()) {
+    while(iterator.hasNext()) {
 
-      var obj = itter.next()
+      val obj = iterator.next()
 
-      if (obj.getUserId() == user.userId) {
-
-        println("##################################################")
-        println("LinkName : " + obj.getLinkName())
-        println("Name : " + obj.getName())
-        println("ObjectId : " + obj.getobjectId())
-        println("PreAmble : " + obj.getpreAmble())
-        println("profileLinkname : " + obj.getprofileLinkName())
-        println("userId : " + obj.getUserId())
-
-        var v = obj.getRating() match {
-          case null => "0.0"
-          case _ => obj.getRating()
-        }
-
-        // convert string to double, round to Int and convert to Int
-        var ratingValue : Int = v.toDouble.round.toInt
-
-
-        println("Rating (Int) : " + ratingValue)
-
-        println("##################################################")
-        var linkToRecipe = obj.getprofileLinkName() match {
-          case null | "" => "#"
-          case link => routes.RecipePageController.viewRecipeByNameAndProfile(obj.getprofileLinkName(), obj.getName()).url
-        }
-
-        var recipe = RecipeBox(None, obj.getLinkName(), obj.getName(), Some(obj.getpreAmble()), None, ratingValue)
-        recipeList += recipe
-      } else {
-        println("Not to view " + obj.getUserId())
+      // Rating
+      val v = obj.getRating() match {
+        case null => "0.0"
+        case _ => obj.getRating()
       }
-    }
 
+      // Convert string to double, round to Int and convert to Int
+      val ratingValue : Int = v.toDouble.round.toInt
+
+      // Link
+      val linkToRecipe = (obj.getprofileLinkName, obj.getLinkName) match {
+        case (null|null) | ("","") => "#"
+        case (profLink,recLink) => routes.RecipePageController.viewRecipeByNameAndProfile(profLink, recLink).url
+      }
+
+      // Image
+      var mainImage = Some("/assets/images/profile/recipe-box-default-bw.png")
+      if(obj.getMainImage().iterator().hasNext()){
+        mainImage = Some(routes.ImageController.recipeBox(obj.getMainImage().iterator().next()).url)
+      }
+
+      // Build return-list
+      var recipe = RecipeBox(
+        Some(UUID.fromString(obj.getobjectId)),
+        linkToRecipe,
+        obj.getName,
+        obj.getpreAmble match {
+        case "" | null =>
+          var retBody = Helpers.removeHtmlTags(obj.getMainBody)
+
+          if (retBody.length > 125)
+            retBody = retBody.substring(0, 125) + "..."
+
+          Some(retBody)
+        case content => Some(content)
+        },
+        mainImage,
+        ratingValue,
+        list.getTotalElements,
+        list.hasNext,
+        list.hasPrevious,
+        list.getTotalPages
+      )
+      recipeList += recipe
+    }
 
     val startPageBoxes: List[RecipeBox] = recipeList.toList
 

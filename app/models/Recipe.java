@@ -81,6 +81,11 @@ public class Recipe extends ContentBase implements IEditable {
         return this.recipeImages;
     }
 
+    @Transient
+    public Integer getMaxNrOfRecipeImages(){
+        return 5;
+    }
+
     public ContentFile addRecipeImage(ContentFile recipeImage) {
         if(this.recipeImages == null){
             this.recipeImages = new HashSet<>();
@@ -94,18 +99,21 @@ public class Recipe extends ContentBase implements IEditable {
         return this.mainImage;
     }
 
-    public void setAndRemoveMainImage(ContentFile newMainImage) {
+    @Transient
+    public Integer getMaxNrOfMainImages(){
+        return 1;
+    }
 
+    public void setAndRemoveMainImage(ContentFile newMainImage) {
         // Remove former image before adding a new one
         deleteMainImage();
-
         this.mainImage = newMainImage;
     }
 
     public void deleteMainImage() {
         if(this.mainImage != null && this.mainImage.objectId != null)
         {
-            InstancedServices.contentFileService().deleteFile(this.mainImage.objectId);
+            //InstancedServices.contentFileService().deleteFile(this.mainImage.objectId);
             this.mainImage = null;
         }
     }
@@ -131,7 +139,7 @@ public class Recipe extends ContentBase implements IEditable {
         if(this.recipeImages == null){
             this.recipeImages = new HashSet<>();
         }else {
-            InstancedServices.contentFileService().deleteFile(recipeImage.objectId);
+            //InstancedServices.contentFileService().deleteFile(recipeImage.objectId);
             this.recipeImages.remove(recipeImage);
         }
     }

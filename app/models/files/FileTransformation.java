@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import services.InstancedServices;
+/*
 
 @NodeEntity
 public class FileTransformation extends AbstractEntity {
@@ -36,9 +37,13 @@ public class FileTransformation extends AbstractEntity {
         }
     }
 
+*/
+/*
     public String getUrl(){
         return InstancedServices.contentFileService().getBucketUrl(this);
     }
+*//*
+
 
     public FileTransformation(String name, double scale, String transformationType){
         this.name = name;
@@ -53,3 +58,4 @@ public class FileTransformation extends AbstractEntity {
     }
     private FileTransformation(){    }
 }
+*/

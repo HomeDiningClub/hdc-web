@@ -1,7 +1,7 @@
-@(recipeForm: Form[models.viewmodels.RecipeForm], editingRecipe: Option[models.Recipe] = None, sortedImages: Option[List[models.files.ContentFile]] = None)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
+@(recipeForm: Form[models.viewmodels.RecipeForm], editingRecipe: Option[models.Recipe] = None, extraValues: models.viewmodels.EditRecipeExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
 @import helper.twitterBootstrap._
 
-@main(Messages("admin.title")){
+@main(Messages("admin.title"), footerHtml = file.modalImages.render()){
 
     <div class="container">
         <div class="row">
@@ -17,24 +17,41 @@
                                 @helper.textarea(recipeForm("recipepreamble"), '_label -> Messages("recipe.edit.add.preamble"), '_help -> Messages("recipe.edit.add.preamble.validation"), '_class -> "recipe-addedit-form-preamble")
                                 <div class="panel panel-default">
                                     <div class="panel-body">
+                                        <label>@Messages("recipe.edit.add.main-image")</label><br>
+                                        @file.previewField(previewId = "recipemainimg", Messages("recipe.edit.add.main-image-preview"), blnShowText = false, prePopulatedWith = extraValues.mainImagePrev)
+                                        @file.openModalButton(btnId = "btnrecmainimg", inputSelector = "recipemainimg", selectorMaxItems = extraValues.mainImageMaxNr, btnText = Messages("recipe.edit.add.main-image-btn"))
+                                        @helper.inputHidden(recipeForm("recipemainimage"), 'id -> "recipemainimg")
+
+                                        @*
                                         @helper.inputFile(recipeForm("recipemainimage"), '_label -> Messages("recipe.edit.add.main-image"))
                                         @if(editingRecipe.isDefined && editingRecipe.get.getMainImage != null) {
-                                            @shared.img(editingRecipe.get.getMainImage.getTransformByName("thumbnail").getUrl) - @Messages("recipe.edit.add.main-image.existing")
-                                        }
+                                            @shared.img(routes.ImageController.recipeNormal(editingRecipe.get.getMainImage.getStoreId).url) - @Messages("recipe.edit.add.main-image.existing")
+                                        }*@
                                     </div>
                                 </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <label>@Messages("recipe.edit.add.images", extraValues.recipeImagesMaxNr)</label><br>
+                                        @file.previewField(previewId = "recipeimages", Messages("recipe.edit.add.images-preview"), blnShowText = false, prePopulatedWith = extraValues.recipeImagesPrev)
+                                        @file.openModalButton(btnId = "btnrecipeimages", inputSelector = "recipeimages", selectorMaxItems = extraValues.recipeImagesMaxNr, btnText = Messages("recipe.edit.add.images-btn"))
+                                        @helper.inputHidden(recipeForm("recipeimages"), 'id -> "recipeimages")
+                                    </div>
+                                </div>
+
+                               @*
                                 @defining(List(1,2,3,4,5)){ items =>
                                     @for(i <- items) {
                                         <div class="panel panel-default">
                                             <div class="panel-body">
                                                 @helper.inputFile(recipeForm("recipeimage" + i), '_label -> Messages("recipe.edit.add.image", i))
                                                 @if(sortedImages.isDefined && sortedImages.get.isDefinedAt(i)) {
-                                                    @shared.img(sortedImages.get(i).getTransformByName("thumbnail").getUrl) - @Messages("recipe.edit.add.main-image.existing")
+                                                    @shared.img(routes.ImageController.recipeThumb(sortedImages.get(i).getStoreId).url) - @Messages("recipe.edit.add.main-image.existing")
                                                 }
                                             </div>
-                                    </div>
+                                        </div>
                                     }
                                 }
+                                *@
                                 @helper.textarea(recipeForm("recipebody"), '_label -> Messages("recipe.edit.add.body"), 'class -> "richtextrecipe")
                                 @helper.inputHidden(recipeForm("receipeid"))
                             </fieldset>

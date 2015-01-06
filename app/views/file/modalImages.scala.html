@@ -1,0 +1,270 @@
+@()
+
+@scripts = {
+
+    <script>
+        var imagesLoaded = false;
+        var globalMaxItems = 1;
+        var globalInputSelector;
+        var globalOriginalValue;
+        var globalOriginalPreview;
+        var globalPreviewList = [];
+        var eventNameAdd = "add-preview";
+        var eventNameRem = "remove-preview";
+        var imagesGrid = "#images-grid";
+        var imagesModal = "#image-list-modal";
+
+
+        function openFileModal (inputSelector, maxItems){
+            $(imagesModal).modal("show");
+
+            setupModalEvents(inputSelector, maxItems);
+
+            // Fetch and fill preview
+            var prevImgReq = $.get("@{routes.ImageController.previewImages()}?selected=" + inputSelector.value,
+            function(data){
+                // Reset list and set new
+                globalPreviewList = [];
+
+                if(data.length > 0){
+                    $.each(data, function (index,item) {
+                        globalPreviewList.push({objectId: item.objectId, name: item.name, url: item.url, selected: item.selected});
+                    });
+                }
+
+            }).done(function(){
+                drawPreview();
+            }).always (function(){
+
+            });
+
+            // Load main list
+            if (!imagesLoaded){
+                $('a[href="#modal-image-grid-tab"]').tab('show');
+                imagesLoaded = true;
+                var imgReq = $.get("@{routes.ImageController.listImages()}?selected=" + inputSelector.value,
+                function(data){
+
+                    if(data.length > 0 ) {
+                        $.each(data, function (index,item){
+                            var selClass = "";
+                            if(item.selected){ selClass = " selected"; }
+                            var htmlToAdd = '<div class="col-md-2 col-xs-6 thumb"><a id="list-' + item.objectId + '" class="thumbnail' + selClass + '" href="#" onclick="return markSelected(this,\'' + item.objectId + '\',\'' + item.url + '\',\'' + item.name + '\')"><div class="thumbnail-overlay icon-ok"><img class="img-responsive" src="' + item.url + '" alt="' + item.name + '"></div></a></div>';
+                            $(imagesGrid).append(htmlToAdd);
+                        });
+                    } else {
+                        $("#image-list-no-images").show();
+                    }
+
+                })
+                .done ( function ( ) {
+                    $("#image-list-preloader").fadeOut ( function() { $("#images-grid").fadeIn(); } );
+                } )
+                .always ( function ( ) {
+                    drawPreview();
+                    imagesLoaded = true;
+                });
+            }else{
+                // Items already loaded, just mark selected
+                drawPreview();
+            }
+        }
+
+        function setupModalEvents(inputSelector, maxItems){
+            globalMaxItems = maxItems;
+            globalInputSelector = inputSelector;
+            globalOriginalValue = inputSelector.value;
+            globalOriginalPreviewList = globalPreviewList;
+
+            // Attach event for if user cancels
+            $(imagesModal + " .btn-abort").off("click").on("click", function(){
+                if(globalInputSelector){
+                    globalInputSelector.value = globalOriginalValue;
+                    globalPreviewList = globalOriginalPreviewList;
+                }
+                $(imagesModal).modal("hide");
+            });
+
+            // Attach event to save and update preview
+            $(imagesModal + " .btn-save").off("click").on("click", function (e) {
+                if(globalInputSelector){
+                    var prevContainer = $(".preview-container-" + globalInputSelector.id);
+                    prevContainer.empty();
+
+                    if(globalPreviewList.length > 0){
+                        $.each(globalPreviewList, function(index, item) {
+                            prevContainer.append('<div class="col-md-2 col-xs-4 prev-' + item.objectId + '"><img class="img-responsive" src="' + item.url + '" alt="' + item.name + '"></div>');
+                        });
+                    }
+                }
+                $(imagesModal).modal("hide");
+            });
+
+            // Add events for chooser, that updates the list of previews
+            /* Moved to markSelected
+            $(globalInputSelector).off(eventNameRem).on(eventNameRem, function(event, itemId, input){
+                var newArray = [];
+                if(globalPreviewList.length > 0){
+                    $.each(globalPreviewList, function(index, item) {
+                        if(item.objectId != itemId){
+                            newArray.push(item);
+                        }
+                    });
+                }
+
+                globalPreviewList = newArray;
+                drawPreview();
+            });
+
+            $(globalInputSelector).off(eventNameAdd).on(eventNameAdd, function(event, itemId, itemUrl, itemName, input){
+                globalPreviewList.push({objectId: itemId, name: itemName, url: itemUrl, selected: true});
+                drawPreview();
+            });
+            */
+
+        }
+
+        function drawPreview(){
+            var imgChooserPrevContainer = $("#images-preview-grid");
+            imgChooserPrevContainer.find(".prev").remove();
+            $(imagesGrid).find(".selected").removeClass("selected");
+            $.each(globalPreviewList, function(index, item) {
+                imgChooserPrevContainer.append('<div class="col-md-2 col-xs-6 prev"><a href="#" onclick="return markSelected(this,\'' + item.objectId + '\',\'' + item.url + '\',\'' + item.name + '\')"><div class="thumbnail-overlay icon-remove"><img class="img-responsive" src="' + item.url + '" alt="' + item.name + '"></div></a></div>');
+                $(imagesGrid).find("#list-" + item.objectId).addClass("selected");
+            });
+
+            $(".label-nr-of-items .nr-from").html(globalPreviewList.length);
+            $(".label-nr-of-items .nr-to").html(globalMaxItems);
+
+            if(globalPreviewList.length == 0){
+                $(imagesGrid).find(".selected").removeClass("selected");
+                $("#image-list-no-preview-images").fadeIn();
+            }else{
+                $("#image-list-no-preview-images").hide();
+            }
+            imgChooserPrevContainer.fadeIn();
+        }
+
+        function markSelected(thisItem, toMarkObjectId, toMarkUrl, toMarkName){
+            if(toMarkObjectId == "undefined" && globalInputSelector != "undefined"){
+                return false;
+            }
+
+            toMark = toMarkObjectId.trim();
+
+            if(isGuid(toMark) && globalInputSelector.type.toLowerCase() == "hidden")
+            {
+                var sep = ",";
+                if(globalInputSelector.value.length === 0){
+                    sep = "";
+                }
+
+                var splitInput = globalInputSelector.value.split(",");
+                var nrOfItems = 0;
+                if(splitInput[0] == ""){
+                    nrOfItems = 0;
+                }else{
+                    nrOfItems = splitInput.length;
+                }
+
+                // Adding or removing an item?
+                var isAlreadyAdded = isInList(toMark,splitInput);
+
+                if(nrOfItems >= globalMaxItems && isAlreadyAdded === false){
+                    // Too many items, don't add
+                    alert('@Messages("image-chooser.max-items-part1") ' + globalMaxItems + ' @Messages("image-chooser.max-items-part2")');
+                    return false;
+                } else {
+                    if(isAlreadyAdded === false){
+                        //thisItem.classList.add("selected");
+                        globalInputSelector.value += sep + toMark;
+                        //$(globalInputSelector).trigger(eventNameAdd, [toMark, toMarkUrl, toMarkName, globalInputSelector]);
+                        // Update preview-list
+                        globalPreviewList.push({objectId: toMark, name: toMarkName, url: toMarkUrl, selected: true});
+                    }else{
+                        //thisItem.classList.remove("selected");
+                        globalInputSelector.value = "";
+                        if(splitInput.length > 1){
+                            sep = ",";
+                        }
+                        for (var i = 0; i < splitInput.length; i++) {
+                            if (splitInput[i] != toMark) {
+                                globalInputSelector.value += splitInput[i] + sep;
+
+                            }
+                        }
+                        // Remove trailing separator
+                        globalInputSelector.value = globalInputSelector.value.replace(/(^,)|(,$)/g, "");
+
+                        //$(globalInputSelector).trigger(eventNameRem, [toMark, globalInputSelector]);
+
+                        // Update preview-list
+                        var newArray = [];
+                        if(globalPreviewList.length > 0){
+                            $.each(globalPreviewList, function(index, item) {
+                                if(item.objectId != toMark){
+                                    newArray.push(item);
+                                }
+                            });
+                        }
+                        globalPreviewList = newArray;
+                    }
+                    drawPreview();
+                    return true;
+                }
+            }
+        }
+    </script>
+}
+
+@views.html.file.imageMain(headerCss = views.html.file.fileCss.render(), footerScripts = scripts) {
+
+    <div class="modal fade image-chooser" id="image-list-modal">
+        <div class="modal-dialog modal-fullscreen-dialog">
+            <div class="modal-content modal-fullscreen-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-abort close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">@Messages("image-chooser.abort")</span></button>
+                    <h4 class="modal-title">@Messages("image-chooser.title")</h4>
+                </div>
+                <div class="modal-body">
+                    <nav>
+                        <ul class="nav nav-tabs">
+                            <li><a data-toggle="tab" href="#modal-image-grid-tab" title="@Messages("image-chooser.tabs.image-grid.title")">@Messages("image-chooser.tabs.image-grid.name")</a></li>
+                            <li class="disabled"><a href="#video-grid-tab" title="@Messages("image-chooser.tabs.video-grid.title")">@Messages("image-chooser.tabs.video-grid.name")</a></li>
+                            <li><a data-toggle="tab" href="#modal-upload-tab" title="@Messages("image-chooser.tabs.upload.title")"><span class="glyphicon glyphicon-plus"></span> @Messages("image-chooser.tabs.upload.name")</a></li>
+                        </ul>
+                    </nav>
+
+                    <div class="tab-content">
+                        <div class="tab-pane tab-hdc fade" id="modal-image-grid-tab">
+
+                            <div class="row row-images-preview-grid" id="images-preview-grid" style="display:none;">
+                                <div class="label">@Messages("image-chooser.preview-images-label")</div>
+                                <div class="label-nr-of-items col-md-1 col-xs-12 pull-left text-center">@Html(Messages("image-chooser.preview-images-nr-of-items", "<span class=\"nr-from\"></span>", "<span class=\"nr-to\"></span>"))</div>
+                                <div id="image-list-no-preview-images" class="col-md-11 col-xs-12 text-center" style="display:none;">@Messages("image-chooser.no-preview-images")</div>
+                            </div>
+                            @shared.img(path = "images/general/hdc-preloader.gif", width = Some(32), height = Some(32), cssClass = "img-responsive", id = "image-list-preloader")
+                            <div class="row row-images-grid" id="images-grid" style="display:none;">
+                                <div id="image-list-no-images" class="col-xs-12" style="display:none;">@Messages("image-chooser.no-images")</div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane tab-hdc fade" id="modal-upload-tab">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                @views.html.file.uploadformajax()
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-abort" data-dismiss="modal">@Messages("image-chooser.abort")</button>
+                    <button type="button" class="btn btn-primary btn-save" data-dismiss="modal">@Messages("image-chooser.save")</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div> <!-- /.modal -->
+
+}

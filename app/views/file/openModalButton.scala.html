@@ -1,0 +1,9 @@
+@(btnId: String, inputSelector: String, selectorMaxItems: Int, btnText: String = Messages("file.button.choose-files-default"))
+
+<button type="button" class="btn btn-default" id="@btnId">@btnText</button>
+
+<script>
+var btn = document.getElementById('@btnId');
+btn.onclick = function(){ openFileModal(@inputSelector, @selectorMaxItems); }
+</script>
+

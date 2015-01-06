@@ -1,4 +1,4 @@
-@(title: String, footerScripts: Html = Html(""), headerCss: Html = Html(""))(content: Html)(implicit flash: Flash = Flash.emptyCookie)
+@(title: String, footerScripts: Html = Html(""), headerCss: Html = Html(""),footerHtml: Html = Html(""))(content: Html)(implicit flash: Flash = Flash.emptyCookie)
 <!DOCTYPE html>
 
 <html lang="@Messages("main.language")">
@@ -38,6 +38,9 @@
                 @content
             </div>
         </div>
+
+        @footerHtml
+
         @*TODO - Create controllers with local backups, also bundle *@
         <script src="@routes.Assets.at("js/libs/jquery.1.11.1.min.js")"></script>
         <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")"></script>
@@ -45,6 +48,7 @@
         <script src="@routes.Assets.at("js/libs/jquery.gray.min.js")"></script>
         <script src="@routes.Assets.at("js/libs/star-rating.2.0.0.min.js")"></script>
         <script src="@routes.Assets.at("js/libs/bootbox.4.3.0.min.js")"></script>
+        @views.html.file.fileScripts()
         <script src="@routes.Assets.at("js/site.js")"></script>
         @shared.modalConfirm()
         @footerScripts

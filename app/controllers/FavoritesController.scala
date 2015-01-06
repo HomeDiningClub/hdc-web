@@ -30,9 +30,10 @@ object FavoritesController extends Controller with SecureSocial {
       var cur = listOfFavorites.next()
       var fav : UserProfile = cur.favoritesUserProfile
 
-      val userImage = fav.getAvatarImage match {
+      val userImage: Option[String] = fav.getAvatarImage match {
         case null => None
-        case image => Some(image.getTransformByName("thumbnail").getUrl)
+        case image =>
+          Some(routes.ImageController.userThumb(image.getStoreId).url)
       }
 
       var preAmble = fav.aboutMeHeadline
@@ -49,9 +50,10 @@ object FavoritesController extends Controller with SecureSocial {
     while(listOfUserFavorMe.hasNext) {
       var cur = listOfUserFavorMe.next()
 
-      val userImage = cur.getAvatarImage match {
+      val userImage: Option[String] = cur.getAvatarImage match {
         case null => None
-        case image => Some(image.getTransformByName("thumbnail").getUrl)
+        case image =>
+          Some(routes.ImageController.userThumb(image.getStoreId).url)
       }
 
       var preAmble = cur.aboutMeHeadline

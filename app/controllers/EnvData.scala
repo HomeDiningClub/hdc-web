@@ -16,5 +16,7 @@ case class EnvData(
         handicapFriendly:Option[String],
         havePets        :Option[String],
         smoke           : Option[String],
-        allkoholServing :Option[String]
+        allkoholServing :Option[String],
+        mainimage       : Option[String],
+        avatarimage     : Option[String]
 )

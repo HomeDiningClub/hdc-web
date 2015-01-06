@@ -224,7 +224,7 @@ class RatingService {
           ratedDate = ratingItem.getLastModifiedDate,
           userImage = userWhoIsRatingProfile.getAvatarImage match {
             case null => None
-            case image => Some(image.getTransformByName("thumbnail").getUrl)
+            case image => Some(routes.ImageController.userThumb(image.getStoreId).url)
           },
           rating = ratingItem.ratingValue)
           }
@@ -249,7 +249,7 @@ class RatingService {
         ratedDate = ratingItem.getLastModifiedDate,
         userImage = userWhoIsRatingProfile.getAvatarImage match {
           case null => None
-          case image => Some(image.getTransformByName("thumbnail").getUrl)
+          case image => Some(routes.ImageController.userThumb(image.getStoreId).url)
         },
         rating = ratingItem.ratingValue)
     }

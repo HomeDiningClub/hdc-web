@@ -10,7 +10,6 @@
             <th>Name</th>
             <th>Owner</th>
             <th>Original</th>
-            <th>Transforms</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -19,11 +18,7 @@
             <tr>
                 <td>@image.getCreatedDate</td>
                 <td>@image.getLastModifiedDate</td>
-                <td>
-                @Option(image.getTransformByName("thumbnail")) match {
-                    case Some(transform) => { <img src="@transform.getUrl"> }
-                    case None => { }
-                }
+                <td><img src="@routes.ImageController.auto(image.getStoreId, 100, 100).url">
                 </td>
                 <td>@image.name</td>
                 <td>
@@ -32,16 +27,7 @@
                 }
                  @image.owner.fullName<br>@image.owner.emailAddress
                 </td>
-                <td><a href="@image.getUrl" target="_blank">Open original</a></td>
-                <td>
-                @if(!image.fileTransformations.isEmpty) {
-                    <ul>
-                        @for(transformedImage <- image.fileTransformations){
-                            <li><a href="@transformedImage.getUrl" target="_blank">@transformedImage.name</a> (@transformedImage.transformationType)</li>
-                        }
-                    </ul>
-                }
-                </td>
+                <td><a href="@routes.ImageController.at(image.getStoreId).url" target="_blank">Open original</a></td>
                 <td><a href="@controllers.admin.routes.AdminFileController.deleteImage(image.objectId)">@Messages("admin.file.list.delete")</a></td>
             </tr>
         }

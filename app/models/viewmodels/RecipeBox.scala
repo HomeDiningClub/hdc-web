@@ -9,5 +9,9 @@ case class RecipeBox (
     name: String,
     preAmble: Option[String],
     mainImage: Option[String],
-    recipeRating: Int
+    recipeRating: Int,
+    recipeBoxCount: Long,
+    hasNext: Boolean,
+    hasPrevious: Boolean,
+    totalPages: Int
 )

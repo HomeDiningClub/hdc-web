@@ -13,7 +13,6 @@ import services.{UserProfileService, ContentFileService, RecipeService}
 import play.api.libs.Files.TemporaryFile
 import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
 import java.util.UUID
-import presets.ImagePreSets
 import utils.authorization.WithRole
 import scala.Some
 import models.viewmodels.RecipeForm
@@ -45,7 +44,9 @@ class AdminRecipeController extends Controller with SecureSocial {
       "receipeid" -> optional(text),
       "recipename" -> nonEmptyText(minLength = 1, maxLength = 255),
       "recipepreamble" -> optional(text(maxLength = 255)),
-      "recipebody" -> optional(text)
+      "recipebody" -> optional(text),
+      "recipemainimage" -> optional(text),
+      "recipeimages" -> optional(text)
     )(RecipeForm.apply)(RecipeForm.unapply)
   )
 
@@ -87,9 +88,11 @@ class AdminRecipeController extends Controller with SecureSocial {
         if(newRec.isEmpty){
             Logger.debug("Error saving Recipe: User used a non-existing Recipe objectId")
             val errorMessage = Messages("recipe.add.error")
-            BadRequest(views.html.recipe.addOrEdit(contentForm.fill(contentData))).flashing(FlashMsgConstants.Error -> errorMessage)
+            BadRequest(views.html.admin.recipe.add(contentForm.fill(contentData))).flashing(FlashMsgConstants.Error -> errorMessage)
         }
 
+        // TODO: Admin Recipe file upload image chooser
+        /*
         val uploadResult = request.body.file("recipemainimage").map {
           file =>
               fileService.uploadFile(file, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages) match {
@@ -120,6 +123,7 @@ class AdminRecipeController extends Controller with SecureSocial {
           }
           i = i + 1
         }
+      */
 
 
         newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
@@ -147,7 +151,12 @@ class AdminRecipeController extends Controller with SecureSocial {
           Some(item.objectId.toString),
           item.getName,
           item.getPreAmble match{case null|"" => None case _ => Some(item.getPreAmble)},
-          Some(item.getMainBody)
+          Some(item.getMainBody),
+          mainImage = item.getMainImage match {
+            case null => None
+            case item => Some(item.objectId.toString)
+          },
+          images = recipeService.convertToCommaSepStringOfObjectIds(recipeService.getSortedRecipeImages(item))
         )
 
         // Get any images and sort them

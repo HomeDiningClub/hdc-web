@@ -16,10 +16,9 @@ import services.{UserProfileService, ContentFileService, RecipeService}
 import play.api.libs.Files.TemporaryFile
 import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
 import java.util.UUID
-import presets.ImagePreSets
 import utils.authorization.{WithRoleAndOwnerOfObject, WithRole}
 import scala.Some
-import models.viewmodels.{RecipeBox, RecipeForm}
+import models.viewmodels.{EditRecipeExtraValues, RecipeBox, RecipeForm}
 import utils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
@@ -57,7 +56,7 @@ class RecipePageController extends Controller with SecureSocial {
   }
 
 
-  def viewRecipeByNameAndProfilePageJSON(profileName: String, recipeName: String, page: Int) = UserAwareAction { implicit request =>
+  def viewRecipeByNameAndProfilePageJSON(profileName: String, page: Int) = UserAwareAction { implicit request =>
 
     var list: ListBuffer[RecipeBoxJSON] = new ListBuffer[RecipeBoxJSON]
     var t: Option[List[RecipeBox]] = None
@@ -68,14 +67,11 @@ class RecipePageController extends Controller with SecureSocial {
 
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) => {
-
-        println("profileLinkName(IN) : " + profileName)
-        println("ProfileLinkName : " + profile.profileLinkName)
-
         try {
           t = recipeService.getRecipeBoxesPage(profile.getOwner, page)
         } catch {
-         case  ex: Exception => println("Error")
+         case  ex: Exception =>
+           Logger.error("Could not get list of Recipe boxes: " + ex.getMessage)
         }
 
       }
@@ -84,18 +80,13 @@ class RecipePageController extends Controller with SecureSocial {
     }
 
 
-    try
-    {
-
+    try {
       // loop ....
-
       t match {
         case Some(t) => {
           for (e: RecipeBox <- t) {
-
-            var link : String = request.host + controllers.routes.RecipePageController.viewRecipeByNameAndProfile(profileName, e.linkToRecipe).toString()
-            // e.linkToRecipe
-            list  += RecipeBoxJSON(e.objectId.toString, link, e.name, e.preAmble.getOrElse(""), e.mainImage.getOrElse(""), e.recipeRating.toString)
+            //val link: String = controllers.routes.RecipePageController.viewRecipeByNameAndProfile(profileName, e.linkToRecipe).url
+            list += RecipeBoxJSON(e.objectId.toString, e.linkToRecipe, e.name, e.preAmble.getOrElse(""), e.mainImage.getOrElse(""), e.recipeRating.toString, e.recipeBoxCount, e.hasNext, e.hasPrevious, e.totalPages)
           }
         }
         case None => {}
@@ -104,7 +95,8 @@ class RecipePageController extends Controller with SecureSocial {
      // ...
 
     } catch {
-      case ex: Exception => println("Error 2")
+      case ex: Exception =>
+        Logger.error("Could not create JSON of list of Recipe boxes: " + ex.getMessage)
     }
 
     Ok(convertRecipiesToJson(list))
@@ -159,14 +151,54 @@ class RecipePageController extends Controller with SecureSocial {
       "receipeid" -> optional(text),
       "recipename" -> nonEmptyText(minLength = 1, maxLength = 255),
       "recipepreamble" -> optional(text(maxLength = 255)),
-      "recipebody" -> optional(text)
+      "recipebody" -> optional(text),
+      "recipemainimage" -> optional(text),
+      "recipeimages" -> optional(text)
     )(RecipeForm.apply)(RecipeForm.unapply)
   )
 
+  private def setExtraValues(recipe: Option[Recipe] = None): EditRecipeExtraValues = {
+
+    if(recipe.isDefined){
+      // Other values not fit to be in form-classes
+      val mainImage = recipe.get.getMainImage match {
+        case null => None
+        case image => Some(image.getStoreId)
+      }
+      val recipeImages = recipe.get.getRecipeImages.asScala.toList match {
+        case null | Nil => Nil
+        case images => images.map { image =>
+          image.getStoreId
+        }
+      }
+
+      EditRecipeExtraValues(
+        mainImage match {
+          case Some(item) => Some(List(routes.ImageController.imgChooserThumb(item).url))
+          case None => None
+        },
+        recipeImages match {
+          case Nil => None
+          case items => Some(items.map{ item => routes.ImageController.imgChooserThumb(item).url})
+        },
+        recipe.get.getMaxNrOfMainImages,
+        recipe.get.getMaxNrOfRecipeImages
+      )
+    }else{
+
+      // Not brilliant, consider moving config
+      var tempRec = new Recipe("temporary")
+      val maxMainImage = tempRec.getMaxNrOfMainImages
+      val maxImages = tempRec.getMaxNrOfRecipeImages
+      tempRec = null
+
+      EditRecipeExtraValues(None,None,maxMainImage,maxImages)
+    }
+  }
 
 
   def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
-    Ok(views.html.recipe.addOrEdit(recForm))
+    Ok(views.html.recipe.addOrEdit(recipeForm = recForm, extraValues = setExtraValues(None)))
   }
 
   def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
@@ -180,16 +212,21 @@ class RecipePageController extends Controller with SecureSocial {
       case Some(item) =>
         item.isEditableBy(Helpers.getUserFromRequest.get.objectId)
         val form = RecipeForm.apply(
-          Some(item.objectId.toString),
-          item.getName,
-          item.getPreAmble match{case null|"" => None case _ => Some(item.getPreAmble)},
-          Some(item.getMainBody)
+          id = Some(item.objectId.toString),
+          name = item.getName,
+          preAmble = item.getPreAmble match{case null|"" => None case _ => Some(item.getPreAmble)},
+          mainBody = Some(item.getMainBody),
+          mainImage = item.getMainImage match {
+            case null => None
+            case item => Some(item.objectId.toString)
+          },
+          images = recipeService.convertToCommaSepStringOfObjectIds(recipeService.getSortedRecipeImages(item))
         )
 
         // Get any images and sort them
-        val sortedImages = recipeService.getSortedRecipeImages(item)
+        //val sortedImages = recipeService.getSortedRecipeImages(item)
 
-        Ok(views.html.recipe.addOrEdit(recForm.fill(form),editingRecipe, sortedImages))
+        Ok(views.html.recipe.addOrEdit(recipeForm = recForm.fill(form), editingRecipe = editingRecipe, extraValues = setExtraValues(editingRecipe)))
     }
   }
 
@@ -204,7 +241,7 @@ class RecipePageController extends Controller with SecureSocial {
     recForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("recipe.add.error")
-        BadRequest(views.html.recipe.addOrEdit(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.recipe.addOrEdit(errors,extraValues = setExtraValues(None))).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
 
@@ -228,9 +265,70 @@ class RecipePageController extends Controller with SecureSocial {
         if (newRec.isEmpty) {
           Logger.debug("Error saving Recipe: User used a non-existing, or someone elses Recipe")
           val errorMessage = Messages("recipe.add.error")
-          BadRequest(views.html.recipe.addOrEdit(recForm.fill(contentData))).flashing(FlashMsgConstants.Error -> errorMessage)
+          BadRequest(views.html.recipe.addOrEdit(recForm.fill(contentData), extraValues = setExtraValues(None))).flashing(FlashMsgConstants.Error -> errorMessage)
         }
 
+        // Recipe main image
+        contentData.mainImage match {
+          case Some(imageId) => UUID.fromString(imageId) match {
+            case imageUUID: UUID =>
+              fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.get.objectId) match {
+                case Some(item) => newRec.get.setAndRemoveMainImage(item)
+                case _  => None
+              }
+          }
+          case None =>
+            newRec.get.deleteMainImage()
+            None
+        }
+
+        // Recipe images
+        var hasDeletedImages = false
+        contentData.images match {
+          case None =>
+            newRec.get.deleteRecipeImages()
+            hasDeletedImages = true
+          case Some(imageStr) =>
+            // This is just a comma sep list of object id's, split, validate UUID, and verify each entry
+            imageStr.split(",").take(newRec.get.getMaxNrOfRecipeImages).foreach { imageId =>
+              UUID.fromString(imageId) match {
+                case imageUUID: UUID =>
+                  fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.get.objectId) match {
+                    case Some(item) =>
+                      // Found at least one valid image, clean the current list, but only one time
+                      if (!hasDeletedImages) {
+                        newRec.get.deleteRecipeImages()
+                        hasDeletedImages = true
+                      }
+                      // Add it
+                      newRec.get.addRecipeImage(item)
+                    case _ =>
+                      None
+                  }
+              }
+            }
+        }
+
+        /*var i = 1
+        while(i <= 6) {
+          request.body.file("recipeimage" + i).map {
+            file =>
+              fileService.uploadFile(file, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages) match {
+                case Some(item) =>
+                  // This code is ugly as hell, but replaces an earlier image
+                  // Remodel to JSON-delete etc in the future
+                  if(sortedImages.isDefined && sortedImages.get.isDefinedAt(i)){
+                    newRec.get.deleteRecipeImage(sortedImages.get(i))
+                  }
+                  newRec.get.addRecipeImage(item)
+                case None =>
+                  None
+              }
+          }
+          i = i + 1
+        }*/
+
+        /*
         request.body.file("recipemainimage").map {
           file =>
             fileService.uploadFile(file, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages) match {
@@ -259,6 +357,7 @@ class RecipePageController extends Controller with SecureSocial {
           }
           i = i + 1
         }
+      */
 
 
         newRec.get.setMainBody(contentData.mainBody.getOrElse(""))

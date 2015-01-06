@@ -26,54 +26,43 @@ public class ContentFile extends AuditEntity {
     public String baseContentType;
     @Indexed
     public Boolean isAdminFile;
+    @Indexed
+    private String storeId;
 
     @Fetch
     @RelatedTo(type = RelationshipTypesJava.OWNER.Constant, direction = Direction.BOTH)
     public UserCredential owner;
 
-    @Fetch
-    @RelatedTo(type = RelationshipTypesJava.FILE_TRANSFORMATION.Constant, direction = Direction.OUTGOING)
-    public Set<FileTransformation> fileTransformations;
+//    @Fetch
+//    @RelatedTo(type = RelationshipTypesJava.FILE_TRANSFORMATION.Constant, direction = Direction.OUTGOING)
+//    public Set<FileTransformation> fileTransformations;
 
     // Getter Setters
+/*
     public String getBasePath(){
         if(this.isAdminFile == null)
             this.isAdminFile = false;
         return InstancedServices.contentFileService().getFilePath(this,this.isAdminFile);
     }
-
-    public String getUrl(){
-        return InstancedServices.contentFileService().getBucketUrl(this);
+*/
+    public void setStoreId(String storeId){
+        this.storeId = storeId;
     }
 
-    public FileTransformation getTransformByName(String name)
-    {
-        for (FileTransformation transform : this.fileTransformations) {
-            if(transform.name.equalsIgnoreCase(name))
-                return transform;
-        }
-        return null;
+    public String getStoreId(){
+        return this.storeId;
     }
-
 
     // Constructors
-    public ContentFile(String name, String extension, String contentType, String baseContentType, UserCredential ownerUser, Set<FileTransformation> fileTransforms, Boolean isAdminFile) {
-        this.fileTransformations = fileTransforms;
-        populateBaseData(name, extension, contentType, baseContentType, ownerUser, isAdminFile);
-    }
-
     public ContentFile(String name, String extension, String contentType, String baseContentType, UserCredential ownerUser, Boolean isAdminFile) {
-        this.fileTransformations = new HashSet<>();
         populateBaseData(name, extension, contentType, baseContentType, ownerUser, isAdminFile);
     }
 
     public ContentFile(String name, String extension, String contentType, String baseContentType, Boolean isAdminFile) {
-        this.fileTransformations = new HashSet<>();
         populateBaseData(name, extension, contentType, baseContentType, null, isAdminFile);
     }
 
     protected ContentFile() {
-        this.fileTransformations = new HashSet<>();
         this.isAdminFile = false;
     }
 

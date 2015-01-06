@@ -14,6 +14,7 @@ import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
+import scala.Int;
 import services.InstancedServices;
 
 import java.util.ArrayList;
@@ -160,6 +161,11 @@ public class UserProfile extends AuditEntity implements IEditable {
         return this.mainImage;
     }
 
+    @Transient
+    public Integer getMaxNrOfMainImages(){
+        return 1;
+    }
+
     public void setAndRemoveMainImage(ContentFile newImage) {
         // Remove former image before adding a new one
         deleteMainImage();
@@ -169,7 +175,7 @@ public class UserProfile extends AuditEntity implements IEditable {
     public void deleteMainImage() {
         if(this.mainImage != null && this.mainImage.objectId != null)
         {
-            InstancedServices.contentFileService().deleteFile(this.mainImage.objectId);
+            //InstancedServices.contentFileService().deleteFile(this.mainImage.objectId);
             this.mainImage = null;
         }
     }
@@ -177,6 +183,11 @@ public class UserProfile extends AuditEntity implements IEditable {
     @Fetch
     public ContentFile getAvatarImage() {
         return this.avatarImage;
+    }
+
+    @Transient
+    public Integer getMaxNrOfAvatarImages(){
+        return 1;
     }
 
     public void setAndRemoveAvatarImage(ContentFile newImage) {
@@ -188,7 +199,6 @@ public class UserProfile extends AuditEntity implements IEditable {
     public void deleteAvatarImage() {
         if(this.avatarImage != null && this.avatarImage.objectId != null)
         {
-            InstancedServices.contentFileService().deleteFile(this.avatarImage.objectId);
             this.avatarImage = null;
         }
     }

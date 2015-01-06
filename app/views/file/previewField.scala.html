@@ -1,0 +1,11 @@
+@(previewId: String, text: String = Messages("file.preview.title-default"), blnShowText: Boolean = false, prePopulatedWith: Option[List[String]] = None)
+@if(blnShowText){<br><em>@text</em>}
+<div class="row preview-row preview-container-@previewId">
+    @if(prePopulatedWith.nonEmpty){
+        @for(item <- prePopulatedWith.get){
+            <div class="col-md-2 col-xs-4 pre-selected"><img class="img-responsive" src="@item"></div>
+        }
+    }
+</div>
+
+

@@ -3,13 +3,13 @@ package controllers
 // http://www.playframework.com/documentation/2.2.x/ScalaForms
 import models.modelconstants.UserLevelScala
 import models.profile.{TaggedFavoritesToUserProfile, TagWord, TaggedUserProfile}
+import models.viewmodels.EditProfileExtraValues
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import org.springframework.transaction.annotation.Transactional
 import play.api.i18n.Messages
 import play.api.libs.Files.TemporaryFile
-import presets.ImagePreSets
 import securesocial.core.{SecuredRequest, SecureSocial}
 
 import services._
@@ -107,7 +107,9 @@ class UserProfileController extends Controller with SecureSocial {
       "handicapFriendly" -> optional(text),
       "havePets" -> optional(text),
       "smoke" -> optional(text),
-      "allkoholServing" -> optional(text)
+      "allkoholServing" -> optional(text),
+      "mainimage" -> optional(text),
+      "avatarimage" -> optional(text)
   )(EnvData.apply) (EnvData.unapply)
     verifying (Messages("profile.control.unique"), f => isUniqueProfileName(f.name, f.name2))
     verifying (Messages("profile.personalidentitynumber.unique"), g => isCorrectPersonnummer(g.personnummer))
@@ -128,9 +130,6 @@ class UserProfileController extends Controller with SecureSocial {
     "quality" -> list(text)
   )
   (UserProfileOptions.apply) (UserProfileOptions.unapply))
-
-
-
 
   val tagForm = Form(
     mapping(
@@ -384,10 +383,18 @@ if(userTags != null) {
       case e : Exception => println("COUNTY EXCEPTION : " + e.getMessage)
     }
 
+    // Other values not fit to be in form-classes
+    val mainImage = theUser.getMainImage match {
+      case null => None
+      case image => Some(image.objectId.toString)
+    }
+    val avatarImage = theUser.getAvatarImage match {
+      case null => None
+      case image => Some(image.objectId.toString)
+    }
 
 
-
-  // File with stored values
+    // File with stored values
   val eData : EnvData = new EnvData(
     theUser.profileLinkName,
     theUser.profileLinkName,
@@ -404,7 +411,9 @@ if(userTags != null) {
     Option(theUser.handicapFriendly),
     Option(theUser.havePets),
     Option(theUser.smoke),
-    Option(theUser.allkoholServing)
+    Option(theUser.allkoholServing),
+    mainImage,
+    avatarImage
   )
 
   val uOptValues = new  UserProfileOptValues(
@@ -418,6 +427,9 @@ if(userTags != null) {
     safeJava(theUser.minNoOfGuest)
   )
 
+    // Other values not fit to be in form-classes
+    val extraValues = setExtraValues(theUser)
+
   println("to form varde : " + uOptValues.ispayBankCard)
   println("to form is : " + uOptValues.ispayBankCard)
 
@@ -425,10 +437,37 @@ if(userTags != null) {
   Ok(views.html.profile.skapa(nyForm,uOptValues,
     retTagList, typ,
     optionsLocationAreas = getCounties,
-    editingProfile = Some(theUser), termsAndConditions = contentService.getTermsAndConditions))
-
+    extraValues = extraValues,
+    editingProfile = Some(theUser),
+    termsAndConditions = contentService.getTermsAndConditions)
+  )
 
 }
+
+  private def setExtraValues(userProfile: UserProfile): EditProfileExtraValues ={
+    // Other values not fit to be in form-classes
+    val mainImage = userProfile.getMainImage match {
+      case null => None
+      case image => Some(image.getStoreId)
+    }
+    val avatarImage = userProfile.getAvatarImage match {
+      case null => None
+      case image => Some(image.getStoreId)
+    }
+
+    EditProfileExtraValues(
+      mainImage match {
+        case Some(item) => Some(List(routes.ImageController.imgChooserThumb(item).url))
+        case None => None
+      },
+      avatarImage match {
+        case Some(item) => Some(List(routes.ImageController.imgChooserThumb(item).url))
+        case None => None
+      },
+      userProfile.getMaxNrOfMainImages,
+      userProfile.getMaxNrOfAvatarImages
+    )
+  }
 
   def safeJava(value : String) : String =  {
     var outString : String = ""
@@ -763,7 +802,7 @@ if(userTags != null) {
         var city                  : String = ""
         var phoneNumber           : String = ""
         var countyId              : String = ""
-        var acceptDemads          : Boolean = false
+        var acceptTerms          : Boolean = false
 
         var childFfriendly        : String = ""
         var handicapFriendly      : String = ""
@@ -840,6 +879,8 @@ if(userTags != null) {
     // Sort & List
     val retTagList = tagList.toList.sortBy(tw => tw.name)
 
+    // Other values not fit to be in form-classes
+    val extraValues = setExtraValues(theUser)
 
       // Handle tags end ...
 
@@ -847,9 +888,12 @@ if(userTags != null) {
           errors => {
             println("error ..." +errors.toString)
 
-            BadRequest(views.html.profile.skapa(errors,uOptValues,
+            BadRequest(views.html.profile.skapa(errors,
+              uOptValues,
               retTagList, typ,
-              optionsLocationAreas = getCounties, termsAndConditions = contentService.getTermsAndConditions))
+              extraValues = extraValues,
+              optionsLocationAreas = getCounties,
+              termsAndConditions = contentService.getTermsAndConditions))
 
           },
           reqUserProfile => {
@@ -867,7 +911,7 @@ if(userTags != null) {
             countyId              = reqUserProfile.county
             println("????? county = " + reqUserProfile.county)
             println("Personnummer: " + reqUserProfile.personnummer)
-            acceptDemads = reqUserProfile.acceptTerms
+            acceptTerms         = reqUserProfile.acceptTerms
             println("acceptTerms :::  " + reqUserProfile.acceptTerms)
 
             println("allkoholServing " + convOptionStringToString(reqUserProfile.allkoholServing))
@@ -950,6 +994,7 @@ if(userTags != null) {
             theUser.havePets = havePets
             theUser.smoke = smoke
             theUser.allkoholServing = allkoholServing
+            theUser.isTermsOfUseApprovedAccepted = acceptTerms
 
             theUser.payBankCard = payBankCard
             theUser.payCache = payCache
@@ -1002,27 +1047,52 @@ if(userTags != null) {
           }
 
           // Images
+          // Avatar image
+          reqUserProfile.avatarimage match {
+            case Some(imageId) => UUID.fromString(imageId) match {
+              case imageUUID: UUID =>
+                fileService.getFileByObjectIdAndOwnerId(imageUUID, userCred.objectId) match {
+                  case Some(item) => theUser = userProfileService.setAndRemoveAvatarImage(theUser, item)
+                  case _  => None
+                }
+              }
+            case None => None
+          }
+
           // Main image
-          request.body.file("mainimage").map {
-            file =>
-                fileService.uploadFile(file, userCred.objectId, FileTypeEnums.IMAGE, ImagePreSets.profileImages) match {
-                case Some(item) => theUser = userProfileService.setAndRemoveMainImage(theUser,item)
-                case None => None
-              }
+          reqUserProfile.mainimage match {
+            case Some(imageId) => UUID.fromString(imageId) match {
+              case imageUUID: UUID =>
+                fileService.getFileByObjectIdAndOwnerId(imageUUID, userCred.objectId) match {
+                  case Some(item) => theUser = userProfileService.setAndRemoveMainImage(theUser, item)
+                  case _  => None
+                }
+            }
+            case None => None
           }
-          // Avatar
-          request.body.file("avatarimage").map {
-            file =>
-              fileService.uploadFile(file, userCred.objectId, FileTypeEnums.IMAGE, ImagePreSets.userCredentialImages) match {
-                case Some(item) => theUser = userProfileService.setAndRemoveAvatarImage(theUser,item)
-                case None => None
-              }
-          }
+
+            /*
+                      request.body.file("mainimage").map {
+                        file =>
+                            fileService.uploadFile(file, userCred.objectId, FileTypeEnums.IMAGE, ImagePreSets.profileImages) match {
+                            case Some(item) => theUser = userProfileService.setAndRemoveMainImage(theUser,item)
+                            case None => None
+                          }
+                      }
+                      // Avatar
+                      request.body.file("avatarimage").map {
+                        file =>
+                          fileService.uploadFile(file, userCred.objectId, FileTypeEnums.IMAGE, ImagePreSets.userCredentialImages) match {
+                            case Some(item) => theUser = userProfileService.setAndRemoveAvatarImage(theUser,item)
+                            case None => None
+                          }
+                      }
+            */
 
           userProfileService.updateUserProfileTags(theUser, d, map)
           //userProfileService.saveUserProfile(theUser)
 
-      Redirect(routes.UserProfileController.edit())
+      Redirect(routes.UserProfileController.edit()).flashing(FlashMsgConstants.Success -> Messages("profile.create.saved-successfully"))
     })
   }
 
