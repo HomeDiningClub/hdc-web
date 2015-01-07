@@ -116,7 +116,6 @@ class RecipeService {
 
     // With paging
     // 0 current page, 6 number of recipes for each page
-    // TODO - Activate paging choice 0, 1, 2, 3
 
     val list = recipeRepository.findRecipesOnPage(user.objectId.toString, new PageRequest(pageNo, 6))
     val iterator = list.iterator()

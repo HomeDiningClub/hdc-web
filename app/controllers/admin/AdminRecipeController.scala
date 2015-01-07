@@ -91,41 +91,6 @@ class AdminRecipeController extends Controller with SecureSocial {
             BadRequest(views.html.admin.recipe.add(contentForm.fill(contentData))).flashing(FlashMsgConstants.Error -> errorMessage)
         }
 
-        // TODO: Admin Recipe file upload image chooser
-        /*
-        val uploadResult = request.body.file("recipemainimage").map {
-          file =>
-              fileService.uploadFile(file, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages) match {
-              case Some(item) =>
-                newRec.get.setAndRemoveMainImage(item)
-              case None =>
-                None
-            }
-        }
-
-        // Get a sorted list to compare with replacing images
-        val sortedImages = recipeService.getSortedRecipeImages(newRec.get)
-        var i = 1
-        while(i < 6) {
-          request.body.file("recipeimage" + i).map {
-            file =>
-              fileService.uploadFile(file, currentUser.get.objectId, FileTypeEnums.IMAGE, ImagePreSets.recipeImages) match {
-                case Some(item) =>
-                  // This code is ugly as hell, but replaces an earlier image
-                  // Remodel to JSON-delete etc in the future
-                  if(sortedImages.isDefined && sortedImages.get.isDefinedAt(i)){
-                    newRec.get.deleteRecipeImage(sortedImages.get(i))
-                  }
-                  newRec.get.addRecipeImage(item)
-                case None =>
-                  None
-              }
-          }
-          i = i + 1
-        }
-      */
-
-
         newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
         newRec.get.setMainBody(contentData.mainBody.getOrElse(""))
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
