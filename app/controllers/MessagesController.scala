@@ -191,7 +191,8 @@ object MessagesController extends  Controller with SecureSocial {
           userCredentialService.findById(UUID.fromString(content.hostId.getOrElse(""))) match {
             case Some(hostingUser) =>
               Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> (Messages("mails.error.no.message")))
-
+            case None =>
+              BadRequest(views.html.host.hostErrorMsg.render(Messages("mails.error.no.message"), "error"))
           }
 
         } else {

@@ -5,8 +5,6 @@ import java.io.{FileInputStream, OutputStream, File}
 import org.apache.commons.io.FilenameUtils
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import utils.scalr.api.Resizer
-
 import util.Random
 import se.digiplant.res.api.Res
 
