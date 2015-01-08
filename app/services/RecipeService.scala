@@ -2,11 +2,11 @@ package services
 
 import models.files.ContentFile
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.{Page, Pageable, PageRequest}
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-
+import scala.language.existentials
 import repositories._
 import models.{UserProfile, UserCredential, Recipe}
 import scala.collection.JavaConverters._

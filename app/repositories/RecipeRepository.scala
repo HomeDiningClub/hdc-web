@@ -53,7 +53,7 @@ trait RecipeRepository extends GraphRepository[Recipe] {
   }
 
   @Query("match (tag {objectId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe) optional match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe) optional match (r)-[:IMAGES]-(recipeImages:`ContentFile`) optional match (r)-[g]-(ux:UserCredential) optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return avg(g.ratingValue), r.name, r.preAmble, r.mainBody, r.objectId, COLLECT(recipeImages.storeId) as RecipeImages, COLLECT(mainImage.storeId) as MainImage, uc.profileLinkName, r.recipeLinkName, tag.userId")
-  def findRecipesOnPage(userObjectId: String, pageable : Pageable) : Page[RecipeData]
+  def findRecipesOnPage(userObjectId: String, pageable: Pageable) : Page[RecipeData]
 
   def findByrecipeLinkName(recipeLinkName: String): Recipe
   def findByownerProfileProfileLinkNameAndRecipeLinkName(profileLinkName: String, recipeLinkName: String): Recipe
