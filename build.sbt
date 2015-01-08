@@ -47,6 +47,9 @@ routesImport ++= Seq(
   "util.Binders._"
 )
 
+// For warning during compile
+scalacOptions += "-feature"
+
 // This makes it easier use routes
 templatesImport ++= Seq(
   "se.digiplant._"
