@@ -23,7 +23,7 @@ $(document).ready(function(){
         return l;
     }
 
-    function getBoxesAsJSON(event, pageDirection){
+    function getBoxesAsJSON(pageDirection){
         $.getJSON('@{routes.RecipePageController.viewRecipeByNameAndProfilePageJSON()}?profileName=@profileName&page=' + (map+pageDirection) + '&tid=' + Date(), function(data){
             var nrOfItems = 0;
             var myArr = [];
@@ -67,11 +67,11 @@ $(document).ready(function(){
     }
 
     // Get default
-    getBoxesAsJSON(event, 0);
+    getBoxesAsJSON(0);
 
     // Attach events to buttons
-    $(resultsNextBtn).off("click").on("click", function(){getBoxesAsJSON(event, 1)});
-    $(resultsPrevBtn).off("click").on("click", function(){getBoxesAsJSON(event, -1)});
+    $(resultsNextBtn).off("click").on("click", function(){getBoxesAsJSON(1)});
+    $(resultsPrevBtn).off("click").on("click", function(){getBoxesAsJSON(-1)});
 
 });
 </script>
