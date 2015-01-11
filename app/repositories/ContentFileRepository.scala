@@ -21,12 +21,7 @@ trait ContentFileRepository extends GraphRepository[ContentFile] {
   @Query("MATCH (n:`ContentFile`)-[:`OWNER`]-(u:`UserCredential`) WHERE n.objectId={0} AND u.objectId={1} RETURN n")
   def findByobjectIdAndownerObjectId(objectId: String, userObjectId: String): ContentFile
 
-  @Query(
-    "MATCH (n:`ContentFile`)" +
-    " WHERE id(n)" +
-    " OPTIONAL MATCH (n)-[r]-()" +
-    " DELETE r,n"
-  )
+  @Query("MATCH (n:`ContentFile`) WHERE id(n) OPTIONAL MATCH (n)-[r]-() DELETE r,n")
   def deleteAllRelationsAndDelete(file: ContentFile)
 
   // Auto-mapped by Spring
