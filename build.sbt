@@ -2,7 +2,7 @@ import play.Project._
 
 name := "hdc-web"
 
-version := "1.0"
+version := "1.2"
 
 //mainClass := Some("controllers.Application.index")
 

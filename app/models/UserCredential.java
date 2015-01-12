@@ -112,7 +112,17 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     private Set<UserCredentialLikeRecipe> hasLikedRecipes;
 
     public String getFullName() {
-        return firstName + " " + lastName;
+        String retString = "";
+        if(firstName != null)
+            retString = firstName;
+
+        if(firstName != null && lastName != null)
+            retString += " ";
+
+        if(lastName != null)
+            retString += lastName;
+
+        return retString;
     }
 
 //    Messages

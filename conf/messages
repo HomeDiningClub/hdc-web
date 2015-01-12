@@ -39,7 +39,7 @@ header.login-form.forgot-password=Har du glömt ditt lösenord?
 header.login-form.submit=Logga in
 header.logo.alt=Home dining club logotyp
 header.mobile-menu.title=Visa meny
-header.ribbon.text=BETA 1.0
+header.ribbon.text=BETA 1.2
 
 # Footer
 footer.text=© Home Dining Club AB
