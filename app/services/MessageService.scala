@@ -62,6 +62,7 @@ class MessageService {
     messageRepository.findByobjectId(id)
   }
 
+  @Transactional(readOnly = false)
   def saveMessage(newItem: Message): Message = {
     val newResult = messageRepository.save(newItem)
     newResult
