@@ -229,6 +229,9 @@ img
 input[type="text"],
 input[type="file"],
 input[type="email"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
 input[type="password"]
 {
   padding:5px 10px 5px 10px;
@@ -555,6 +558,38 @@ input[type="reset"]:hover
 }
 .btn-rate-popover.collapsed span.glyphicon-chevron-down {
   display: inline-block;
+}
+
+
+// Request popover
+.request-popover h3 {
+  margin-top:0px;
+  font-weight: bold;
+}
+.btn-request {
+  background-image: url("/assets/images/icons/hdc-request-icon-63x47.png");
+  background-repeat: no-repeat;
+  padding-left:95px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 100%;
+  background-position: 20px center;
+  border-radius: 3px;
+  font-weight:bold;
+  font-size:16px;
+  background-color: @hdc-light-green;
+  border: 1px solid @hdc-green;
+}
+.btn-request:hover {
+  background-image: url("/assets/images/icons/hdc-request-icon-63x47.png");
+  background-color: #fff;
+}
+
+.hdc-request-icon {
+  display:block;
+  width:63px;
+  height:47px;
+  float: left;
 }
 
 // FileUpload
@@ -1976,10 +2011,67 @@ a.morelink {
   display: none;
 }
 
-.inboxTable>tbody>tr>td {
-  padding: 0px;
+/* Inbox */
+.inbox-table>thead>tr>th{
+  padding: 3px;
   vertical-align: middle;
 }
+
+.inbox-table>tbody>tr>td {
+  padding: 5px;
+  vertical-align: middle;
+}
+.inbox-table>tbody>tr.mail-inbox-row>td{
+  background-color: @hdc-light-gray;
+  border-bottom: none;
+  cursor: pointer;
+}
+.inbox-table>tbody>tr.mail-inbox-row.collapsed:hover>td {
+  background-color: @hdc-light-gray;
+}
+.inbox-table>tbody>tr.mail-inbox-row.collapsed>td {
+  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+}
+.inbox-table .read {
+  color:@hdc-green;
+}
+.inbox-table .unread {
+  color:@hdc-orange;
+}
+.inbox-table>tbody>tr.respond-row {
+  top: -1px;
+}
+.inbox-table>tbody>tr.respond-row>td.mail-details {
+  background-color: @hdc-light-gray;
+  padding-top:20px;
+  padding-bottom:20px;
+}
+.inbox-table>tbody>tr.respond-row.collapse.in {
+  display: table-row;
+}
+
+.inbox-table>tbody>tr.respond-row.collapsing{
+  -webkit-transition:height .01s ease;
+  transition:height .01s ease
+}
+.inbox-table .request-table {
+  border:1px solid @hdc-gray;
+}
+.inbox-table .request-table>thead>tr>th{
+  border-bottom:1px solid @hdc-gray;
+  padding: 3px 8px 3px 8px;
+}
+.inbox-table .request-table td {
+  background-color: #fff;
+  border:none;
+  padding: 3px 8px 3px 8px;
+  width: 70%;
+}
+.inbox-table .request-table td.req-header {
+  width: 30%;
+}
+
 
 // Responsive
 /* Large devices (large desktops, 1200px and up) */
@@ -2138,6 +2230,11 @@ a.morelink {
   }
   #recipe-carousel .set-height {
     height:auto;
+  }
+  .btn-request,
+  .btn-request:hover {
+    padding-left:10px;
+    background-image: none;
   }
 
 }

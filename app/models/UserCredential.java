@@ -126,20 +126,23 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     }
 
 //    Messages
-    @RelatedTo(type = RelationshipTypesJava.MESSAGE.Constant, direction = Direction.BOTH)
-    public Set<Message> messages;
+    //@RelatedTo(type = RelationshipTypesJava.MESSAGE.Constant, direction = Direction.BOTH)
+    //public Set<Message> messages;
 
+/*
     @Fetch
     public Set<Message> getMessages() {
         if (messages == null)
             this.messages = new HashSet<>();
 
-        return  this.messages;
+        return this.messages;
     }
+
     public void setMessages(Set<Message> messages) {
         this.messages = messages;
     }
 
+*/
     // Verify the object owner
     @Transient
     public Boolean isEditableBy(UUID objectId){

@@ -59,8 +59,10 @@ class UserProfileController extends Controller with SecureSocial {
   private var fileService: ContentFileService = _
 
   @Autowired
-  var userCredentialService : services.UserCredentialService = _
+  var userCredentialService : UserCredentialService = _
 
+  @Autowired
+  var messageService: MessageService = _
 
   // Constants
   val FOOD = "food-tab"
@@ -148,7 +150,6 @@ class UserProfileController extends Controller with SecureSocial {
     false
   }
 
-
  def isUniqueProfileName(profileName : String, storedProfileName : String) : Boolean = {
 
    //var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
@@ -218,14 +219,15 @@ class UserProfileController extends Controller with SecureSocial {
     // Try getting the profile from name, if failure show 404
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) =>
+        val myProfile = isThisMyProfile(profile)
 
         val recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner)
-        val myReviewBoxes = ratingService.getMyUserReviews(profile.getOwner)
-        val myRecipeReviewBoxes = ratingService.getMyUserReviewsAboutFood(profile.getOwner)
+        val myReviewBoxes = if(myProfile) ratingService.getMyUserReviews(profile.getOwner) else None
+        val myRecipeReviewBoxes = if(myProfile) ratingService.getMyUserReviewsAboutFood(profile.getOwner) else None
         val reviewBoxesAboutMyFood = ratingService.getUserReviewsAboutMyFood(profile.getOwner)
         val reviewBoxesAboutMe = ratingService.getUserReviewsAboutMe(profile.getOwner)
         val tags = tagWordService.findByProfileAndGroup(profile,"profile")
-        val isThisMyProfileValue = isThisMyProfile(profile)
+        val messages = if(myProfile) messageService.findIncomingMessagesForUser(profile.getOwner) else None
 
         Ok(views.html.profile.index(profile,
           FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,
@@ -234,8 +236,9 @@ class UserProfileController extends Controller with SecureSocial {
           myRecipeReviewBoxes = myRecipeReviewBoxes,
           reviewBoxesAboutMyFood = reviewBoxesAboutMyFood,
           reviewBoxesAboutMe = reviewBoxesAboutMe,
+          userMessages = messages,
           tagList = tags,
-          isThisMyProfile = isThisMyProfileValue))
+          isThisMyProfile = myProfile))
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
         Logger.debug(errMess)

@@ -9,6 +9,7 @@
         myRecipeReviewBoxes: Option[List[models.viewmodels.ReviewBox]] = None,
         reviewBoxesAboutMyFood: Option[List[models.viewmodels.ReviewBox]] = None,
         reviewBoxesAboutMe: Option[List[models.viewmodels.ReviewBox]] = None,
+        userMessages: Option[List[models.message.Message]] = None,
         tagList: Option[List[models.profile.TagWord]] = None,
         isThisMyProfile: Boolean = false)(implicit request: RequestHeader, flash: Flash)
 
@@ -20,24 +21,23 @@
             var lesstext = "mindre";
 
             $(document).ready(function(){
-
                 var url = document.location.toString();
-                if (url.match('#')) {
+                if (url.match('#')){
                     $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show') ;
-                    var msgId = url.split('#')[2 ].split("Some(")[1].substring(0, url.split('#')[2 ].split("Some(")[1 ].length -1);
+                    var msgId = url.split('#')[2].split("Some(")[1].substring(0, url.split('#')[2 ].split("Some(")[1 ].length -1);
 
-
-                    $('#expandBtn_' + msgId).click();
+                    $('#mail_' + msgId).click();
                 }
 
-            $(".expandBtn1").click(function(){
-
-                var btnArray = this.id.split("expandBtn_" );
-
-                $.get("/profile/mark?msgId=" + btnArray[1] + "&tid=" + new Date().toString(),function(data,status){
-                    $( "#chkMark_" + btnArray[1] ).show();
-                    $( "#mail_" + btnArray[1] ).hide();
-                });
+            $(".mail-inbox-row").click(function(){
+                var btnArray = this.id.split("mail_");
+                var mailRowId = "#mail_" + btnArray[1];
+                if($(mailRowId + " .unread").is(":visible")){
+                    $.get( "/profile/mark?msgId=" + btnArray[1] + "&tid=" + new Date().toString(), function (data, status){
+                        $(mailRowId + " .read").show();
+                        $(mailRowId + " .unread").hide();
+                    });
+                }
             });
 
             $('.more').each(function() {
@@ -221,13 +221,13 @@
                     <div class="col-xs-12 col-md-12 big-margin-top">
                         <nav>
                             <ul class="nav nav-tabs nav-tabs-profile">
-                                <li class="active"><a data-toggle="tab" href="#@tab1" title="@Messages("profile.tabs.food.title")">@Messages("profile.tabs.food.name")</a></li>
+                                <li class="active"><a data-toggle="tab" href="#@tab1" title="@Messages("profile.tabs.food.title")"><span class="glyphicon glyphicon-cutlery"></span>&nbsp;@Messages("profile.tabs.food.name")</a></li>
                                 @if(userProfile.isUserHost) {
                                     <li><a data-toggle="tab" href="#@tab2" title="@Messages("profile.tabs.blog.title")">@Messages("profile.tabs.blog.name")</a></li>
                                 }
-                                <li><a data-toggle="tab" href="#@tab3" title="@Messages("profile.tabs.ratings.title")">@Messages("profile.tabs.ratings.name")</a></li>
+                                <li><a data-toggle="tab" href="#@tab3" title="@Messages("profile.tabs.ratings.title")"><span class="glyphicon glyphicon-star"></span>&nbsp;@Messages("profile.tabs.ratings.name")</a></li>
                                 @if(isThisMyProfile) {
-                                    <li><a data-toggle="tab" href="#@tab4" title="@Messages("profile.tabs.inbox.title")">@Messages("profile.tabs.inbox.name")</a></li>
+                                    <li><a data-toggle="tab" href="#@tab4" title="@Messages("profile.tabs.inbox.title")"><span class="glyphicon glyphicon-envelope"></span>&nbsp;@Messages("profile.tabs.inbox.name")</a></li>
                                     <li><a data-toggle="tab" href="#@tab5" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
                                 }
                             </ul>
@@ -305,22 +305,20 @@
 
                             </div>
                             <div class="tab-pane tab-hdc fade" id="@tab4">
-                                @if(isThisMyProfile && userProfile.getOwner.getMessages.nonEmpty) {
+                                @if(isThisMyProfile && userMessages.nonEmpty) {
 
-                                    <table class="table inboxTable">
+                                    <table class="table inbox-table">
                                         <thead>
                                             <tr>
-                                                <th></th>
+                                                <th>@Messages("mails.inbox.header.read")</th>
                                                 <th>@Messages("mails.inbox.header.from")</th>
-                                                <th>@Messages("mails.inbox.header.sent")</th>
-                                                <th>@Messages("mails.inbox.header.date")</th>
                                                 <th>@Messages("mails.inbox.header.message")</th>
-                                                <th>@Messages("mails.inbox.header.expand")</th>
+                                                <th>@Messages("mails.inbox.header.date")</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @for(msg <- userProfile.getOwner.getMessages) {
-                                                @MessagesController.renderHostReplyForm(msg)(request)
+                                            @for(msg <- userMessages.get) {
+                                                @MessagesController.renderMessage(msg)(request)
                                             }
                                         </tbody>
                                     </table>

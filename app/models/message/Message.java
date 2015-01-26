@@ -12,17 +12,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by Tommy on 15/10/2014.
- */
 @NodeEntity
-public class Message extends  BaseMessage {
+public class Message extends BaseMessage {
 
     @RelatedTo(type = RelationshipTypesJava.OUTGOING_MESSAGE.Constant, direction = Direction.INCOMING)
     public UserCredential owner;
-
-//    @RelatedTo(type = RelationshipTypesJava.RESPONSE.Constant, direction = Direction.BOTH)
-//    public Message response;
 
     @RelatedTo(type = RelationshipTypesJava.RESPONSE.Constant, direction = Direction.BOTH)
     public Set<Message> responses;
@@ -41,6 +35,7 @@ public class Message extends  BaseMessage {
         this.receiver = receiver;
         this.type = type;
         this.phone = phone;
+        this.read = false;
         return this;
     }
 
@@ -65,7 +60,6 @@ public class Message extends  BaseMessage {
 
     @Fetch
     public UserCredential getOwner() {
-//        return InstancedServices.userCredentialService().fetchUserCredential(owner);
         return owner;
     }
 
@@ -74,5 +68,4 @@ public class Message extends  BaseMessage {
 //        return InstancedServices.userCredentialService().fetchUserCredential(recipient);
         return recipient;
     }
-//    public Message getResponse() { return InstancedServices.messageService().fetchMessage(response); }
 }

@@ -9,11 +9,6 @@ public final class RelationshipTypesJava {
         public static final String Constant = "REACHABLE_BY_ROCKET";
     }
 
-    public final  static  class  MESSAGE implements  RelationshipType {
-        public  String name() { return Constant; }
-        public  static  final  String Constant = "MESSAGE";
-    }
-
     public final  static  class  RESPONSE implements  RelationshipType {
         public  String name() { return Constant; }
         public  static  final  String Constant = "RESPONSE";

@@ -30,13 +30,14 @@ class MessageService {
   private var messageRepository: MessageRepository = _
 
   @Transactional(readOnly = false)
-  def createRequest(user: UserCredential, host: UserCredential, date: Date, time: Date, numberOfGuests: Int, request: String, phone: String): Message = {
+  def createRequest(user: UserCredential, host: UserCredential, date: Date, time: Date, numberOfGuests: Int, request: String, phone: Option[String]): Message = {
 
     var msg: Message = new Message
-    msg.createMessage(date, time, numberOfGuests, request, user, host, user.firstName, host.firstName, RelationshipTypesScala.REQUEST.Constant, phone)
-    host.getMessages.add(saveMessage(msg))
+    msg.createMessage(date, time, numberOfGuests, request, user, host, user.firstName, host.firstName, RelationshipTypesScala.REQUEST.Constant, phone.getOrElse(""))
+    //host.getMessages.add(saveMessage(msg))
 
-    userCredentialRepository.save(host)
+    saveMessage(msg)
+    //userCredentialRepository.save(host)
 
     msg
   }
@@ -47,19 +48,49 @@ class MessageService {
     var msg: Message = new Message
     msg.createMessage(message.date, message.time, message.numberOfGuests, response, user, guest, user.firstName, guest.firstName, RelationshipTypesScala.REPLY.Constant, phone)
 
-    guest.getMessages.add(saveMessage(msg))
+    //guest.getMessages.add(saveMessage(msg))
 
-    message.addResponse(msg);
+    message.addResponse(msg)
     saveMessage(message)
 
-    userCredentialRepository.save(guest)
+    //userCredentialRepository.save(guest)
 
     msg
   }
 
   @Transactional(readOnly = true)
-  def findById(id: UUID): Message = {
-    messageRepository.findByobjectId(id)
+  def findAllMessagesForUser(user: UserCredential): Option[List[Message]] = {
+    messageRepository.findAllMessagesForUser(user.objectId).asScala.toList match {
+      case Nil => None
+      case messages =>
+        Some(messages)
+    }
+  }
+
+  @Transactional(readOnly = true)
+  def findOutgoingMessagesForUser(user: UserCredential): Option[List[Message]] = {
+    messageRepository.findOutgoingMessagesForUser(user.objectId).asScala.toList match {
+      case Nil => None
+      case messages =>
+        Some(messages)
+    }
+  }
+
+  @Transactional(readOnly = true)
+  def findIncomingMessagesForUser(user: UserCredential): Option[List[Message]] = {
+    messageRepository.findIncomingMessagesForUser(user.objectId).asScala.toList match {
+      case Nil => None
+      case messages =>
+        Some(messages)
+    }
+  }
+
+  @Transactional(readOnly = true)
+  def findById(id: UUID): Option[Message] = {
+    messageRepository.findByobjectId(id) match {
+      case null => None
+      case item => Some(item)
+    }
   }
 
   @Transactional(readOnly = false)

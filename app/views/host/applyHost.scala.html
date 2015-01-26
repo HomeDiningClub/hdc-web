@@ -4,36 +4,29 @@
     <div class="well well-hdc">
         <h3>@Messages("mails.hosting.form.title") @userToBeHost.get.firstName @userToBeHost.get.lastName</h3>
         <p><em>@Messages("mails.hosting.form.text")</em></p>
-
         @utils.Helpers.getUserFromRequest match {
             case None => {}
             case Some(currentUser) => {
                 @if(hostForm.get.memberId.nonEmpty && !hostForm.get.hostId.toString.equalsIgnoreCase(currentUser.objectId.toString)){
-                    <div class="grade hdc-grade">
                         @helper.form(action = routes.MessagesController.applyToHost()) {
+                            <div class="row big-margin-top">
                             <fieldset>
-                                @helper.inputTextHorizontal(hostForm("firstName"), 'readonly -> "readonly", '_label -> "Förnamn", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
-                                @helper.inputTextHorizontal(hostForm("lastName"), 'readonly -> "readonly", '_label -> "Efternamn", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
-                                @helper.inputTextHorizontal(hostForm("phone"), '_label -> "Telefon", 'required -> "required", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
-                                @helper.inputTextHorizontal(hostForm("date"), 'type -> "date", '_label -> "Datum för event", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
-                                <br/>
-                                @helper.inputTextHorizontal(hostForm("time"), 'type -> "time", '_label -> "Tid", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
-                                <br/>
-                                @helper.inputTextHorizontal(hostForm("numberOfGuests"), 'type -> "number", '_label -> "Antal personer", 'class -> "col-sm-8", '_labelClass -> "col-sm-5")
-                                <br/>
-                                @helper.inputTextHorizontal(hostForm("request"), 'type -> "textarea", 'rows -> 6, 'required -> "required", '_label -> "Meddelande", 'class -> "col-sm-8", '_labelClass -> "col-sm-5", '_error -> hostForm.error("request"))
+                                @helper.inputTextHorizontal(hostForm("phone"), '_label -> Messages("mails.forms.send-request.my-phone"), 'required -> "required", '_showConstraints -> false, '_labelClass -> "col-xs-12", '_divClass -> "col-xs-12")
+                                @helper.inputTextHorizontal(hostForm("date"), 'type -> "date", '_label -> Messages("mails.forms.send-request.date-for-event"), '_showConstraints -> false, '_labelClass -> "col-xs-12", '_divClass -> "col-xs-12")
+                                @helper.inputTextHorizontal(hostForm("time"), 'type -> "time", '_label -> Messages("mails.forms.send-request.time-for-event"), '_showConstraints -> false, '_labelClass -> "col-xs-12", '_divClass -> "col-xs-12")
+                                @helper.inputTextHorizontal(hostForm("numberOfGuests"), 'type -> "number", '_label -> Messages("mails.forms.send-request.nr-of-guests"), '_showConstraints -> false, '_labelClass -> "col-xs-12", '_divClass -> "col-xs-12")
+                                @helper.inputTextHorizontal(hostForm("request"), 'type -> "textarea", 'rows -> 6, 'required -> "required", '_label -> Messages("mails.forms.send-request.message"), '_error -> hostForm.error("request"), '_showConstraints -> false, '_labelClass -> "col-xs-12", '_divClass -> "col-xs-12")
+                                @helper.inputHidden(hostForm("firstName"), 'readonly -> "readonly", '_label -> Messages("mails.forms.send-request.first-name"),'_showConstraints -> false)
+                                @helper.inputHidden(hostForm("lastName"), 'readonly -> "readonly", '_label -> Messages("mails.forms.send-request.last-name"),'_showConstraints -> false)
                                 @helper.inputHidden(hostForm("memberId"))
                                 @helper.inputHidden(hostForm("hostId"))
                                 @helper.inputHidden(hostForm("response"))
                             </fieldset>
-                            <div class="form-actions">
+                            <div class="col-xs-12">
                                 <input type="submit" class="btn btn-primary pull-right" value="@Messages("mails.hosting.send.request")">
                             </div>
-                            <br/>
-                            <br/>
-                            <br/>
+                            </div>
                         }
-                    </div>
                 }
             }
         }

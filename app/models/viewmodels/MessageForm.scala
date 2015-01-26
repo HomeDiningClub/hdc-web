@@ -2,13 +2,10 @@ package models.viewmodels
 
 import java.util.Date
 
-/**
- * Created by Tommy on 15/10/2014.
- */
 case class MessageForm(
                             firstName: String,
                             lastName: String,
-                            phone: String,
+                            phone: Option[String],
                             memberId: Option[String],
                             hostId: Option[String],
                             date: Date,

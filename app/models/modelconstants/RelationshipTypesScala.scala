@@ -4,14 +4,9 @@ import org.neo4j.graphdb.RelationshipType
 
 object RelationshipTypesScala {
 
-   object REACHABLE_BY_ROCKET extends RelationshipType {
-     final val Constant = "REACHABLE_BY_ROCKET"
-     def name(): String = Constant
-   }
-
-  object  MESSAGE extends RelationshipType {
-    final val Constant = "MESSAGE"
-    def name(): String = Constant
+  object REACHABLE_BY_ROCKET extends RelationshipType {
+   final val Constant = "REACHABLE_BY_ROCKET"
+   def name(): String = Constant
   }
 
   object  RESPONSE extends RelationshipType {

@@ -14,6 +14,7 @@ import models.viewmodels.{MessageForm, EmailAndName}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import play.Play
+import play.api.Logger
 import play.api.data.{Mapping, Form}
 import play.api.data.Forms._
 import play.api.i18n.Messages
@@ -24,13 +25,10 @@ import utils.authorization.WithRole
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 
-/**
- * Created by Tommy on 30/09/2014.
- */
 class MessagesController extends  Controller { }
 
 @SpringController
-object MessagesController extends  Controller with SecureSocial {
+object MessagesController extends Controller with SecureSocial {
 
   @Autowired
   private var userCredentialService : UserCredentialService = _
@@ -45,7 +43,7 @@ object MessagesController extends  Controller with SecureSocial {
     mapping(
       "firstName" -> nonEmptyText,
       "lastName" -> nonEmptyText,
-      "phone" -> nonEmptyText,
+      "phone" -> optional(text),
       "memberId" -> optional(text),
       "hostId" -> optional(text),
       "date" -> date("yyyy-MM-dd"),
@@ -60,17 +58,27 @@ object MessagesController extends  Controller with SecureSocial {
   )
 
   def markMessageAsRead(messageId : String) = SecuredAction(ajaxCall=true) { implicit request =>
-    var currentUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+    val currentUser = utils.Helpers.getUserFromRequest
 
-    var msg = messageService.findById(UUID.fromString(messageId))
-
-    msg.read = "true"
-    messageService.saveMessage(msg)
-
-    Ok("Ok")
+    if(currentUser.nonEmpty){
+      messageService.findById(UUID.fromString(messageId)) match {
+        case None =>
+          Ok("No Message found")
+        case Some(msg) =>
+          if(msg.getRecipient.objectId == currentUser.get.objectId){
+            msg.read = true
+            messageService.saveMessage(msg)
+            Ok("Ok")
+          }else{
+            Ok("User tried to read someone else's messages")
+          }
+      }
+    }else{
+      Ok("No logged in user")
+    }
   }
 
-  def renderHostReplyForm(message: Message) = { implicit request: RequestHeader =>
+  def renderMessage(message: Message) = { implicit request: RequestHeader =>
 
     utils.Helpers.getUserFromRequest match {
       case None =>
@@ -78,8 +86,7 @@ object MessagesController extends  Controller with SecureSocial {
       case Some(currentUser) =>
 
         if (message.getRecipient != null && message.getRecipient.equals(currentUser)) {
-
-          val hostReply = MessageForm.apply(message.getOwner().firstName, message.getOwner().lastName, message.phone, Option(message.getOwner().objectId.toString),
+          val hostReply = MessageForm.apply(message.getOwner().firstName, message.getOwner().lastName, Option(message.phone), Option(message.getOwner().objectId.toString),
             Option(currentUser.objectId.toString), message.date, message.time, message.numberOfGuests, Option(message.request), Option(""), Option(message.`type`),
             Option(message.getCreatedDate), Option(message.objectId.toString))
 
@@ -100,7 +107,7 @@ object MessagesController extends  Controller with SecureSocial {
       content => {
 
         if(content.response.isEmpty) {
-            Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName) + "#inbox-tab#" + content.messageId).flashing(FlashMsgConstants.Error -> (Messages("mails.error.no.reply")))
+            Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName) + "#inbox-tab#" + content.messageId).flashing(FlashMsgConstants.Error -> Messages("mails.error.no.reply"))
         } else {
 
           userCredentialService.findById(UUID.fromString(content.memberId.getOrElse(""))) match {
@@ -108,36 +115,39 @@ object MessagesController extends  Controller with SecureSocial {
 
             case Some(receiver) =>
 
-              val msgItr:util.Iterator[Message] = currentUser.getMessages.iterator()
+              val msgItr = messageService.findIncomingMessagesForUser(currentUser)
 
-              while (msgItr.hasNext) {
-                var msg: Message = msgItr.next()
+              if(msgItr.nonEmpty){
+                for(msg: Message <- msgItr.get){
+                //while (msgItr.hasNext) {
+                  //var msg: Message = msgItr.next()
 
-                if(msg.request.equals(content.request.getOrElse(""))) {
+                  if(msg.request.equals(content.request.getOrElse(""))) {
 
-                  // save here
-                  messageService.createResponse(currentUser, receiver, msg, content.response.getOrElse(""), msg.phone)
+                    // save here
+                    messageService.createResponse(currentUser, receiver, msg, content.response.getOrElse(""), msg.phone)
 
-                  val guest = EmailAndName(
-                    name = receiver.firstName() + " " + receiver.lastName(),
-                    email = receiver.emailAddress
-                  )
+                    val guest = EmailAndName(
+                      name = receiver.firstName() + " " + receiver.lastName(),
+                      email = receiver.emailAddress
+                    )
 
-                  val hdc = EmailAndName(
-                    name = Messages("main.title"),
-                    email = Messages("footer.link.mail.text")
-                  )
+                    val hdc = EmailAndName(
+                      name = Messages("main.title"),
+                      email = Messages("footer.link.mail.text")
+                    )
 
 
-                  val baseUrl: String = routes.StartPageController.index().absoluteURL(false).dropRight(1)
-                  val userUrl: String = routes.UserProfileController.viewProfileByName(receiver.firstName).url
+                    val baseUrl: String = routes.StartPageController.index().absoluteURL(false).dropRight(1)
+                    val userUrl: String = routes.UserProfileController.viewProfileByName(receiver.profiles.asScala.head.profileLinkName).url + "#inbox-tab"
 
-                  val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>länk</a>"
+                    val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>" + Messages("mails.hosting.mail.link-text") + "</a>"
 
-                  mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text") + appUrl, guest, hdc)
+                    mailService.createMailNoReply(Messages("main.title") + " " + Messages("mails.hosting.mail.title"), Messages("mail.hdc.text") + appUrl, guest, hdc)
 
-                } else {
-                  println("###### NOT EQUAL ######")
+                  } else {
+                    Logger.debug("Message not equal to request")
+                  }
                 }
               }
           }
@@ -169,7 +179,7 @@ object MessagesController extends  Controller with SecureSocial {
           val format = new SimpleDateFormat("HH:mm")
           val currentTime = format.parse(format.format(new Date()))
 
-          val host = MessageForm.apply(currentUser.firstName(), currentUser.lastName(), currentUser.getPhone, Option(currentUser.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(""), Option(new Date()), Option(""))
+          val host = MessageForm.apply(currentUser.firstName(), currentUser.lastName(), Option(currentUser.getPhone), Option(currentUser.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(""), Option(new Date()), Option(""))
 
           views.html.host.applyHost.render(messageFormMapping.fill(host), Some(hostingUser), request)
         }
@@ -190,7 +200,7 @@ object MessagesController extends  Controller with SecureSocial {
 
           userCredentialService.findById(UUID.fromString(content.hostId.getOrElse(""))) match {
             case Some(hostingUser) =>
-              Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> (Messages("mails.error.no.message")))
+              Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> Messages("mails.error.no.message"))
             case None =>
               BadRequest(views.html.host.hostErrorMsg.render(Messages("mails.error.no.message"), "error"))
           }
@@ -220,11 +230,11 @@ object MessagesController extends  Controller with SecureSocial {
               )
 
               val baseUrl: String = routes.StartPageController.index().absoluteURL(false).dropRight(1)
-              val userUrl: String = routes.UserProfileController.viewProfileByName(hostingUser.firstName).url
+              val userUrl: String = routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName).url + "#inbox-tab"
 
-              val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>länk</a>"
+              val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>" + Messages("mails.hosting.mail.link-text") + "</a>"
 
-              mailService.createMailNoReply(Messages("main.title") + " Förfrågan", Messages("mail.hdc.text") + appUrl, host, hdc)
+              mailService.createMailNoReply(Messages("main.title") + " " + Messages("mails.hosting.mail.title"), Messages("mail.hdc.text") + appUrl, host, hdc)
 
               Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName))
             }
