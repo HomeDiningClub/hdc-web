@@ -109,13 +109,13 @@
         <div class="row">
             <div class="col-xs-12 col-md-9">
                 @defining(if(userProfile.getAvatarImage != null){controllers.routes.ImageController.userThumb(userProfile.getAvatarImage.getStoreId).url}else{""}){ avatarUrl =>
-                    @views.html.profile.profileHeader(userProfile.profileLinkName, avatarUrl, false)
+                    @views.html.profile.profileHeader(userProfile.getOwner.firstName, avatarUrl, false)
                 }
                 <div class="row">
                     <div class="col-xs-12 col-md-6 big-margin-top">
                         <section>
                             <article>
-                                <h1 class="page-header">@userProfile.getOwner.firstName</h1>
+                                <!--<h1 class="page-header">@userProfile.getOwner.firstName</h1> -->
                                 @shared.grade(inputId = "host-grade", initialValue = userProfile.getOwner.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = userProfile.getOwner.getNrOfRatings)
                                 @if(!isThisMyProfile) {
                                     @RatingController.renderUserRateForm(userProfile.getOwner, routes.UserProfileController.viewProfileByName(userProfile.profileLinkName).url)(request)
