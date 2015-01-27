@@ -215,7 +215,8 @@ class RatingService {
           objectId = Some(ratingItem.objectId),
           linkToProfile = controllers.routes.UserProfileController.viewProfileByName(userWhoIsRatingProfile.profileLinkName),
           firstName = ratingItem.getUserWhoIsRating.firstName,
-          rankedName = itemRatedProfile.profileLinkName + "&nbsp;(" + ratingItem.getUserRates.firstName + ")",
+          // rankedName = itemRatedProfile.profileLinkName + "&nbsp;(" + ratingItem.getUserRates.firstName + ")",
+          rankedName =  ratingItem.getUserRates.firstName,
           linkToRatedItem = controllers.routes.UserProfileController.viewProfileByName(itemRatedProfile.profileLinkName),
           reviewText = ratingItem.ratingComment match {
             case "" | null => None
