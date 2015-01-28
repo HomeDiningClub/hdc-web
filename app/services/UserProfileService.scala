@@ -373,7 +373,7 @@ class UserProfileService {
 
 
   @Transactional(readOnly = true)
-  def getUserProfilesFiltered(filterTag: Option[TagWord], filterCounty: Option[County]): Option[List[models.UserProfile]] = {
+  def getUserProfilesFiltered(filterTag: Option[TagWord], filterCounty: Option[County], filterIsHost: Boolean): Option[List[models.UserProfile]] = {
 
     var returnList: List[models.UserProfile] = Nil
 
@@ -386,6 +386,10 @@ class UserProfileService {
         userProfileRepository.findByCountyId(cnt.objectId).asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
       case _ =>
         userProfileRepository.findAll().asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
+    }
+
+    if(returnList != Nil && filterIsHost){
+      returnList = returnList.filter(p => p.isUserHost)
     }
 
     returnList match {

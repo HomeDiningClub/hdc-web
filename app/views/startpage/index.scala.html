@@ -1,6 +1,7 @@
 @(searchForm: Form[models.viewmodels.SearchStartPageForm],
         optionsFoodAreas: Option[Seq[(String,String)]],
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
+        optionsIsHost: Option[Boolean] = None,
         startPageBoxes: Option[List[models.viewmodels.StartPageBox]],
         reviewBoxes: Option[List[models.viewmodels.ReviewBox]],
         asideNews: Option[List[models.content.ContentPage]])(implicit request: RequestHeader)
@@ -102,13 +103,14 @@
             <div class="col-xs-12 col-md-6">
                 <div class="row">
                     <!-- Filtering push -->
-                    <div class="col-xs-10 col-xs-offset-1 col-sm-12 col-sm-offset-0 form-startpage-filter animated fadeInDownBig">
+                    <div class="col-xs-10 col-xs-offset-1 col-sm-12 col-sm-offset-0 form-startpage-filter animated fadeIn">
                     @helper.form(action=routes.StartPageController.index(), 'class -> "form-horizontal form-filter-startpage"){
                         <div class="form-group">
                             @* @helper.inputText(searchForm("freeText"), '_label -> Messages("startpage.filterform.freetext")) *@
-                            @if(!optionsFoodAreas.isEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fTag"), optionsFoodAreas.get, '_label -> Messages("startpage.filterform.foodarea"), 'class -> "form-control") </div>}
-                            @if(!optionsLocationAreas.isEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fCounty"), optionsLocationAreas.get, '_label -> Messages("startpage.filterform.area"), 'class -> "form-control") </div> }
-                            <div class="col-xs-12 col-sm-2 form-actions"><button class="btn btn-primary" type="submit">@Messages("startpage.filterform.submit")</button></div>
+                            @if(optionsFoodAreas.nonEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fTag"), optionsFoodAreas.get, '_label -> Messages("startpage.filterform.foodarea"), 'class -> "form-control") </div>}
+                            @if(optionsLocationAreas.nonEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fCounty"), optionsLocationAreas.get, '_label -> Messages("startpage.filterform.area"), 'class -> "form-control") </div> }
+                            @if(optionsIsHost.nonEmpty){ <div class="col-xs-12 col-sm-2"> @helper.checkbox(searchForm("fHost"), '_label -> Messages("startpage.filterform.is-host"), '_help -> "", '_showErrors -> false, 'class -> "") </div> }
+                            <div class="col-xs-12"><button class="btn btn-primary btn-block btn-no-margin" type="submit">@Messages("startpage.filterform.submit")</button></div>
                         </div>
                         }
                     </div>

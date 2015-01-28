@@ -7,6 +7,7 @@
             <a href="@box.linkToProfile">
                 @defining( if(box.mainImage.isDefined){ "style=\"background-image: url('" + box.mainImage.get + "');background-size:100%;\"" } else { "" } ) { mainImage =>
                 <div class="thumbnail panel-startpage hover-green-dropshadow" @Html(mainImage)>
+                    @if(box.isHost){<div class="host-level-icon" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description", box.fullName)"><span class="icon"></span></div>}
                     <div class="body">
                         @shared.hostImageCircle(box.userImage.getOrElse(""),cssClassWrapper = "white-border drop-shadow")
                         <h2>@box.fullName</h2>

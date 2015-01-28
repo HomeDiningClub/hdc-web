@@ -11,5 +11,6 @@ case class StartPageBox (
     mainBody: Option[String],
     mainImage: Option[String],
     userImage: Option[String],
-    userRating: Int
+    userRating: Int,
+    isHost: Boolean
 )

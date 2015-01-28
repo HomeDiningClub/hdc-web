@@ -80,6 +80,7 @@ startpage.filterform.freetext=Fritext
 startpage.filterform.area=Välj län
 startpage.filterform.foodarea=Välj typ av mat
 startpage.filterform.counties=Välj län
+startpage.filterform.is-host=Värdar
 startpage.filterform.submit=Filtrera
 
 startpage.boxes.not-found=Kunde inte hitta några profiler som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
@@ -526,9 +527,9 @@ rating.add.error=Någonting gick fel när du skulle addera ett betyg, försök i
 
 # Level
 level.guest.header=Gäst
-level.guest.description=Gäst, att vara en gäst innebär...
+level.guest.description=Gäst, att vara en gäst innebär att du kan gå på bokningar hos värdar.
 level.host.header=Värd
-level.host.description=Värd, kan bjuda...
+level.host.description=Värd. Som värd erbjuder {0} möjligheten att boka besök.
 
 validation.required.se = Ett värde för %s måste anges
 

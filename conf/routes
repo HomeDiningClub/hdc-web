@@ -4,7 +4,7 @@
 
 
 # Start page
-GET         /                                                    @controllers.StartPageController.index(fTag: String ?= "",fCounty: String ?= "")
+GET         /                                                    @controllers.StartPageController.index(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?= false)
 
 # Content pages
 GET         /content/:contentName                                @controllers.ContentPageController.viewContentByName(contentName: String)

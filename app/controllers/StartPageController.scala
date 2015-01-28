@@ -44,23 +44,25 @@ class StartPageController extends Controller with SecureSocial {
     mapping(
       //"freeText" -> optional(text),
       "fCounty" -> optional(text),
-      "fTag" -> optional(text)
+      "fTag" -> optional(text),
+      "fHost" -> optional(boolean)
     )(SearchStartPageForm.apply)(SearchStartPageForm.unapply)
   )
 
-  def index(fTag: String, fCounty: String) = UserAwareAction { implicit request =>
+  def index(fTag: String, fCounty: String, fHost: Boolean) = UserAwareAction { implicit request =>
 
-
-    val startPageBoxes = getStartPageBoxes(fTag, fCounty)
+    val startPageBoxes = getStartPageBoxes(fTag, fCounty, fHost)
     val form = SearchStartPageForm.apply(
       fCounty match { case null | "" => None case item => Some(item)},
-      fTag match { case null | "" => None case item => Some(item)}
+      fTag match { case null | "" => None case item => Some(item)},
+      fHost match { case false => None case item => Some(item)}
     )
 
     Ok(views.html.startpage.index(
       searchForm = searchStartPageForm.fill(form),
       optionsFoodAreas = getFoodAreas,
       optionsLocationAreas = getCounties,
+      optionsIsHost = if(fHost) Some(true) else Some(false),
       startPageBoxes = startPageBoxes,
       reviewBoxes = ratingService.getUserReviewBoxesStartPage(8),
       asideNews = contentService.getAsideNewsItems
@@ -113,7 +115,7 @@ class StartPageController extends Controller with SecureSocial {
   }
 
 
-  private def getStartPageBoxes(boxFilterTag: String, boxFilterCounty: String): Option[List[StartPageBox]] = {
+  private def getStartPageBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean): Option[List[StartPageBox]] = {
 
     val fetchedTag: Option[TagWord] = boxFilterTag match {
       case "" | null => None
@@ -128,7 +130,7 @@ class StartPageController extends Controller with SecureSocial {
         countyService.findById(UUID.fromString(county))
     }
 
-    val startPageBoxes: Option[List[StartPageBox]] = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty) match {
+    val startPageBoxes: Option[List[StartPageBox]] = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost) match {
       case None => None
       case Some(profile) => Some(profile.map {
         userProfile: UserProfile =>
@@ -152,7 +154,9 @@ class StartPageController extends Controller with SecureSocial {
               case null => None
               case image => Some(routes.ImageController.userThumb(image.getStoreId).url)
             },
-            userRating = userProfile.getOwner.getAverageRating)
+            userRating = userProfile.getOwner.getAverageRating,
+            isHost = userProfile.isUserHost
+          )
       })
     }
     startPageBoxes
