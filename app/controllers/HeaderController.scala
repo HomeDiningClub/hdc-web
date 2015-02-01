@@ -83,6 +83,7 @@ object HeaderController extends Controller with SecureSocial {
       title = Messages("header.main-menu.link.fb.title"),
       url = Messages("header.main-menu.link.fb.href"),
       icon = "genericon genericon-facebook",
+      target = "_blank",
       wrapperCssClass = "pull-right")
 
     val defMenuItem04 = MenuItem(
@@ -90,6 +91,7 @@ object HeaderController extends Controller with SecureSocial {
       title = Messages("header.main-menu.link.instagram.title"),
       url = Messages("header.main-menu.link.instagram.href"),
       icon = "genericon genericon-instagram",
+      target = "_blank",
       wrapperCssClass = "pull-right")
 
 

@@ -76,12 +76,7 @@ startpage.main-content.body.btn.signup=Bli medlem idag!
 startpage.main.cta.text=Bli medlem idag!
 startpage.main.cta.link.text=Registrera dig
 
-startpage.filterform.freetext=Fritext
-startpage.filterform.area=Välj län
-startpage.filterform.foodarea=Välj typ av mat
-startpage.filterform.counties=Välj län
-startpage.filterform.is-host=Värdar
-startpage.filterform.submit=Filtrera
+startpage.main.browse.link.text=Se fler medlemmar
 
 startpage.boxes.not-found=Kunde inte hitta några profiler som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
 startpage.boxes.location=<em>Finns i {0}</em>
@@ -89,6 +84,19 @@ startpage.boxes.location=<em>Finns i {0}</em>
 startpage.reviews.users.header=Omdömen om värdar
 startpage.reviews.recipes.header=Omdömen om recept
 
+# Browse members page
+browse.title=Bläddra medlemmar
+browse.boxes.not-found=Kunde inte hitta några profiler som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
+browse.boxes.location=<em>Finns i {0}</em>
+
+
+# Form used by Startpage and Browse members
+filterform.freetext=Fritext
+filterform.area=Välj län
+filterform.foodarea=Välj typ av mat
+filterform.counties=Välj län
+filterform.is-host=Värdar
+filterform.submit=Filtrera
 
 # ContentPages
 content.menu.header=Relaterad information
@@ -314,10 +322,13 @@ recipe.edit.saving=Sparar...
 
 recipe.button.edit=Redigera recept
 
+# Pagination
+button.next=Nästa sida
+button.previous=Föreg. sida
+
+
 # Recipe box
 recipe.box.button=Se hela receptet
-recipe.box.button.next=Nästa sida
-recipe.box.button.previous=Föreg. sida
 
 # File Chooser / File upload
 file.button.choose-files-default=Välj bild(er)..

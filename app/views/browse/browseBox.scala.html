@@ -1,0 +1,27 @@
+@(boxes: List[models.viewmodels.BrowseBox] = Nil)
+@if(!boxes.isEmpty) {
+    <div class="row">
+    @for(box: models.viewmodels.BrowseBox <- boxes){
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+            <a href="@box.linkToProfile">
+                @defining( if(box.mainImage.isDefined){ "style=\"background-image: url('" + box.mainImage.get + "');background-size:100%;\"" } else { "" } ) { mainImage =>
+                <div class="thumbnail panel-startpage hover-green-dropshadow" @Html(mainImage)>
+                    @if(box.isHost){<div class="host-level-icon" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description", box.fullName)"><span class="icon"></span></div>}
+                    <div class="body">
+                        @shared.hostImageCircle(box.userImage.getOrElse(""),cssClassWrapper = "white-border drop-shadow")
+                        <h2>@box.fullName</h2>
+                        <hr>
+                        @if(box.location.nonEmpty) {
+                            <p class="location">@Html(Messages("browse.boxes.location", box.location.get))</p>
+                        }else {
+                        <p><br></p>
+                        }
+                        @shared.grade(inputId = "host-grade", initialValue = box.userRating, disabled = true, size = "xxs")
+                    </div>
+                </div>
+                }
+            </a>
+        </div>
+    }
+    </div>
+}

@@ -3,10 +3,12 @@ package services
 import java.util.UUID
 
 import models.files.ContentFile
+import models.modelconstants.UserLevelScala
 import models.{Recipe, UserCredential, UserProfile}
 import org.neo4j.graphdb._
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.{Page, PageRequest, Pageable}
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import repositories.UserProfileRepository
@@ -372,29 +374,73 @@ class UserProfileService {
   }
 
 
+  // Can return either:
+  // Option[Page[UserProfile]]
+  // Option[List[UserProfile]]
   @Transactional(readOnly = true)
-  def getUserProfilesFiltered(filterTag: Option[TagWord], filterCounty: Option[County], filterIsHost: Boolean): Option[List[models.UserProfile]] = {
+  def getUserProfilesFiltered(filterTag: Option[TagWord], filterCounty: Option[County], filterIsHost: Boolean, pageNo: Option[Integer] = None, nrPerPage: Int = 9) = {
 
-    var returnList: List[models.UserProfile] = Nil
+    var returnList: List[UserProfile] = Nil
+    var returnPaged: Page[UserProfile] = null
 
-    returnList = (filterTag, filterCounty) match {
-      case (Some(tw), Some(cnt)) =>
-        userProfileRepository.findByTagWordIdAndCountyId(tw.objectId.toString, cnt.objectId.toString).asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
-      case (Some(tw), None) =>
-        userProfileRepository.findByTagWordId(tw.objectId).asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
-      case (None, Some(cnt)) =>
-        userProfileRepository.findByCountyId(cnt.objectId).asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
+    (filterTag, filterCounty, filterIsHost) match {
+      case (Some(tw), Some(cnt), true) =>
+        if(pageNo.isDefined){
+          returnPaged = userProfileRepository.findByTagWordIdAndCountyIdAndIsHost(tw.objectId.toString, cnt.objectId.toString, UserLevelScala.HOST.Constant, new PageRequest(pageNo.get, nrPerPage))
+        }else{
+          returnList = userProfileRepository.findByTagWordIdAndCountyIdAndIsHost(tw.objectId.toString, cnt.objectId.toString, UserLevelScala.HOST.Constant).asScala.toList
+        }
+      case (Some(tw), Some(cnt), false) =>
+        if(pageNo.isDefined){
+          returnPaged = userProfileRepository.findByTagWordIdAndCountyId(tw.objectId.toString, cnt.objectId.toString, new PageRequest(pageNo.get, nrPerPage))
+        }else{
+          returnList = userProfileRepository.findByTagWordIdAndCountyId(tw.objectId.toString, cnt.objectId.toString).asScala.toList
+        }
+      case (Some(tw), None, true) =>
+        if(pageNo.isDefined) {
+          returnPaged = userProfileRepository.findByTagWordIdAndIsHost(tw.objectId.toString, UserLevelScala.HOST.Constant, new PageRequest(pageNo.get, nrPerPage))
+        }else{
+          returnList = userProfileRepository.findByTagWordIdAndIsHost(tw.objectId.toString, UserLevelScala.HOST.Constant).asScala.toList
+        }
+      case (Some(tw), None, false) =>
+        if(pageNo.isDefined) {
+          returnPaged = userProfileRepository.findByTagWordId(tw.objectId.toString, new PageRequest(pageNo.get, nrPerPage))
+        }else{
+          returnList = userProfileRepository.findByTagWordId(tw.objectId.toString).asScala.toList
+        }
+      case (None, Some(cnt), true) =>
+        if(pageNo.isDefined) {
+          returnPaged = userProfileRepository.findByCountyIdAndIsHost(cnt.objectId.toString, UserLevelScala.HOST.Constant, new PageRequest(pageNo.get, nrPerPage))
+        }else{
+          returnList = userProfileRepository.findByCountyIdAndIsHost(cnt.objectId.toString, UserLevelScala.HOST.Constant).asScala.toList
+        }
+      case (None, Some(cnt), false) =>
+        if(pageNo.isDefined) {
+          returnPaged = userProfileRepository.findByCountyId(cnt.objectId.toString, new PageRequest(pageNo.get, nrPerPage))
+        }else{
+          returnList = userProfileRepository.findByCountyId(cnt.objectId.toString).asScala.toList
+        }
+      case (None, None, true) =>
+        if(pageNo.isDefined) {
+          returnPaged = userProfileRepository.findByIsHost(UserLevelScala.HOST.Constant, new PageRequest(pageNo.get, nrPerPage))
+        }else{
+          returnList = userProfileRepository.findByIsHost(UserLevelScala.HOST.Constant).asScala.toList
+        }
       case _ =>
-        userProfileRepository.findAll().asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
+        if(pageNo.isDefined) {
+          returnPaged = userProfileRepository.findAll(new PageRequest(pageNo.get, nrPerPage))
+        }else{
+          returnList = userProfileRepository.findAll().asScala.toList
+        }
     }
 
-    if(returnList != Nil && filterIsHost){
-      returnList = returnList.filter(p => p.isUserHost)
-    }
-
-    returnList match {
-      case Nil | null => None
-      case listOfItem => Some(listOfItem)
+    // Return paged list, or normal list or just None
+    if(returnList != Nil){
+      Some(returnList)
+    }else if(returnPaged != null){
+      Some(returnPaged)
+    }else{
+      None
     }
   }
 

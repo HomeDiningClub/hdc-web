@@ -1,0 +1,45 @@
+@(fTag: Option[String], fCounty: Option[String], fHost: Boolean, page: Int)
+
+<script>
+$(document).ready(function(){
+
+    var map = 0;
+    var $list = $("#browseList");
+    var $preloader = $("#boxlist-pre-loader");
+
+    function getBoxesAsJSON(pageDirection){
+
+    // Show pre-loader and hide list
+    $list.hide();
+    $preloader.show();
+
+    $.get('@{routes.BrowsePageController.getBrowseBoxesPagedJSON()}?fTag=@fTag.getOrElse("")&fCounty=@fCounty.getOrElse("")&fHost=@fHost&page=' + (map+pageDirection), function(data){
+
+        // Recount pager
+        map = map + pageDirection;
+
+        // Populate data and show list
+        $list.html(data);
+        $list.show();
+
+        // Hide preloader results
+        $preloader.hide();
+
+        // Re-Render ratings & Popovers
+        $(".rating").rating();
+        $(".host-level-icon,.host-header-link").tooltip();
+
+        // Attach events to buttons
+        $("#resultNext").off("click").on("click", function(){getBoxesAsJSON(1)});
+        $("#resultPrev").off("click").on("click", function(){getBoxesAsJSON(-1)});
+
+        });
+    };
+
+    // Get default
+    getBoxesAsJSON(0);
+});
+</script>
+
+<div id="browseList"></div>
+<div class="row" id="boxlist-pre-loader"><div class="col-xs-2 col-xs-offset-5">@shared.img(path = "images/general/hdc-preloader.gif", width = Some(32), height = Some(32), cssClass = "img-responsive", id = "box-preloader")</div></div>

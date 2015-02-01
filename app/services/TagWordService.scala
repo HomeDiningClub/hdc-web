@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.transaction.annotation.Transactional
+import play.api.i18n.Messages
 
 import securesocial.core._
 import scala.Some
@@ -14,6 +15,8 @@ import models.profile.{TaggedUserProfile, TagWord}
 import repositories.TagWordRepository
 import scala.collection.JavaConverters._
 import models.UserProfile
+
+import scala.collection.mutable
 
 
 @Service
@@ -73,6 +76,29 @@ class TagWordService {
           tup.tagWord
       })
     }
+  }
+
+  @Transactional(readOnly = true)
+  def getFoodAreas: Option[Seq[(String,String)]] = {
+    val foodTags: Option[Seq[(String,String)]] = this.listByGroupOption("profile") match {
+      case Some(listOfTags) =>
+        var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
+
+        // Prepend the fist selection
+        bufferList += (("", Messages("filterform.foodarea")))
+
+        // Map and add the rest
+        listOfTags.sortBy(tw => tw.tagName).toBuffer.map {
+          tag: TagWord =>
+            bufferList += ((tag.objectId.toString, tag.tagName))
+        }
+
+        Some(bufferList.toSeq)
+      case None =>
+        None
+    }
+
+    foodTags
   }
 
 

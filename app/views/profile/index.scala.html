@@ -15,11 +15,14 @@
 
     @pageScripts= {
         <script>
+            /*
             var showChar = 50;
             var ellipsestext = "...";
             var moretext = "mer";
             var lesstext = "mindre";
+            */
 
+            /* Code to open a mail directly, not working atm */
             $(document).ready(function(){
                 var url = document.location.toString();
                 if (url.match('#')){
@@ -29,6 +32,7 @@
                     $('#mail_' + msgId).click();
                 }
 
+            /* Mark mail as read, also read more functionality */
             $(".mail-inbox-row").click(function(){
                 var btnArray = this.id.split("mail_");
                 var mailRowId = "#mail_" + btnArray[1];
@@ -40,6 +44,7 @@
                 }
             });
 
+            /* Couldn't find a ref to this code
             $('.more').each(function() {
                 var content = $(this).html();
 
@@ -66,6 +71,7 @@
                     $(this).prev().toggle();
                     return false;
             });
+            */
 
         $("#rf").click(function(){
         $.get("/profile/favorite/remove?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){

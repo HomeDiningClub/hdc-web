@@ -99,11 +99,11 @@ class RecipePageController extends Controller with SecureSocial {
         Logger.error("Could not create JSON of list of Recipe boxes: " + ex.getMessage)
     }
 
-    Ok(convertRecipiesToJson(list))
+    Ok(convertRecipesToJson(list))
   }
 
 
-  def convertRecipiesToJson(jsonCase: Seq[RecipeBoxJSON]): JsValue = Json.toJson(jsonCase)
+  def convertRecipesToJson(jsonCase: Seq[RecipeBoxJSON]): JsValue = Json.toJson(jsonCase)
 
   def viewRecipeByNameAndProfilePage(profileName: String, recipeName: String, page: Int) = UserAwareAction { implicit request =>
 

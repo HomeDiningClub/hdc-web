@@ -6,6 +6,10 @@
 # Start page
 GET         /                                                    @controllers.StartPageController.index(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?= false)
 
+# Browse page
+GET         /browse                                              @controllers.BrowsePageController.index(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?= false)
+GET         /browse.json                                         @controllers.BrowsePageController.getBrowseBoxesPagedJSON(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?= false, page: Int ?= 0)
+
 # Content pages
 GET         /content/:contentName                                @controllers.ContentPageController.viewContentByName(contentName: String)
 

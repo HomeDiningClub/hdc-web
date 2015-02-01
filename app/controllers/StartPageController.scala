@@ -39,8 +39,8 @@ class StartPageController extends Controller with SecureSocial {
   @Autowired
   var ratingService: RatingService = _
 
-  // Search startpage form
-  val searchStartPageForm = Form(
+  // Search form
+  val searchForm = Form(
     mapping(
       //"freeText" -> optional(text),
       "fCounty" -> optional(text),
@@ -59,61 +59,15 @@ class StartPageController extends Controller with SecureSocial {
     )
 
     Ok(views.html.startpage.index(
-      searchForm = searchStartPageForm.fill(form),
-      optionsFoodAreas = getFoodAreas,
-      optionsLocationAreas = getCounties,
+      searchForm = searchForm.fill(form),
+      optionsFoodAreas = tagWordService.getFoodAreas,
+      optionsLocationAreas = countyService.getCounties,
       optionsIsHost = if(fHost) Some(true) else Some(false),
       startPageBoxes = startPageBoxes,
       reviewBoxes = ratingService.getUserReviewBoxesStartPage(8),
       asideNews = contentService.getAsideNewsItems
     ))
   }
-
-
-  private def getFoodAreas: Option[Seq[(String,String)]] = {
-    val foodTags: Option[Seq[(String,String)]] = tagWordService.listByGroupOption("profile") match {
-      case Some(listOfTags) =>
-        var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
-
-        // Prepend the fist selection
-        bufferList += (("", Messages("startpage.filterform.foodarea")))
-
-        // Map and add the rest
-        listOfTags.sortBy(tw => tw.tagName).toBuffer.map {
-          tag: TagWord =>
-            bufferList += ((tag.objectId.toString, tag.tagName))
-        }
-
-        Some(bufferList.toSeq)
-      case None =>
-        None
-    }
-
-    foodTags
-  }
-
-  private def getCounties: Option[Seq[(String,String)]] = {
-    val counties: Option[Seq[(String,String)]] = countyService.getListOfAll match {
-      case Some(counties) =>
-        var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
-
-        // Prepend the first selection
-        bufferList += (("", Messages("startpage.filterform.counties")))
-
-        // Map and add the rest
-        counties.sortBy(tw => tw.name).toBuffer.map {
-          item: County =>
-            bufferList += ((item.objectId.toString, item.name))
-        }
-
-        Some(bufferList.toSeq)
-      case None =>
-        None
-    }
-
-    counties
-  }
-
 
   private def getStartPageBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean): Option[List[StartPageBox]] = {
 
@@ -130,9 +84,9 @@ class StartPageController extends Controller with SecureSocial {
         countyService.findById(UUID.fromString(county))
     }
 
-    val startPageBoxes: Option[List[StartPageBox]] = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost) match {
+    val startPageBoxes: Option[List[StartPageBox]] = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost).asInstanceOf[Option[List[UserProfile]]] match {
       case None => None
-      case Some(profile) => Some(profile.map {
+      case Some(profile) => Some(profile.take(8).map {
         userProfile: UserProfile =>
           StartPageBox(
             objectId = Some(userProfile.objectId),

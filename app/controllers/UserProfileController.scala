@@ -271,14 +271,14 @@ class UserProfileController extends Controller with SecureSocial {
     }
   }
 
-
+/* Moved to CountyService
   private def getCounties: Option[Seq[(String,String)]] = {
     val counties: Option[Seq[(String,String)]] = countyService.getListOfAll match {
       case Some(counties) =>
         var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
 
         // Prepend the first selection
-        bufferList += (("", Messages("startpage.filterform.counties")))
+        bufferList += (("", Messages("filterform.counties")))
 
         // Map and add the rest
         counties.sortBy(tw => tw.name).toBuffer.map {
@@ -293,6 +293,7 @@ class UserProfileController extends Controller with SecureSocial {
 
     counties
   }
+*/
 
 
   /****************************************************************************************************
@@ -311,7 +312,7 @@ def edit = SecuredAction { implicit request =>
 
   var personnummer = theUser.getOwner.personNummer
 
-  var countiesList = getCounties
+  var countiesList = countyService.getCounties
 
   var countyItter = countiesList.iterator
   while(countyItter.hasNext) {
@@ -439,7 +440,7 @@ if(userTags != null) {
   val nyForm =  AnvandareForm.fill(eData)
   Ok(views.html.profile.skapa(nyForm,uOptValues,
     retTagList, typ,
-    optionsLocationAreas = getCounties,
+    optionsLocationAreas = countyService.getCounties,
     extraValues = extraValues,
     editingProfile = Some(theUser),
     termsAndConditions = contentService.getTermsAndConditions)
@@ -895,7 +896,7 @@ if(userTags != null) {
               uOptValues,
               retTagList, typ,
               extraValues = extraValues,
-              optionsLocationAreas = getCounties,
+              optionsLocationAreas = countyService.getCounties,
               termsAndConditions = contentService.getTermsAndConditions))
 
           },

@@ -79,7 +79,7 @@ o
                         <div class="col-xs-12">
                                 <ul class="nav nav-pills nav-main-menu collapse bs-navbar-collapse">
                                 @for(nav:models.viewmodels.MenuItem <- menuItems.get) {
-                                    <li class="@nav.wrapperCssClass"><a class="@nav.cssClass" href="@nav.url" title="@nav.title">@if(nav.icon.nonEmpty){<span class="@nav.icon"></span>&nbsp;}@nav.name</a></li>
+                                    <li class="@nav.wrapperCssClass"><a class="@nav.cssClass" href="@nav.url" target="@nav.target" title="@nav.title">@if(nav.icon.nonEmpty){<span class="@nav.icon"></span>&nbsp;}@nav.name</a></li>
                                 }
                                 </ul>
                         </div>

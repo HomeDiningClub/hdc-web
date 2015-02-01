@@ -1,0 +1,15 @@
+@(jsMethodName: String, hasNext:Boolean = false, hasPrev: Boolean = false, currentPage: Int = 0, totalCount: Long = 0, totalPages: Int = 0)
+
+<div class="row pagination-hdc">
+    <div class="col-xs-6 col-sm-5">
+        @if(hasPrev) {
+            <button id="resultPrev" class="btn btn-default pull-right"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;@Messages("button.previous")</button>
+        }
+    </div>
+    <div id="resultsTotal" class="col-xs-2 hidden-xs text-center">@(currentPage + 1) / @totalPages</div>
+    <div class="col-xs-6 col-sm-5">
+        @if(hasNext) {
+            <button id="resultNext" class="btn btn-default pull-left">@Messages("button.next") &nbsp; <span class="glyphicon glyphicon-arrow-right"></span></button>
+        }
+    </div>
+</div>
