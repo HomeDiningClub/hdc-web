@@ -106,7 +106,6 @@ object Global extends GlobalSettings {
   override def onRouteRequest(request: RequestHeader): Option[Handler] = {
 
     // Lock down site to logged in users only
-    /*
     // Is Production?
     if(play.api.Play.isProd(play.api.Play.current)){
       val approvedPaths = List("/assets/","/login", "/logout", "/signup", "/reset", "/password", "/authenticate", "/not-authorized")
@@ -119,7 +118,7 @@ object Global extends GlobalSettings {
               return Some(controllers.CampaignController.index)
           }
       }
-    }*/
+    }
 
     // Remove trailing slash
     super.onRouteRequest(NormalizedRequest(request))

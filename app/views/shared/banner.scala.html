@@ -1,8 +1,6 @@
-@(imgPath: String = "images/banners/banner-0001.png", linkPath: String = "http://www.bannertarget.se", alt: String = "Senaste nyheterna", title: String = "Senaste nyheterna")
+@(imgPath: String = "images/banners/HDC_reklampuff_1.png", linkPath: String = "/content/partners", alt: String = "", title: String = "Våra Partners är viktiga för oss och vi söker alltid fler som vill samarbeta med oss på HomeDiningClub.")
 
 <div class="banner">
-    @*
     <div class="banner-header">@Messages("banner.header")</div>
-    <a href="@linkPath" target="_blank">@shared.img(imgPath.stripPrefix("/"), cssClass = "banner")</a>
-    *@
+    <a href="@linkPath" title="@title" target="">@shared.img(imgPath.stripPrefix("/"), cssClass = "banner")</a>
 </div>

@@ -94,6 +94,12 @@ object HeaderController extends Controller with SecureSocial {
       target = "_blank",
       wrapperCssClass = "pull-right")
 
+    val defMenuItem05 = MenuItem(
+      name = Messages("header.main-menu.link.members-browse.text"),
+      title = Messages("header.main-menu.link.members-browse.title"),
+      url = routes.BrowsePageController.index().url
+      )
+
 
 
     // Define main items
@@ -113,8 +119,8 @@ object HeaderController extends Controller with SecureSocial {
     if(menuItemsList.nonEmpty)
       retMenuItemsList.appendAll(menuItemsList.get)
 
+    retMenuItemsList.prepend(defMenuItem05)
     retMenuItemsList.prepend(defMenuItem01)
-    //retMenuItemsList.append(defMenuItem02)
     retMenuItemsList.append(defMenuItem03)
     retMenuItemsList.append(defMenuItem04)
 

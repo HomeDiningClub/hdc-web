@@ -23,7 +23,8 @@ header.main-menu.link.fb.title=Gilla oss på Facebook!
 header.main-menu.link.instagram.href=http://instagram.com/homediningclub
 header.main-menu.link.instagram.text=Instagram
 header.main-menu.link.instagram.title=Bli hungrig över våra bilder på Instagram
-
+header.main-menu.link.members-browse.text=Medlemmar
+header.main-menu.link.members-browse.title=Sök bland våra Medlemmar
 
 header.link.host-profile-header={0}
 header.link.host-profile=Gå till min sida
