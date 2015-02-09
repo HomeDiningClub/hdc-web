@@ -94,7 +94,7 @@ class StartPageController extends Controller with SecureSocial {
               case null => ""
               case pfName => routes.UserProfileController.viewProfileByName(pfName).url
             },
-            fullName = userProfile.getOwner.firstName,
+            fullName = userProfile.profileLinkName,
             location = userProfile.getLocations.asScala.headOption match {
               case None => None
               case Some(countyTag) => Some(countyTag.county.name)
