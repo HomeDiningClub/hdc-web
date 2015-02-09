@@ -5,9 +5,9 @@
             <header>
                 @if(showLinkBack){
                 <a href="@routes.UserProfileController.viewProfileByName(header).url">
-                    <h2 class="host-header-link hdc-tooltip" data-toggle="tooltip" data-placement="right" data-original-title="@Messages("host-header.tooltip.text", firstName)"><span class="glyphicon glyphicon-chevron-left glyphicon-lowered"></span>&nbsp;@firstName</h2>
+                    <h2 class="host-header-link hdc-tooltip" data-toggle="tooltip" data-placement="right" data-original-title="@Messages("host-header.tooltip.text", firstName)"><span class="glyphicon glyphicon-chevron-left glyphicon-lowered"></span>&nbsp;@header</h2>
                 }else{
-                    <h2>@firstName</h2>
+                    <h2>@header</h2>
                 }
                     @if(avatarUrl.isEmpty){
                         @shared.hostImageCircle(cssClassWrapper = "white-border drop-shadow")
@@ -17,7 +17,12 @@
                 @if(showLinkBack){
                 </a>
                 }
+
+
+
             </header>
         </div>
     </div>
 </div>
+
+<h1><p style="color:gray"> @firstName</p></h1>
