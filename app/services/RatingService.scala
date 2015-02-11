@@ -241,7 +241,9 @@ class RatingService {
       ReviewBox(
         objectId = Some(ratingItem.objectId),
         linkToProfile = controllers.routes.UserProfileController.viewProfileByName(userWhoIsRatingProfile.profileLinkName),
-        firstName = ratingItem.getUserWhoIsRating.firstName,
+        firstName = ratingItem.getUserWhoIsRating.profiles.iterator().next().profileLinkName,
+        //firstName = ratingItem.getUserWhoIsRating.firstName,
+        //rankedName = ratingItem.getUserRates.getOwnerProfile.profileLinkName,
         rankedName = ratingItem.getUserRates.getName,
         linkToRatedItem = controllers.routes.RecipePageController.viewRecipeByNameAndProfile(itemRatedProfile.profileLinkName,ratingItem.getUserRates.getLink),
         reviewText = ratingItem.ratingComment match {
