@@ -398,6 +398,11 @@ input[type="reset"]:hover
   max-width:240px;
   width:100%
 }
+.banner-dropshadow {
+  -webkit-box-shadow: 4px 4px 10px -7px rgba(166,166,166,1);
+  -moz-box-shadow: 4px 4px 10px -7px rgba(166,166,166,1);
+  box-shadow: 4px 4px 10px -5px rgba(166,166,166,1);
+}
 .banner .banner-header
 {
   text-align: left;
@@ -1308,10 +1313,6 @@ h3.aside-title {
   margin-top: 0px;
   margin-bottom:10px;
 }
-.form-filter-startpage dl
-{
-  margin-bottom:0px;
-}
 
 #carousel-startpage.carousel
 {
@@ -1447,7 +1448,7 @@ h3.aside-title {
   background-position: top center;
   padding: 160px 0px 0px 0px;
   width:100%;
-  background-image: url("/assets/images/startpage/startpage-box-default-bw.png");
+  background-image: url("/assets/images/startpage/box-default-full.png");
 }
 .panel-startpage:nth-child(4n)
 {
@@ -1673,9 +1674,27 @@ h3.aside-title {
   color: @hdc-orange;
 }
 
-// Startpage - Form filter
-.form-startpage-filter .form-actions{
-  padding-top:16px;
+// Form filter
+.form-filter
+{
+  padding-top:15px;
+  margin-bottom:15px;
+  background-color: @hdc-light-gray;
+}
+.form-filter .form-group
+{
+  margin-bottom:0px;
+}
+.form-filter .btn-filter {
+  margin-top:24px;
+}
+.form-filter dl
+{
+  margin-bottom:0px;
+}
+.form-filter .no-margin-top
+{
+  margin-top:0px;
 }
 
 // Campaign

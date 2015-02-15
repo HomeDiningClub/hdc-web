@@ -8,7 +8,7 @@ import models.{Recipe, UserCredential, UserProfile}
 import org.neo4j.graphdb._
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.{Page, PageRequest, Pageable}
+import org.springframework.data.domain.{Sort, Page, PageRequest, Pageable}
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import repositories.UserProfileRepository
@@ -427,10 +427,13 @@ class UserProfileService {
           returnList = userProfileRepository.findByIsHost(UserLevelScala.HOST.Constant).asScala.toList
         }
       case _ =>
+        // Sorting, works but not with relations
+        //val sorting = new Sort(new Sort.Order(Sort.Direction.ASC, "mainImage", Sort.NullHandling.NULLS_LAST))
+
         if(pageNo.isDefined) {
-          returnPaged = userProfileRepository.findAll(new PageRequest(pageNo.get, nrPerPage))
+          returnPaged = userProfileRepository.findAllProfiles(new PageRequest(pageNo.get, nrPerPage))
         }else{
-          returnList = userProfileRepository.findAll().asScala.toList
+          returnList = userProfileRepository.findAllProfiles().asScala.toList
         }
     }
 
