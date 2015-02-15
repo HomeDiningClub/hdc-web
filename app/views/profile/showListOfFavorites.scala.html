@@ -10,7 +10,7 @@
                 <a href="@routes.UserProfileController.viewProfileByName(i.profileName).url">
                     <div class="favorite-box hover-green-dropshadow">
                         @shared.hostImageCircle(i.profilePicture.getOrElse(""), "pull-left", "host-image-favorite white-border drop-shadow")
-                        <span class="name">@i.userName</span><br>
+                        <span class="name">@i.profileName</span><br>
                         <em class="preamble">@i.profilePreAmble</em>
                     </div>
                 </a>
@@ -29,7 +29,7 @@
                 <a href="@routes.UserProfileController.viewProfileByName(f.profileName).url">
                     <div class="favorite-box hover-green-dropshadow">
                         @shared.hostImageCircle(f.profilePicture.getOrElse(""), "pull-left", "host-image-favorite white-border drop-shadow")
-                        <span class="name">@f.userName</span><br>
+                        <span class="name">@f.profileName</span><br>
                         <em class="preamble">@f.profilePreAmble</em>
                     </div>
                 </a>

@@ -101,10 +101,10 @@
 
                             <hr class="hr-orange margin-top">
                             <div class="col-xs-12 margin-top">
-                                @helper.inputTextHorizontal(hostReplyForm("firstName"), 'readonly -> "readonly", '_label -> Messages("mails.inbox.reply.header.to"))
+                                @helper.inputTextHorizontal(hostReplyForm("profileLinkName"), 'readonly -> "readonly", '_label -> Messages("mails.inbox.reply.header.to"))
                                 @helper.inputTextHorizontal(hostReplyForm("response"), 'type -> "textarea", 'rows -> 6, '_label -> Messages("mails.inbox.reply.header.message"), 'required -> "required")
                                 <div class="col-xs-12">
-                                    <input type="submit" class="btn btn-primary pull-right" value="@Messages("mails.inbox.reply.button", hostReplyForm.get.firstName)">
+                                    <input type="submit" class="btn btn-primary pull-right" value="@Messages("mails.inbox.reply.button", hostReplyForm.get.profileLinkName)">
                                 </div>
                             </div>
 
@@ -120,6 +120,7 @@
                             @helper.inputHidden(hostReplyForm("hostId"))
                             @helper.inputHidden(hostReplyForm("createdDate"))
                             @helper.inputHidden(hostReplyForm("messageId"))
+                            @*helper.inputHidden(hostReplyForm("profileLinkName"))*@
                     }
                 </div>
             </div>

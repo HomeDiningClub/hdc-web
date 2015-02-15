@@ -15,6 +15,7 @@ case class MessageForm(
                             response: Option[String],
                             messageType: Option[String],
                             createdDate: Option[Date],
-                            messageId: Option[String]
+                            messageId: Option[String],
+                            profileLinkName: String
                             )
 { }

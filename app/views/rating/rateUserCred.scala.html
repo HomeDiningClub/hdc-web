@@ -3,7 +3,7 @@
 
 @views.html.rating.rateMain() {
     <div class="well well-hdc">
-        <h3>@Messages("rating.add.title", userToBeRated.get.firstName())</h3>
+        <h3>@Messages("rating.add.title", userToBeRated.get.profiles.iterator().next().profileLinkName)</h3>
         <p><em>@Messages("rating.add.lead.user")</em></p>
 
         @utils.Helpers.getUserFromRequest match {

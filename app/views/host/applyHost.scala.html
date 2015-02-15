@@ -2,7 +2,7 @@
 
 @views.html.host.hostMain() {
     <div class="well well-hdc">
-        <h3>@Messages("mails.hosting.form.title") @userToBeHost.get.firstName @userToBeHost.get.lastName</h3>
+        <h3>@Messages("mails.hosting.form.title") @userToBeHost.get.profiles.iterator().next().profileLinkName</h3>
         <p><em>@Messages("mails.hosting.form.text")</em></p>
         @utils.Helpers.getUserFromRequest match {
             case None => {}
@@ -21,6 +21,7 @@
                                 @helper.inputHidden(hostForm("memberId"))
                                 @helper.inputHidden(hostForm("hostId"))
                                 @helper.inputHidden(hostForm("response"))
+                                @helper.inputHidden(hostForm("profileLinkName"))
                             </fieldset>
                             <div class="col-xs-12">
                                 <input type="submit" class="btn btn-primary pull-right" value="@Messages("mails.hosting.send.request")">

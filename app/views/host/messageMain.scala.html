@@ -9,7 +9,7 @@
             <span class="genericon genericon-checkmark"></span>
         </div>
     </td>
-    <td>@user.firstName @user.lastName</td>
+    <td>@user.profiles.iterator().next().profileLinkName</td>
     <td>
         @if(message.request != null) {
             @if(message.request.length > 60) {
@@ -20,9 +20,6 @@
         }
     </td>
     <td>@message.getCreatedDate.date.format("yyyy-MM-dd HH:mm")</td>
-    @*<td>*@
-        @*<button id="expandBtn_@msgId" class="btn expandBtn1 btn-primary btn-sm pull-left btn-host-popover collapsed" data-toggle="collapse" data-target="#@msgId"><span class="glyphicon glyphicon-chevron-down"></span><span class="glyphicon glyphicon-chevron-up"></span></button>*@
-    @*</td>*@
 </tr>
 <tr id="respond_@msgId" class="respond-row collapse">
     <td colspan="6" class="mail-details">@content</td>

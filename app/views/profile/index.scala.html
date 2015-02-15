@@ -268,7 +268,7 @@
                                             @if(isThisMyProfile) {
                                                 @Messages("profile.reviews.reviews.aboutme.header")
                                             }else {
-                                                @Messages("profile.reviews.reviews.aboutme.username.header", userProfile.getOwner.firstName)
+                                                @Messages("profile.reviews.reviews.aboutme.username.header", userProfile.profileLinkName)
                                             }
                                             </h3>
                                         </div>
@@ -283,7 +283,7 @@
                                                 @if(isThisMyProfile) {
                                                     @Messages("profile.reviews.reviews.aboutmyfood.header")
                                                 }else {
-                                                    @Messages("profile.reviews.reviews.aboutmyfood.username.header", userProfile.getOwner.firstName)
+                                                    @Messages("profile.reviews.reviews.aboutmyfood.username.header", userProfile.profileLinkName)
                                                 }
                                             </h3>
                                         </div>

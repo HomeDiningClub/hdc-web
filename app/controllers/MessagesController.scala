@@ -53,7 +53,8 @@ object MessagesController extends Controller with SecureSocial {
       "response" -> optional(text),
       "messageType" -> optional(text),
       "createdDate" -> optional(date("yyyy-MM-dd")),
-      "messageId" -> optional(text)
+      "messageId" -> optional(text),
+      "profileLinkName" -> nonEmptyText
     )(MessageForm.apply)(MessageForm.unapply)
   )
 
@@ -88,7 +89,7 @@ object MessagesController extends Controller with SecureSocial {
         if (message.getRecipient != null && message.getRecipient.equals(currentUser)) {
           val hostReply = MessageForm.apply(message.getOwner().firstName, message.getOwner().lastName, Option(message.phone), Option(message.getOwner().objectId.toString),
             Option(currentUser.objectId.toString), message.date, message.time, message.numberOfGuests, Option(message.request), Option(""), Option(message.`type`),
-            Option(message.getCreatedDate), Option(message.objectId.toString))
+            Option(message.getCreatedDate), Option(message.objectId.toString),message.getOwner().profiles.iterator().next().profileLinkName)
 
           views.html.host.replyGuest.render(messageFormMapping.fill(hostReply), message.getOwner(), message.objectId.toString, message, request)
         }
@@ -179,7 +180,7 @@ object MessagesController extends Controller with SecureSocial {
           val format = new SimpleDateFormat("HH:mm")
           val currentTime = format.parse(format.format(new Date()))
 
-          val host = MessageForm.apply(currentUser.firstName(), currentUser.lastName(), Option(currentUser.getPhone), Option(currentUser.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(""), Option(new Date()), Option(""))
+          val host = MessageForm.apply(currentUser.firstName(), currentUser.lastName(), Option(currentUser.getPhone), Option(currentUser.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(""), Option(new Date()), Option(""), currentUser.profiles.asScala.head.profileLinkName)
 
           views.html.host.applyHost.render(messageFormMapping.fill(host), Some(hostingUser), request)
         }
@@ -215,7 +216,7 @@ object MessagesController extends Controller with SecureSocial {
               messageService.createRequest(currentUser, hostingUser, content.date, content.time, content.numberOfGuests, content.request.getOrElse(""), content.phone)
 
               val guest = EmailAndName(
-                name = currentUser.firstName() + " " + currentUser.lastName(),
+                name = currentUser.profiles.asScala.head.profileLinkName,
                 email = currentUser.emailAddress
               )
 
@@ -225,14 +226,14 @@ object MessagesController extends Controller with SecureSocial {
               )
 
               val host = EmailAndName(
-                name = hostingUser.firstName() + " " + hostingUser.lastName(),
+                name = hostingUser.profiles.asScala.head.profileLinkName,
                 email = hostingUser.emailAddress
               )
 
               val baseUrl: String = routes.StartPageController.index().absoluteURL(false).dropRight(1)
               val userUrl: String = routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName).url + "#inbox-tab"
 
-              val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>" + Messages("mails.hosting.mail.link-text") + "</a>"
+              val appUrl: String = " " + currentUser.profiles.asScala.head.profileLinkName + " <a href='" + (baseUrl + userUrl) + "'>" + Messages("mails.hosting.mail.link-text") + "</a>"
 
               mailService.createMailNoReply(Messages("main.title") + " " + Messages("mails.hosting.mail.title"), Messages("mail.hdc.text") + appUrl, host, hdc)
 
