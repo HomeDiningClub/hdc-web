@@ -98,7 +98,7 @@ $(document).ready(function () {
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-52171001-1', 'hdc-web.herokuapp.com');
+    ga('create', 'UA-52171001-2', 'auto');
     ga('send', 'pageview');
 
 
