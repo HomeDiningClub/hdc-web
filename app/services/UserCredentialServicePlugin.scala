@@ -46,7 +46,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   private var tokens = Map[String, Token]()
   var users = Map[String, UserCredential]()
 
-  var isUserCacheON : Boolean = false /// @todo
+    var isUserCacheON : Boolean = false /// @todo
 
 
   /** *
