@@ -17,7 +17,8 @@ GET         /content/:contentName                                @controllers.Co
 POST        /suggest-feature                                     controllers.SuggestController.suggestFeatures
 
 # Campaign
-GET         /newsletter                                          @controllers.CampaignController.index
+# Temporarily disabled due to sharing cache issues with FB
+#GET         /newsletter                                          @controllers.CampaignController.index
 
 
 # Profile
@@ -141,7 +142,6 @@ GET         /admin/recipe/add                                    @controllers.ad
 POST        /admin/recipe/add                                    @controllers.admin.AdminRecipeController.addSubmit
 GET         /admin/recipe/edit/:objectId                         @controllers.admin.AdminRecipeController.edit(objectId: java.util.UUID)
 GET         /admin/recipe/delete/:objectId                       @controllers.admin.AdminRecipeController.delete(objectId: java.util.UUID)
-GET         /admin/recipe/deleteall                              @controllers.admin.AdminRecipeController.deleteAll
 
 # ADMIN - County
 GET         /admin/county                                        @controllers.admin.AdminCountyController.editIndex

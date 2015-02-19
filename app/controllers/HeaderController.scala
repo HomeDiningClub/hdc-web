@@ -72,12 +72,6 @@ object HeaderController extends Controller with SecureSocial {
       url = routes.StartPageController.index().url,
       icon = "glyphicon glyphicon-home")
 
-    val defMenuItem02 = MenuItem(
-      name = Messages("header.main-menu.link.newsletter.text"),
-      title = Messages("header.main-menu.link.newsletter.title"),
-      url = routes.CampaignController.index().url,
-      icon = "glyphicon glyphicon-envelope")
-
     val defMenuItem03 = MenuItem(
       name = Messages("header.main-menu.link.fb.text"),
       title = Messages("header.main-menu.link.fb.title"),
