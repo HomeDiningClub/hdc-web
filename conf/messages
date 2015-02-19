@@ -169,7 +169,7 @@ favorite.profile.my-favorites.header=Mina favoriter
 favorite.profile.others-favorites.header=Vilka har mig som favorit?
 
 # Profile
-profile.title={0}
+profile.title={0} - Profil
 profile.button.recipe.add=Lägg till recept
 profile.tags.header={0} är intresserad av
 
@@ -297,7 +297,7 @@ profile.no=Nej
 
 
 # Recipe
-recipe.title=Recept
+recipe.title={0} - Recept
 recipe.edit.index.header=Recept
 recipe.edit.add.header=Lägg till / Redigera recept
 recipe.edit.add.name=Namn

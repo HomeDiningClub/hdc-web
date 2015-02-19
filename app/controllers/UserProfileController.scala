@@ -283,10 +283,10 @@ class UserProfileController extends Controller with SecureSocial {
         case null | "" =>
           profile.aboutMeHeadline match {
             case null | "" => ""
-            case item => item
+            case item => utils.Helpers.limitLength(item, 125)
           }
         case item => {
-          item.substring(0, 125)
+          utils.Helpers.limitLength(Helpers.removeHtmlTags(item), 125)
         }
       },
       fbImage = profile.getMainImage match {

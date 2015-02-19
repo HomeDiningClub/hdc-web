@@ -1,4 +1,5 @@
 @(recipe: models.Recipe,
+        metaData: Option[viewmodels.MetaData] = None,
         recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
         isThisMyRecipe: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
 @import scala.collection.JavaConverters._
@@ -10,7 +11,7 @@
 }
 
 
-@main(Messages("recipe.title")) {
+@main(Messages("recipe.title", recipe.getName), metaData = metaData) {
 
     <div class="container host-container">
         <div class="row">

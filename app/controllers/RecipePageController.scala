@@ -18,7 +18,7 @@ import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
 import java.util.UUID
 import utils.authorization.{WithRoleAndOwnerOfObject, WithRole}
 import scala.Some
-import models.viewmodels.{EditRecipeExtraValues, RecipeBox, RecipeForm}
+import models.viewmodels.{MetaData, EditRecipeExtraValues, RecipeBox, RecipeForm}
 import utils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
@@ -47,7 +47,7 @@ class RecipePageController extends Controller with SecureSocial {
     // Try getting the recipe from name, if failure show 404
     recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
       case Some(recipe) =>
-             Ok(views.html.recipe.recipe(recipe, recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), isThisMyRecipe = isThisMyRecipe(recipe)))
+             Ok(views.html.recipe.recipe(recipe, metaData = buildMetaData(recipe, request), recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), isThisMyRecipe = isThisMyRecipe(recipe)))
           case None =>
             val errMess = "Cannot find recipe using name:" + recipeName + " and profileName:" + profileName
             Logger.debug(errMess)
@@ -110,7 +110,7 @@ class RecipePageController extends Controller with SecureSocial {
     // Try getting the recipe from name, if failure show 404
     recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
       case Some(recipe) =>
-        Ok(views.html.recipe.recipe(recipe, recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), isThisMyRecipe = isThisMyRecipe(recipe)))
+        Ok(views.html.recipe.recipe(recipe, metaData = buildMetaData(recipe, request),recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), isThisMyRecipe = isThisMyRecipe(recipe)))
       case None =>
         val errMess = "Cannot find recipe using name:" + recipeName + " and profileName:" + profileName
         Logger.debug(errMess)
@@ -131,6 +131,30 @@ class RecipePageController extends Controller with SecureSocial {
         BadRequest(errMess)
     }
   }
+
+  private def buildMetaData(recipe: Recipe, request: RequestHeader): Option[MetaData] = {
+    val domain = "//" + request.domain
+
+    Some(MetaData(
+      fbUrl = domain + request.path,
+      fbTitle = recipe.getName,
+      fbDesc = recipe.getPreAmble match {
+        case null | "" =>
+          recipe.getMainBody match {
+            case null | "" => ""
+            case item: String => utils.Helpers.limitLength(Helpers.removeHtmlTags(item), 125)
+          }
+        case item => {
+          utils.Helpers.limitLength(item, 125)
+        }
+      },
+      fbImage = recipe.getMainImage match {
+        case image: ContentFile => { domain + routes.ImageController.profileNormal(image.getStoreId).url }
+        case _ => { domain + "/images/profile/profile-default-main-image.jpg" }
+      }
+    ))
+  }
+
 
   private def isThisMyRecipe(recipe: Recipe)(implicit request: RequestHeader): Boolean = {
     utils.Helpers.getUserFromRequest match {

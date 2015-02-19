@@ -51,6 +51,19 @@ object Helpers {
   }
 
 
+  def limitLength(input: String, limitLength: Int): String = {
+    if(input == null)
+      null
+
+    if(limitLength == null)
+      input
+
+    if(input.length >= limitLength)
+      input.substring(0,limitLength)
+    else
+      input
+  }
+
   def createRoute(input: String): String = {
     // TODO: Improve language when making routes
     input.toLowerCase.replaceAll("å", "a").replaceAll("ä", "a").replaceAll("ö", "o").replaceAll("\\s", "-").replaceAll("\\W_-", "")
