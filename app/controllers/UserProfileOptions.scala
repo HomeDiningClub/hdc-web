@@ -9,7 +9,9 @@ case class UserProfileOptions (
   roleHost        : Option[String],
   maxGuest : String,
   minGuest : String,
-  quality  : List[String]
+  quality  : List[String],
+  handicapFriendly : String, // moved from EnvData
+  childFfriendly   : String
                                 )
 
 
