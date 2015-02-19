@@ -120,6 +120,17 @@
                 <div class="tab-pane tab-hdc fade" id="profile-tab-personal-info">
                     <div class="col-xs-12">
                         <h3 class="lead">@Messages("profile.create.header.personal-information")</h3>
+
+
+                        <br>Förnamn
+                        <br><input type="text" value="" name="firstName">
+                        <br>Efternamn
+                        <br><input type="text" value="" name="lastName">
+                        <br>E-postadress:
+                        <br><input type="text" value="" name="emailAddress">
+
+
+
                         @helper.inputText(EnvDataForm("streetAddress"),
                             'id -> "streetAddress",
                             '_showErrors -> true,
@@ -168,6 +179,10 @@
                             '_help -> Messages("profile.create.form.personnummer.help"),
                             '_error -> EnvDataForm.error("personnummer")
                         )
+
+
+                        <a class="btn" href="@securesocial.core.providers.utils.RoutesHelper.handleStartResetPassword()">@Messages("hdc.securesocial.login.newPassword")</a>
+
                     </div>
                 </div>
 
@@ -180,17 +195,20 @@
                         <hr>
 
                         <!--  New input -->
-                        @helper.inputRadioGroup(
-                            EnvDataForm("childFfriendly"),
-                            options = helper.options("Ja"->Messages("profile.create.form.host.yes"),"Nej"->Messages("profile.create.form.host.no")),
-                            '_label -> Messages("profile.create.form.host.childfriendly")
-                        )
 
-                        @helper.inputRadioGroup(
-                            EnvDataForm("handicapFriendly"),
-                            options = helper.options("Ja"->Messages("profile.create.form.host.yes"),"Nej"->Messages("profile.create.form.host.no")),
-                            '_label -> Messages("profile.create.form.host.handicapfriendly")
-                        )
+                        @Messages("profile.create.form.host.childfriendly")
+                        <br>
+                        <input type="radio" name="childFfriendly" value="Ja"  @profileOpts.childFfriendlyJa()>@Messages("profile.create.form.host.yes")
+                        <input type="radio" name="childFfriendly" value="Nej" @profileOpts.childFfriendlyNej()>@Messages("profile.create.form.host.no")
+
+                        <br>
+
+                        @Messages("profile.create.form.host.handicapfriendly")
+                        <br>
+                        <input type="radio" name="handicapFriendly" value="Ja"  @profileOpts.handicapFriendlyJa()>@Messages("profile.create.form.host.yes")
+                        <input type="radio" name="handicapFriendly" value="Nej" @profileOpts.handicapFriendlyNej()>@Messages("profile.create.form.host.no")
+
+
 
                         @helper.inputRadioGroup(
                             EnvDataForm("havePets"),

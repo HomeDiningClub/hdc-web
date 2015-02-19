@@ -105,8 +105,8 @@ class UserProfileController extends Controller with SecureSocial {
       "phoneNumber" -> text,
       "personnummer" -> text,
       "acceptTerms"  -> boolean,
-      "childFfriendly" -> optional(text),
-      "handicapFriendly" -> optional(text),
+      //"childFfriendly" -> optional(text),
+      //"handicapFriendly" -> optional(text),
       "havePets" -> optional(text),
       "smoke" -> optional(text),
       "allkoholServing" -> optional(text),
@@ -129,7 +129,9 @@ class UserProfileController extends Controller with SecureSocial {
     "roleHost" -> optional(text),
     "maxGuest" -> text,
     "minGuest" -> text,
-    "quality" -> list(text)
+    "quality" -> list(text),
+    "handicapFriendly" -> text,
+    "childFfriendly" -> text
   )
   (UserProfileOptions.apply) (UserProfileOptions.unapply))
 
@@ -436,8 +438,8 @@ if(userTags != null) {
     theUser.phoneNumber, // phone number
     personnummer, // TODO
     theUser.isTermsOfUseApprovedAccepted, // isTermsOfUseApprovedAccepted
-    Option(theUser.childFfriendly),
-    Option(theUser.handicapFriendly),
+    // Option(theUser.childFfriendly),
+    // Option(theUser.handicapFriendly),
     Option(theUser.havePets),
     Option(theUser.smoke),
     Option(theUser.allkoholServing),
@@ -453,7 +455,9 @@ if(userTags != null) {
     safeJava(guest),
     safeJava(host),
     safeJava(theUser.maxNoOfGuest),
-    safeJava(theUser.minNoOfGuest)
+    safeJava(theUser.minNoOfGuest),
+    safeJava(theUser.handicapFriendly), // moved from EnvData.
+    safeJava(theUser.childFfriendly)
   )
 
     // Other values not fit to be in form-classes
@@ -848,6 +852,7 @@ if(userTags != null) {
           var numberOfGuest             : String = ""
           var minGuest                  : String = ""
 
+
         OptionsForm.bindFromRequest.fold(
          error => println("Error reading options "),
         ok=>
@@ -870,6 +875,11 @@ if(userTags != null) {
               roleHost = ok.roleHost.getOrElse("")
               numberOfGuest = ok.maxGuest
               minGuest = ok.minGuest
+
+              handicapFriendly =  ok.handicapFriendly
+              childFfriendly   = ok.childFfriendly
+
+
               println("OK. max : " +  numberOfGuest)
 
               for(tags<-ok.quality) {
@@ -886,7 +896,7 @@ if(userTags != null) {
     val uOptValues = new  UserProfileOptValues(
       payCache, paySwish,
       payBankCard, payIZettle, roleGuest, roleHost,
-      numberOfGuest, minGuest)
+      numberOfGuest, minGuest, handicapFriendly, childFfriendly)
 
       // Handle tags from form ...
 
@@ -949,8 +959,8 @@ if(userTags != null) {
 
 
 
-            childFfriendly  = convOptionStringToString(reqUserProfile.childFfriendly)
-            handicapFriendly  = convOptionStringToString(reqUserProfile.handicapFriendly)
+            // childFfriendly  = convOptionStringToString(reqUserProfile.childFfriendly)  moved to UserProfileOptions
+           // handicapFriendly  = convOptionStringToString(reqUserProfile.handicapFriendly) moved to UserProfileOptions
             havePets  = convOptionStringToString(reqUserProfile.havePets)
             smoke  = convOptionStringToString(reqUserProfile.smoke)
             allkoholServing   = convOptionStringToString(reqUserProfile.allkoholServing)
@@ -1032,6 +1042,8 @@ if(userTags != null) {
             theUser.maxNoOfGuest = numberOfGuest
             theUser.minNoOfGuest = uOptValues.minGuest
 
+            println("handicapFriendly : " + handicapFriendly)
+
 
 //        This part is not needed since tags or on it's own page now, activate this code if they are moved back
 
@@ -1071,6 +1083,9 @@ if(userTags != null) {
 
                 println("county name: " + item.name)
                 println("OBJECTID: " + item.objectId + " def :  " + item.toString)
+
+
+
 
             }
           }

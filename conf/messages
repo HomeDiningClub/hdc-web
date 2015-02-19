@@ -225,10 +225,10 @@ profile.create.form.zipCode=Postnummer
 profile.create.form.zipCode.help=Postnummer
 profile.create.form.city=Stad
 profile.create.form.city.help=Kommun eller stad
-profile.create.form.phoneNumber=Telefonnummer
+profile.create.form.phoneNumber=Telefonnummer(kommer aldrig att visas)
 profile.create.form.phoneNumber.help=Mobilnummer eller telefonnummer
 
-profile.create.form.personnummer=Personnummer
+profile.create.form.personnummer=Personnummer(kommer aldrig att visas)
 profile.create.form.personnummer.help=Personnummer ÅÅÅÅMMDDNNNN
 
 profile.create.form.host=Jag vill vara värd
@@ -565,6 +565,7 @@ securesocial.login.signUp=Ny medlem? Om du inte har ett konto, kan du skapa ett 
 securesocial.login.here=Registrera dig
 securesocial.login.invalidCredentials=Inloggningsuppgifterna du angav är felaktiga.
 securesocial.login.forgotPassword=Glömt lösenord?
+hdc.securesocial.login.newPassword=Jag vill byta lösenord
 
 # Sign up page
 securesocial.signup.title=Registrera

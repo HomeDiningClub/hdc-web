@@ -8,7 +8,10 @@ class UserProfileOptValues(
   var roleGuest     : String,
   var roleHost      : String,
   var numberOfGuest : String,
-  var minGuest      : String)
+  var minGuest      : String,
+  var handicapFriendly : String,
+  var childFfriendly : String
+                        )
 {
 
     def maxGuestsSelected(value : String) : String = {
@@ -37,6 +40,42 @@ class UserProfileOptValues(
   }
 
 
+  /**
+   * Check if value is equals to value of checkedValue when
+   * make the value checked
+   * @param value
+   * @param checkedValue
+   * @return
+   */
+  def isValueToCheck(value : String, checkedValue : String) : String = {
+
+    var defSelected    : String = "CHECKED"
+    var selectedString : String = ""
+
+    if(value.equalsIgnoreCase(checkedValue)) {
+      selectedString = defSelected
+    }
+
+    selectedString
+  }
+
+
+  def childFfriendlyJa() : String = {
+    isValueToCheck(childFfriendly, "Ja")
+  }
+
+  def childFfriendlyNej() : String = {
+    isValueToCheck(childFfriendly, "Nej")
+  }
+
+
+  def handicapFriendlyJa() : String = {
+    isValueToCheck(handicapFriendly, "Ja")
+  }
+
+  def handicapFriendlyNej() : String = {
+    isValueToCheck(handicapFriendly, "Nej")
+  }
 
 
   def isVald(value : String) : String = {
