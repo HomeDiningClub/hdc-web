@@ -3,7 +3,7 @@ package controllers
 // http://www.playframework.com/documentation/2.2.x/ScalaForms
 import models.modelconstants.UserLevelScala
 import models.profile.{TaggedFavoritesToUserProfile, TagWord, TaggedUserProfile}
-import models.viewmodels.EditProfileExtraValues
+import models.viewmodels.{MetaData, EditProfileExtraValues}
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
@@ -228,6 +228,7 @@ class UserProfileController extends Controller with SecureSocial {
         val reviewBoxesAboutMe = ratingService.getUserReviewsAboutMe(profile.getOwner)
         val tags = tagWordService.findByProfileAndGroup(profile,"profile")
         val messages = if(myProfile) messageService.findIncomingMessagesForUser(profile.getOwner) else None
+        val metaData = buildMetaData(profile, request)
 
         Ok(views.html.profile.index(profile,
           FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,
@@ -238,6 +239,7 @@ class UserProfileController extends Controller with SecureSocial {
           reviewBoxesAboutMe = reviewBoxesAboutMe,
           userMessages = messages,
           tagList = tags,
+          metaData = metaData,
           isThisMyProfile = myProfile))
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
@@ -269,6 +271,29 @@ class UserProfileController extends Controller with SecureSocial {
         Logger.debug(errMess)
         NotFound(errMess)
     }
+  }
+
+  private def buildMetaData(profile: UserProfile, request: RequestHeader): Option[MetaData] = {
+    val domain = "//" + request.domain
+
+    Some(MetaData(
+      fbUrl = domain + request.path,
+      fbTitle = Messages("profile.title", profile.profileLinkName),
+      fbDesc = profile.aboutMe match {
+        case null | "" =>
+          profile.aboutMeHeadline match {
+            case null | "" => ""
+            case item => item
+          }
+        case item => {
+          item.substring(0, 125)
+        }
+      },
+      fbImage = profile.getMainImage match {
+        case image: models.files.ContentFile => { domain + routes.ImageController.profileNormal(image.getStoreId).url }
+        case _ => { domain + "/images/profile/profile-default-main-image.jpg" }
+      }
+    ))
   }
 
 /* Moved to CountyService

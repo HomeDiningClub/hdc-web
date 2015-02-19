@@ -1,0 +1,17 @@
+@(metaData: Option[viewmodels.MetaData] = None)
+@if(metaData.nonEmpty) {
+    @defining(metaData.get) { meta =>
+        @if(meta.metaTitle.nonEmpty){<meta property="title" content="@meta.metaTitle" />}        @* Normal meta *@
+        @if(meta.metaDesc.nonEmpty){<meta property="description" content="@meta.metaDesc" />}
+        @if(meta.metaKeywords.nonEmpty){<meta property="title" content="@meta.metaKeywords" />}
+        @if(meta.metaRobots.nonEmpty){<meta property="robots" content="@meta.metaRobots" />}
+        @if(meta.fbTitle.nonEmpty){<meta property="og:title" content="@meta.fbTitle" />}         @* Facebook meta *@
+        @if(meta.fbType.nonEmpty){<meta property="og:type" content="@meta.fbType" />}
+        @if(meta.fbImage.nonEmpty){<meta property="og:image" content="@meta.fbImage" />}
+        @if(meta.fbUrl.nonEmpty){<meta property="og:url" content="@meta.fbUrl" />}
+        @if(meta.fbDesc.nonEmpty){<meta property="og:description" content="@meta.fbDesc" />}
+        <meta property="og:site_name" content="Home Dining Club"/>
+    }
+}
+
+

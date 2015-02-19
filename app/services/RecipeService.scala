@@ -218,7 +218,7 @@ class RecipeService {
 
 
   @Transactional(readOnly = false)
-  def deleteAll {
+  private def deleteAll {
     recipeRepository.deleteAll()
   }
 

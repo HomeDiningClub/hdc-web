@@ -145,10 +145,5 @@ class AdminRecipeController extends Controller with SecureSocial {
     }
 
   }
-  // Edit - Delete content
-  def deleteAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    recipeService.deleteAll
-    val successMessage = Messages("admin.success") + " - " + Messages("admin.delete-all.success")
-    Redirect(controllers.admin.routes.AdminRecipeController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
-  }
+
 }
