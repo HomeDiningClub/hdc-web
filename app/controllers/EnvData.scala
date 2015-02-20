@@ -14,8 +14,8 @@ case class EnvData(
         acceptTerms     : Boolean,
         // childFfriendly  :Option[String],
         // handicapFriendly removed
-        havePets        :Option[String],
-        smoke           : Option[String],
+        // havePets        :Option[String],
+        // smoke           : Option[String],
         allkoholServing :Option[String],
         mainimage       : Option[String],
         avatarimage     : Option[String]

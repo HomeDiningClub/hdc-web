@@ -10,7 +10,9 @@ class UserProfileOptValues(
   var numberOfGuest : String,
   var minGuest      : String,
   var handicapFriendly : String,
-  var childFfriendly : String
+  var childFfriendly : String,
+  var havePets      : String,
+  var smoke         : String
                         )
 {
 
@@ -57,6 +59,24 @@ class UserProfileOptValues(
     }
 
     selectedString
+  }
+
+
+  def smokingPermittedJa() : String = {
+    isValueToCheck(smoke, "Ja")
+  }
+
+  def smokingPermittedNej() : String = {
+    isValueToCheck(smoke, "Nej")
+  }
+
+
+  def havePetsJa() : String = {
+    isValueToCheck(havePets, "Ja")
+  }
+
+  def havePetsNej() : String = {
+    isValueToCheck(havePets, "Nej")
   }
 
 

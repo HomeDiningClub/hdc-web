@@ -57,8 +57,8 @@ class AdminUserProfileController  extends Controller with SecureSocial {
       "acceptTerms"  -> boolean,
       // "childFfriendly" -> optional(text),
       // "handicapFriendly" -> optional(text),
-      "havePets" -> optional(text),
-      "smoke" -> optional(text),
+      // "havePets" -> optional(text),
+      // "smoke" -> optional(text),
       "allkoholServing" -> optional(text),
       "mainimage" -> optional(text),
       "avatarimage" -> optional(text)

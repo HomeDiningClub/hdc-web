@@ -121,14 +121,14 @@
                     <div class="col-xs-12">
                         <h3 class="lead">@Messages("profile.create.header.personal-information")</h3>
 
-
+                        <!--
                         <br>Förnamn
                         <br><input type="text" value="" name="firstName">
                         <br>Efternamn
                         <br><input type="text" value="" name="lastName">
                         <br>E-postadress:
                         <br><input type="text" value="" name="emailAddress">
-
+                        -->
 
 
                         @helper.inputText(EnvDataForm("streetAddress"),
@@ -208,19 +208,20 @@
                         <input type="radio" name="handicapFriendly" value="Ja"  @profileOpts.handicapFriendlyJa()>@Messages("profile.create.form.host.yes")
                         <input type="radio" name="handicapFriendly" value="Nej" @profileOpts.handicapFriendlyNej()>@Messages("profile.create.form.host.no")
 
+                        <br>
+
+                        @Messages("profile.create.form.host.pets")
+                        <br>
+                        <input type="radio" name="havePets" value="Ja"  @profileOpts.havePetsJa()>@Messages("profile.create.form.host.yes")
+                        <input type="radio" name="havePets" value="Nej" @profileOpts.havePetsNej()>@Messages("profile.create.form.host.no")
+
+                        <br>
+                        @Messages("profile.create.form.host.smoking")
+                        <br>
+                        <input type="radio" name="smoke" value="Ja"  @profileOpts.smokingPermittedJa()>@Messages("profile.create.form.host.yes")
+                        <input type="radio" name="smoke" value="Nej" @profileOpts.smokingPermittedNej()>@Messages("profile.create.form.host.no")
 
 
-                        @helper.inputRadioGroup(
-                            EnvDataForm("havePets"),
-                            options = helper.options("Ja"->Messages("profile.create.form.host.yes"),"Nej"->Messages("profile.create.form.host.no")),
-                            '_label -> Messages("profile.create.form.host.pets")
-                        )
-
-                        @helper.inputRadioGroup(
-                            EnvDataForm("smoke"),
-                            options = helper.options("Ja"->Messages("profile.create.form.host.yes"),"Nej"->Messages("profile.create.form.host.no")),
-                            '_label -> Messages("profile.create.form.host.smoking")
-                        )
 
 
                         @helper.inputRadioGroup(

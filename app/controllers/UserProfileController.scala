@@ -107,8 +107,8 @@ class UserProfileController extends Controller with SecureSocial {
       "acceptTerms"  -> boolean,
       //"childFfriendly" -> optional(text),
       //"handicapFriendly" -> optional(text),
-      "havePets" -> optional(text),
-      "smoke" -> optional(text),
+      //"havePets" -> optional(text),
+      // "smoke" -> optional(text),
       "allkoholServing" -> optional(text),
       "mainimage" -> optional(text),
       "avatarimage" -> optional(text)
@@ -131,7 +131,9 @@ class UserProfileController extends Controller with SecureSocial {
     "minGuest" -> text,
     "quality" -> list(text),
     "handicapFriendly" -> text,
-    "childFfriendly" -> text
+    "childFfriendly" -> text,
+    "havePets" -> text,
+    "smoke" -> text
   )
   (UserProfileOptions.apply) (UserProfileOptions.unapply))
 
@@ -440,8 +442,8 @@ if(userTags != null) {
     theUser.isTermsOfUseApprovedAccepted, // isTermsOfUseApprovedAccepted
     // Option(theUser.childFfriendly),
     // Option(theUser.handicapFriendly),
-    Option(theUser.havePets),
-    Option(theUser.smoke),
+    // Option(theUser.havePets),
+    //Option(theUser.smoke),
     Option(theUser.allkoholServing),
     mainImage,
     avatarImage
@@ -457,7 +459,9 @@ if(userTags != null) {
     safeJava(theUser.maxNoOfGuest),
     safeJava(theUser.minNoOfGuest),
     safeJava(theUser.handicapFriendly), // moved from EnvData.
-    safeJava(theUser.childFfriendly)
+    safeJava(theUser.childFfriendly),
+    safeJava(theUser.havePets),
+    safeJava(theUser.smoke)
   )
 
     // Other values not fit to be in form-classes
@@ -876,8 +880,11 @@ if(userTags != null) {
               numberOfGuest = ok.maxGuest
               minGuest = ok.minGuest
 
-              handicapFriendly =  ok.handicapFriendly
-              childFfriendly   = ok.childFfriendly
+              handicapFriendly  =  ok.handicapFriendly
+              childFfriendly    = ok.childFfriendly
+              havePets          = ok.havePets
+              smoke             = ok.smoke
+
 
 
               println("OK. max : " +  numberOfGuest)
@@ -896,7 +903,7 @@ if(userTags != null) {
     val uOptValues = new  UserProfileOptValues(
       payCache, paySwish,
       payBankCard, payIZettle, roleGuest, roleHost,
-      numberOfGuest, minGuest, handicapFriendly, childFfriendly)
+      numberOfGuest, minGuest, handicapFriendly, childFfriendly, havePets, smoke)
 
       // Handle tags from form ...
 
@@ -954,15 +961,15 @@ if(userTags != null) {
             println("acceptTerms :::  " + reqUserProfile.acceptTerms)
 
             println("allkoholServing " + convOptionStringToString(reqUserProfile.allkoholServing))
-            println("smoke " + convOptionStringToString(reqUserProfile.smoke))
+
            // println("payIZettle: " + convOptionStringToString(reqUserProfile.payIZettle))
 
 
 
             // childFfriendly  = convOptionStringToString(reqUserProfile.childFfriendly)  moved to UserProfileOptions
            // handicapFriendly  = convOptionStringToString(reqUserProfile.handicapFriendly) moved to UserProfileOptions
-            havePets  = convOptionStringToString(reqUserProfile.havePets)
-            smoke  = convOptionStringToString(reqUserProfile.smoke)
+           //  havePets  = convOptionStringToString(reqUserProfile.havePets)
+           // smoke  = convOptionStringToString(reqUserProfile.smoke)
             allkoholServing   = convOptionStringToString(reqUserProfile.allkoholServing)
 
 
