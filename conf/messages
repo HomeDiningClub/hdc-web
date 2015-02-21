@@ -219,8 +219,21 @@ profile.create.form.main-image=Inspirationsbild
 profile.create.form.main-image-btn=Välj en bild
 profile.create.form.main-image-preview=Förhandsgranskning
 
+
+##
 profile.create.form.streetAddress=Gatuadress
 profile.create.form.streetAddress.help=Gatuadress måste inte anges
+
+## förnamn - firstname
+profile.create.form.firstName=Förnamn
+profile.create.form.firstName.help=Förnamn måste anges
+
+## efternamn - lastname
+profile.create.form.lastName=Efternamn
+profile.create.form.lastName.help=Efternamn måste anges
+
+
+
 profile.create.form.zipCode=Postnummer
 profile.create.form.zipCode.help=Postnummer
 profile.create.form.city=Stad

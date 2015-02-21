@@ -124,11 +124,33 @@
                         <!--
                         <br>Förnamn
                         <br><input type="text" value="" name="firstName">
+
                         <br>Efternamn
                         <br><input type="text" value="" name="lastName">
                         <br>E-postadress:
                         <br><input type="text" value="" name="emailAddress">
                         -->
+
+                        <!-- firstName -->
+                        @helper.inputText(EnvDataForm("firstName"),
+                            'id -> "firstName",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.firstName"),
+                            '_help -> Messages("profile.create.form.firstName.help"),
+                            '_error -> EnvDataForm.error("firstName")
+                        )
+
+                        <!-- lastName -->
+                        @helper.inputText(EnvDataForm("lastName"),
+                            'id -> "lastName",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.lastName"),
+                            '_help -> Messages("profile.create.form.lastName.help"),
+                            '_error -> EnvDataForm.error("lastName")
+                        )
+
+
+
 
 
                         @helper.inputText(EnvDataForm("streetAddress"),

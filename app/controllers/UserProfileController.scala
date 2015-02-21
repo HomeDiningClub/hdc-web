@@ -111,7 +111,9 @@ class UserProfileController extends Controller with SecureSocial {
       // "smoke" -> optional(text),
       "allkoholServing" -> optional(text),
       "mainimage" -> optional(text),
-      "avatarimage" -> optional(text)
+      "avatarimage" -> optional(text),
+      "firstName" -> text,
+      "lastName" -> text
   )(EnvData.apply) (EnvData.unapply)
     verifying (Messages("profile.control.unique"), f => isUniqueProfileName(f.name, f.name2))
     verifying (Messages("profile.personalidentitynumber.unique"), g => isCorrectPersonnummer(g.personnummer))
@@ -330,8 +332,6 @@ class UserProfileController extends Controller with SecureSocial {
    display profile data for the current user to be changed
    my profile
    ****************************************************************************************************/
-
-
 def edit = SecuredAction { implicit request =>
 
 
@@ -446,7 +446,10 @@ if(userTags != null) {
     //Option(theUser.smoke),
     Option(theUser.allkoholServing),
     mainImage,
-    avatarImage
+    avatarImage,
+    theUser.fistName,
+    theUser.lastName
+
   )
 
   val uOptValues = new  UserProfileOptValues(
@@ -802,11 +805,7 @@ if(userTags != null) {
 
   /** **************************************************************************************************
     Save UserProfile
-
-
    ***************************************************************************************************/
-
-
   def editSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
     println("************************ save profile *********************************************")
@@ -847,15 +846,17 @@ if(userTags != null) {
         var smoke                 : String = ""
         var allkoholServing       : String = ""
 
-          var payBankCard               : String = ""
-          var payCache                  : String = ""
-          var payIZettle                : String = ""
-          var paySwish                  : String = ""
-          var roleGuest                 : String= ""
-          var roleHost                  : String = ""
-          var numberOfGuest             : String = ""
-          var minGuest                  : String = ""
+        var payBankCard               : String = ""
+        var payCache                  : String = ""
+        var payIZettle                : String = ""
+        var paySwish                  : String = ""
+        var roleGuest                 : String= ""
+        var roleHost                  : String = ""
+        var numberOfGuest             : String = ""
+        var minGuest                  : String = ""
 
+        var firstName                 : String = ""
+        var lastName                  : String = ""
 
         OptionsForm.bindFromRequest.fold(
          error => println("Error reading options "),
@@ -884,6 +885,8 @@ if(userTags != null) {
               childFfriendly    = ok.childFfriendly
               havePets          = ok.havePets
               smoke             = ok.smoke
+
+              firstName
 
 
 
@@ -960,7 +963,8 @@ if(userTags != null) {
             acceptTerms         = reqUserProfile.acceptTerms
             println("acceptTerms :::  " + reqUserProfile.acceptTerms)
 
-            println("allkoholServing " + convOptionStringToString(reqUserProfile.allkoholServing))
+           firstName = reqUserProfile.firstName
+           lastName  = reqUserProfile.lastName
 
            // println("payIZettle: " + convOptionStringToString(reqUserProfile.payIZettle))
 
@@ -971,6 +975,7 @@ if(userTags != null) {
            //  havePets  = convOptionStringToString(reqUserProfile.havePets)
            // smoke  = convOptionStringToString(reqUserProfile.smoke)
             allkoholServing   = convOptionStringToString(reqUserProfile.allkoholServing)
+
 
 
 
@@ -1021,11 +1026,25 @@ if(userTags != null) {
 
            var userCredentials =  theUser.getOwner
 
+
+
+            // save: UserCredential
             userCredentials.personNummer = reqUserProfile.personnummer
-            userCredentialService.save(userCredentials)
+            userCredentials.firstName = "test"
+            userCredentials.lastName = lastName
+            userCredentials.fullName = firstName + " " + lastName
+            var t = userCredentialService.save(userCredentials)
+
+            println("retur_lastName : " + t.lastName)
+            println("retur_persOrgNr : " + t.personNummer)
+            println("retur_epost: " + t.emailAddress )
+            println("retur_userId : " + t.userId)
+            println("retur_firstName : " + t.firstName)
 
 
 
+           theUser.fistName             = firstName
+           theUser.lastName             = lastName
 
            theUser.aboutMeHeadline      = aboutMeHeadlineText
            theUser.aboutMe              = aboutMeText
@@ -1140,6 +1159,8 @@ if(userTags != null) {
                       }
             */
 
+
+           // save: userProfile
           userProfileService.updateUserProfileTags(theUser, d, map)
           //userProfileService.saveUserProfile(theUser)
 
