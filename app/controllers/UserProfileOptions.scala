@@ -10,10 +10,10 @@ case class UserProfileOptions (
   maxGuest : String,
   minGuest : String,
   quality  : List[String],
-  handicapFriendly : String, // moved from EnvData
-  childFfriendly   : String,
-  havePets         : String,
-  smoke            : String
+  handicapFriendly : Option[String], // moved from EnvData
+  childFfriendly   : Option[String],
+  havePets         : Option[String],
+  smoke            : Option[String]
                                 )
 
 

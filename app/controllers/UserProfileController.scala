@@ -135,10 +135,10 @@ class UserProfileController extends Controller with SecureSocial {
     "maxGuest" -> text,
     "minGuest" -> text,
     "quality" -> list(text),
-    "handicapFriendly" -> text,
-    "childFfriendly" -> text,
-    "havePets" -> text,
-    "smoke" -> text
+    "handicapFriendly" -> optional(text),
+    "childFfriendly" -> optional(text),
+    "havePets" -> optional(text),
+    "smoke" -> optional(text)
   )
   (UserProfileOptions.apply) (UserProfileOptions.unapply))
 
@@ -951,16 +951,11 @@ if(userTags != null) {
               numberOfGuest = ok.maxGuest
               minGuest = ok.minGuest
 
-              handicapFriendly  =  ok.handicapFriendly
-              childFfriendly    = ok.childFfriendly
-              havePets          = ok.havePets
-              smoke             = ok.smoke
+              handicapFriendly  =  ok.handicapFriendly.getOrElse("")
+              childFfriendly    = ok.childFfriendly.getOrElse("")
+              havePets          = ok.havePets.getOrElse("")
+              smoke             = ok.smoke.getOrElse("")
 
-              firstName
-
-
-
-              println("OK. max : " +  numberOfGuest)
 
               for(tags<-ok.quality) {
                 typ.addVald(tags)
