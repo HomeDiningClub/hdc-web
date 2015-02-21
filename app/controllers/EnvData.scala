@@ -44,5 +44,7 @@ case class EnvData(
         mainimage       : Option[String],
         avatarimage     : Option[String],
         firstName       : String,
-        lastName        : String
+        lastName        : String,
+        emailAddress    : String,
+        emailAddress2   : String
 )

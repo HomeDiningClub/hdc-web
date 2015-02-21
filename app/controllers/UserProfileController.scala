@@ -113,8 +113,11 @@ class UserProfileController extends Controller with SecureSocial {
       "mainimage" -> optional(text),
       "avatarimage" -> optional(text),
       "firstName" -> text,
-      "lastName" -> text
+      "lastName" -> text,
+      "emailAddress" -> text,
+      "emailAddress2" -> text
   )(EnvData.apply) (EnvData.unapply)
+    verifying (Messages("profile.create.form.emailAddress.uniq"), e => isUniqueEmailAddress(e.emailAddress, e.emailAddress2))
     verifying (Messages("profile.control.unique"), f => isUniqueProfileName(f.name, f.name2))
     verifying (Messages("profile.personalidentitynumber.unique"), g => isCorrectPersonnummer(g.personnummer))
     verifying (Messages("profile.approve.memberterms"), h => h.acceptTerms == true)
@@ -162,7 +165,9 @@ class UserProfileController extends Controller with SecureSocial {
 
    var profileWithLinkName = userProfileService.findByprofileLinkName(profileName)
 
-   // Får endast innehålla små bokstäver mellan a till z
+   // Länknamn måste börja på en bokstav, stor eller liten
+   // därefter kan det koimma en stor eller liten bokstav elln siffra eller ett bindesträck
+   //
    if (!profileName.matches("[a-z,A-Z]+[a-z,A-Z,0-9,-]*")) return false
 
 
@@ -179,6 +184,7 @@ class UserProfileController extends Controller with SecureSocial {
        println("ID : " + up.userIdentity)
        println("profileLinkName : " + up.profileLinkName)
 
+       // profilelinkname has not been changed
        if(profileName == storedProfileName) {
          return true
        }
@@ -196,6 +202,7 @@ class UserProfileController extends Controller with SecureSocial {
  }
 
 
+
   private def isThisMyProfile(profile: UserProfile)(implicit request: RequestHeader): Boolean = {
     utils.Helpers.getUserFromRequest match {
       case None =>
@@ -207,6 +214,63 @@ class UserProfileController extends Controller with SecureSocial {
           false
     }
   }
+
+
+
+  // Is email uniq
+  def isUniqueEmailAddress(emailAddress : String, storedEmailAddress : String) : Boolean = {
+
+    //var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+
+    // Fetch UserCredential with email address and autentication usernamn/password
+    var ucwithEmail = userCredentialService.findUserPasswordUserByEmail(emailAddress)
+
+    // Länknamn måste börja på en bokstav, stor eller liten
+    // därefter kan det koimma en stor eller liten bokstav elln siffra eller ett bindesträck
+    //
+
+    var emailRegExpPatern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+
+    if (!emailAddress.matches(emailRegExpPatern)) return false
+
+    var ucExits =
+      ucwithEmail match {
+        case None =>{
+          println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+          println("No mtach")
+          return true
+        }
+        case Some(up)=> {
+          println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+          println("ObjecID : " + up.objectId)
+          println("email address : " + up.emailAddress)
+
+          // emailaddress has not been changed
+          if(emailAddress == storedEmailAddress) {
+            return true
+          }
+
+          // params.flash();
+          // flash.error("Please correct the error below!");
+
+
+          // emailaddress exists in the storage and have
+          // been changed mening an other user i usning the same emailadress.
+          return false
+        }
+
+      }
+
+    false
+    //profileName.startsWith("test")
+  }
+
+
+
+
+
+
+
 
   def verifyUserProfile = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: RequestHeader =>
     val curUser = utils.Helpers.getUserFromRequest.get
@@ -448,9 +512,12 @@ if(userTags != null) {
     mainImage,
     avatarImage,
     theUser.fistName,
-    theUser.lastName
-
+    theUser.lastName,
+    theUser.getOwner.emailAddress,
+    theUser.getOwner.emailAddress
   )
+
+
 
   val uOptValues = new  UserProfileOptValues(
     safeJava(theUser.payCache),
@@ -858,6 +925,9 @@ if(userTags != null) {
         var firstName                 : String = ""
         var lastName                  : String = ""
 
+        var epostAddress              : String = ""
+
+
         OptionsForm.bindFromRequest.fold(
          error => println("Error reading options "),
         ok=>
@@ -962,6 +1032,9 @@ if(userTags != null) {
             println("Personnummer: " + reqUserProfile.personnummer)
             acceptTerms         = reqUserProfile.acceptTerms
             println("acceptTerms :::  " + reqUserProfile.acceptTerms)
+            println("email 1 " + reqUserProfile.emailAddress)
+            println("email 2 " + reqUserProfile.emailAddress2)
+
 
            firstName = reqUserProfile.firstName
            lastName  = reqUserProfile.lastName
@@ -1033,6 +1106,15 @@ if(userTags != null) {
             userCredentials.firstName = "test"
             userCredentials.lastName = lastName
             userCredentials.fullName = firstName + " " + lastName
+
+            epostAddress = reqUserProfile.emailAddress
+
+            userCredentials.userId = epostAddress
+            userCredentials.emailAddress = epostAddress
+
+            println("userCredentials.userId : " + userCredentials.userId)
+            println("userCredentials.emailAddress : " + userCredentials.emailAddress)
+
             var t = userCredentialService.save(userCredentials)
 
             println("retur_lastName : " + t.lastName)
@@ -1161,6 +1243,14 @@ if(userTags != null) {
 
 
            // save: userProfile
+
+           theUser.keyIdentity = epostAddress +  "_userpass"
+           theUser.userIdentity = epostAddress
+
+
+            println("UP:userIdentity : " + theUser.userIdentity)
+            println("UP:keyIdentity : " + theUser.keyIdentity)
+
           userProfileService.updateUserProfileTags(theUser, d, map)
           //userProfileService.saveUserProfile(theUser)
 

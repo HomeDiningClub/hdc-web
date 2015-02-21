@@ -63,7 +63,9 @@ class AdminUserProfileController  extends Controller with SecureSocial {
       "mainimage" -> optional(text),
       "avatarimage" -> optional(text),
       "firstName" -> text,
-      "lastName" -> text
+      "lastName" -> text,
+      "emailAddress" -> text,
+     "emailAddress2" -> text
     )
     (EnvData.apply) (EnvData.unapply)
   )

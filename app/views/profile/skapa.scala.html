@@ -150,6 +150,27 @@
                         )
 
 
+                        <!-- e-mailaddress -->
+                        @helper.inputText(EnvDataForm("emailAddress"),
+                            'id -> "name",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.emailAddress"),
+                            '_help -> Messages("profile.create.form.emailAddress.required"),
+                            '_error -> EnvDataForm.error("emailAddress")
+                        )
+
+
+                        @helper.inputHidden(EnvDataForm("emailAddress2"),
+                            'id -> "name",
+                            '_showErrors -> true,
+                            '_label -> Messages("profile.create.form.emailAddress"),
+                            '_help -> "",
+                            '_error -> EnvDataForm.error("emailAddress2")
+                        )
+
+
+
+
 
 
 

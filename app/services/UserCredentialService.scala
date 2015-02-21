@@ -151,6 +151,19 @@ class UserCredentialService {
     }
   }
 
+
+  // providerId = userpass
+  // authMethod = userPassword
+  @Transactional(readOnly = true)
+  def findUserPasswordUserByEmail(emailAdress: String): Option[UserCredential] = {
+    userCredentialRepository.findByemailAddressAndProviderId(emailAdress, "userpass") match {
+      case null => None
+      case item => Some(item)
+    }
+  }
+
+
+
   @Transactional(readOnly = true)
   def getListOfAll: Option[List[UserCredential]] = {
     val listOfAll: List[UserCredential] = userCredentialRepository.findAll().iterator.asScala.toList

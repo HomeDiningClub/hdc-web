@@ -220,7 +220,7 @@ profile.create.form.main-image-btn=Välj en bild
 profile.create.form.main-image-preview=Förhandsgranskning
 
 
-##
+## gatuadress -road address
 profile.create.form.streetAddress=Gatuadress
 profile.create.form.streetAddress.help=Gatuadress måste inte anges
 
@@ -232,7 +232,11 @@ profile.create.form.firstName.help=Förnamn måste anges
 profile.create.form.lastName=Efternamn
 profile.create.form.lastName.help=Efternamn måste anges
 
-
+## email-address
+profile.create.form.emailAddress=E-Postadress
+profile.create.form.emailAddress.help=E-postadress måste anges och vara korrekt
+profile.create.form.emailAddress.required=E-postadressen måste vara korrekt och unik, vid byte av e-postadress blir du utloggad
+profile.create.form.emailAddress.uniq=E-postadress är inte korrekt angiviet
 
 profile.create.form.zipCode=Postnummer
 profile.create.form.zipCode.help=Postnummer
