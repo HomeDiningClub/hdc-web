@@ -4,15 +4,16 @@ import java.util.UUID
 
 import models.files.ContentFile
 import models.modelconstants.UserLevelScala
-import models.{Recipe, UserCredential, UserProfile}
+import models.{ViewedByMember, Recipe, UserCredential, UserProfile, ViewedByUnKnown}
 import org.neo4j.graphdb._
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Sort, Page, PageRequest, Pageable}
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
-import repositories.UserProfileRepository
+import repositories.{ViewedByUnKnownRepository, UserProfileRepository, ViewdByMemberRepository}
 import securesocial.core.Identity
+import utils.ViewedByMemberUtil
 import scala.collection.JavaConverters._
 import scala.List
 import scala.language.implicitConversions
@@ -23,7 +24,7 @@ import play.api.mvc.Results._
 import models.location.County
 import models.profile.{TaggedFavoritesToUserProfile, TaggedUserProfile, TagWord}
 import scala.collection.JavaConverters._
-
+import utils.ViewedByMemberUtil
 
 @Service
 object  UserProfileService {
@@ -47,6 +48,76 @@ class UserProfileService {
 
   @Autowired
   private var userProfileRepository: UserProfileRepository = _
+
+  @Autowired
+  private var viewdByMemberRepository: ViewdByMemberRepository = _
+
+  @Autowired
+  private var viewedByUnKnownRepository: ViewedByUnKnownRepository = _
+
+
+  // save UnKnow user access to page
+  @Transactional(readOnly = false)
+  def saveUnKnownAccess(view: models.ViewedByUnKnown): models.ViewedByUnKnown = {
+    var newView = viewedByUnKnownRepository.save(view)
+    newView
+  }
+
+  // save member access to page
+  @Transactional(readOnly = false)
+  def saveMemberAccess(view: models.ViewedByMember): models.ViewedByMember = {
+    var newView = viewdByMemberRepository.save(view)
+    newView
+  }
+
+
+  // logged in user accessing profile page
+  @Transactional(readOnly = false)
+  def logProfileViewByObjectId(viewdByMember:ViewedByMember,viewerObjectId: String, pageOwnerObjectId : String) {
+    var util = new ViewedByMemberUtil()
+    viewdByMember.viewedBy(viewerObjectId, util.getNowString) //@todo
+      saveMemberAccess(viewdByMember)
+  }
+
+  // UnKnow user access not logged in user
+  @Transactional(readOnly = false)
+  def logUnKnownProfileViewByObjectId(viewedByUnKnown:ViewedByUnKnown, ipAddress : String) {
+    var util = new ViewedByMemberUtil()
+    viewedByUnKnown.viewedBy(ipAddress, util.getNowString)
+    saveUnKnownAccess(viewedByUnKnown)
+  }
+
+
+  // fetch number of viewers
+
+  // LoggedInUsers
+
+  // UnKnownUsers
+
+
+  //@todo not working, must implement a new metod on repository
+  @Transactional(readOnly = true)
+  def findByViewByMemberAccess(objectId:String): Option[ViewedByMember] = {
+
+    var ob : Option[ViewedByMember] = None
+
+    var list = viewdByMemberRepository.findAll()
+
+
+    // @todo
+    /*
+    for(v: models.ViewdByMember <- list) {
+      if(v.objectId == objectId.toString) {
+       ob = Some(v)
+      }
+
+    }
+    */
+    ob
+  }
+
+
+
 
 
   @Transactional(readOnly = false)
@@ -75,6 +146,26 @@ class UserProfileService {
 
     theUser
   }
+
+  @Transactional(readOnly = false)
+  def viewedBy(
+                    theUser:  models.UserProfile,
+                    name:  String
+                    ): models.UserProfile = {
+
+      var memberAccess = theUser.getmemberVisited() : models.ViewedByMember
+      var util = new ViewedByMemberUtil()
+
+      println("Viewed by member name : " + name)
+      println("Viewed by objectId : " + memberAccess.objectId)
+
+      memberAccess.viewedBy(name, util.getNowString)
+      theUser.setViewedByMeber(memberAccess)
+
+    theUser
+  }
+
+
 
 
 
@@ -308,6 +399,19 @@ class UserProfileService {
   @Transactional(readOnly = false)
   def setAndRemoveAvatarImage(userProfile: UserProfile, newImage: ContentFile): UserProfile = {
     userProfile.setAndRemoveAvatarImage(newImage)
+    userProfile
+  }
+
+
+  @Transactional(readOnly = false)
+  def setAndRemoveViewByMember(userProfile: UserProfile, viewedByMember:models.ViewedByMember): UserProfile = {
+    userProfile.setViewedByMeber(viewedByMember)
+    userProfile
+  }
+
+  @Transactional(readOnly = false)
+  def setAndRemoveViewByUnKnown(userProfile: UserProfile, viewedByUnKnown:models.ViewedByUnKnown): UserProfile = {
+    userProfile.setViewedByUnKnown(viewedByUnKnown)
     userProfile
   }
 

@@ -3,8 +3,7 @@ package services
 import _root_.java.util.UUID
 import enums.RoleEnums
 import enums.RoleEnums.RoleEnums
-import models.{UserCredential, UserProfileData}
-import models.UserProfile
+import models.{ViewedByUnKnown, UserCredential, UserProfileData, UserProfile}
 import org.neo4j.helpers.collection.IteratorUtil
 import repositories.UserProfileRepository
 
@@ -276,7 +275,45 @@ class UserCredentialServicePlugin (application: Application) extends UserService
         if(profileItter.hasNext)
         {
           var theProfile = profileItter.next()
+          var saveProfile : Boolean = false
+
+
+          print("#######################################################")
+          print("# Viewed By Member ...")
+          print("#######################################################")
+
+
+
+          if(theProfile.getmemberVisited() == null || theProfile.getmemberVisited() == None) {
+            print("Create ViewedByMember")
+            var view : models.ViewedByMember = new models.ViewedByMember()
+            println("size : " + view.getSize)
+            InstancedServices.userProfileService.setAndRemoveViewByMember(theProfile, view)
+            //InstancedServices.userProfileService.saveUserProfile(theProfile)
+            saveProfile = true
+          }
+
+          // At ViewedByUnKnown
+          if(theProfile.getUnKnownVisited() == null || theProfile.getUnKnownVisited == None) {
+            print("Create ViewedByUnKnown")
+            var view : models.ViewedByUnKnown = new ViewedByUnKnown()
+            InstancedServices.userProfileService.setAndRemoveViewByUnKnown(theProfile, view)
+            saveProfile = true
+
+          }
+
+          if(saveProfile) {
+            println("Save profile ....  ")
+            InstancedServices.userProfileService.saveUserProfile(theProfile)
+          }
+
+
+
         }
+
+
+
+
 
 
         modUserCredential.oAuth1InfoToken         = userCredential.oAuth1InfoToken

@@ -1,0 +1,215 @@
+package utils;
+
+
+import models.ViewedByUnKnown;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+public class ViewedByUnKnownUtil {
+
+    private String DATE_STRING = "yyyy-MM-dd";
+    private SimpleDateFormat sipmpleDateFormatString = new SimpleDateFormat(DATE_STRING);
+
+
+    /**
+     * Convert string to date
+     * @param str with format YYYY-MM-DD
+     * @return Date
+     */
+    public Date getDate(String str) {
+        Date date = Calendar.getInstance().getTime();
+
+        try {
+            date = sipmpleDateFormatString.parse(getDateAsString(str));
+        } catch(ParseException ex) {
+
+        }
+
+        return date;
+    }
+
+
+    /***
+     * Return date as String from formated String <name>,<date>
+     * @param str <name>,<date>
+     * @return <date>
+     */
+    public String getDateAsString(String str) {
+        int index = str.indexOf(",");
+        return str.substring(index+1).trim();
+    }
+
+    /**
+     * Return name
+     * @param str
+     * @return
+     */
+    public String getNamne(String str) {
+        int index = str.indexOf(",");
+        return str.substring(0, index).trim();
+    }
+
+
+
+    public String getDateObjectAsString(Date date) {
+        String str = "";
+
+        try {
+            str = sipmpleDateFormatString.format(date);
+        } catch(Exception ex) {
+
+        }
+        return str;
+    }
+
+
+    public String getNowString() {
+        return getDateObjectAsString(Calendar.getInstance().getTime());
+    }
+
+    public Date xDayEarlier(int daysEarliers) {
+        daysEarliers =  -1 * daysEarliers;
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, daysEarliers);
+        return cal.getTime();
+    }
+
+
+    public void removeAllAccessOlderThen(Date datum, ViewedByUnKnown view) {
+
+        view.initUserAccessLog();
+        Iterator<String> itter = view.getIterator();
+        Set<String> toRemove = new HashSet<String>();
+        int noOfRemovedViews = 0;
+
+        while(itter.hasNext()) {
+            String str = itter.next();
+            Date pos = getDate(str);
+
+            if(pos.before(datum)) {
+                toRemove.add(str);
+            }
+        }
+
+        for(String txt: toRemove) {
+            view.remove(txt);
+            noOfRemovedViews++;
+        }
+
+
+        view.addNewViews(noOfRemovedViews);
+    }
+
+
+    public Iterator<String> getIterator(ViewedByUnKnown view) {
+        view.initUserAccessLog();
+        return view.getIterator();
+    }
+
+    public Iterator<String> getNameIteratorByDate(ViewedByUnKnown view, String date) {
+        ArrayList<String> arr = new ArrayList<String>();
+
+        Iterator<String> iter = getIterator(view);
+
+        while(iter.hasNext()) {
+            String log = iter.next();
+            String nDate = getDateAsString(log);
+            if(nDate.equals(date)) {
+                arr.add(getNamne(log));
+            }
+        }
+
+        return arr.iterator();
+    }
+
+    public Iterator<String> getNameIterator(ViewedByUnKnown view) {
+        ArrayList<String> arr = new ArrayList<String>();
+        HashSet<String> hSet = new HashSet<String>();
+
+        Iterator<String> iter = getIterator(view);
+
+        while(iter.hasNext()) {
+            String log = iter.next();
+            String nDate = getDateAsString(log);
+            String nName = getNamne(log);
+            hSet.add(nName);
+
+
+        }
+
+        return hSet.iterator();
+    }
+
+
+    public static void main(String args[]) {
+
+        ViewedByUnKnownUtil v = new ViewedByUnKnownUtil();
+        ViewedByUnKnown v1 = new ViewedByUnKnown();
+        v1.viewedBy("01-01", "2010-12-12");
+        v1.viewedBy("01-02", "2010-12-12");
+        v1.viewedBy("01-01", "2010-12-13");
+
+        Iterator<String> iter1 = v.getIterator(v1);
+        while(iter1.hasNext()) {
+            String obj = iter1.next();
+            System.out.println(obj);
+        }
+
+
+        System.out.println("Name iterator ...");
+        iter1 = v.getNameIterator(v1);
+        while(iter1.hasNext()) {
+            String obj = iter1.next();
+            System.out.println(obj);
+        }
+
+        System.out.println("Iter by date : 2010-12-12 ");
+        Iterator<String> iter2 = v.getNameIteratorByDate(v1, "2010-12-12");
+        while(iter2.hasNext()) {
+            String obj = iter2.next();
+            System.out.println(obj);
+        }
+
+        iter2 = v.getNameIteratorByDate(v1, "2010-12-13");
+        while(iter2.hasNext()) {
+            String obj = iter2.next();
+            System.out.println(obj);
+        }
+
+        iter2 = v.getNameIteratorByDate(v1, "2010-12-14");
+        while(iter2.hasNext()) {
+            String obj = iter2.next();
+            System.out.println(obj);
+        }
+
+        System.out.println("antal : " + v1.getNumberOfViews());
+        System.out.println("storlek : " + v1.getSize());
+        System.out.println("Remove record older when ...");
+        v.removeAllAccessOlderThen(v.getDate("2010-12-13"), v1);
+        System.out.println("antal : " + v1.getNumberOfViews());
+        System.out.println("storlek : " + v1.getSize());
+        iter1 = v.getIterator(v1);
+        while(iter1.hasNext()) {
+            String obj = iter1.next();
+            v.getNamne(obj);
+            v.getDateAsString(obj);
+            System.out.println(obj);
+        }
+
+        System.out.println("Now : " + v.getDateObjectAsString(Calendar.getInstance().getTime()));
+        System.out.println("Now : " + v.getNowString());
+
+
+        v.xDayEarlier(1);
+
+
+    }
+
+
+
+}
+
+
+

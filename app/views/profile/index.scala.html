@@ -222,9 +222,36 @@
 
                             </div>
                         </div>
+                        <div class="panel panel-default panel-dropshadow big-margin-top">
+                            <div class="panel-body">
+                                Antal besökare:
+                                <br>
+                                <table>
+                                    <tr>
+                                        <td>Inloggade:</td>
+                                        <td align="right">
+                                        @{userProfile.getmemberVisited() match {
+                                            case  null => { 0 }
+                                            case _ => { userProfile.getmemberVisited().getSize }
+                                        }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Icke inloggade: </td>
+                                        <td align="right">
+                                        @{userProfile.getUnKnownVisited() match {
+                                            case  null => { 0 }
+                                            case _ => { userProfile.getUnKnownVisited().getSize }
+                                        }}
+                                        </td>
+                                    </tr>
+                                </table>
 
+                            </div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-xs-12 col-md-12 big-margin-top">
                         <nav>

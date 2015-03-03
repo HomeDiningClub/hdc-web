@@ -14,8 +14,6 @@ import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
-import scala.Int;
-import services.InstancedServices;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -119,11 +117,52 @@ public class UserProfile extends AuditEntity implements IEditable {
     @RelatedTo(type = "IN_PROFILE", direction = Direction.INCOMING)
     private UserCredential owner;
 
+    @RelatedTo(type = "IN_USER_VISITED", direction = Direction.OUTGOING)
+    private ViewedByMember memberVisited;
+
+    @RelatedTo(type = "IN_OTHER_VISITED", direction = Direction.OUTGOING)
+    private ViewedByUnKnown unKnownVisited;
+
+
     @RelatedTo(type = RelationshipTypesJava.MAIN_IMAGE.Constant, direction = Direction.OUTGOING)
     private ContentFile mainImage;
 
     @RelatedTo(type = RelationshipTypesJava.AVATAR_IMAGE.Constant, direction = Direction.OUTGOING)
     private ContentFile avatarImage;
+
+
+    @Fetch
+    public ViewedByMember getmemberVisited() {
+        return this.memberVisited;
+    }
+
+    public void setViewedByMeber(ViewedByMember viewed) {
+        this.memberVisited = viewed;
+    }
+
+    public void removeViewdByMember() {
+        if(this.memberVisited != null && this.memberVisited.objectId != null) {
+            this.memberVisited = null;
+        }
+    }
+
+
+    @Fetch
+    public ViewedByUnKnown getUnKnownVisited() {
+        return this.unKnownVisited;
+    }
+
+    public void setViewedByUnKnown(ViewedByUnKnown viewed) {
+        this.unKnownVisited = viewed;
+    }
+
+    public void removeViewdUnKnown() {
+        if(this.unKnownVisited != null && this.unKnownVisited.objectId != null) {
+            this.unKnownVisited = null;
+        }
+    }
+
+
 
     @Fetch
     public Set<String> getRole() {
