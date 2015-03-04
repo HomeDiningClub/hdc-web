@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Sort, Page, PageRequest, Pageable}
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
-import repositories.{ViewedByUnKnownRepository, UserProfileRepository, ViewdByMemberRepository}
+import repositories.{ViewedByUnKnownRepository, UserProfileRepository, ViewedByMemberRepository}
 import securesocial.core.Identity
 import utils.ViewedByMemberUtil
 import scala.collection.JavaConverters._
@@ -50,7 +50,7 @@ class UserProfileService {
   private var userProfileRepository: UserProfileRepository = _
 
   @Autowired
-  private var viewdByMemberRepository: ViewdByMemberRepository = _
+  private var viewdByMemberRepository: ViewedByMemberRepository = _
 
   @Autowired
   private var viewedByUnKnownRepository: ViewedByUnKnownRepository = _
@@ -155,10 +155,6 @@ class UserProfileService {
 
       var memberAccess = theUser.getmemberVisited() : models.ViewedByMember
       var util = new ViewedByMemberUtil()
-
-      println("Viewed by member name : " + name)
-      println("Viewed by objectId : " + memberAccess.objectId)
-
       memberAccess.viewedBy(name, util.getNowString)
       theUser.setViewedByMeber(memberAccess)
 

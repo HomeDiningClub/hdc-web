@@ -281,70 +281,50 @@ class UserProfileController extends Controller with SecureSocial {
         val messages = if(myProfile) messageService.findIncomingMessagesForUser(profile.getOwner) else None
         val metaData = buildMetaData(profile, request)
 
-        println("####################################################")
-        println("#########ACCESS                      ###############")
-        println("####################################################")
-        //userProfileService.viewedBy(profile, profile.objectId.toString)
-        println("ObjectID : " + profile.objectId.toString)
-        println("ProfileLinkName : " + profile.profileLinkName)
+        // should the event be registred or not
+        val doCountEvent : Boolean = false
 
-        if(request.user == None) {
-          println("Anonymouse user access ...")
+        if(doCountEvent) {
 
-          if(profile.getUnKnownVisited() != null && profile.getUnKnownVisited() != None) {
-            var ipAddress = request.remoteAddress
-            println("ip-address : " +  ipAddress)
+          if (request.user == None) {
 
-            var log = profile.getUnKnownVisited
-            var util : ViewedByUnKnownUtil = new ViewedByUnKnownUtil()
-            var oldestDate : java.util.Date = util.xDayEarlier(1)
-            util.removeAllAccessOlderThen(oldestDate, log)
+            if (profile.getUnKnownVisited() != null && profile.getUnKnownVisited() != None)
+            {
+              var ipAddress = request.remoteAddress
 
-            userProfileService.logUnKnownProfileViewByObjectId(log, ipAddress)
-          } else {
-            println("No log for viewers (UnKnown) ")
-          }
-          println("UnKnown - OK ")
+              var log = profile.getUnKnownVisited
+              var util: ViewedByUnKnownUtil = new ViewedByUnKnownUtil()
+              var oldestDate: java.util.Date = util.xDayEarlier(1)
+              util.removeAllAccessOlderThen(oldestDate, log)
+              userProfileService.logUnKnownProfileViewByObjectId(log, ipAddress)
+            }
 
-
-
-        } else {
-          println("Logged in user access ...")
-
-          // fetch logged in user
-          var theUser: Option[models.UserProfile] = Helpers.getUserFromRequest(request) match {
-            case Some(user) => Some(user.profiles.asScala.head)
-            case None => None
-          }
-
-          var vOId: String = theUser match {
-            case Some(v) => v.objectId.toString
-            case None => ""
-          }
-
-          // Member access
-          if(profile.getmemberVisited() != null && profile.getmemberVisited() != None) {
-            var log = profile.getmemberVisited()
-            var util : ViewedByMemberUtil = new ViewedByMemberUtil()
-            var oldestDate : java.util.Date = util.xDayEarlier(7)
-            util.removeAllAccessOlderThen(oldestDate, log)
-            userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
           } else
           {
-            println("No log for users UserNamePassword")
+
+            // fetch logged in user
+            var theUser: Option[models.UserProfile] = Helpers.getUserFromRequest(request) match {
+              case Some(user) => Some(user.profiles.asScala.head)
+              case None => None
+            }
+
+            var vOId: String = theUser match {
+              case Some(v) => v.objectId.toString
+              case None => ""
+            }
+
+            // Member access
+            if (profile.getmemberVisited() != null && profile.getmemberVisited() != None) {
+              var log = profile.getmemberVisited()
+              var util: ViewedByMemberUtil = new ViewedByMemberUtil()
+              var oldestDate: java.util.Date = util.xDayEarlier(7)
+              util.removeAllAccessOlderThen(oldestDate, log)
+              userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
+            }
+
           }
 
-
-
-        }
-
-         if(profile.getmemberVisited() != null && profile.getmemberVisited() != None) {
-           println("Antal besökare : " + profile.getmemberVisited().getSize)
-         }
-
-
-
-
+        } // false
 
 
         Ok(views.html.profile.index(profile,

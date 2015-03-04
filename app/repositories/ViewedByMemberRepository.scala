@@ -6,6 +6,6 @@ import org.springframework.data.neo4j.annotation.Query
 import models.ViewedByMember
 import java.util.UUID
 
-trait ViewdByMemberRepository extends GraphRepository[ViewedByMember] {
+trait ViewedByMemberRepository extends GraphRepository[ViewedByMember] {
 
 }
