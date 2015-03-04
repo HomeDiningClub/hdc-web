@@ -101,6 +101,27 @@ public class ViewedByMemberUtil {
     }
 
 
+    public void removeOldAccessOfSameUser(String name, ViewedByMember view) {
+
+        view.initUserAccessLog();
+        Iterator<String> itter = view.getIterator();
+        Set<String> toRemove = new HashSet<String>();
+        int noOfRemovedViews = 0;
+
+        while(itter.hasNext()) {
+            String str = itter.next();
+            if(name.equalsIgnoreCase(getNamne(str))) {
+                toRemove.add(str);
+            }
+        }
+
+        for(String txt: toRemove) {
+            view.remove(txt);
+            noOfRemovedViews++;
+        }
+
+    }
+
 
 
     public Iterator<String> getIterator(ViewedByMember view) {
