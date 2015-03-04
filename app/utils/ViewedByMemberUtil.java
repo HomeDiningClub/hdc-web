@@ -97,9 +97,10 @@ public class ViewedByMemberUtil {
             noOfRemovedViews++;
         }
 
-
         view.addNewViews(noOfRemovedViews);
     }
+
+
 
 
     public Iterator<String> getIterator(ViewedByMember view) {
@@ -123,6 +124,8 @@ public class ViewedByMemberUtil {
         return arr.iterator();
     }
 
+
+
     public Iterator<String> getNameIterator(ViewedByMember view) {
         ArrayList<String> arr = new ArrayList<String>();
         HashSet<String> hSet = new HashSet<String>();
@@ -134,78 +137,10 @@ public class ViewedByMemberUtil {
             String nDate = getDateAsString(log);
             String nName = getNamne(log);
             hSet.add(nName);
-
-
         }
 
         return hSet.iterator();
     }
-
-
-    public static void main(String args[]) {
-
-        ViewedByMemberUtil v = new ViewedByMemberUtil();
-        ViewedByMember v1 = new ViewedByMember();
-        v1.viewedBy("01-01", "2010-12-12");
-        v1.viewedBy("01-02", "2010-12-12");
-        v1.viewedBy("01-01", "2010-12-13");
-
-        Iterator<String> iter1 = v.getIterator(v1);
-        while(iter1.hasNext()) {
-            String obj = iter1.next();
-            System.out.println(obj);
-        }
-
-
-        System.out.println("Name iterator ...");
-        iter1 = v.getNameIterator(v1);
-        while(iter1.hasNext()) {
-            String obj = iter1.next();
-            System.out.println(obj);
-        }
-
-        System.out.println("Iter by date : 2010-12-12 ");
-        Iterator<String> iter2 = v.getNameIteratorByDate(v1, "2010-12-12");
-        while(iter2.hasNext()) {
-            String obj = iter2.next();
-            System.out.println(obj);
-        }
-
-        iter2 = v.getNameIteratorByDate(v1, "2010-12-13");
-        while(iter2.hasNext()) {
-            String obj = iter2.next();
-            System.out.println(obj);
-        }
-
-        iter2 = v.getNameIteratorByDate(v1, "2010-12-14");
-        while(iter2.hasNext()) {
-            String obj = iter2.next();
-            System.out.println(obj);
-        }
-
-        System.out.println("antal : " + v1.getNumberOfViews());
-        System.out.println("storlek : " + v1.getSize());
-        System.out.println("Remove record older when ...");
-        v.removeAllAccessOlderThen(v.getDate("2010-12-13"), v1);
-        System.out.println("antal : " + v1.getNumberOfViews());
-        System.out.println("storlek : " + v1.getSize());
-        iter1 = v.getIterator(v1);
-        while(iter1.hasNext()) {
-            String obj = iter1.next();
-            v.getNamne(obj);
-            v.getDateAsString(obj);
-            System.out.println(obj);
-        }
-
-        System.out.println("Now : " + v.getDateObjectAsString(Calendar.getInstance().getTime()));
-        System.out.println("Now : " + v.getNowString());
-
-
-        v.xDayEarlier(1);
-
-
-    }
-
 
 
 }
