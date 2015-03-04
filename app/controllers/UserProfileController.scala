@@ -1,6 +1,6 @@
 package controllers
 
-import java.util.UUID
+import java.util.{Date, UUID}
 
 import constants.FlashMsgConstants
 import enums.RoleEnums
@@ -15,7 +15,7 @@ import play.api.data.Forms._
 import play.api.data._
 import play.api.i18n.Messages
 import play.api.mvc._
-import securesocial.core.SecureSocial
+import securesocial.core.{RequestWithUser, SecureSocial}
 import services._
 import utils.Helpers
 import utils.authorization.WithRole
@@ -285,45 +285,7 @@ class UserProfileController extends Controller with SecureSocial {
         val doCountEvent : Boolean = false
 
         if(doCountEvent) {
-
-          if (request.user == None) {
-
-            if (profile.getUnKnownVisited() != null && profile.getUnKnownVisited() != None)
-            {
-              var ipAddress = request.remoteAddress
-
-              var log = profile.getUnKnownVisited
-              var util: ViewedByUnKnownUtil = new ViewedByUnKnownUtil()
-              var oldestDate: java.util.Date = util.xDayEarlier(1)
-              util.removeAllAccessOlderThen(oldestDate, log)
-              userProfileService.logUnKnownProfileViewByObjectId(log, ipAddress)
-            }
-
-          } else
-          {
-
-            // fetch logged in user
-            var theUser: Option[models.UserProfile] = Helpers.getUserFromRequest(request) match {
-              case Some(user) => Some(user.profiles.asScala.head)
-              case None => None
-            }
-
-            var vOId: String = theUser match {
-              case Some(v) => v.objectId.toString
-              case None => ""
-            }
-
-            // Member access
-            if (profile.getmemberVisited() != null && profile.getmemberVisited() != None) {
-              var log = profile.getmemberVisited()
-              var util: ViewedByMemberUtil = new ViewedByMemberUtil()
-              var oldestDate: java.util.Date = util.xDayEarlier(7)
-              util.removeAllAccessOlderThen(oldestDate, log)
-              userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
-            }
-
-          }
-
+          doLogViewOfUserProfile(request, profile)
         } // false
 
 
@@ -344,6 +306,61 @@ class UserProfileController extends Controller with SecureSocial {
         BadRequest(errMess)
     }
   }
+
+  /**
+   * Log the access to a user profile member
+   * A loged on member or an unkown user accessing a profile
+   * @param request the users requesting viewing the profile
+   * @param profile the user of the profile page
+   */
+  def doLogViewOfUserProfile(request: RequestWithUser[AnyContent], profile: UserProfile) {
+    if (request.user == None) {
+
+      if (profile.getUnKnownVisited() != null && profile.getUnKnownVisited() != None) {
+        var ipAddress = request.remoteAddress
+
+        var log = profile.getUnKnownVisited
+        var util: ViewedByUnKnownUtil = new ViewedByUnKnownUtil()
+
+        // Number of days to store data as invidual logposts
+        var oldestDate: Date = util.xDayEarlier(1)
+        // Remove older recorded data and count number of accesss to the profile page
+        //util.removeAllAccessOlderThen(oldestDate, log)
+
+        // save access of profile to the profile users node for ...
+        userProfileService.logUnKnownProfileViewByObjectId(log, ipAddress)
+      }
+
+    } else {
+
+      // fetch logged in user
+      var theUser: Option[UserProfile] = Helpers.getUserFromRequest(request) match {
+        case Some(user) => Some(user.profiles.asScala.head)
+        case None => None
+      }
+
+      var vOId: String = theUser match {
+        case Some(v) => v.objectId.toString
+        case None => ""
+      }
+
+      // Member access
+      if (profile.getmemberVisited() != null && profile.getmemberVisited() != None) {
+        var log = profile.getmemberVisited()
+        var util: ViewedByMemberUtil = new ViewedByMemberUtil()
+
+        // Number of days to store data as invidual logposts
+        var oldestDate: Date = util.xDayEarlier(7)
+        // Remove older recorded data and count number of accesss to the profile page
+        //util.removeAllAccessOlderThen(oldestDate, log)
+
+        // save access of profile to the profile users node for ...
+        userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
+      }
+
+    }
+  }
+
 
 
   def viewProfileByLoggedInUser = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: RequestHeader =>
