@@ -8,8 +8,8 @@ import java.util.*;
 
 public class ViewedByMemberUtil {
 
-    private String DATE_STRING = "yyyy-MM-dd";
-    private SimpleDateFormat sipmpleDateFormatString = new SimpleDateFormat(DATE_STRING);
+    private static final String DATE_STRING = "yyyy-MM-dd";
+    private static final SimpleDateFormat sipmpleDateFormatString = new SimpleDateFormat(DATE_STRING);
 
 
     /**
@@ -42,8 +42,8 @@ public class ViewedByMemberUtil {
 
     /**
      * Return name
-     * @param str
-     * @return
+     * @param str record string name,date
+     * @return  name
      */
     public String getNamne(String str) {
         int index = str.indexOf(",");
@@ -148,14 +148,13 @@ public class ViewedByMemberUtil {
 
 
     public Iterator<String> getNameIterator(ViewedByMember view) {
-        ArrayList<String> arr = new ArrayList<String>();
+
         HashSet<String> hSet = new HashSet<String>();
 
         Iterator<String> iter = getIterator(view);
 
         while(iter.hasNext()) {
             String log = iter.next();
-            String nDate = getDateAsString(log);
             String nName = getNamne(log);
             hSet.add(nName);
         }

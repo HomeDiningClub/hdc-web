@@ -324,8 +324,12 @@ class UserProfileController extends Controller with SecureSocial {
 
         // Number of days to store data as invidual logposts
         var oldestDate: Date = util.xDayEarlier(1)
+
         // Remove older recorded data and count number of accesss to the profile page
         //util.removeAllAccessOlderThen(oldestDate, log)
+
+        //remove the sam ip-address if it is stored before
+        util.removeOldAccessOfSameHost(ipAddress, log)
 
         // save access of profile to the profile users node for ...
         userProfileService.logUnKnownProfileViewByObjectId(log, ipAddress)
@@ -351,8 +355,12 @@ class UserProfileController extends Controller with SecureSocial {
 
         // Number of days to store data as invidual logposts
         var oldestDate: Date = util.xDayEarlier(7)
+
         // Remove older recorded data and count number of accesss to the profile page
         //util.removeAllAccessOlderThen(oldestDate, log)
+
+        // remove the same member if it have been viewn the same profile an other date
+        util.removeOldAccessOfSameUser(profile.objectId.toString, log)
 
         // save access of profile to the profile users node for ...
         userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
