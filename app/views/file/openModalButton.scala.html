@@ -1,9 +1,9 @@
-@(btnId: String, inputSelector: String, selectorMaxItems: Int, btnText: String = Messages("file.button.choose-files-default"))
+@(btnId: String, inputSelector: String = "", selectorMaxItems: Int = 0, btnText: String = Messages("file.button.choose-files-default"), editMode: Boolean = false)
 
 <button type="button" class="btn btn-default" id="@btnId">@btnText</button>
 
 <script>
 var btn = document.getElementById('@btnId');
-btn.onclick = function(){ openFileModal(@inputSelector, @selectorMaxItems); }
+btn.onclick = function(){ openFileModal(@editMode, @if(inputSelector.isEmpty){""}else{@inputSelector}, @selectorMaxItems); }
 </script>
 

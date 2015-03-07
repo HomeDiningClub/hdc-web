@@ -13,43 +13,50 @@
         var eventNameRem = "remove-preview";
         var imagesGrid = "#images-grid";
         var imagesModal = "#image-list-modal";
+        var globalEditMode = false;
 
-
-        function openFileModal (inputSelector, maxItems){
+        function openFileModal(editMode, inputSelector, maxItems){
             $(imagesModal).modal("show");
+            var inputSelectorValue;
+            globalEditMode = editMode;
 
-            setupModalEvents(inputSelector, maxItems);
+            if(!globalEditMode){
+                inputSelectorValue = inputSelector.value;
+                setupModalEvents(inputSelector, maxItems);
 
-            // Fetch and fill preview
-            var prevImgReq = $.get("@{routes.ImageController.previewImages()}?selected=" + inputSelector.value,
-            function(data){
-                // Reset list and set new
-                globalPreviewList = [];
+                // Fetch and fill preview
+                var prevImgReq = $.get("@{routes.ImageController.previewImages()}?selected=" + inputSelectorValue,
+                function(data){
+                    // Reset list and set new
+                    globalPreviewList = [];
 
-                if(data.length > 0){
-                    $.each(data, function (index,item) {
-                        globalPreviewList.push({objectId: item.objectId, name: item.name, url: item.url, selected: item.selected});
-                    });
-                }
+                    if(data.length > 0){
+                        $.each(data, function (index,item) {
+                            globalPreviewList.push({objectId: item.objectId, name: item.name, url: item.url, selected: item.selected});
+                        });
+                    }
 
-            }).done(function(){
-                drawPreview();
-            }).always (function(){
+                }).done(function(){
+                    drawPreview();
+                }).always (function(){
 
-            });
+                });
+            }else{
+                inputSelectorValue = "";
+                maxItems = 0;
+                $("#images-preview-grid" ).hide();
+            }
 
             // Load main list
             if (!imagesLoaded){
                 $('a[href="#modal-image-grid-tab"]').tab('show');
                 imagesLoaded = true;
-                var imgReq = $.get("@{routes.ImageController.listImages()}?selected=" + inputSelector.value,
+                var imgReq = $.get("@{routes.ImageController.listImages()}?selected=" + inputSelectorValue,
                 function(data){
 
                     if(data.length > 0 ) {
-                        $.each(data, function (index,item){
-                            var selClass = "";
-                            if(item.selected){ selClass = " selected"; }
-                            var htmlToAdd = '<div class="col-md-2 col-xs-6 thumb"><a id="list-' + item.objectId + '" class="thumbnail' + selClass + '" href="#" onclick="return markSelected(this,\'' + item.objectId + '\',\'' + item.url + '\',\'' + item.name + '\')"><div class="thumbnail-overlay icon-ok"><img class="img-responsive" src="' + item.url + '" alt="' + item.name + '"></div></a></div>';
+                        $.each(data, function (index,file){
+                            var htmlToAdd = imgTemplate(file, false);
                             $(imagesGrid).append(htmlToAdd);
                         });
                     } else {
@@ -61,13 +68,15 @@
                     $("#image-list-preloader").fadeOut ( function() { $("#images-grid").fadeIn(); } );
                 } )
                 .always ( function ( ) {
-                    drawPreview();
+                    drawPreview(globalEditMode);
                     imagesLoaded = true;
                 });
             }else{
                 // Items already loaded, just mark selected
-                drawPreview();
+                drawPreview(globalEditMode);
             }
+
+
         }
 
         function setupModalEvents(inputSelector, maxItems){
@@ -92,8 +101,8 @@
                     prevContainer.empty();
 
                     if(globalPreviewList.length > 0){
-                        $.each(globalPreviewList, function(index, item) {
-                            prevContainer.append('<div class="col-md-2 col-xs-4 prev-' + item.objectId + '"><img class="img-responsive" src="' + item.url + '" alt="' + item.name + '"></div>');
+                        $.each(globalPreviewList, function(index, file) {
+                            prevContainer.append('<div class="col-md-2 col-xs-4 prev-' + file.objectId + '"><img class="img-responsive" src="' + file.url + '" alt="' + file.name + '"></div>');
                         });
                     }
                 }
@@ -124,26 +133,164 @@
 
         }
 
-        function drawPreview(){
-            var imgChooserPrevContainer = $("#images-preview-grid");
-            imgChooserPrevContainer.find(".prev").remove();
+        function drawPreview(editMode){
             $(imagesGrid).find(".selected").removeClass("selected");
-            $.each(globalPreviewList, function(index, item) {
-                imgChooserPrevContainer.append('<div class="col-md-2 col-xs-6 prev"><a href="#" onclick="return markSelected(this,\'' + item.objectId + '\',\'' + item.url + '\',\'' + item.name + '\')"><div class="thumbnail-overlay icon-remove"><img class="img-responsive" src="' + item.url + '" alt="' + item.name + '"></div></a></div>');
-                $(imagesGrid).find("#list-" + item.objectId).addClass("selected");
-            });
 
-            $(".label-nr-of-items .nr-from").html(globalPreviewList.length);
-            $(".label-nr-of-items .nr-to").html(globalMaxItems);
+            if(!editMode){
+                var imgChooserPrevContainer = $("#images-preview-grid");
+                imgChooserPrevContainer.find(".prev").remove();
 
-            if(globalPreviewList.length == 0){
-                $(imagesGrid).find(".selected").removeClass("selected");
-                $("#image-list-no-preview-images").fadeIn();
-            }else{
-                $("#image-list-no-preview-images").hide();
+                $.each(globalPreviewList, function(index, file) {
+                    imgChooserPrevContainer.append('<div class="col-md-2 col-xs-6 prev"><a href="#" onclick="return markSelected(this,\'' + file.objectId + '\',\'' + file.url + '\',\'' + file.name + '\')"><div class="thumbnail-overlay icon-remove"><img class="img-responsive" src="' + file.url + '" alt="' + file.name + '"></div></a></div>');
+                    $(imagesGrid).find("#list-" + file.objectId).addClass("selected");
+                });
+
+                $(".label-nr-of-items .nr-from").html(globalPreviewList.length);
+                $(".label-nr-of-items .nr-to").html(globalMaxItems);
+
+                if(globalPreviewList.length == 0){
+                    $(imagesGrid).find(".selected").removeClass("selected");
+                    $("#image-list-no-preview-images").fadeIn();
+                }else{
+                    $("#image-list-no-preview-images").hide();
+                }
+                imgChooserPrevContainer.fadeIn();
             }
-            imgChooserPrevContainer.fadeIn();
         }
+
+       function imgTemplate(file,isNew){
+            var column = $('<div/>').addClass('col-md-2 col-xs-6 thumb');
+            var link = $('<a/>')
+                .addClass('thumbnail')
+                .prop('id', 'list-' + file.objectId)
+                .prop('href', '#')
+                .data(file)
+                .on('mouseenter', function (event) {
+                    var file = $(this).data();
+                    showFunctions(this,file);
+                })
+                .on('mouseleave', function (event, file) {
+                    hideFunctions(this);
+                });
+
+            var tnOverlay = $('<div class="thumbnail-overlay icon-ok">');
+            if(file.selected){ link.addClass('selected') }
+
+            var image = $('<img/>')
+                .addClass('img-responsive')
+                .prop('src', file.url)
+                .prop('alt', file.name)
+
+            if(isNew) {
+                var newIcon = $('<div class="icon-new"></div>');
+                newIcon.appendTo(tnOverlay)
+            }
+
+            // Build and return html
+            return column.append(link.append(tnOverlay.append(image)));
+        }
+
+        function hideFunctions(thisItem){
+            $(thisItem).find('.overlay-functions').stop().slideUp(50, function() {
+                $(this).remove();
+            });
+        }
+
+        function showFunctions(thisItem, file){
+            var placeHolder = $(thisItem).find('.thumbnail-overlay');
+            var functionsAdded = false;
+
+            // Don't run if any old already exists
+            if(!placeHolder.children('.overlay-functions').length){
+                var functionRow = $('<div class="overlay-functions text-center"/>');
+
+                // Edit mode
+                if(globalEditMode){
+                    // Todo implement delete functionality
+                    //functionRow.append(createDelBtn(thisItem, file));
+                    functionsAdded = false;
+                }
+
+                // Select mode
+                if(!globalEditMode){
+                    functionRow.append(createMarkBtn(thisItem, file));
+                    functionsAdded = true;
+                }
+
+                // Don't add functions if no functions selected
+                if(functionsAdded){
+                    functionRow.hide().children('.btn-function').tooltip();
+                    placeHolder.append(functionRow);
+                    functionRow.slideDown(100);
+                }
+            }
+        }
+
+        function createDelBtn(thisItem, file){
+            var $this = $(thisItem);
+
+            var delButton = $('<button/>')
+                .addClass('btn btn-danger btn-circle btn-function btn-fn-del')
+                .prop('disabled', false)
+                .data(file)
+                .prop('title', '@Messages("image-chooser.functions.delete")')
+                .prop('data-toggle', 'tooltip')
+                .prop('data-placement', 'top')
+                .append('<span class="glyphicon glyphicon-trash"/>')
+                .on('click', function (event) {
+                    var file = $(this).data();
+                    event.preventDefault();
+                    alert('Delete: ' + file.name);
+                });
+
+            return delButton;
+        }
+
+        function createMarkBtn(thisItem, file){
+            var $this = $(thisItem);
+
+            var markButton = $('<button/>')
+                .addClass('btn btn-orange btn-circle btn-function')
+                .prop('disabled', false)
+                .prop('data-toggle', 'tooltip')
+                .prop('data-placement', 'top')
+                .data(file)
+                .on('click', function (event) {
+                    var $this = $(this), file = $this.data();
+                    event.preventDefault();
+                    retVal = markSelected(this, file.objectId, file.url, file.name);
+                    if(retVal == false){
+                        $this.focus();
+                    }
+                    setMarkBtnIcon(thisItem, $this)
+                });
+
+            setMarkBtnIcon(thisItem, markButton);
+
+            return markButton;
+        }
+
+        function setMarkBtnIcon(thisItem, markButton){
+           var $this = $(thisItem);
+
+           markButton.children('span.glyphicon').remove();
+
+            if($this.hasClass('selected')){
+                markButton
+                    .append('<span class="glyphicon glyphicon-remove"/>')
+                    .prop('title', '@Messages("image-chooser.functions.un-mark")')
+                    .addClass('active');
+            }else{
+                markButton
+                    .append('<span class="glyphicon glyphicon-ok"/>')
+                    .prop('title', '@Messages("image-chooser.functions.mark")')
+                    .removeClass('active');
+            }
+            // Re-render tooltip
+            markButton.tooltip('fixTitle').tooltip('show');
+
+        }
+
 
         function markSelected(thisItem, toMarkObjectId, toMarkUrl, toMarkName){
             if(toMarkObjectId == "undefined" && globalInputSelector != "undefined"){
@@ -151,6 +298,7 @@
             }
 
             toMark = toMarkObjectId.trim();
+            $this = $(thisItem);
 
             if(isGuid(toMark) && globalInputSelector.type.toLowerCase() == "hidden")
             {
@@ -172,7 +320,18 @@
 
                 if(nrOfItems >= globalMaxItems && isAlreadyAdded === false){
                     // Too many items, don't add
-                    alert('@Messages("image-chooser.max-items-part1") ' + globalMaxItems + ' @Messages("image-chooser.max-items-part2")');
+                    var labelOfItems = $('.label-nr-of-items .nr-from');
+
+                    labelOfItems
+                        .prop('title', '@Html(Messages("image-chooser.max-items-part1")) ' + globalMaxItems + ' @Html(Messages("image-chooser.max-items-part2"))')
+                        .tooltip({placement: 'bottom', html:true})
+                        .tooltip('fixTitle')
+                        .tooltip('show');
+
+                    setTimeout(function () {
+                        labelOfItems.tooltip('destroy');
+                    }, 3000);
+
                     return false;
                 } else {
                     if(isAlreadyAdded === false){

@@ -176,7 +176,7 @@ $(function () {
             }
             // Add to main image list, with a new icon
             if(file.objectId){
-                $("#images-grid").prepend('<div class="col-md-2 col-xs-6 thumb"><a id="list-' + file.objectId + '" class="thumbnail" href="#" onclick="return markSelected(this,\'' + file.objectId + '\',\'' + file.url + '\',\'' + file.name + '\')"><div class="thumbnail-overlay icon-ok"><div class="icon-new"></div><img class="img-responsive" src="' + file.url + '" alt="' + file.name + '"></div></a></div>');
+                $("#images-grid").prepend(imgTemplate(file, true));
             }
         });
         // Clear the upload events

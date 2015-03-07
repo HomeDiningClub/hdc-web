@@ -13,7 +13,7 @@
     <td>
         @if(message.request != null) {
             @if(message.request.length > 60) {
-                @message.request.substring(0, 60) + "..."
+                @message.request.substring(0, 60)...
             } else {
                 @message.request
             }

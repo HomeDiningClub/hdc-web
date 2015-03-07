@@ -1,4 +1,4 @@
-@(refUrl: String)(implicit request: RequestHeader)
+@(refUrl: String, message: Option[String] = None)(implicit request: RequestHeader)
 @theLink = { <a href="@routes.StartPageController.index()">@Messages("notfound.linkhome")</a> }
 
 @main(Messages("notfound.title")) {
@@ -9,6 +9,7 @@
                 <div class="page-header">
                     <h1>@Messages("notfound.header")</h1>
                 </div>
+                @if(message.nonEmpty){<p>@Html(message.get)</p>}
                 <p>@Html(Messages("notfound.body", refUrl, theLink))</p>
             </div>
 

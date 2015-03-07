@@ -203,6 +203,11 @@ profile.create.header.host=Hur ser ditt värdskap ut?
 profile.create.tabs.host.name=Värd
 profile.create.tabs.host.title=Värd
 
+profile.create.header.media=Hantera mina bilder och media
+profile.create.tabs.media.name=Media
+profile.create.tabs.media.title=Media
+
+
 profile.create.form.profilename=Profilnamn
 profile.create.form.profilename.required=*
 profile.create.form.profilename.help=<strong>Viktig information</strong><br>Detta namn kommer att användas för att identifiera din profilsida. <br>Denna måste vara unik. Vi kommer ta bort ÅÄÖ, punkter, / eller andra tecken förutom bindestreck.<br><br><strong>Exempel:</strong><br>linda-larsson<br>henriksrestaurang<br>den-goda-maten
@@ -259,6 +264,8 @@ profile.create.form.host.alcohol.option2=Tillhandahålls
 profile.create.form.host.alcohol.option3=Nej
 profile.create.form.host.yes=Ja
 profile.create.form.host.no=Nej
+
+profile.create.form.open-media-btn=Öppna mitt mediabibliotek
 
 profile.create.form.host.payment.header=Betalning
 profile.create.save=Spara
@@ -361,9 +368,13 @@ file.done-message=<strong>Klar!</strong><br> Titta under fliken <strong><a href=
 image-chooser.title=Mediabibliotek
 image-chooser.abort=Avbryt
 image-chooser.save=Spara / Välj
-image-chooser.max-items-part1=Du kan max välja
+image-chooser.max-items-part1=Du kan inte<br>välja mer än<br>
 image-chooser.max-items-part2=bild(er)
 image-chooser.no-images=Du har inga bilder, ladda upp några under fliken "Ladda upp".
+
+image-chooser.functions.mark=Markera / Välj
+image-chooser.functions.un-mark=Avmarkera
+image-chooser.functions.delete=Ta bort
 
 image-chooser.preview-images-label=Valda bilder
 image-chooser.no-preview-images=Du har inte valt några bilder, ladda upp några under fliken "Ladda upp", eller välj i listan.

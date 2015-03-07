@@ -41,6 +41,7 @@
                         <li><a data-toggle="tab" href="#profile-tab-food" title="@Messages("profile.create.tabs.food.title")">@Messages("profile.create.tabs.food.name")</a></li>
                         <li><a data-toggle="tab" href="#profile-tab-personal-info" title="@Messages("profile.create.tabs.personal-information.title")">@Messages("profile.create.tabs.personal-information.name")</a></li>
                         <li><a data-toggle="tab" href="#profile-tab-host" title="@Messages("profile.create.tabs.host.title")">@Messages("profile.create.tabs.host.name")</a></li>
+                        <li><a data-toggle="tab" href="#profile-tab-media" title="@Messages("profile.create.tabs.media.title")">@Messages("profile.create.tabs.media.name")</a></li>
                     </ul>
                 </nav>
             </div>
@@ -297,6 +298,14 @@
                         </select>
                         <label for="maxGuest">@Messages("profile.groupsize.max")</label><br>
 
+                    </div>
+                </div>
+
+                <div class="tab-pane tab-hdc fade" id="profile-tab-media">
+                    <div class="col-xs-12">
+                        <h3 class="lead">@Messages("profile.create.header.media")</h3>
+                        @file.openModalButton(btnId = "btneditmedia", btnText = Messages("profile.create.form.open-media-btn"), editMode = true)
+                        <hr>
                     </div>
                 </div>
             </div>

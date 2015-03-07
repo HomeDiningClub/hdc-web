@@ -303,7 +303,7 @@ class UserProfileController extends Controller with SecureSocial {
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
         Logger.debug(errMess)
-        BadRequest(errMess)
+        NotFound(views.html.error.notfound(refUrl = request.path)(request))
     }
   }
 
@@ -365,10 +365,8 @@ class UserProfileController extends Controller with SecureSocial {
         // save access of profile to the profile users node for ...
         userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
       }
-
     }
   }
-
 
 
   def viewProfileByLoggedInUser = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: RequestHeader =>
@@ -387,12 +385,12 @@ class UserProfileController extends Controller with SecureSocial {
           case None =>
             val errMess = "Cannot find user profile using current user:" + reqUser.asInstanceOf[UserCredential].objectId
             Logger.debug(errMess)
-            NotFound(errMess)
+            NotFound(views.html.error.notfound(refUrl = request.path)(request))
         }
       case None =>
         val errMess = "Cannot find any user to fetch profile for"
         Logger.debug(errMess)
-        NotFound(errMess)
+        NotFound(views.html.error.notfound(refUrl = request.path)(request))
     }
   }
 

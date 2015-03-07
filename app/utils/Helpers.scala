@@ -55,9 +55,6 @@ object Helpers {
     if(input == null)
       null
 
-    if(limitLength == null)
-      input
-
     if(input.length >= limitLength)
       input.substring(0,limitLength)
     else
