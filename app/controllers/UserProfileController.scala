@@ -282,7 +282,7 @@ class UserProfileController extends Controller with SecureSocial {
         val metaData = buildMetaData(profile, request)
 
         // should the event be registred or not
-        val doCountEvent : Boolean = false
+        val doCountEvent : Boolean = true
 
         if(doCountEvent) {
           doLogViewOfUserProfile(request, profile)
