@@ -1349,6 +1349,28 @@ input[type="reset"]:hover
 .panel-startpage-intro h1.aside-title {
   text-align: center;
 }
+.startpage-head {
+  margin:0px 0px 20px 0px;
+}
+.startpage-video {
+  position: relative;
+  padding-bottom: 56.25%;
+  padding-top: 0px;
+  height: 0;
+  overflow: hidden;
+  max-width: 100%;
+  height: auto;
+}
+.startpage-video iframe,
+.startpage-video object,
+.startpage-video embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .hdc-pin-orange {
   position: absolute;
   width: 60px;
@@ -2202,6 +2224,7 @@ a.morelink {
 }
 /* Small devices (tablets, 768px and up) */
 @media screen and (min-width:768px) {
+
   .nav-main-menu
   {
     height: auto;

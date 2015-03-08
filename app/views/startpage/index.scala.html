@@ -70,37 +70,22 @@
 
     <div class="container maincontent-container">
         <div class="row margin-top">
-            <div class="col-xs-12 col-md-3">
-                <aside>
-                    <!-- Main intro -->
-                    @*
-                    <div class="panel panel-default panel-dropshadow panel-startpage-intro">
-                        @shared.img("images/general/hdc-pin-orange.png", alt = "", cssClass = "hdc-pin-orange")
-                        <div class="panel-body">
-                            <h1 class="aside-title">@Html(Messages("startpage.main-aside.header"))</h1>
-                            @Html(Messages("startpage.main-aside.body", shared.img("images/startpage/signatur-hl.png", alt = "", cssClass = "img-responsive signature")))
+            <div class="col-xs-12 col-md-push-3 col-md-6">
+                <!-- Video -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h1 class="startpage-head text-center hidden">@Messages("startpage.main-content.header")</h1>
+                        @Html(Messages("startpage.main-content.body"))
+                        <div class="startpage-video">
+                            <iframe src="//player.vimeo.com/video/97540915?title=0&amp;byline=0&amp;portrait=0&amp;color=6fc2b5&amp;autoplay=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                         </div>
-                    </div>
-                    *@
 
-                    @if(asideNews.nonEmpty) {
-                        @for(content <- asideNews.get){
-                            <!-- Content -->
-                            <div class="panel panel-dropshadow panel-default panel-startpage-aside">
-                                <div class="panel-body">
-                                    @if(content.title.nonEmpty) {
-                                        <h3 class="aside-title">@content.title</h3>
-                                    }
-                                    @Html(content.preamble)
-                                    @Html(content.mainBody)
-                                </div>
-                            </div>
+                        @if(utils.Helpers.getUserFromRequest.isEmpty) {
+                            <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
                         }
-                    }
-                </aside>
-            </div>
+                    </div>
+                </div>
 
-            <div class="col-xs-12 col-md-6">
                 <div class="row">
                     <!-- Filtering push -->
                     <div class="col-xs-12 form-filter animated fadeIn">
@@ -145,18 +130,13 @@
                 </div>
                 }
 
-                <div class="row margin-top row-border-bottom">
-                    <!-- Video -->
+                @if(utils.Helpers.getUserFromRequest.isEmpty) {
+                <div class="row">
                     <div class="col-xs-12">
-                        <h2 class="page-header">@Messages("startpage.main-content.header")</h2>
-                        @Html(Messages("startpage.main-content.body"))
-                        <iframe style="margin:0 auto; display:block;" src="//player.vimeo.com/video/97540915?title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff&amp;autoplay=0" width="100%" height="259" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
-                        @if(utils.Helpers.getUserFromRequest.isEmpty) {
                             <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
-                        }
                     </div>
                 </div>
+                }
 
 
                 <!-- Functions -->
@@ -168,6 +148,24 @@
                 @*</div>*@
             </div>
 
+            <div class="col-xs-12 col-md-pull-6 col-md-3">
+                <aside>
+                @if(asideNews.nonEmpty) {
+                    @for(content <- asideNews.get){
+                            <!-- Content -->
+                        <div class="panel panel-dropshadow panel-default panel-startpage-aside">
+                            <div class="panel-body">
+                                @if(content.title.nonEmpty) {
+                                    <h3 class="aside-title">@content.title</h3>
+                                }
+                                @Html(content.preamble)
+                                @Html(content.mainBody)
+                            </div>
+                        </div>
+                    }
+                }
+                </aside>
+            </div>
 
 
             <!-- Banner -->
