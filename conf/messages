@@ -403,7 +403,7 @@ admin.menu.files=Filer
 admin.menu.county=Län
 admin.menu.tagword=Taggar
 admin.menu.roles=Roller
-admin.menu.release=Release & Batch
+admin.menu.release=Övrigt
 admin.menu.backtosite=Tillbaka till hemsidan
 
 admin.index.title=Det här är redigeringsläget
@@ -527,6 +527,17 @@ admin.file.filelist.header=Alla filer
 admin.file.button.upload=Ladda upp
 admin.file.list.delete=Ta bort
 admin.file.list.isAdminFile=Adminfil
+
+admin.stat.title=Statistik
+admin.stat.table.h1=Typ
+admin.stat.table.h2=Antal
+admin.stat.table.h3=Antal senaste månaden
+admin.stat.type.images=Bilder
+admin.stat.type.members=Medlemmar
+admin.stat.type.recipes=Recept
+admin.stat.type.rating.recipes=Omdömmen recept
+admin.stat.type.rating.members=Omdömmen medlemmar
+
 
 # Admin - End
 

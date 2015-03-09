@@ -36,4 +36,8 @@ trait UserCredentialRepository extends GraphRepository[UserCredential] {
   @Query("start up=node:UserCredential(identity={0}) return up")
   def getUserCredential(identityId: IdentityId ): UserCredential
 
+  @Query("MATCH (n:`UserCredential`) RETURN COUNT(*)")
+  def getCountOfAll(): Int
+
+
 }

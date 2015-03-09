@@ -14,6 +14,9 @@ trait RecipeRepository extends GraphRepository[Recipe] {
   @Query("MATCH (n:`Recipe`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): Recipe
 
+  @Query("MATCH (n:`Recipe`) RETURN COUNT(*)")
+  def getCountOfAll(): Int
+
   @Query("match (tag {objectId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe) optional match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HAS_RECIPES]-(r:Recipe) optional match (r)-[:IMAGES]-(recipeImages:`ContentFile`) optional match (r)-[g]-(ux:UserCredential) optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return avg(g.ratingValue), r.name, r.preAmble, r.mainBody, r.objectId, COLLECT(recipeImages.storeId) as RecipeImages, COLLECT(mainImage.storeId) as MainImage, uc.profileLinkName, r.recipeLinkName, tag.userId")
   def findRecipes(userObjectId: String) : util.List[RecipeData]
 

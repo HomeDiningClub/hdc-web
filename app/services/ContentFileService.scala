@@ -105,6 +105,16 @@ class ContentFileService {
     results
   }
 
+  @Transactional(readOnly = true)
+  def getCountOfAll: Int = {
+    contentFileRepository.getCountOfAll()
+  }
+
+  @Transactional(readOnly = true)
+  def getCountOfAllType(fileType: String): Int = {
+    contentFileRepository.getCountOfAllType(fileType)
+  }
+
   def getImagesForUser(userObjectId: UUID): List[ContentFile] = {
     val results = contentFileRepository.findByownerObjectIdAndContentType(userObjectId.toString, FileTypeEnums.IMAGE.toString).asScala match {
       case null => Nil

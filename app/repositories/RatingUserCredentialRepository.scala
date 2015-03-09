@@ -27,4 +27,8 @@ trait RatingUserCredentialRepository extends GraphRepository[RatesUserCredential
 
   @Query("MATCH (a:`UserCredential`)-[ratings:`RATED_USER`]->(b:`UserCredential`) WHERE a.objectId={0} AND b.objectId={1} RETURN ratings")
   def findByuserWhoIsRatingAndUserRates(userWhoIsRating: String, userRates: String): util.List[RatesUserCredential]
+
+  @Query("MATCH ()-[r:`RATED_USER`]->() RETURN COUNT(r)")
+  def getCountOfAll(): Int
+
 }

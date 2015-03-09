@@ -83,6 +83,20 @@ class RatingService {
     }
   }
 
+  @Transactional(readOnly = true)
+  def getCountOfAll: Int = {
+    getCountOfAllMemberRatings + getCountOfAllRecipesRatings
+  }
+
+  @Transactional(readOnly = true)
+  def getCountOfAllRecipesRatings: Int = {
+    ratingRecipeRepository.getCountOfAll()
+  }
+
+  @Transactional(readOnly = true)
+  def getCountOfAllMemberRatings: Int = {
+    ratingUserCredentialRepository.getCountOfAll()
+  }
 
 
   // RatingRecipe

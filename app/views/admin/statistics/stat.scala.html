@@ -1,0 +1,41 @@
+@(stat: Option[viewmodels.StatisticsData] = None)
+
+@if(stat.isDefined) {
+    <div class="col-xs-12 col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">@Messages("admin.stat.title")</div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>@Messages("admin.stat.table.h1")</th>
+                            <th>@Messages("admin.stat.table.h2")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@Messages("admin.stat.type.members")</td>
+                            <td>@stat.get.membersTotal</td>
+                        </tr>
+                        <tr>
+                            <td>@Messages("admin.stat.type.images")</td>
+                            <td>@stat.get.imagesTotal</td>
+                        </tr>
+                        <tr>
+                            <td>@Messages("admin.stat.type.recipes")</td>
+                            <td>@stat.get.recipesTotal</td>
+                        </tr>
+                        <tr>
+                            <td>@Messages("admin.stat.type.rating.members")</td>
+                            <td>@stat.get.ratingsMemberTotal</td>
+                        </tr>
+                        <tr>
+                            <td>@Messages("admin.stat.type.rating.recipes")</td>
+                            <td>@stat.get.ratingsRecipeTotal</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

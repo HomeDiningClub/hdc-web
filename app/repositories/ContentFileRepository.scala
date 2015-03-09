@@ -24,7 +24,14 @@ trait ContentFileRepository extends GraphRepository[ContentFile] {
   @Query("MATCH (n:`ContentFile`) WHERE id(n) OPTIONAL MATCH (n)-[r]-() DELETE r,n")
   def deleteAllRelationsAndDelete(file: ContentFile)
 
+  @Query("MATCH (n:`ContentFile`) RETURN COUNT(*)")
+  def getCountOfAll(): Int
+
+  @Query("MATCH (n:`ContentFile`) WHERE n.baseContentType={0} RETURN COUNT(*)")
+  def getCountOfAllType(contentType: String): Int
+
   // Auto-mapped by Spring
   def findBybaseContentType(name: String): util.List[ContentFile]
+
 
 }

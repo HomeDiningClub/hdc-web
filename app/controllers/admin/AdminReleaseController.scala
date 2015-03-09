@@ -113,10 +113,13 @@ class AdminReleaseController extends Controller with SecureSocial {
   // Clean up the whole database, use with extreme caution
   def deleteAllFromDB = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
 
-    val results = neo4jDatabaseCleanerService.cleanDb
-    val successMessage = Messages("admin.success")
-    Ok(successMessage)
-    //Redirect(securesocial.controllers.routes.LoginPage.logout()).flashing(FlashMsgConstants.Success -> successMessage)
+    if(1 == 0){ // Disabled for now
+      val results = neo4jDatabaseCleanerService.cleanDb
+      val successMessage = Messages("admin.success")
+      Ok(successMessage)
+    }
+
+    Ok("Disabled for now")
   }
 
 }

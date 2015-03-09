@@ -162,6 +162,11 @@ class UserCredentialService {
     }
   }
 
+  @Transactional(readOnly = true)
+  def getCountOfAll: Int = {
+    userCredentialRepository.getCountOfAll()
+  }
+
 
 
   @Transactional(readOnly = true)

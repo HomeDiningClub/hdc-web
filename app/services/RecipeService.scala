@@ -69,6 +69,12 @@ class RecipeService {
   }
 
   @Transactional(readOnly = true)
+  def getCountOfAll: Int = {
+    recipeRepository.getCountOfAll()
+  }
+
+
+  @Transactional(readOnly = true)
   def getListOfAll: List[Recipe] = {
     recipeRepository.findAll.iterator.asScala.toList match {
       case null => null
