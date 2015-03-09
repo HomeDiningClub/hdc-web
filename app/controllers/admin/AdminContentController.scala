@@ -154,7 +154,7 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
 
         val savedContentPage = contentService.addContentPage(newContent.get)
         val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", savedContentPage.name, savedContentPage.objectId.toString)
-        Redirect(controllers.admin.routes.AdminContentController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.admin.routes.AdminContentController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -201,10 +201,10 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
     result match {
       case true =>
         val successMessage = Messages("admin.success") + " - " + Messages("admin.delete.success", objectId.toString)
-        Redirect(controllers.admin.routes.AdminContentController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.admin.routes.AdminContentController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("admin.error") + " - " + Messages("admin.delete.error")
-        Redirect(controllers.admin.routes.AdminContentController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.admin.routes.AdminContentController.listAll()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

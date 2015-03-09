@@ -80,7 +80,7 @@ class AdminCountyController extends Controller with SecureSocial {
           case Some(county) =>
             val saved = countyService.add(county)
             val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.name, saved.objectId.toString)
-            Redirect(controllers.admin.routes.AdminCountyController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+            Redirect(controllers.admin.routes.AdminCountyController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
         }
         result
       }
@@ -113,10 +113,10 @@ class AdminCountyController extends Controller with SecureSocial {
     result match {
       case true =>
         val successMessage = Messages("admin.success") + " - " + Messages("admin.delete.success", objectId.toString)
-        Redirect(controllers.admin.routes.AdminCountyController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.admin.routes.AdminCountyController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("admin.error") + " - " + Messages("admin.delete.error")
-        Redirect(controllers.admin.routes.AdminCountyController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.admin.routes.AdminCountyController.listAll()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

@@ -98,7 +98,7 @@ class AdminRecipeController extends Controller with SecureSocial {
         val saved = recipeService.add(newRec.get)
         val savedProfile = userProfileService.addRecipeToProfile(currentUser.get, saved)
         val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.getName, saved.objectId.toString)
-        Redirect(controllers.admin.routes.AdminRecipeController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.admin.routes.AdminRecipeController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -138,10 +138,10 @@ class AdminRecipeController extends Controller with SecureSocial {
     result match {
       case true =>
         val successMessage = Messages("admin.success") + " - " + Messages("admin.delete.success", objectId.toString)
-        Redirect(controllers.admin.routes.AdminRecipeController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.admin.routes.AdminRecipeController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("admin.error") + " - " + Messages("admin.delete.error")
-        Redirect(controllers.admin.routes.AdminRecipeController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.admin.routes.AdminRecipeController.listAll()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

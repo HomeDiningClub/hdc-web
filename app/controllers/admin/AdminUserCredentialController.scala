@@ -67,7 +67,7 @@ class AdminUserCredentialController extends Controller with SecureSocial {
 
         val saved = userCredentialService.add(newRec)
         val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.emailAddress, saved.objectId.toString)
-        Redirect(controllers.admin.routes.AdminUserCredentialController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.admin.routes.AdminUserCredentialController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -101,10 +101,10 @@ class AdminUserCredentialController extends Controller with SecureSocial {
     result match {
       case true =>
         val successMessage = Messages("admin.success") + " - " + Messages("admin.delete.success", objectId.toString)
-        Redirect(controllers.admin.routes.AdminUserCredentialController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.admin.routes.AdminUserCredentialController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("admin.error") + " - " + Messages("admin.delete.error")
-        Redirect(controllers.admin.routes.AdminUserCredentialController.editIndex()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.admin.routes.AdminUserCredentialController.listAll()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }
