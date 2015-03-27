@@ -11,6 +11,10 @@
 @hdc-green-g: 194;
 @hdc-green-b: 181;
 
+@hdc-dark-green-r: 89;
+@hdc-dark-green-g: 161;
+@hdc-dark-green-b: 148;
+
 @hdc-orange: #ef7b3e;
 @hdc-orange-r: 239;
 @hdc-orange-g: 123;
@@ -44,10 +48,7 @@
 @text-color: #666;
 @header-color: @hdc-green;
 @header-color-extra: #222;
-@header-background-color: #fff;
 @maincontent-background-color: #fff;
-@footer-background-color: @hdc-green;
-@footer-border-color: @hdc-green;
 @link-color: @hdc-green;
 @link-color-hover: darken(@link-color, 30%);
 @label-color: #666;
@@ -59,8 +60,9 @@
 // Fonts
 @font-family-base: 'Open Sans',tahoma,arial,geneva,verdana,helvetica,sans-serif;
 
-
-
+// Footer
+@footer-height: 87px;
+@footer-height-negative: -87px;
 
 
 // General tags
@@ -69,16 +71,24 @@ html{
   overflow-y:scroll;
   overflow-x:auto;
   color: @text-color;
+  height:100%;
 }
 body
 {
   font-smooth: always;
   font-family: @font-family-base !important;
-}
-#wrap{
-  //height:100%;
+  background-size: 100% auto;
+  background-position:0px 111px;
+  background-repeat: no-repeat;
+  background-color: @hdc-light-gray;
+  height:100%;
 }
 
+.content-wrap {
+  position: relative;
+  min-height: 100%;
+  margin-bottom: @footer-height-negative; /* the bottom margin is the negative value of the footer's height */
+}
 
 
 // General headers
@@ -419,9 +429,9 @@ input[type="reset"]:hover
 
 // Panels
 .panel-dropshadow {
-  -webkit-box-shadow: 4px 4px 10px -7px rgba(166,166,166,1);
-  -moz-box-shadow: 4px 4px 10px -7px rgba(166,166,166,1);
-  box-shadow: 4px 4px 10px -7px rgba(166,166,166,1);
+  -webkit-box-shadow: 2px 2px 5px -5px rgba(166,166,166,1);
+  -moz-box-shadow: 2px 2px 5px -5px rgba(166,166,166,1);
+  box-shadow: 2px 2px 5px -5px rgba(166,166,166,1);
 }
 
 // Pagination
@@ -1056,11 +1066,10 @@ input[type="reset"]:hover
 .header-navbar {
   background-image: url("/assets/images/general/bg-header.png");
   background-repeat: repeat-x;
-  background-color: @header-background-color;
 }
 .header-spacing
 {
-  padding-bottom: 190px;
+  padding-bottom: 170px;
 }
 .logo-img
 {
@@ -1163,11 +1172,15 @@ input[type="reset"]:hover
 }
 .nav-main-menu-wrapper {
   position: relative;
+  background-color: rgba(@hdc-dark-green-r, @hdc-dark-green-g, @hdc-dark-green-b, 0.4);
+  /*
   background-image: url("/assets/images/general/bg-menu-gray-transparent.png");
   background-repeat: repeat-x;
+  */
   z-index:300;
   max-height: 37px;
   height: 37px;
+  border-bottom:1px solid white;
 }
 .nav-main-menu
 {
@@ -1294,12 +1307,19 @@ input[type="reset"]:hover
 
 
 // Footer
+#footer, #footer-push{
+  display: block;
+  position: relative;
+  height: @footer-height;
+}
+#footer {
+  background-color: rgba(@hdc-green-r, @hdc-green-g, @hdc-green-b, 0.9);
+  border-top:1px solid white;
+}
 .footer-container
 {
-  margin-top:2em;
-  padding-bottom:2em;
-  background-color: @footer-background-color;
-  border-top:1px solid @footer-border-color;
+  padding-top:20px;
+  padding-bottom:20px;
 }
 .footer-container a,
 .footer-container a:visited
@@ -1312,8 +1332,15 @@ input[type="reset"]:hover
 }
 .footer-container a:hover
 {
-  color:#eee;
-  text-decoration:none;
+  color:#fff;
+  text-decoration:underline;
+}
+.footer-logo {
+  width:45px;
+  float: right;
+}
+.footer-text {
+  color:@hdc-dark-green;
 }
 .footer-sociallinks {
   margin-bottom: 0;
@@ -1324,9 +1351,13 @@ input[type="reset"]:hover
 
 
 // Main content
-.maincontent-container
+.maincontent-container,
+.host-container,
 {
   background-color: @maincontent-background-color;
+  border-radius: 10px;
+  padding-bottom:60px;
+  margin-bottom:30px;
 }
 
 
@@ -2243,6 +2274,14 @@ a.morelink {
   body {
     padding-left: 0px;
     padding-right: 0px;
+    background-image: none !important;
+    margin-bottom:0px;
+  }
+
+  .maincontent-container,
+  .host-container{
+    border-radius: 0px;
+    margin-bottom:0px;
   }
 
   // Alignment
@@ -2305,12 +2344,16 @@ a.morelink {
   }
   .nav-main-menu-wrapper
   {
-    background-color: #fff;
+    background-color: #fff !important;
     max-height:none;
     height:auto;
     overflow: hidden;
     /*margin-top:15px;*/
     background-image: none;
+  }
+  .nav-main-menu li.pull-left,
+  .nav-main-menu li.pull-right {
+    float:none !important;
   }
   .logo-img
   {
@@ -2334,6 +2377,11 @@ a.morelink {
     font-size:12px;
     padding: 0px 5px 0px 5px;
 
+  }
+
+  // Footer
+  #footer {
+    height: auto;
   }
 
   // Recipeboxes

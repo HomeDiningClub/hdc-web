@@ -79,7 +79,7 @@ o
                         <div class="col-xs-12">
                                 <ul class="nav nav-pills nav-main-menu collapse bs-navbar-collapse">
                                 @for(nav:models.viewmodels.MenuItem <- menuItems.get) {
-                                    <li class="@nav.wrapperCssClass"><a class="@nav.cssClass" href="@nav.url" target="@nav.target" title="@nav.title">@if(nav.icon.nonEmpty){<span class="@nav.icon"></span>&nbsp;}@nav.name</a></li>
+                                    <li class="@nav.wrapperCssClass"><a class="@nav.cssClass" href="@nav.url" target="@nav.target" title="@nav.title">@if(nav.icon.nonEmpty){<span class="@nav.icon"></span>&nbsp;}<span class="@nav.textCssClass">@nav.name</span></a></li>
                                 }
                                 </ul>
                         </div>
@@ -89,6 +89,7 @@ o
         </div>
         }
 
+        @*
         <div class="food-nav hidden-xs">
             <div id="carousel-header" class="carousel slide carousel-fade" data-ride="carousel" data-interval="8000">
                 <div class="carousel-inner food-carousel-inner">
@@ -105,6 +106,7 @@ o
                 </div>
             </div>
         </div>
+        *@
     </div>
     <div class="header-spacing"><!-- no content --></div>
 </header>

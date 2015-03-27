@@ -36,6 +36,12 @@ object HeaderController extends Controller with SecureSocial {
 //    ("Campaign page", "Campaign title", routes.CampaignController.index(), "")
 //  )
 
+  def bodyBg = {
+    val r = scala.util.Random
+    val number = r.nextInt(10) + 1
+    "background-image:url('/assets/images/general/body-bg-faded/2048x1360-" + number.toString + ".jpg')"
+  }
+
 
   def index(request: RequestHeader) = {
 
@@ -78,7 +84,9 @@ object HeaderController extends Controller with SecureSocial {
       url = Messages("header.main-menu.link.fb.href"),
       icon = "genericon genericon-facebook",
       target = "_blank",
-      wrapperCssClass = "pull-right")
+      wrapperCssClass = "pull-right",
+      textCssClass = "hidden-sm"
+    )
 
     val defMenuItem04 = MenuItem(
       name = Messages("header.main-menu.link.instagram.text"),
@@ -86,7 +94,9 @@ object HeaderController extends Controller with SecureSocial {
       url = Messages("header.main-menu.link.instagram.href"),
       icon = "genericon genericon-instagram",
       target = "_blank",
-      wrapperCssClass = "pull-right")
+      wrapperCssClass = "pull-right",
+      textCssClass = "hidden-sm"
+    )
 
     val defMenuItem05 = MenuItem(
       name = Messages("header.main-menu.link.members-browse.text"),
@@ -122,5 +132,6 @@ object HeaderController extends Controller with SecureSocial {
 
     views.html.header.header.render(Some(retMenuItemsList.result()), quickLinkTitle, quickLinkList)
   }
+
 
 }

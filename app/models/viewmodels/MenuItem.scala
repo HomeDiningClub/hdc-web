@@ -6,6 +6,7 @@ case class MenuItem(name: String,
                     url: String,
                     target: String = "",
                     cssClass: String = "",
+                    textCssClass: String = "",
                     wrapperCssClass: String = "",
                     icon: String = "",
                     selected: Boolean = false) {

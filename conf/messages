@@ -43,7 +43,7 @@ header.mobile-menu.title=Visa meny
 header.ribbon.text=BETA 1.2
 
 # Footer
-footer.text=© Home Dining Club AB
+footer.text=Home Dining Club AB
 footer.link.mail.href=mailto:info@homediningclub.se?Subject=Hej%20Home%20dining%20club
 footer.link.mail.title=Maila till info@homediningclub.se
 footer.link.mail.text=info@homediningclub.se

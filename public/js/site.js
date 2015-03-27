@@ -69,6 +69,19 @@ $(document).ready(function () {
     });
     */
 
+    // Menu color change
+    $(document).scroll(function() {
+        var alpha = Math.min(0.5 + 0.4 * $(this).scrollTop() / 110, 1.0);
+        var channelr = Math.round(alpha * 89);
+        var channelg = Math.round(alpha * 161);
+        var channelb = Math.round(alpha * 148);
+        //$(".nav-main-menu-wrapper").css('opacity', alpha);
+        $(".nav-main-menu-wrapper").css('background-color', 'rgba(' + channelr + ',' + channelg + ',' + channelb + ',' + alpha + ')');
+    });
+
+    // Make footer flush to bottom
+    //flushFooterToBottom();
+
     // Disable double click
     $("*").dblclick(function(e){
         e.preventDefault();
@@ -160,6 +173,17 @@ $(document).ready(function () {
 
 });
 
+
+function flushFooterToBottom(){
+
+    var docHeight = $(window).height();
+    var footerHeight = $('#footer').height();
+    var footerTop = $('#footer').position().top + footerHeight;
+
+    if (footerTop < docHeight) {
+        $('#footer').css('margin-top', -1+ (docHeight - footerTop) + 'px');
+    }
+}
 
 function isGuid(expression){
     if (expression != "undefined"){

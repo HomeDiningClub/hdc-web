@@ -22,12 +22,13 @@
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")">
         @headerCss
     </head>
-    <body>
-        <div id="wrap">
+    <body style="@HeaderController.bodyBg">
+        <div class="content-wrap">
             @if(headerVisible){ @HeaderController.index(request) }
             @content
-            @if(footerVisible){ @footer.footer() }
+            <div id="footer-push"></div>
         </div>
+        @if(footerVisible){ @footer.footer() }
         <div id="fb-root"></div>
         @footerHtml
 

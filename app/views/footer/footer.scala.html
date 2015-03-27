@@ -1,21 +1,20 @@
-<footer>
-    <div class="container-fluid footer-container">
-        <div class="row-fluid">
-            <div class="col-xs-12">
-                <div class="row">
-                    @*<div class="col-xs-12 col-sm-4 margin-top text-center">*@
-                        @*<ul class="footer-sociallinks">*@
-                            @*<li><a href="@Messages("footer.link.fb.href")" title="@Messages("footer.link.fb.title")" target="_blank"><span class="genericon genericon-facebook"></span> @Messages("footer.link.fb.text")</a></li>*@
-                            @*<li><a href="@Messages("footer.link.instagram.href")" title="@Messages("footer.link.instagram.title")" target="_blank"><span class="genericon genericon-instagram"></span> @Messages("footer.link.instagram.text")</a></li>*@
-                        @*</ul>*@
-                    @*</div>*@
-                    <div class="col-xs-12 margin-top text-center">
-                        @Messages("footer.text")
-                        <ul class="footer-sociallinks">
-                            <li><a href="@Messages("footer.link.mail.href")" title="@Messages("footer.link.mail.title")" target="_blank"><span class="genericon genericon-mail"></span> @Messages("footer.link.mail.text")</a></li>
-                        </ul>
-                    </div>
-                </div>
+<footer id="footer">
+    <div class="container footer-container">
+        <div class="row">
+            @*<div class="col-xs-12 col-sm-4 margin-top text-center">*@
+                @*<ul class="footer-sociallinks">*@
+                    @*<li><a href="@Messages("footer.link.fb.href")" title="@Messages("footer.link.fb.title")" target="_blank"><span class="genericon genericon-facebook"></span> @Messages("footer.link.fb.text")</a></li>*@
+                    @*<li><a href="@Messages("footer.link.instagram.href")" title="@Messages("footer.link.instagram.title")" target="_blank"><span class="genericon genericon-instagram"></span> @Messages("footer.link.instagram.text")</a></li>*@
+                @*</ul>*@
+            @*</div>*@
+            <div class="col-xs-8">
+                <strong class="footer-text">@Messages("footer.text")</strong>
+                <ul class="footer-sociallinks">
+                    <li><span class="glyphicon glyphicon-envelope"></span>&nbsp;<a href="@Messages("footer.link.mail.href")" title="@Messages("footer.link.mail.title")" target="_blank">@Messages("footer.link.mail.text")</a></li>
+                </ul>
+            </div>
+            <div class="col-xs-4">
+                @shared.img("/images/icons/white-house.png", alt = "Home Dining Club", title = "Home Dining Club", cssClass = "footer-logo img-responsive")
             </div>
         </div>
     </div>
