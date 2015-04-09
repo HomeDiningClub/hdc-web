@@ -4,6 +4,6 @@
 
 <script>
 var btn = document.getElementById('@btnId');
-btn.onclick = function(){ openFileModal(@editMode, @if(inputSelector.isEmpty){""}else{@inputSelector}, @selectorMaxItems); }
+btn.onclick = function(){ openFileModal(@editMode, @if(inputSelector.isEmpty){""}else{document.getElementById('@inputSelector')}, @selectorMaxItems); }
 </script>
 
