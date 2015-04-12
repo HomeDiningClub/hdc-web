@@ -1,7 +1,13 @@
 @(recipeForm: Form[models.viewmodels.RecipeForm], editingRecipe: Option[models.Recipe] = None, extraValues: models.viewmodels.EditRecipeExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
 @import helper.twitterBootstrap._
 
-@main(Messages("admin.title"), footerHtml = file.modalImages.render()){
+@script = {
+    <script>
+    //bootbox.confirm("Are you sure?", function(result) { alert('go ahead');});
+    </script>
+}
+
+@main(Messages("admin.title"), footerHtml = file.modalImages.render(),footerScripts = script){
 
     <div class="container maincontent-container">
         <div class="row">
@@ -56,7 +62,7 @@
                                 @helper.inputHidden(recipeForm("receipeid"))
                             </fieldset>
                             <div class="form-actions">
-                                <button class="btn btn-primary" type="submit">@Messages("recipe.edit.save")</button>
+                                <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;@Messages("recipe.edit.save")</button>
                                 @defining(if(editingRecipe.isDefined){
                                     controllers.routes.RecipePageController.viewRecipeByNameAndProfile(editingRecipe.get.getOwnerProfile.profileLinkName,editingRecipe.get.getLink).url
                                 }else{
@@ -64,9 +70,12 @@
                                 }) { abortLink =>
                                     <a class="btn" data-loading-text="@Messages("recipe.edit.saving")" href="@abortLink">@Messages("recipe.edit.abort")</a>
                                 }
+                                @if(recipeForm("receipeid").value.nonEmpty) {
+                                    <a class="btn btn-danger pull-right" data-confirm-type="link" data-confirm-btn-ok="@Messages("recipe.edit.delete.ok")" data-confirm-title="@Messages("recipe.edit.delete.title")" data-confirm-btn-cancel="@Messages("recipe.edit.delete.abort")" data-confirm-text="@Messages("recipe.edit.delete.confirm")" href="@controllers.routes.RecipePageController.delete(java.util.UUID.fromString(recipeForm("receipeid").value.get))"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("recipe.edit.delete")</a>
+                                }
                             </div>
                         }
-                    </div>
+                        </div>
                 </div>
             </div>
 

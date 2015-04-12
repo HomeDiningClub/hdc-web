@@ -71,12 +71,46 @@ $(document).ready(function () {
 
     // Menu color change
     $(document).scroll(function() {
-        var alpha = Math.min(0.5 + 0.4 * $(this).scrollTop() / 110, 1.0);
+        var alpha = Math.min(0.5 + 0.4 * $(this).scrollTop() / 110, 0.8);
         var channelr = Math.round(alpha * 89);
         var channelg = Math.round(alpha * 161);
         var channelb = Math.round(alpha * 148);
         //$(".nav-main-menu-wrapper").css('opacity', alpha);
         $(".nav-main-menu-wrapper").css('background-color', 'rgba(' + channelr + ',' + channelg + ',' + channelb + ',' + alpha + ')');
+    });
+
+    // Confirm alerts
+    $("[data-confirm-text]").click(function(e){
+        var $el = $(this);
+        e.preventDefault();
+        var confirmText = $el.attr('data-confirm-text');
+        var confirmTitle = $el.attr('data-confirm-title');
+        var confirmBtnOk = $el.attr('data-confirm-btn-ok');
+        var confirmBtnCancel = $el.attr('data-confirm-btn-cancel');
+        var confirmType = $el.attr('data-confirm-type');
+        bootbox.confirm({
+            message: confirmText,
+            title: confirmTitle,
+            buttons: {
+                confirm: {
+                    label: confirmBtnOk,
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    label: confirmBtnCancel,
+                    className: 'btn-default'
+                }
+            },
+            callback: function(result) {
+            if (result) {
+                if(confirmType.toLowerCase() == "submit"){
+                    $el.closest('form').submit();
+                }else if (confirmType.toLowerCase() == "link"){
+                    window.location = $el.attr("href");
+                }
+
+            }
+        }});
     });
 
     // Make footer flush to bottom

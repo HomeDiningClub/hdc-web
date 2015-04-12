@@ -344,6 +344,11 @@ recipe.delete.error=Kunde inte ta bort recept
 recipe.edit.save=Spara
 recipe.edit.abort=Avbryt
 recipe.edit.saving=Sparar...
+recipe.edit.delete=Ta bort
+recipe.edit.delete.title=Varning
+recipe.edit.delete.confirm=Du kan inte ångra denna åtgärd, är du säker att du vill ta bort?
+recipe.edit.delete.ok=Ta bort!
+recipe.edit.delete.abort=Avbryt
 
 recipe.button.edit=Redigera recept
 

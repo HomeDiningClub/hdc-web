@@ -135,6 +135,22 @@ public class Recipe extends ContentBase implements IEditable {
         }
     }
 
+    public void deleteLikes() {
+        if(this.likes == null){
+            this.likes = new HashSet<>();
+        }else {
+            this.likes.clear();
+        }
+    }
+
+    public void deleteRatings() {
+        if(this.ratings == null){
+            this.ratings = new HashSet<>();
+        }else {
+            this.ratings.clear();
+        }
+    }
+
     public void deleteRecipeImage(ContentFile recipeImage) {
         if(this.recipeImages == null){
             this.recipeImages = new HashSet<>();

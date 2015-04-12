@@ -211,6 +211,8 @@ class RecipeService {
       case Some(item) =>
         item.deleteMainImage()
         item.deleteRecipeImages()
+        item.deleteRatings()
+        item.deleteLikes()
         recipeRepository.delete(item)
         true
     }
