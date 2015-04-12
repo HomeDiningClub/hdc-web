@@ -207,6 +207,9 @@ profile.create.header.media=Hantera mina bilder och media
 profile.create.tabs.media.name=Media
 profile.create.tabs.media.title=Media
 
+profile.create.header.other=Övriga inställningar
+profile.create.tabs.other.name=Övrigt
+profile.create.tabs.other.title=Övrigt
 
 profile.create.form.profilename=Profilnamn
 profile.create.form.profilename.required=*
