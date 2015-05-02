@@ -296,6 +296,8 @@ profile.tabs.inbox.name=Inbox
 profile.tabs.inbox.title=Inbox
 profile.tabs.favourites.name=Favoriter
 profile.tabs.favourites.title=Favoriter
+profile.button.blogg.add=Lägg till blogg
+
 
 profile.blog.tab.body=Här kommer alla värdar att kunna skriva och blogga om sin mat och sina intressen.
 

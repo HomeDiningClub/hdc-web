@@ -290,6 +290,15 @@
                             </div>
                             @if(userProfile.isUserHost) {
                                 <div class="tab-pane tab-hdc fade" id="@tab2">
+                                    <div class="row">
+                                    @if(isThisMyProfile) {
+                                        <div class="col-xs-12">
+                                            <div class="btn-group btn-edit-group">
+                                                <a href="@controllers.routes.BloggPostsPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.blogg.add")</a>
+                                            </div>
+                                        </div>
+                                    }
+                                    </div>
                                 <!-- @Messages("profile.blog.tab.body") -->
                                     @if(userProfile.getRole.size() > 1){
                                         @blogg.bloggBox(userProfile.profileLinkName)
