@@ -355,6 +355,11 @@ recipe.edit.delete.abort=Avbryt
 
 recipe.button.edit=Redigera recept
 
+#blogg
+
+blogg.edit.add.header=Lägg till / Redigera blogg
+
+
 # Pagination
 button.next=Nästa sida
 button.previous=Föreg. sida

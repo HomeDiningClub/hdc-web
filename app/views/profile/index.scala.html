@@ -290,7 +290,13 @@
                             </div>
                             @if(userProfile.isUserHost) {
                                 <div class="tab-pane tab-hdc fade" id="@tab2">
-                                @Messages("profile.blog.tab.body")
+                                <!-- @Messages("profile.blog.tab.body") -->
+                                    @if(userProfile.getRole.size() > 1){
+                                        @blogg.bloggBox(userProfile.profileLinkName)
+                                    } else {
+                                        @Messages("profile.blog.tab.body")
+                                    }
+
                                 </div>
                             }
                             <div class="tab-pane tab-hdc fade" id="@tab3">

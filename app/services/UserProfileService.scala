@@ -4,7 +4,7 @@ import java.util.UUID
 
 import models.files.ContentFile
 import models.modelconstants.UserLevelScala
-import models.{ViewedByMember, Recipe, UserCredential, UserProfile, ViewedByUnKnown}
+import models._
 import org.neo4j.graphdb._
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -278,6 +278,23 @@ class UserProfileService {
   {
     userProfile.addRecipe(recipeToAdd)
   }
+
+  @Transactional(readOnly = false)
+  def addBloggPostsToProfile(userProfile: UserProfile, bloggPostsToAdd: BloggPosts): UserProfile =
+  {
+    userProfile.addBloggPosts(bloggPostsToAdd)
+  }
+
+
+  @Transactional(readOnly = false)
+  def addBloggPostsToProfile(user: UserCredential, bloggPostsToAdd: BloggPosts): UserProfile = {
+    val userProfile = user.profiles.iterator().next()
+    var modUserProfile = this.addBloggPostsToProfile(userProfile, bloggPostsToAdd)
+    modUserProfile = userProfileRepository.save(userProfile)
+    modUserProfile
+  }
+
+
 
   def findByprofileLinkName(profileName: String): Option[UserProfile] =
   {

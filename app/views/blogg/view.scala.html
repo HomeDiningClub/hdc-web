@@ -1,0 +1,51 @@
+@(bloggPostForm: Form[models.viewmodels.BlogPostsForm], editingBloggPosts: Option[models.BloggPosts] = None, extraValues: models.viewmodels.EditBloggPostsExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
+@import helper.twitterBootstrap._
+
+@main(Messages("admin.title"), footerHtml = file.modalImages.render()){
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-9">
+                <div class="row">
+                    <div class="col-xs-12">
+
+                        @shared.flashmsg(flash)
+
+
+
+                            <fieldset style="background:#ffffff">
+
+
+                                @bloggPostForm.get.title
+
+                                @Html(bloggPostForm.get.title.get)
+
+
+
+                                        @file.previewField(previewId = "bloggmainimg", Messages("recipe.edit.add.main-image-preview"), blnShowText = false, prePopulatedWith = extraValues.mainImagePrev)
+                                        @helper.inputHidden(bloggPostForm("mainimage"), 'id -> "bloggmainimg")
+
+
+
+
+                                <div class="breadtext">@Html(bloggPostForm.get.maintext.get)</div>
+
+
+                                @helper.inputHidden(bloggPostForm("blogpostid"))
+                            </fieldset>
+
+                            <div class="form-actions">
+
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+
+                <!-- Banner -->
+            <div class="col-xs-12 col-md-3 col-banner">
+            @shared.banner()
+            </div>
+        </div>
+    </div>
+}

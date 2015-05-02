@@ -4,11 +4,11 @@
 
 
 # Start page
-GET         /                                                    @controllers.StartPageController.index(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?= false)
+GET         /                                                    @controllers.StartPageController.index(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?=        false)
 
 # Browse page
-GET         /browse                                              @controllers.BrowsePageController.index(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?= false)
-GET         /browse.json                                         @controllers.BrowsePageController.getBrowseBoxesPagedJSON(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?= false, page: Int ?= 0)
+GET         /browse                                              @controllers.BrowsePageController.index(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?=        false)
+GET         /browse.json                                         @controllers.BrowsePageController.getBrowseBoxesPagedJSON(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?=        false,        page: Int ?=        0)
 
 # Content pages
 GET         /content/:contentName                                @controllers.ContentPageController.viewContentByName(contentName: String)
@@ -62,6 +62,16 @@ GET         /recipe/add                                          @controllers.Re
 POST        /recipe/add                                          @controllers.RecipePageController.addSubmit
 GET         /recipe/edit/:objectId                               @controllers.RecipePageController.edit(objectId: java.util.UUID)
 GET         /recipe/delete/:objectId                             @controllers.RecipePageController.delete(objectId: java.util.UUID)
+
+# Blogg
+GET         /blogg/add                                          @controllers.BloggPostsPageController.add
+POST        /blogg/add                                          @controllers.BloggPostsPageController.addSubmit
+GET         /blogg/list                                         @controllers.BloggPostsPageController.viewListOfBloggPosts(profileName: String, page: Int)
+GET         /blogg/jsonList                                     @controllers.BloggPostsPageController.viewBloggPostByNameAndProfilePageJSON(profileName: String ?= "", page: Int ?= 0)
+# edit(objectId: UUID)
+GET         /blogg/edit/:objectId                               @controllers.BloggPostsPageController.edit(objectId: java.util.UUID)
+GET         /blogg/view/:objectId                               @controllers.BloggPostsPageController.view(objectId: java.util.UUID)
+GET         /blogg/showList                                     @controllers.BloggPostsPageController.viewBloggPosts
 
 # Rating
 POST        /rate/user                                           controllers.RatingController.rateSubmit
