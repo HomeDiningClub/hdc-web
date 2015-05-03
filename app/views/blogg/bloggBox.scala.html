@@ -4,9 +4,9 @@
 $(document).ready(function(){
 
 var map = 0;
-var resultsNextBtn = "#resultNext";
-var resultsPrevBtn = "#resultPrev";
-var resultsTotal = "#resultsTotal";
+var resultsNextBtnBlogg = "#resultNextBlogg";
+var resultsPrevBtnBlogg = "#resultPrevBlogg";
+var resultsTotalBlogg = "#resultsTotalBlogg";
 
 
 function boxTemplate(value){
@@ -44,19 +44,19 @@ myArr.push(boxTemplate(value));
 
 if(nrOfItems > 0) {
 if(hasNext)
-$(resultsNextBtn).show();
+$(resultsNextBtnBlogg).show();
 else
-$(resultsNextBtn).hide();
+$(resultsNextBtnBlogg).hide();
 
 if(hasPrev)
-$(resultsPrevBtn).show();
+$(resultsPrevBtnBlogg).show();
 else
-$(resultsPrevBtn).hide();
+$(resultsPrevBtnBlogg).hide();
 
 map = map + pageDirection;
 
 if(totalPages > 1)
-$(resultsTotal).html((map+1) + " / " + totalPages);
+$(resultsTotalBlogg).html((map+1) + " / " + totalPages);
 
 $('#bloggList').html(myArr.join(''));
 }
@@ -68,8 +68,8 @@ $('#bloggList').html(myArr.join(''));
 getBloggBoxesAsJSON(0);
 
 // Attach events to buttons
-$(resultsNextBtn).off("click").on("click", function(){getBloggBoxesAsJSON(1)});
-$(resultsPrevBtn).off("click").on("click", function(){getBloggBoxesAsJSON(-1)});
+$(resultsNextBtnBlogg).off("click").on("click", function(){getBloggBoxesAsJSON(1)});
+$(resultsPrevBtnBlogg).off("click").on("click", function(){getBloggBoxesAsJSON(-1)});
 
 });
 </script>
@@ -77,10 +77,10 @@ $(resultsPrevBtn).off("click").on("click", function(){getBloggBoxesAsJSON(-1)});
 <div class="row" id="bloggList"></div>
 <div class="row pagination-hdc">
     <div class="col-xs-6 col-sm-5">
-        <button id="resultPrev" class="btn btn-default pull-right"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;@Messages("button.previous")</button>
+        <button id="resultPrevBlogg" class="btn btn-default pull-right"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;@Messages("button.previous")</button>
     </div>
-    <div id="resultsTotal" class="col-xs-2 hidden-xs text-center"></div>
+    <div id="resultsTotalBlogg" class="col-xs-2 hidden-xs text-center"></div>
     <div class="col-xs-6 col-sm-5">
-        <button id="resultNext" class="btn btn-default pull-left">@Messages("button.next") &nbsp; <span class="glyphicon glyphicon-arrow-right"></span></button>
+        <button id="resultNextBlogg" class="btn btn-default pull-left">@Messages("button.next") &nbsp; <span class="glyphicon glyphicon-arrow-right"></span></button>
     </div>
 </div>
