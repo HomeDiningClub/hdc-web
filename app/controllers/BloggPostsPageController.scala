@@ -217,7 +217,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
 
   def viewListOfBloggPosts(profileName: String, page: Int) = UserAwareAction { implicit request =>
 
-    var t: Option[List[BloggPostBox]] = None
+    var t: Option[List[BloggPostItem]] = None
     var antal : Int = 0
     print("1 ok")
 
@@ -245,7 +245,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
       // loop ....
       t match {
         case Some(t) => {
-          for (e: BloggPostBox <- t) {
+          for (e: BloggPostItem <- t) {
             print("\nObjectId" + e.bloggPostObjectId.toString)
             print("\nTitle : " + e.title)
             print("\ntext : " + e.text)
@@ -275,7 +275,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
   def viewBloggPostByNameAndProfilePageJSON(profileName: String, page: Int) = UserAwareAction { implicit request =>
 
     var list: ListBuffer[BlogPostBoxJSON] = new ListBuffer[BlogPostBoxJSON]
-    var t: Option[List[BloggPostBox]] = None
+    var t: Option[List[BloggPostItem]] = None
 
 
     println("profileLinkName(IN) : " + profileName)
@@ -301,7 +301,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
       // loop ....
       t match {
         case Some(t) => {
-          for (e: BloggPostBox <- t) {
+          for (e: BloggPostItem <- t) {
             //val link: String = controllers.routes.RecipePageController.viewRecipeByNameAndProfile(profileName, e.linkToRecipe).url
             list += BlogPostBoxJSON(e.bloggPostObjectId.toString, e.title, e.text, e.mainImage.getOrElse(""), e.hasNext, e.hasPrevious, e.totalPages) // ? antal sidor
           }
@@ -351,31 +351,46 @@ class BloggPostsPageController extends Controller with SecureSocial {
     }
   }
 
+  private def buildMetaData(blogPost: BloggPosts, request: RequestHeader): Option[MetaData] = {
+    val domain = "//" + request.domain
+
+    Some(MetaData(
+      fbUrl = domain + request.path,
+      fbTitle = blogPost.getTitle,
+      fbDesc = blogPost.getText match {
+        case null | "" => ""
+        case item: String => utils.Helpers.limitLength(Helpers.removeHtmlTags(item), 125)
+      },
+      fbImage = blogPost.getMainImage match {
+        case image: ContentFile => { domain + routes.ImageController.profileNormal(image.getStoreId).url }
+        case _ => { "" }
+      }
+    ))
+  }
+
+  private def isThisMyBlogPost(blogPost: BloggPosts)(implicit request: RequestHeader): Boolean = {
+    utils.Helpers.getUserFromRequest match {
+      case None =>
+        false
+      case Some(user) =>
+        if(blogPost.getOwnerProfile.getOwner.objectId == user.objectId)
+          true
+        else
+          false
+    }
+  }
 
   def view(objectId: UUID) = UserAwareAction { implicit request =>
-    val editingRecipe = bloggPostsService.findById(objectId)
+    val blogPosting = bloggPostsService.findById(objectId)
 
-    editingRecipe match {
+    blogPosting match {
       case None =>
         val errorMsg = "Wrong ID, cannot edit, Page cannot be found."
         Logger.debug(errorMsg)
         print("error ..... ")
         NotFound(errorMsg)
       case Some(item) =>
-
-        item.setTitle(item.getTitle)
-        print("svar objectId : " + item.objectId)
-        val form = BlogPostsForm.apply(
-          id = Some(item.objectId.toString),
-          title = Some(item.getTitle),
-          maintext = Some(item.getText),
-          mainImage = Some(""))
-
-
-        // Get any images and sort them
-        //val sortedImages = recipeService.getSortedRecipeImages(item)
-
-        Ok(views.html.blogg.view(bloggPostForm = recForm.fill(form), editingBloggPosts = editingRecipe, extraValues = setExtraValues(editingRecipe)))
+        Ok(views.html.blogg.view(blogPost = item, metaData = buildMetaData(item,request), isThisMyBlogPost = isThisMyBlogPost(item)))
     }
   }
 

@@ -1,13 +1,9 @@
 package models.viewmodels
-
-//case class BloggPostBox()
-
 import java.util.UUID
 
 import org.joda.time.DateTime
 
-// Used on the Start page, collects profile information and user information
-case class BloggPostBox (
+case class BloggPostItem (
                        objectId: Option[UUID],
                        title: String,
                        text : String,

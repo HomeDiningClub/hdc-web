@@ -1,45 +1,23 @@
-@(bloggPostForm: Form[models.viewmodels.BlogPostsForm], editingBloggPosts: Option[models.BloggPosts] = None, extraValues: models.viewmodels.EditBloggPostsExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
-@import helper.twitterBootstrap._
+@(blogPost: models.BloggPosts,
+        metaData: Option[viewmodels.MetaData] = None,
+        isThisMyBlogPost: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
 
-@main(Messages("admin.title"), footerHtml = file.modalImages.render()){
+@main(Messages("blog.title", blogPost.getTitle), metaData = metaData){
 
-    <div class="container">
+    <div class="container maincontent-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                <div class="row">
-                    <div class="col-xs-12">
-
-                        @shared.flashmsg(flash)
-
-
-
-                            <fieldset style="background:#ffffff">
-
-
-                                @bloggPostForm.get.title
-
-                                @Html(bloggPostForm.get.title.get)
-
-
-
-                                        @file.previewField(previewId = "bloggmainimg", Messages("recipe.edit.add.main-image-preview"), blnShowText = false, prePopulatedWith = extraValues.mainImagePrev)
-                                        @helper.inputHidden(bloggPostForm("mainimage"), 'id -> "bloggmainimg")
-
-
-
-
-                                <div class="breadtext">@Html(bloggPostForm.get.maintext.get)</div>
-
-
-                                @helper.inputHidden(bloggPostForm("blogpostid"))
-                            </fieldset>
-
-                            <div class="form-actions">
-
-                            </div>
-
-                    </div>
-                </div>
+                @shared.flashmsg(flash)
+                <article>
+                    <h1 class="page-header">@blogPost.getTitle</h1>
+                    @blogPost.getMainImage match {
+                        case image: models.files.ContentFile => {
+                            @shared.img(routes.ImageController.profileNormal(image.getStoreId).url, cssClass = "img-responsive")
+                        }
+                        case _ => {}
+                    }
+                    <div class="breadtext">@Html(blogPost.getText)</div>
+                </article>
             </div>
 
                 <!-- Banner -->

@@ -15,7 +15,7 @@ import java.util.UUID
 import models.viewmodels.BlogPostsForm
 import controllers.routes
 import utils.Helpers
-import models.viewmodels.BloggPostBox
+import models.viewmodels.BloggPostItem
 
 import scala.collection.mutable.ListBuffer
 
@@ -59,7 +59,7 @@ class BloggPostsService {
   }
 
   @Transactional(readOnly = true)
-  def getBlogPostsBoxesPage(user: UserCredential, pageNo: Integer): Option[List[BloggPostBox]] = {
+  def getBlogPostsBoxesPage(user: UserCredential, pageNo: Integer): Option[List[BloggPostItem]] = {
 
     val userObjectId = user.profiles.iterator().next().objectId.toString
     println("ObjectId : " + userObjectId)
@@ -73,7 +73,7 @@ class BloggPostsService {
 
     val iterator = list.iterator()
     var antal : Int = 0
-    var bloggPostList : ListBuffer[BloggPostBox] = new ListBuffer[BloggPostBox]
+    var bloggPostList : ListBuffer[BloggPostItem] = new ListBuffer[BloggPostItem]
 
     while(iterator.hasNext()) {
 
@@ -92,7 +92,7 @@ class BloggPostsService {
 
 
       // Build return-list
-      var bloggPost = BloggPostBox(
+      var bloggPost = BloggPostItem(
         Some(UUID.fromString(obj.getBloggPostObjectId())),
         obj.getTitle(), obj.getText(), mainImage,
         list.hasNext,
@@ -110,14 +110,14 @@ class BloggPostsService {
 
     }
 
-    val startPageBoxes: List[BloggPostBox] = bloggPostList.toList
+    val blogPosts: List[BloggPostItem] = bloggPostList.toList
 
     println("antal = " + antal)
 
-    if(startPageBoxes.isEmpty)
+    if(blogPosts.isEmpty)
       None
     else
-      Some(startPageBoxes)
+      Some(blogPosts)
 
   }
 
