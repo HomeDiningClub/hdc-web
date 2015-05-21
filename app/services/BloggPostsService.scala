@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import scala.language.existentials
 import repositories._
-import models.{UserProfile, UserCredential, BloggPosts}
+import models.{UserProfile, UserCredential, BlogPost}
 import scala.collection.JavaConverters._
 import scala.List
 import java.util.UUID
@@ -29,7 +29,7 @@ class BloggPostsService {
   private var bloggPostsRepository: BloggPostsRepository = _
 
   @Transactional(readOnly = true)
-  def findById(objectId: UUID): Option[BloggPosts] = {
+  def findById(objectId: UUID): Option[BlogPost] = {
     bloggPostsRepository.findByobjectId(objectId) match {
       case null => None
       case item => Some(item)
@@ -43,7 +43,7 @@ class BloggPostsService {
 
 
   @Transactional(readOnly = true)
-  def getListOfAll: List[BloggPosts] = {
+  def getListOfAll: List[BlogPost] = {
     bloggPostsRepository.findAll.iterator.asScala.toList match {
       case null => null
       case bloggPosts =>
@@ -53,7 +53,7 @@ class BloggPostsService {
   }
 
   @Transactional(readOnly = false)
-  def add(newContent: BloggPosts): BloggPosts = {
+  def add(newContent: BlogPost): BlogPost = {
     val newContentResult = bloggPostsRepository.save(newContent)
     newContentResult
   }

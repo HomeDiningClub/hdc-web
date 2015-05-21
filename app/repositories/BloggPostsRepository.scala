@@ -4,27 +4,27 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.annotation._
 import org.springframework.data.neo4j.repository.GraphRepository
-import models.{UserProfile, UserCredential, BloggPosts}
+import models.{UserProfile, UserCredential, BlogPost}
 import java.util.UUID
 import java.util
 
-trait BloggPostsRepository extends GraphRepository[BloggPosts]
+trait BloggPostsRepository extends GraphRepository[BlogPost]
 {
 
   // Auto-mapped by Spring
-  @Query("MATCH (n:`BloggPosts`) WHERE n.objectId={0} RETURN n")
-  def findByobjectId(objectId: UUID): BloggPosts
+  @Query("MATCH (n:`BlogPost`) WHERE n.objectId={0} RETURN n")
+  def findByobjectId(objectId: UUID): BlogPost
 
-  @Query("MATCH (n:`BloggPosts`) RETURN COUNT(*)")
+  @Query("MATCH (n:`BlogPost`) RETURN COUNT(*)")
   def getCountOfAll(): Int
 
-  @Query("match (b:BloggPosts)-[:HAS_BLOGGPOSTS]-(p:UserProfile {objectId:{0}}) return b.title, b.text, b.objectId, b.lastModifiedDate, b.createdDate, b.contentState")
+  @Query("match (b:BlogPost)-[:HAS_BLOGGPOSTS]-(p:UserProfile {objectId:{0}}) return b.title, b.text, b.objectId, b.lastModifiedDate, b.createdDate, b.contentState")
   def findAllUsersBloggPost(userObjectId: String) : util.List[BloggPostsData]
 
-  @Query("match (b:BloggPosts)-[:HAS_BLOGGPOSTS]-(p:UserProfile {objectId:{0}}) optional match (b)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return b.title, b.text, b.objectId, b.lastModifiedDate, b.createdDate, b.contentState, COLLECT(mainImage.storeId) as MainImage order by b.createdDate desc")
+  @Query("match (b:BlogPost)-[:HAS_BLOGGPOSTS]-(p:UserProfile {objectId:{0}}) optional match (b)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return b.title, b.text, b.objectId, b.lastModifiedDate, b.createdDate, b.contentState, COLLECT(mainImage.storeId) as MainImage order by b.createdDate desc")
   def findAllUsersBloggPostsOnPage(userObjectId: String, pageable: Pageable) : Page[BloggPostsData]
 
-  // match (b:BloggPosts)-[:HAS_BLOGGPOSTS]-(p:UserProfile) optional match (b)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`)  return b.title, b.text, b.objectId, b.lastModifiedDate, b.createdDate, b.contentState, COLLECT(mainImage.storeId) as MainImage
+  // match (b:BlogPost)-[:HAS_BLOGGPOSTS]-(p:UserProfile) optional match (b)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`)  return b.title, b.text, b.objectId, b.lastModifiedDate, b.createdDate, b.contentState, COLLECT(mainImage.storeId) as MainImage
 
   @QueryResult
   trait BloggPostsData {

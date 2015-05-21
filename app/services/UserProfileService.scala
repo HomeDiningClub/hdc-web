@@ -280,14 +280,14 @@ class UserProfileService {
   }
 
   @Transactional(readOnly = false)
-  def addBloggPostsToProfile(userProfile: UserProfile, bloggPostsToAdd: BloggPosts): UserProfile =
+  def addBloggPostsToProfile(userProfile: UserProfile, bloggPostsToAdd: BlogPost): UserProfile =
   {
     userProfile.addBloggPosts(bloggPostsToAdd)
   }
 
 
   @Transactional(readOnly = false)
-  def addBloggPostsToProfile(user: UserCredential, bloggPostsToAdd: BloggPosts): UserProfile = {
+  def addBloggPostsToProfile(user: UserCredential, bloggPostsToAdd: BlogPost): UserProfile = {
     val userProfile = user.profiles.iterator().next()
     var modUserProfile = this.addBloggPostsToProfile(userProfile, bloggPostsToAdd)
     modUserProfile = userProfileRepository.save(userProfile)

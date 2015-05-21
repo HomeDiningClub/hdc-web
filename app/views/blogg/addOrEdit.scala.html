@@ -1,4 +1,4 @@
-@(bloggPostForm: Form[models.viewmodels.BlogPostsForm], editingBloggPosts: Option[models.BloggPosts] = None, extraValues: models.viewmodels.EditBloggPostsExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
+@(bloggPostForm: Form[models.viewmodels.BlogPostsForm], editingBloggPosts: Option[models.BlogPost] = None, extraValues: models.viewmodels.EditBloggPostsExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
 @import helper.twitterBootstrap._
 
 @main(Messages("admin.title"), footerHtml = file.modalImages.render()){

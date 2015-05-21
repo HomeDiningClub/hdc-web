@@ -17,7 +17,7 @@ import java.util.UUID;
 
 
 @NodeEntity
-public class BloggPosts extends ContentBase implements IEditable {
+public class BlogPost extends ContentBase implements IEditable {
 
 
 

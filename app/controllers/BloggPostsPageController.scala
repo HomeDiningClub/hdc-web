@@ -6,7 +6,7 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
 import securesocial.core.SecureSocial
-import models.{BloggPosts, UserCredential, Recipe}
+import models.{BlogPost, UserCredential, Recipe}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
@@ -82,7 +82,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
 
         print("addSubmit ... 4... ")
 
-        val newRec: Option[BloggPosts] = contentData.id match {
+        val newRec: Option[BlogPost] = contentData.id match {
           case Some(id) =>
             bloggPostsService.findById(UUID.fromString(id)) match {
               case None => None
@@ -99,7 +99,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
             }
           case None =>
             print("addSubmit ... 5 ... No in data ....")
-            Some(new BloggPosts())
+            Some(new BlogPost())
         }
 
         print("addSubmit ... 5 ... ")
@@ -161,7 +161,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
 
   }
 
-  private def setExtraValues(bloggPosts: Option[BloggPosts] = None): EditBloggPostsExtraValues = {
+  private def setExtraValues(bloggPosts: Option[BlogPost] = None): EditBloggPostsExtraValues = {
 
     if(bloggPosts.isDefined){
       // Other values not fit to be in form-classes
@@ -181,7 +181,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
 
       // Not brilliant, consider moving config
       //@todo new constructor new BloggPosts("temporary")
-      var tempRec = new BloggPosts()
+      var tempRec = new BlogPost()
       val maxMainImage = tempRec.getMaxNrOfMainImages
 
       tempRec = null
@@ -351,7 +351,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
     }
   }
 
-  private def buildMetaData(blogPost: BloggPosts, request: RequestHeader): Option[MetaData] = {
+  private def buildMetaData(blogPost: BlogPost, request: RequestHeader): Option[MetaData] = {
     val domain = "//" + request.domain
 
     Some(MetaData(
@@ -368,7 +368,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
     ))
   }
 
-  private def isThisMyBlogPost(blogPost: BloggPosts)(implicit request: RequestHeader): Boolean = {
+  private def isThisMyBlogPost(blogPost: BlogPost)(implicit request: RequestHeader): Boolean = {
     utils.Helpers.getUserFromRequest match {
       case None =>
         false
