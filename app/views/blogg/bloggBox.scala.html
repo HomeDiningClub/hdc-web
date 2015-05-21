@@ -13,7 +13,7 @@ function blogTemplate(value){
 var l = "";
 l = l + "<div class='row'><div class='col-xs-12'>";
 l = l + "<a href='" + "/blogg/view/" + value.objectId + "' class='link-recipe-panel'>";
-l = l + "<h2>" + value.title + "</h2>";
+l = l + "<h2>" + value.dateCreated  + " " + value.title + "</h2>";
 l = l + "</a>";
 l = l + "<div><img src='" + value.mainImage + "' class='img-responsive'></div>";
 l = l + "<div>" + value.text + "</div>";

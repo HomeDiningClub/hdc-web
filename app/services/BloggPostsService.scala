@@ -58,12 +58,20 @@ class BloggPostsService {
     newContentResult
   }
 
+
+  def stringToDate(dateString : String) : org.joda.time.DateTime = {
+    var createdDateLong : Long = dateString.toLong
+    new org.joda.time.DateTime(createdDateLong)
+  }
+
+
+
   @Transactional(readOnly = true)
   def getBlogPostsBoxesPage(user: UserCredential, pageNo: Integer): Option[List[BloggPostItem]] = {
 
     val userObjectId = user.profiles.iterator().next().objectId.toString
     println("ObjectId : " + userObjectId)
-    var userObjectId2 = "3e6051cc-9dbd-4b4a-8148-81cc8797f74e"
+    // var userObjectId2 = "3e6051cc-9dbd-4b4a-8148-81cc8797f74e"
     // val list = bloggPostsRepository.findAllUsersBloggPostsOnPage(userObjectId, new PageRequest(pageNo, 6))
     // findAllUsersBloggPost
     // val list = bloggPostsRepository.findAllUsersBloggPost(userObjectId)
@@ -91,6 +99,12 @@ class BloggPostsService {
       }
 
 
+     // obj.getLastModDate(),
+     // obj.getDateCreated(),
+
+
+
+
       // Build return-list
       var bloggPost = BloggPostItem(
         Some(UUID.fromString(obj.getBloggPostObjectId())),
@@ -98,14 +112,19 @@ class BloggPostsService {
         list.hasNext,
         list.hasPrevious,
         list.getTotalPages,
-        org.joda.time.DateTime.now(),
-        org.joda.time.DateTime.now(),
+        stringToDate(obj.getDateCreated()),
+        stringToDate(obj.getLastModDate()),
         UUID.fromString(obj.getBloggPostObjectId()))
 
       bloggPostList += bloggPost
 
       println("prev : " + list.hasPrevious())
       println("next : " + list.hasNext())
+      println("created date: " + obj.getDateCreated())
+      println("mod date: " + obj.getLastModDate())
+
+      // PUBLISHED
+      println("mod date: " + obj.getState())
       println("getTotalElements : " + list.getTotalElements)
 
     }

@@ -303,7 +303,13 @@ class BloggPostsPageController extends Controller with SecureSocial {
         case Some(t) => {
           for (e: BloggPostItem <- t) {
             //val link: String = controllers.routes.RecipePageController.viewRecipeByNameAndProfile(profileName, e.linkToRecipe).url
-            list += BlogPostBoxJSON(e.bloggPostObjectId.toString, e.title, e.text, e.mainImage.getOrElse(""), e.hasNext, e.hasPrevious, e.totalPages) // ? antal sidor
+
+            var cd : String = e.dateChanged.toString("YYYY-MM-dd HH:mm")
+            var md : String = e.dateChanged.toString("YYYY-MM-dd HH:mm")
+
+            println("Mod date : " + md)
+
+            list += BlogPostBoxJSON(e.bloggPostObjectId.toString, e.title, e.text, cd, md, e.mainImage.getOrElse(""), e.hasNext, e.hasPrevious, e.totalPages) // ? antal sidor
           }
         }
         case None => {}

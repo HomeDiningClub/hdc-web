@@ -42,10 +42,10 @@ trait BloggPostsRepository extends GraphRepository[BlogPost]
     def getLastModDate() : String
 
     @ResultColumn("b.contentState")
-    def getDateCreated() : String
+    def getState() : String
 
     @ResultColumn("b.createdDate")
-    def getState() : String
+    def getDateCreated() : String
 
     @ResultColumn("MainImage")
     def getMainImage() : util.List[String]
