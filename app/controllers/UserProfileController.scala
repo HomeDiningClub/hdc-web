@@ -1,5 +1,6 @@
 package controllers
 
+import java.text.SimpleDateFormat
 import java.util.{Date, UUID}
 
 import constants.FlashMsgConstants
@@ -280,6 +281,7 @@ class UserProfileController extends Controller with SecureSocial {
         val tags = tagWordService.findByProfileAndGroup(profile,"profile")
         val messages = if(myProfile) messageService.findIncomingMessagesForUser(profile.getOwner) else None
         val metaData = buildMetaData(profile, request)
+        val shareUrl = createShareUrl(profile)
 
         // should the event be registred or not
         val doCountEvent : Boolean = true
@@ -299,6 +301,7 @@ class UserProfileController extends Controller with SecureSocial {
           userMessages = messages,
           tagList = tags,
           metaData = metaData,
+          shareUrl = shareUrl,
           isThisMyProfile = myProfile))
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
@@ -393,6 +396,11 @@ class UserProfileController extends Controller with SecureSocial {
         NotFound(views.html.error.notfound(refUrl = request.path)(request))
     }
   }
+
+  private def createShareUrl(profile: UserProfile): String = {
+    routes.UserProfileController.viewProfileByName(profile.profileLinkName).url + "?ts=" + Helpers.getDateForSharing(profile)
+  }
+
 
   private def buildMetaData(profile: UserProfile, request: RequestHeader): Option[MetaData] = {
     val domain = "//" + request.domain

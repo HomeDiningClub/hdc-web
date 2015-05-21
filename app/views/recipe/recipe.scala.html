@@ -1,6 +1,7 @@
 @(recipe: models.Recipe,
         metaData: Option[viewmodels.MetaData] = None,
         recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
+        shareUrl: String = "",
         isThisMyRecipe: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
 @import scala.collection.JavaConverters._
 @import utils.Helpers
@@ -87,7 +88,7 @@
 
                         <div class="col-xs-12 margin-top">
                             @LikeController.renderRecipeLikeForm(recipe)(request)
-                            @shared.fbShare(url = request.uri)
+                            @shared.fbShare(url = shareUrl)
                         </div>
                     </div>
 

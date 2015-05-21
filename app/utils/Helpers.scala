@@ -1,5 +1,9 @@
 package utils
 
+import java.text.SimpleDateFormat
+import java.util.Date
+
+import models.base.AuditEntity
 import play.api.mvc.{Controller, RequestHeader}
 import models.UserCredential
 import securesocial.core.{Identity, SecureSocial}
@@ -48,6 +52,18 @@ object Helpers {
       case Some(user) => isUserAdmin(user)
       case None => false
     }
+  }
+
+  def getDateForSharing(auditEntry: AuditEntity): String = {
+    auditEntry.getLastModifiedDate match {
+      case modDate: Date => Helpers.formatDateForSharing(modDate)
+      case _ => Helpers.formatDateForSharing(auditEntry.getCreatedDate)
+    }
+  }
+
+  def formatDateForSharing(date: java.util.Date): String = {
+    val ret = new SimpleDateFormat("yyyyMMddHHmmss")
+    ret.format(date)
   }
 
 

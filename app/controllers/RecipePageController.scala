@@ -39,15 +39,10 @@ class RecipePageController extends Controller with SecureSocial {
 
   def viewRecipeByNameAndProfile(profileName: String, recipeName: String) = UserAwareAction { implicit request =>
 
-    println("###############################")
-    println("profileName = " + profileName)
-    println("recipeName = " + recipeName)
-    println("###############################")
-
     // Try getting the recipe from name, if failure show 404
     recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
       case Some(recipe) =>
-             Ok(views.html.recipe.recipe(recipe, metaData = buildMetaData(recipe, request), recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), isThisMyRecipe = isThisMyRecipe(recipe)))
+             Ok(views.html.recipe.recipe(recipe, metaData = buildMetaData(recipe, request), recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), shareUrl = createShareUrl(recipe), isThisMyRecipe = isThisMyRecipe(recipe)))
           case None =>
             val errMess = "Cannot find recipe using name:" + recipeName + " and profileName:" + profileName
             Logger.debug(errMess)
@@ -60,10 +55,6 @@ class RecipePageController extends Controller with SecureSocial {
 
     var list: ListBuffer[RecipeBoxJSON] = new ListBuffer[RecipeBoxJSON]
     var t: Option[List[RecipeBox]] = None
-
-
-    println("profileLinkName(IN) : " + profileName)
-
 
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) => {
@@ -110,7 +101,7 @@ class RecipePageController extends Controller with SecureSocial {
     // Try getting the recipe from name, if failure show 404
     recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
       case Some(recipe) =>
-        Ok(views.html.recipe.recipe(recipe, metaData = buildMetaData(recipe, request),recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), isThisMyRecipe = isThisMyRecipe(recipe)))
+        Ok(views.html.recipe.recipe(recipe, metaData = buildMetaData(recipe, request),recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), shareUrl = createShareUrl(recipe), isThisMyRecipe = isThisMyRecipe(recipe)))
       case None =>
         val errMess = "Cannot find recipe using name:" + recipeName + " and profileName:" + profileName
         Logger.debug(errMess)
@@ -130,6 +121,10 @@ class RecipePageController extends Controller with SecureSocial {
         Logger.debug(errMess)
         BadRequest(errMess)
     }
+  }
+
+  private def createShareUrl(recipe: Recipe): String = {
+    controllers.routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.profileLinkName,recipe.getLink).url + "?ts=" + Helpers.getDateForSharing(recipe)
   }
 
   private def buildMetaData(recipe: Recipe, request: RequestHeader): Option[MetaData] = {

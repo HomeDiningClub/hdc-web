@@ -12,6 +12,7 @@
         userMessages: Option[List[models.message.Message]] = None,
         tagList: Option[List[models.profile.TagWord]] = None,
         metaData: Option[viewmodels.MetaData] = None,
+        shareUrl: String = "",
         isThisMyProfile: Boolean = false)(implicit request: RequestHeader, flash: Flash)
 
     @pageScripts= {
@@ -140,7 +141,7 @@
                                             <a id="rf" hidden="true" class="btn btn-default btn-favorite btn-favorite-active" title="@Messages("favorite.remove.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.remove.text")</a>
                                         </div>
                                         @LikeController.renderUserLikeForm(userProfile.getOwner)(request)
-                                        @shared.fbShare(url = request.uri)
+                                        @shared.fbShare(url = shareUrl)
                                     </div>
                                 </div>
                                 <hr class="hr-orange hr-like">
