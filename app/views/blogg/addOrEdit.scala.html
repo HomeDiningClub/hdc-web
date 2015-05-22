@@ -34,14 +34,16 @@
 
                             <div class="form-actions">
                                 <button class="btn btn-primary" type="submit">@Messages("recipe.edit.save")</button>
-                                @defining(if(editingBloggPosts.isDefined){
+                                @defining(
+                                    if(editingBloggPosts.isDefined){
                                     //controllers.routes.RecipePageController.viewRecipeByNameAndProfile(editingBloggPosts.get.getOwnerProfile.profileLinkName,editingBloggPosts.get.getLink).url
 
                                     //controllers.routes.BloggPostsPageController.
                                 }else{
                                     controllers.routes.UserProfileController.viewProfileByLoggedInUser().url
                                 }) { abortLink =>
-                                    <a class="btn" data-loading-text="@Messages("recipe.edit.saving")" href="@abortLink">@Messages("recipe.edit.abort")</a>
+                                    <a class="btn" data-loading-text="@Messages("blog.edit.saving")"></a>
+                                    <!-- a class="btn" data-loading-text="@Messages("blog.edit.saving")" href="@abortLink">@Messages("blog.edit.abort")</a> -->
                                 }
                             </div>
                         }

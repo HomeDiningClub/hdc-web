@@ -304,7 +304,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
           for (e: BloggPostItem <- t) {
             //val link: String = controllers.routes.RecipePageController.viewRecipeByNameAndProfile(profileName, e.linkToRecipe).url
 
-            var cd : String = e.dateChanged.toString("YYYY-MM-dd HH:mm")
+            var cd : String = e.dateCreated.toString("YYYY-MM-dd HH:mm")
             var md : String = e.dateChanged.toString("YYYY-MM-dd HH:mm")
 
             println("Mod date : " + md)
