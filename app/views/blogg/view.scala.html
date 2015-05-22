@@ -20,6 +20,11 @@
                 </article>
             </div>
 
+            @if(isThisMyBlogPost){
+                <div class="col-xs-12 big-margin-top">
+                    <a href="@controllers.routes.BloggPostsPageController.edit(blogPost.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> @Messages("blog.button.edit")</a><br>
+                </div>
+            }
                 <!-- Banner -->
             <div class="col-xs-12 col-md-3 col-banner">
             @shared.banner()
