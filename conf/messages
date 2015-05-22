@@ -300,7 +300,7 @@ profile.button.blogg.add=Lägg till blogg
 
 
 profile.blog.tab.body=Här kommer alla värdar att kunna skriva och blogga om sin mat och sina intressen.
-
+blog.button.edit=Ändra
 profile.firstname.label=Namn:
 profile.city.label=Stad:
 profile.control.unique=Profilnamn måste vara unikt
