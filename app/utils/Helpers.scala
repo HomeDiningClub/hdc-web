@@ -66,6 +66,10 @@ object Helpers {
     ret.format(date)
   }
 
+  def formatDateForDisplay(date: java.util.Date): String = {
+    val ret = new SimpleDateFormat("yyyy-MM-dd - HH:mm")
+    ret.format(date)
+  }
 
   def limitLength(input: String, limitLength: Int): String = {
     if(input == null)

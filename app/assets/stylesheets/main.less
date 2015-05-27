@@ -434,6 +434,7 @@ input[type="reset"]:hover
   box-shadow: 2px 2px 5px -5px rgba(166,166,166,1);
 }
 
+
 // Pagination
 .pagination-hdc #resultsTotal {
   margin-top:16px;
@@ -1891,32 +1892,32 @@ h3.aside-title {
   box-shadow: 1px 1px 4px #444;
 }
 
-// Profile
-.host-container .host-header .host-image img
+// Host header
+.host-header
+{
+  background-color: @hdc-green;
+  padding:5px 15px 5px 15px;
+}
+.host-header header .host-image img
 {
   display: block;
   width: 100px;
   height:100px;
 }
-.host-container .host-header .host-image
+.host-header header .host-image
 {
   position: absolute;
   right:10px;
   top:-32px;
 }
-.host-container .host-header
-{
-  background-color: @hdc-green;
-  padding:5px 15px 5px 15px;
-}
-.host-container .host-header .glyphicon-lowered {
+.host-header header .glyphicon-lowered {
   top:3px;
 }
-.host-container .host-header a:hover
+.host-header header a:hover
 {
   text-decoration: none;
 }
-.host-container .host-header h2
+.host-header header h2
 {
   display: inline-block;
   color: #fff;
@@ -1924,6 +1925,8 @@ h3.aside-title {
   margin-top:0px;
   line-height:2em;
 }
+
+// Profile
 .host-container h1
 {
   margin-top:0px;

@@ -192,10 +192,10 @@ $(document).ready(function () {
 
     tinymce.init({
         mode : "specific_textareas",
-        editor_selector : "richtextrecipe",
+        editor_selector : "richtext-extra",
         theme : "modern",
         skin: "light",
-        height: 200,
+        height: 300,
         content_css : "/assets/stylesheets/richtext.min.css",
         menubar: false,
         plugins: [ "paste" ],

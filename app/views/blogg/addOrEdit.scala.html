@@ -8,37 +8,29 @@
             <div class="col-xs-12 col-md-9">
                 <div class="row">
                     <div class="col-xs-12">
-                        <h1 class="page-header">@Messages("blogg.edit.add.header")</h1>
+                        <h1 class="page-header">@Messages("blog.edit.add.header")</h1>
                         @shared.flashmsg(flash)
 
 
                         @helper.form(action=controllers.routes.BloggPostsPageController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
                             <fieldset>
-                                @helper.inputText(bloggPostForm("title"), '_label -> Messages("recipe.edit.add.name"), '_help -> Messages("admin.recipe.add.name.validation"))
-
-
+                                @helper.inputText(bloggPostForm("title"), '_label -> Messages("blog.edit.add.title"), '_help -> Messages("blog.edit.add.title.validation"))
+                                @helper.textarea(bloggPostForm("maintext"), '_label -> Messages("blog.edit.add.body"), 'class -> "richtext-extra")
                                 <div class="panel panel-default">
                                     <div class="panel-body">
-                                        <label>@Messages("recipe.edit.add.main-image")</label><br>
+                                        <label>@Messages("blog.edit.add.main-image")</label><br>
                                         @file.previewField(previewId = "bloggmainimg", Messages("recipe.edit.add.main-image-preview"), blnShowText = false, prePopulatedWith = extraValues.mainImagePrev)
-                                        @file.openModalButton(btnId = "btnrecmainimg", inputSelector = "bloggmainimg", selectorMaxItems = extraValues.mainImageMaxNr, btnText = Messages("recipe.edit.add.main-image-btn"))
+                                        @file.openModalButton(btnId = "btnrecmainimg", inputSelector = "bloggmainimg", selectorMaxItems = extraValues.mainImageMaxNr, btnText = Messages("blog.edit.add.main-image-btn"))
                                         @helper.inputHidden(bloggPostForm("mainimage"), 'id -> "bloggmainimg")
                                     </div>
                                 </div>
-
-
-                                @helper.textarea(bloggPostForm("maintext"), '_label -> Messages("recipe.edit.add.body"), 'class -> "richtextrecipe")
-
                                 @helper.inputHidden(bloggPostForm("blogpostid"))
                             </fieldset>
 
                             <div class="form-actions">
-                                <button class="btn btn-primary" type="submit">@Messages("recipe.edit.save")</button>
+                                <button class="btn btn-primary" type="submit">@Messages("blog.edit.save")</button>
                                 @defining(
                                     if(editingBloggPosts.isDefined){
-                                    //controllers.routes.RecipePageController.viewRecipeByNameAndProfile(editingBloggPosts.get.getOwnerProfile.profileLinkName,editingBloggPosts.get.getLink).url
-
-                                    //controllers.routes.BloggPostsPageController.
                                 }else{
                                     controllers.routes.UserProfileController.viewProfileByLoggedInUser().url
                                 }) { abortLink =>

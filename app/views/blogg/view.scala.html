@@ -2,30 +2,49 @@
         metaData: Option[viewmodels.MetaData] = None,
         isThisMyBlogPost: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
 
-@main(Messages("blog.title", blogPost.getTitle), metaData = metaData){
+@main(Messages("blog.title", blogPost.getTitle, blogPost.getOwnerProfile.profileLinkName), metaData = metaData){
 
     <div class="container maincontent-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
+                @defining(if(blogPost.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(blogPost.getOwnerProfile.getAvatarImage.getStoreId).url}else{""}) { avatarUrl =>
+                    @views.html.profile.profileHeader(blogPost.getOwnerProfile.profileLinkName, blogPost.getOwnerProfile.fistName, avatarUrl, true)
+                }
+
                 @shared.flashmsg(flash)
-                <article>
-                    <h1 class="page-header">@blogPost.getTitle</h1>
-                    @blogPost.getMainImage match {
-                        case image: models.files.ContentFile => {
-                            @shared.img(routes.ImageController.profileNormal(image.getStoreId).url, cssClass = "img-responsive")
-                        }
-                        case _ => {}
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <article>
+                            <h1 class="page-header">@blogPost.getTitle</h1>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-3"><strong>@Messages("blog.created.date")</strong></div>
+                                <div class="col-xs-12 col-md-9"><time>@utils.Helpers.formatDateForDisplay(blogPost.getCreatedDate)</time></div>
+                                <div class="col-xs-12 col-md-3"><strong>@Messages("blog.modified.date")</strong></div>
+                                <div class="col-xs-12 col-md-9"><time>@utils.Helpers.formatDateForDisplay(blogPost.getLastModifiedDate)</time></div>
+                            </div>
+                            <hr>
+                            @blogPost.getMainImage match {
+                                case image: models.files.ContentFile => {
+                                    @shared.img(routes.ImageController.blogNormal(image.getStoreId).url, cssClass = "img-responsive")
+                                }
+                                case _ => {}
+                            }
+                            <br>
+                            <div class="breadtext">@Html(blogPost.getText)</div>
+                            <hr>
+                        </article>
+                    </div>
+                    @if(isThisMyBlogPost){
+                        <div class="col-xs-12 big-margin-top">
+                            <a href="@controllers.routes.BloggPostsPageController.edit(blogPost.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> @Messages("blog.button.edit")</a><br>
+                        </div>
                     }
-                    <div class="breadtext">@Html(blogPost.getText)</div>
-                </article>
+                </div>
+
             </div>
 
-            @if(isThisMyBlogPost){
-                <div class="col-xs-12 big-margin-top">
-                    <a href="@controllers.routes.BloggPostsPageController.edit(blogPost.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> @Messages("blog.button.edit")</a><br>
-                </div>
-            }
-                <!-- Banner -->
+            <!-- Banner -->
             <div class="col-xs-12 col-md-3 col-banner">
             @shared.banner()
             </div>

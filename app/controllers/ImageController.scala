@@ -16,6 +16,7 @@ import utils.Helpers
 import utils.authorization.WithRole
 import se.digiplant.scalr._
 import se.digiplant.res._
+import utils.scalr.api.Resizer
 
 @SpringController
 class ImageController extends Controller with SecureSocial {
@@ -161,7 +162,7 @@ class ImageController extends Controller with SecureSocial {
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        utils.scalr.ScalrResAssets.at(id, width, height, mode = "CROP")
+        utils.scalr.ScalrResAssets.at(id, width, height, mode = Resizer.Mode.CROP.toString)
     }
   }
 
@@ -171,7 +172,7 @@ class ImageController extends Controller with SecureSocial {
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        utils.scalr.ScalrResAssets.at(id, 100, 100, mode = "CROP")
+        utils.scalr.ScalrResAssets.at(id, 100, 100, mode = Resizer.Mode.CROP.toString)
     }
   }
 
@@ -181,7 +182,7 @@ class ImageController extends Controller with SecureSocial {
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        utils.scalr.ScalrResAssets.at(id, 30, 30, mode = "CROP")
+        utils.scalr.ScalrResAssets.at(id, 30, 30, mode = Resizer.Mode.CROP.toString)
     }
   }
   def userThumb(fileUid: String) = {
@@ -189,7 +190,7 @@ class ImageController extends Controller with SecureSocial {
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        utils.scalr.ScalrResAssets.at(id, 100, 100, mode = "CROP")
+        utils.scalr.ScalrResAssets.at(id, 100, 100, mode = Resizer.Mode.CROP.toString)
     }
   }
 
@@ -199,7 +200,7 @@ class ImageController extends Controller with SecureSocial {
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        utils.scalr.ScalrResAssets.at(id, 150, 100, mode = "CROP")
+        utils.scalr.ScalrResAssets.at(id, 150, 100, mode = Resizer.Mode.CROP.toString)
     }
   }
   def profileBox(fileUid: String) = {
@@ -207,7 +208,7 @@ class ImageController extends Controller with SecureSocial {
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        utils.scalr.ScalrResAssets.at(id, 263, 160, mode = "FIT_TO_WIDTH")
+        utils.scalr.ScalrResAssets.at(id, 263, 160, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
   def profileNormal(fileUid: String) = {
@@ -215,7 +216,7 @@ class ImageController extends Controller with SecureSocial {
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        utils.scalr.ScalrResAssets.at(id, 460, 305, mode = "FIT_TO_WIDTH")
+        utils.scalr.ScalrResAssets.at(id, 460, 305, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
   def profileBig(fileUid: String) = {
@@ -223,9 +224,20 @@ class ImageController extends Controller with SecureSocial {
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        utils.scalr.ScalrResAssets.at(id, 800, 600, mode = "FIT_TO_WIDTH")
+        utils.scalr.ScalrResAssets.at(id, 800, 600, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
+
+  // Blog
+  def blogNormal(fileUid: String) = {
+    fileUid match {
+      case "null" =>
+        faultyImageRequestAction
+      case id: String =>
+        utils.res.ResAssets.at(id)
+    }
+  }
+
 
   // Recipe
   def recipeThumb(fileUid: String) = {
@@ -233,7 +245,7 @@ class ImageController extends Controller with SecureSocial {
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        utils.scalr.ScalrResAssets.at(id, 150, 100, mode = "CROP")
+        utils.scalr.ScalrResAssets.at(id, 150, 100, mode = Resizer.Mode.CROP.toString)
     }
   }
   def recipeBox(fileUid: String) = {
@@ -241,7 +253,7 @@ class ImageController extends Controller with SecureSocial {
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        utils.scalr.ScalrResAssets.at(id, 275, 160, mode = "FIT_TO_WIDTH")
+        utils.scalr.ScalrResAssets.at(id, 275, 160, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
   def recipeNormal(fileUid: String) = {
@@ -249,7 +261,7 @@ class ImageController extends Controller with SecureSocial {
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        utils.scalr.ScalrResAssets.at(id, 460, 345, mode = "FIT_TO_WIDTH")
+        utils.scalr.ScalrResAssets.at(id, 460, 345, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
 

@@ -132,6 +132,7 @@ GET         /dynassets/profile/thumb/*file                       @controllers.Im
 GET         /dynassets/profile/box/*file                         @controllers.ImageController.profileBox(file)
 GET         /dynassets/profile/normal/*file                      @controllers.ImageController.profileNormal(file)
 GET         /dynassets/profile/big/*file                         @controllers.ImageController.profileBig(file)
+GET         /dynassets/blog/normal/*file                         @controllers.ImageController.blogNormal(file)
 
 
 # ADMIN - Index

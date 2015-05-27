@@ -148,14 +148,9 @@ class BloggPostsPageController extends Controller with SecureSocial {
 
         val savedBlogPost = bloggPostsService.add(newRec.get)
         val savedProfile = userProfileService.addBloggPostsToProfile(currentUser.get, savedBlogPost)
-        var bloggPostObjectId = savedBlogPost.objectId
-
-
-
-        // Redirect(controllers.routes.RecipePageController.viewRecipeByNameAndProfile(currentUser.get.profiles.iterator.next.profileLinkName,savedRecipe.getLink)).flashing(FlashMsgConstants.Success -> successMessage)
-        //todo
-        //Ok("todo")
-        Redirect(controllers.routes.BloggPostsPageController.edit(bloggPostObjectId))
+        val blogPostObjectId = savedBlogPost.objectId
+        val successMessage = Messages("blog.add.success", savedBlogPost.getTitle)
+        Redirect(controllers.routes.BloggPostsPageController.view(blogPostObjectId)).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
