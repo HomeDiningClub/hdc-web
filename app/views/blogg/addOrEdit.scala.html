@@ -1,7 +1,7 @@
 @(bloggPostForm: Form[models.viewmodels.BlogPostsForm], editingBloggPosts: Option[models.BlogPost] = None, extraValues: models.viewmodels.EditBloggPostsExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
 @import helper.twitterBootstrap._
 
-@main(Messages("admin.title"), footerHtml = file.modalImages.render()){
+@main(Messages("blog.create.title"), footerHtml = file.modalImages.render()){
 
     <div class="container maincontent-container">
         <div class="row">

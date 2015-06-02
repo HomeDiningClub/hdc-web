@@ -298,7 +298,7 @@ profile.tabs.favourites.name=Favoriter
 profile.tabs.favourites.title=Favoriter
 profile.button.blogg.add=Skapa nytt inlägg
 
-profile.blog.tab.body=Här kommer alla värdar att kunna skriva och blogga om sin mat och sina intressen.
+profile.blog.tab.body.non-admin=Här kommer alla värdar att kunna skriva och blogga om sin mat och sina intressen.
 profile.firstname.label=Namn:
 profile.city.label=Stad:
 profile.control.unique=Profilnamn måste vara unikt
@@ -325,6 +325,7 @@ profile.no=Nej
 
 # Recipe
 recipe.title={0} - Recept
+recipe.create.title=Lägg till / Redigera recept
 recipe.edit.index.header=Recept
 recipe.edit.add.header=Lägg till / Redigera recept
 recipe.edit.add.name=Namn
@@ -357,8 +358,10 @@ recipe.button.edit=Redigera recept
 
 # Blog
 blog.title={0} - {1} - Home dining club - Blogg
+blog.create.title=Skapa / Redigera inlägg
 blog.edit.add.header=Skapa / Redigera inlägg
 blog.add.success=Sparat inlägg: {0}
+blog.add.error=Formuläret innehåller något fel, vad god korrigera innan vi kan spara.
 blog.edit.add.main-image=Bild
 blog.edit.add.main-image-btn=Välj bild
 blog.edit.add.title=Rubrik på ditt inlägg

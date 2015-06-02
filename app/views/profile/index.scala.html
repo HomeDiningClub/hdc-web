@@ -291,17 +291,17 @@
                             </div>
                             @if(userProfile.isUserHost) {
                                 <div class="tab-pane tab-hdc fade" id="@tab2">
-                                    @if(isThisMyProfile) {
-                                        <div class="col-xs-12">
-                                            <div class="btn-group btn-edit-group">
-                                                <a href="@controllers.routes.BloggPostsPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.blogg.add")</a>
+                                    @if(utils.Helpers.isUserAdmin(request)) {
+                                        @if(isThisMyProfile) {
+                                            <div class="col-xs-12">
+                                                <div class="btn-group btn-edit-group">
+                                                    <a href="@controllers.routes.BloggPostsPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.blogg.add")</a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    }
-                                    @if(userProfile.getRole.size() > 1){
+                                        }
                                         @blogg.bloggBox(userProfile.profileLinkName)
-                                    } else {
-                                        @Messages("profile.blog.tab.body")
+                                    }else {
+                                        @Messages("profile.blog.tab.body.non-admin")
                                     }
                                 </div>
                             }

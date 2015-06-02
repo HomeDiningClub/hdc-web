@@ -60,21 +60,16 @@ class BloggPostsPageController extends Controller with SecureSocial {
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-
-    print("addSubmit ... 1... ")
-
     val currentUser: Option[UserCredential] = Helpers.getUserFromRequest
 
-    print("addSubmit ... 2... ")
-
-    if (currentUser.nonEmpty)
+    // Only HOSTS are allowed to create blog items
+    if(!currentUser.get.profiles.iterator().next().isUserHost)
       Unauthorized("Not authorized to perform this function")
 
-    print("addSubmit ... 3... ")
 
     recForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Messages("recipe.add.error")
+        val errorMessage = Messages("blog.add.error")
         BadRequest(views.html.blogg.addOrEdit(errors, extraValues = setExtraValues(None))).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {

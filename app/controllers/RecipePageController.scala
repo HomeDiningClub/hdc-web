@@ -254,9 +254,6 @@ class RecipePageController extends Controller with SecureSocial {
 
     val currentUser: Option[UserCredential] = Helpers.getUserFromRequest
 
-    if(currentUser.nonEmpty)
-      Unauthorized("Not authorized to perform this function")
-
     recForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("recipe.add.error")
