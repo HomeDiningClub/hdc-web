@@ -1,19 +1,18 @@
 package controllers
 
 import models.files.ContentFile
-import models.jsonmodels.{BlogPostBoxJSON, RecipeBoxJSON}
+import models.jsonmodels.{BlogPostBoxJSON}
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
 import securesocial.core.SecureSocial
-import models.{BlogPost, UserCredential, Recipe}
+import models.{BlogPost, UserCredential}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
-import services.{UserProfileService, ContentFileService, RecipeService, BloggPostsService}
-import play.api.libs.Files.TemporaryFile
+import services.{UserProfileService, ContentFileService, BloggPostsService}
 import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
 import java.util.UUID
 import utils.authorization.{WithRoleAndOwnerOfObject, WithRole}
@@ -299,8 +298,8 @@ class BloggPostsPageController extends Controller with SecureSocial {
           for (e: BloggPostItem <- t) {
             //val link: String = controllers.routes.RecipePageController.viewRecipeByNameAndProfile(profileName, e.linkToRecipe).url
 
-            var cd : String = e.dateCreated.toString("YYYY-MM-dd HH:mm")
-            var md : String = e.dateChanged.toString("YYYY-MM-dd HH:mm")
+            var cd : String = Helpers.formatDateForDisplay(e.dateCreated)
+            var md : String = Helpers.formatDateForDisplay(e.dateChanged)
 
             println("Mod date : " + md)
 

@@ -93,9 +93,9 @@ class BloggPostsService {
 
       // Image
 
-      var mainImage = Some("/assets/images/profile/recipe-box-default-bw.png")
+      var mainImage: Option[String] = None
       if(obj.getMainImage().iterator().hasNext()){
-        mainImage = Some(routes.ImageController.recipeBox(obj.getMainImage().iterator().next()).url)
+        mainImage = Some(routes.ImageController.blogNormal(obj.getMainImage().iterator().next()).url)
       }
 
 

@@ -13,6 +13,7 @@ import utils.authorization.WithRole
 import enums.RoleEnums
 
 import scala.util.Random
+import org.joda.time.DateTime
 
 
 object Helpers {
@@ -70,6 +71,10 @@ object Helpers {
     val ret = new SimpleDateFormat("yyyy-MM-dd - HH:mm")
     ret.format(date)
   }
+  def formatDateForDisplay(date: DateTime): String = {
+    date.toString("YYYY-MM-dd - HH:mm")
+  }
+
 
   def limitLength(input: String, limitLength: Int): String = {
     if(input == null)

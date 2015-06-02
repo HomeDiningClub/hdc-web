@@ -298,7 +298,6 @@ profile.tabs.favourites.name=Favoriter
 profile.tabs.favourites.title=Favoriter
 profile.button.blogg.add=Skapa nytt inlägg
 
-
 profile.blog.tab.body=Här kommer alla värdar att kunna skriva och blogga om sin mat och sina intressen.
 profile.firstname.label=Namn:
 profile.city.label=Stad:
@@ -365,12 +364,12 @@ blog.edit.add.main-image-btn=Välj bild
 blog.edit.add.title=Rubrik på ditt inlägg
 blog.edit.add.title.validation=*
 blog.edit.add.body=Brödtext
-blog.button.edit=Ändra
+blog.button.edit=Redigera inlägg
 blog.edit.saving=Sparar
 blog.edit.save=Spara
 blog.edit.abort=Avbryt
 blog.modified.date=Senast modifierad:
-blog.created.date=Datum:
+blog.created.date=Skapat:
 
 # Pagination
 button.next=Nästa sida

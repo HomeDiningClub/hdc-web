@@ -3,84 +3,92 @@
 <script>
 $(document).ready(function(){
 
-var map = 0;
-var resultsNextBtnBlogg = "#resultNextBlogg";
-var resultsPrevBtnBlogg = "#resultPrevBlogg";
-var resultsTotalBlogg = "#resultsTotalBlogg";
+    var map = 0;
+    var resultsNextBtnBlog = "#resultNextBlog";
+    var resultsPrevBtnBlog = "#resultPrevBlog";
+    var resultsTotalBlog = "#resultsTotalBlog";
+    var resultsPagination = "#pagination-blog";
 
 
-function blogTemplate(value){
-var l = "";
-l = l + "<div class='row'><div class='col-xs-12'>";
-l = l + "<a href='" + "/blogg/view/" + value.objectId + "' class='link-recipe-panel'>";
-l = l + "<h2>" +  " " + value.title + "</h2>";
-l = l + "</a>" + " "+ value.dateMod;
-l = l + "<div><img src='" + value.mainImage + "' class='img-responsive'></div>";
-l = l + "<div>" + value.text + "</div>";
-l = l + "</div></div>";
-l = l + "</div></div>";
+    function blogTemplate(value){
+        var l = "";
+        l = l + "<div class='col-xs-12 blog-item well'>";
+        l = l + "<a href='" + "/blogg/view/" + value.objectId + "'>";
+        l = l + "<h2>" +  " " + value.title + "</h2>";
+        l = l + "</a>";
+        l = l + "<div class='dates'>";
+        l = l + "<strong>" + "@Messages("blog.created.date")" + "</strong>&nbsp;<time>" + value.dateCreated + "</time><br>";
+        l = l + "<strong>" + "@Messages("blog.modified.date")" + "</strong>&nbsp;<time>" + value.dateModified + "</time>";
+        l = l + "</div>";
+        if(value.mainImage != ""){
+            l = l + "<div><img src='" + value.mainImage + "' class='img-responsive'></div>";
+        }
+        l = l + "<div class='bread'>" + value.text + "</div>";
+        l = l + "</div></div>";
+        l = l + "</div>";
 
-return l;
-}
+        return l;
+    }
 
-function getBloggBoxesAsJSON(pageDirection){
-$.getJSON('@{routes.BloggPostsPageController.viewBloggPostByNameAndProfilePageJSON()}?profileName=@profileName&page=' + (map+pageDirection) + '&tid=' + Date(), function(data){
-var nrOfItems = 0;
-var myArr = [];
-var hasNext = false;
-var hasPrev = false;
-var totalPages = 0;
+    function getBlogBoxesAsJSON(pageDirection){
+        $.getJSON('@{routes.BloggPostsPageController.viewBloggPostByNameAndProfilePageJSON()}?profileName=@profileName&page=' + (map+pageDirection) + '&tid=' + Date(), function(data){
+            var nrOfItems = 0;
+            var myArr = [];
+            var hasNext = false;
+            var hasPrev = false;
+            var totalPages = 0;
 
-$.each(data,function(key,value) {
-if(nrOfItems == 0){
-hasNext = value.hasNext;
-hasPrev = value.hasPrevious;
-totalPages = value.totalPages;
-}
+            $.each(data,function(key,value) {
+                if(nrOfItems == 0){
+                    hasNext = value.hasNext;
+                    hasPrev = value.hasPrevious;
+                    totalPages = value.totalPages;
+                }
 
-nrOfItems = nrOfItems + 1;
-myArr.push(blogTemplate(value));
-});
+                nrOfItems = nrOfItems + 1;
+                myArr.push(blogTemplate(value));
+            });
 
-if(nrOfItems > 0) {
-if(hasNext)
-$(resultsNextBtnBlogg).show();
-else
-$(resultsNextBtnBlogg).hide();
+            if(nrOfItems > 0) {
+                if(hasNext)
+                    $(resultsNextBtnBlog).show();
+                else
+                    $(resultsNextBtnBlog).hide();
 
-if(hasPrev)
-$(resultsPrevBtnBlogg).show();
-else
-$(resultsPrevBtnBlogg).hide();
+                if(hasPrev)
+                    $(resultsPrevBtnBlog).show();
+                else
+                    $(resultsPrevBtnBlog).hide();
 
-map = map + pageDirection;
+                map = map + pageDirection;
 
-if(totalPages > 1)
-$(resultsTotalBlogg).html((map+1) + " / " + totalPages);
+                if(totalPages > 1)
+                    $(resultsTotalBlog).html((map+1) + " / " + totalPages);
 
-$('#bloggList').html(myArr.join(''));
-}
+                $('#blogList').html(myArr.join(''));
+            }else{
+                $(resultsPagination).hide();
+            }
+        });
+    }
 
-});
-}
+    // Get default
+    getBlogBoxesAsJSON(0);
 
-// Get default
-getBloggBoxesAsJSON(0);
-
-// Attach events to buttons
-$(resultsNextBtnBlogg).off("click").on("click", function(){getBloggBoxesAsJSON(1)});
-$(resultsPrevBtnBlogg).off("click").on("click", function(){getBloggBoxesAsJSON(-1)});
+    // Attach events to buttons
+    $(resultsNextBtnBlog).off("click").on("click", function(){getBlogBoxesAsJSON(1)});
+    $(resultsPrevBtnBlog).off("click").on("click", function(){getBlogBoxesAsJSON(-1)});
 
 });
 </script>
 
-<div id="bloggList"></div>
-<div class="row pagination-hdc">
+<div id="blogList"></div>
+<div id="pagination-blog" class="row pagination-hdc">
     <div class="col-xs-6 col-sm-5">
-        <button id="resultPrevBlogg" class="btn btn-default pull-right"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;@Messages("button.previous")</button>
+        <button id="resultPrevBlog" class="btn btn-default pull-right"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;@Messages("button.previous")</button>
     </div>
-    <div id="resultsTotalBlogg" class="col-xs-2 hidden-xs text-center"></div>
+    <div id="resultsTotalBlog" class="col-xs-2 hidden-xs text-center"></div>
     <div class="col-xs-6 col-sm-5">
-        <button id="resultNextBlogg" class="btn btn-default pull-left">@Messages("button.next") &nbsp; <span class="glyphicon glyphicon-arrow-right"></span></button>
+        <button id="resultNextBlog" class="btn btn-default pull-left">@Messages("button.next") &nbsp; <span class="glyphicon glyphicon-arrow-right"></span></button>
     </div>
 </div>

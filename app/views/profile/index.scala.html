@@ -291,7 +291,6 @@
                             </div>
                             @if(userProfile.isUserHost) {
                                 <div class="tab-pane tab-hdc fade" id="@tab2">
-                                    <div class="row">
                                     @if(isThisMyProfile) {
                                         <div class="col-xs-12">
                                             <div class="btn-group btn-edit-group">
@@ -299,13 +298,11 @@
                                             </div>
                                         </div>
                                     }
-                                    </div>
                                     @if(userProfile.getRole.size() > 1){
                                         @blogg.bloggBox(userProfile.profileLinkName)
                                     } else {
                                         @Messages("profile.blog.tab.body")
                                     }
-
                                 </div>
                             }
                             <div class="tab-pane tab-hdc fade" id="@tab3">

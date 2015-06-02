@@ -11,12 +11,11 @@
                     @views.html.profile.profileHeader(blogPost.getOwnerProfile.profileLinkName, blogPost.getOwnerProfile.fistName, avatarUrl, true)
                 }
 
-                @shared.flashmsg(flash)
-
                 <div class="row">
-                    <div class="col-xs-12">
+                    <div class="col-xs-12 blog-item">
                         <article>
                             <h1 class="page-header">@blogPost.getTitle</h1>
+                            @shared.flashmsg(flash)
                             <div class="row">
                                 <div class="col-xs-12 col-md-3"><strong>@Messages("blog.created.date")</strong></div>
                                 <div class="col-xs-12 col-md-9"><time>@utils.Helpers.formatDateForDisplay(blogPost.getCreatedDate)</time></div>
@@ -30,8 +29,7 @@
                                 }
                                 case _ => {}
                             }
-                            <br>
-                            <div class="breadtext">@Html(blogPost.getText)</div>
+                            <div class="bread">@Html(blogPost.getText)</div>
                             <hr>
                         </article>
                     </div>

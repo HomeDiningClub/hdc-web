@@ -7,6 +7,7 @@ $(document).ready(function(){
     var resultsNextBtn = "#resultNext";
     var resultsPrevBtn = "#resultPrev";
     var resultsTotal = "#resultsTotal";
+    var resultsPagination = "#pagination-recipe";
 
 
     function boxTemplate(value){
@@ -61,6 +62,8 @@ $(document).ready(function(){
                     $(resultsTotal).html((map+1) + " / " + totalPages);
 
                 $('#recipeList').html(myArr.join(''));
+            }else{
+                $(resultsPagination).hide();
             }
 
         });
@@ -77,7 +80,7 @@ $(document).ready(function(){
 </script>
 
 <div class="row" id="recipeList"></div>
-<div class="row pagination-hdc">
+<div id="pagination-recipe" class="row pagination-hdc">
     <div class="col-xs-6 col-sm-5">
         <button id="resultPrev" class="btn btn-default pull-right"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;@Messages("button.previous")</button>
     </div>
