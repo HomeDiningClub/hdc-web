@@ -1,5 +1,5 @@
 package models.viewmodels
 
-case class EditBloggPostsExtraValues (mainImagePrev : Option[List[String]],
+case class EditBlogPostsExtraValues (mainImagePrev : Option[List[String]],
                                  mainImageMaxNr : Integer
                                   )

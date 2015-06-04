@@ -3,7 +3,7 @@ import java.util.UUID
 
 import org.joda.time.DateTime
 
-case class BloggPostItem (
+case class BlogPostItem (
                        objectId: Option[UUID],
                        title: String,
                        text : String,
@@ -13,6 +13,6 @@ case class BloggPostItem (
                        totalPages: Int,  
                        dateCreated : DateTime,
                        dateChanged : DateTime,
-                       bloggPostObjectId : UUID
+                       blogPostObjectId : UUID
                        )
 

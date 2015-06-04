@@ -296,7 +296,7 @@ profile.tabs.inbox.name=Inbox
 profile.tabs.inbox.title=Inbox
 profile.tabs.favourites.name=Favoriter
 profile.tabs.favourites.title=Favoriter
-profile.button.blogg.add=Skapa nytt inlägg
+profile.button.blog.add=Skapa nytt inlägg
 
 profile.blog.tab.body.non-admin=Här kommer alla värdar att kunna skriva och blogga om sin mat och sina intressen.
 profile.firstname.label=Namn:
@@ -373,6 +373,13 @@ blog.edit.save=Spara
 blog.edit.abort=Avbryt
 blog.modified.date=Senast modifierad:
 blog.created.date=Skapat:
+
+blog.edit.delete=Ta bort
+blog.edit.delete.title=Varning
+blog.edit.delete.confirm=Du kan inte ångra denna åtgärd, är du säker att du vill ta bort?
+blog.edit.delete.ok=Ta bort!
+blog.edit.delete.abort=Avbryt
+
 
 # Pagination
 button.next=Nästa sida

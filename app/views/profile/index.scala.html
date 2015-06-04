@@ -295,11 +295,11 @@
                                         @if(isThisMyProfile) {
                                             <div class="col-xs-12">
                                                 <div class="btn-group btn-edit-group">
-                                                    <a href="@controllers.routes.BloggPostsPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.blogg.add")</a>
+                                                    <a href="@controllers.routes.BlogPostsPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.blog.add")</a>
                                                 </div>
                                             </div>
                                         }
-                                        @blogg.bloggBox(userProfile.profileLinkName)
+                                        @blog.blogBox(userProfile.profileLinkName)
                                     }else {
                                         @Messages("profile.blog.tab.body.non-admin")
                                     }

@@ -115,8 +115,8 @@ public class UserProfile extends AuditEntity implements IEditable {
     private Set<Recipe> recipes;
 
 
-    @RelatedTo(type = RelationshipTypesJava.HAS_BLOGGPOSTS.Constant, direction = Direction.OUTGOING)
-    private Set<BlogPost> bloggPosts;
+    @RelatedTo(type = RelationshipTypesJava.HAS_BLOGPOSTS.Constant, direction = Direction.OUTGOING)
+    private Set<BlogPost> blogPosts;
 
     @RelatedTo(type = "IN_PROFILE", direction = Direction.INCOMING)
     private UserCredential owner;
@@ -326,19 +326,19 @@ public class UserProfile extends AuditEntity implements IEditable {
         return this;
     }
 
-    public UserProfile addBloggPosts(BlogPost addedBloggPosts) {
-        if(this.bloggPosts == null)
-            this.bloggPosts = new HashSet<BlogPost>();
+    public UserProfile addBlogPosts(BlogPost addedBlogPosts) {
+        if(this.blogPosts == null)
+            this.blogPosts = new HashSet<BlogPost>();
 
-        this.bloggPosts.add(addedBloggPosts);
+        this.blogPosts.add(addedBlogPosts);
         return this;
     }
 
-    public UserProfile removeBloggPosts(BlogPost addedBloggPosts) {
-        if(this.bloggPosts == null)
-            this.bloggPosts = new HashSet<BlogPost>();
+    public UserProfile removeBlogPosts(BlogPost addedBlogPosts) {
+        if(this.blogPosts == null)
+            this.blogPosts = new HashSet<BlogPost>();
 
-        this.bloggPosts.remove(addedBloggPosts);
+        this.blogPosts.remove(addedBlogPosts);
         return this;
     }
 
@@ -385,7 +385,7 @@ public class UserProfile extends AuditEntity implements IEditable {
 
 
     @Fetch
-    public Iterable<BlogPost> getBloggPosts() { return bloggPosts; }
+    public Iterable<BlogPost> getBlogPosts() { return blogPosts; }
 
 
     public Set<TaggedFavoritesToUserProfile> getFavorites() { return userFriendsProfileTag;}

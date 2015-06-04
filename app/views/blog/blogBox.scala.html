@@ -13,7 +13,7 @@ $(document).ready(function(){
     function blogTemplate(value){
         var l = "";
         l = l + "<div class='col-xs-12 blog-item well'>";
-        l = l + "<a href='" + "/blogg/view/" + value.objectId + "'>";
+        l = l + "<a href='" + "/blog/view/" + value.objectId + "'>";
         l = l + "<h2>" +  " " + value.title + "</h2>";
         l = l + "</a>";
         l = l + "<div class='dates'>";
@@ -31,7 +31,7 @@ $(document).ready(function(){
     }
 
     function getBlogBoxesAsJSON(pageDirection){
-        $.getJSON('@{routes.BloggPostsPageController.viewBloggPostByNameAndProfilePageJSON()}?profileName=@profileName&page=' + (map+pageDirection) + '&tid=' + Date(), function(data){
+        $.getJSON('@{routes.BlogPostsPageController.viewBlogPostByNameAndProfilePageJSON()}?profileName=@profileName&page=' + (map+pageDirection) + '&tid=' + Date(), function(data){
             var nrOfItems = 0;
             var myArr = [];
             var hasNext = false;

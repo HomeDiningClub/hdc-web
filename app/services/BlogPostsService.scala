@@ -15,22 +15,22 @@ import java.util.UUID
 import models.viewmodels.BlogPostsForm
 import controllers.routes
 import utils.Helpers
-import models.viewmodels.BloggPostItem
+import models.viewmodels.BlogPostItem
 
 import scala.collection.mutable.ListBuffer
 
 @Service
-class BloggPostsService {
+class BlogPostsService {
 
   @Autowired
   private var template: Neo4jTemplate = _
 
   @Autowired
-  private var bloggPostsRepository: BloggPostsRepository = _
+  private var blogPostsRepository: BlogPostsRepository = _
 
   @Transactional(readOnly = true)
   def findById(objectId: UUID): Option[BlogPost] = {
-    bloggPostsRepository.findByobjectId(objectId) match {
+    blogPostsRepository.findByobjectId(objectId) match {
       case null => None
       case item => Some(item)
     }
@@ -38,23 +38,23 @@ class BloggPostsService {
 
   @Transactional(readOnly = true)
   def getCountOfAll: Int = {
-    bloggPostsRepository.getCountOfAll()
+    blogPostsRepository.getCountOfAll()
   }
 
 
   @Transactional(readOnly = true)
   def getListOfAll: List[BlogPost] = {
-    bloggPostsRepository.findAll.iterator.asScala.toList match {
+    blogPostsRepository.findAll.iterator.asScala.toList match {
       case null => null
-      case bloggPosts =>
+      case blogPosts =>
 
-        bloggPosts
+        blogPosts
     }
   }
 
   @Transactional(readOnly = false)
   def add(newContent: BlogPost): BlogPost = {
-    val newContentResult = bloggPostsRepository.save(newContent)
+    val newContentResult = blogPostsRepository.save(newContent)
     newContentResult
   }
 
@@ -67,21 +67,21 @@ class BloggPostsService {
 
 
   @Transactional(readOnly = true)
-  def getBlogPostsBoxesPage(user: UserCredential, pageNo: Integer): Option[List[BloggPostItem]] = {
+  def getBlogPostsBoxesPage(user: UserCredential, pageNo: Integer): Option[List[BlogPostItem]] = {
 
     val userObjectId = user.profiles.iterator().next().objectId.toString
     println("ObjectId : " + userObjectId)
     // var userObjectId2 = "3e6051cc-9dbd-4b4a-8148-81cc8797f74e"
-    // val list = bloggPostsRepository.findAllUsersBloggPostsOnPage(userObjectId, new PageRequest(pageNo, 6))
-    // findAllUsersBloggPost
-    // val list = bloggPostsRepository.findAllUsersBloggPost(userObjectId)
-    val list = bloggPostsRepository.findAllUsersBloggPostsOnPage(userObjectId, new PageRequest(pageNo, 6))
+    // val list = blogPostsRepository.findAllUsersBlogPostsOnPage(userObjectId, new PageRequest(pageNo, 6))
+    // findAllUsersBlogPost
+    // val list = blogPostsRepository.findAllUsersBlogPost(userObjectId)
+    val list = blogPostsRepository.findAllUsersBlogPostsOnPage(userObjectId, new PageRequest(pageNo, 6))
 
 
 
     val iterator = list.iterator()
     var antal : Int = 0
-    var bloggPostList : ListBuffer[BloggPostItem] = new ListBuffer[BloggPostItem]
+    var blogPostList : ListBuffer[BlogPostItem] = new ListBuffer[BlogPostItem]
 
     while(iterator.hasNext()) {
 
@@ -106,17 +106,17 @@ class BloggPostsService {
 
 
       // Build return-list
-      var bloggPost = BloggPostItem(
-        Some(UUID.fromString(obj.getBloggPostObjectId())),
+      var blogPost = BlogPostItem(
+        Some(UUID.fromString(obj.getBlogPostObjectId())),
         obj.getTitle(), obj.getText(), mainImage,
         list.hasNext,
         list.hasPrevious,
         list.getTotalPages,
         stringToDate(obj.getDateCreated()),
         stringToDate(obj.getLastModDate()),
-        UUID.fromString(obj.getBloggPostObjectId()))
+        UUID.fromString(obj.getBlogPostObjectId()))
 
-      bloggPostList += bloggPost
+      blogPostList += blogPost
 
       println("prev : " + list.hasPrevious())
       println("next : " + list.hasNext())
@@ -129,7 +129,7 @@ class BloggPostsService {
 
     }
 
-    val blogPosts: List[BloggPostItem] = bloggPostList.toList
+    val blogPosts: List[BlogPostItem] = blogPostList.toList
 
     println("antal = " + antal)
 
@@ -138,6 +138,19 @@ class BloggPostsService {
     else
       Some(blogPosts)
 
+  }
+
+  @Transactional(readOnly = false)
+  def deleteById(objectId: UUID): Boolean = {
+    this.findById(objectId) match {
+      case None => false
+      case Some(item) =>
+        item.deleteMainImage()
+        //item.deleteRatings()
+        //item.deleteLikes()
+        blogPostsRepository.delete(item)
+        true
+    }
   }
 
 

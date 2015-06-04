@@ -63,15 +63,16 @@ POST        /recipe/add                                          @controllers.Re
 GET         /recipe/edit/:objectId                               @controllers.RecipePageController.edit(objectId: java.util.UUID)
 GET         /recipe/delete/:objectId                             @controllers.RecipePageController.delete(objectId: java.util.UUID)
 
-# Blogg
-GET         /blogg/add                                          @controllers.BloggPostsPageController.add
-POST        /blogg/add                                          @controllers.BloggPostsPageController.addSubmit
-GET         /blogg/list                                         @controllers.BloggPostsPageController.viewListOfBloggPosts(profileName: String, page: Int)
-GET         /blogg/jsonList                                     @controllers.BloggPostsPageController.viewBloggPostByNameAndProfilePageJSON(profileName: String ?= "", page: Int ?= 0)
+# Blog
+GET         /blog/add                                          @controllers.BlogPostsPageController.add
+POST        /blog/add                                          @controllers.BlogPostsPageController.addSubmit
+GET         /blog/list                                         @controllers.BlogPostsPageController.viewListOfBlogPosts(profileName: String, page: Int)
+GET         /blog/jsonList                                     @controllers.BlogPostsPageController.viewBlogPostByNameAndProfilePageJSON(profileName: String ?= "", page: Int ?= 0)
 # edit(objectId: UUID)
-GET         /blogg/edit/:objectId                               @controllers.BloggPostsPageController.edit(objectId: java.util.UUID)
-GET         /blogg/view/:objectId                               @controllers.BloggPostsPageController.view(objectId: java.util.UUID)
-GET         /blogg/showList                                     @controllers.BloggPostsPageController.viewBloggPosts
+GET         /blog/edit/:objectId                               @controllers.BlogPostsPageController.edit(objectId: java.util.UUID)
+GET         /blog/view/:objectId                               @controllers.BlogPostsPageController.view(objectId: java.util.UUID)
+GET         /blog/showList                                     @controllers.BlogPostsPageController.viewBlogPosts
+GET         /blog/delete/:objectId                             @controllers.BlogPostsPageController.delete(objectId: java.util.UUID)
 
 # Rating
 POST        /rate/user                                           controllers.RatingController.rateSubmit

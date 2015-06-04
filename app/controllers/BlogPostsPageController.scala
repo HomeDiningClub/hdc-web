@@ -12,7 +12,7 @@ import play.api.data.Forms._
 import play.api.i18n.Messages
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
-import services.{UserProfileService, ContentFileService, BloggPostsService}
+import services.{UserProfileService, ContentFileService, BlogPostsService}
 import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
 import java.util.UUID
 import utils.authorization.{WithRoleAndOwnerOfObject, WithRole}
@@ -25,11 +25,11 @@ import scala.collection.mutable.ListBuffer
 
 
 @SpringController
-class BloggPostsPageController extends Controller with SecureSocial {
+class BlogPostsPageController extends Controller with SecureSocial {
 
 
   @Autowired
-  private var bloggPostsService: BloggPostsService = _
+  private var blogPostsService: BlogPostsService = _
 
   @Autowired
   private var userProfileService: UserProfileService = _
@@ -49,13 +49,13 @@ class BloggPostsPageController extends Controller with SecureSocial {
 
 
   // Change to parameter
-  def viewBloggPosts() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
-    Ok(views.html.blogg.bloggBox("freddy"))
+  def viewBlogPosts() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
+    Ok(views.html.blog.blogBox("freddy"))
   }
 
 
   def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
-    Ok(views.html.blogg.addOrEdit(bloggPostForm = recForm, extraValues = setExtraValues(None)))
+    Ok(views.html.blog.addOrEdit(blogPostForm = recForm, extraValues = setExtraValues(None)))
   }
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
@@ -70,7 +70,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
     recForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("blog.add.error")
-        BadRequest(views.html.blogg.addOrEdit(errors, extraValues = setExtraValues(None))).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.blog.addOrEdit(errors, extraValues = setExtraValues(None))).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
 
@@ -78,7 +78,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
 
         val newRec: Option[BlogPost] = contentData.id match {
           case Some(id) =>
-            bloggPostsService.findById(UUID.fromString(id)) match {
+            blogPostsService.findById(UUID.fromString(id)) match {
               case None => None
               case Some(item) =>
 
@@ -107,7 +107,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
 
           Logger.debug("Error saving Recipe: User used a non-existing, or someone elses Recipe")
           val errorMessage = Messages("recipe.add.error")
-          BadRequest(views.html.blogg.addOrEdit(recForm.fill(contentData), extraValues = setExtraValues(None))).flashing(FlashMsgConstants.Error -> errorMessage)
+          BadRequest(views.html.blog.addOrEdit(recForm.fill(contentData), extraValues = setExtraValues(None))).flashing(FlashMsgConstants.Error -> errorMessage)
         }
 
         print("addSubmit ... 7 ... ")
@@ -140,28 +140,28 @@ class BloggPostsPageController extends Controller with SecureSocial {
         newRec.get.setText(contentData.maintext.get)
 
 
-        val savedBlogPost = bloggPostsService.add(newRec.get)
-        val savedProfile = userProfileService.addBloggPostsToProfile(currentUser.get, savedBlogPost)
+        val savedBlogPost = blogPostsService.add(newRec.get)
+        val savedProfile = userProfileService.addBlogPostsToProfile(currentUser.get, savedBlogPost)
         val blogPostObjectId = savedBlogPost.objectId
         val successMessage = Messages("blog.add.success", savedBlogPost.getTitle)
-        Redirect(controllers.routes.BloggPostsPageController.view(blogPostObjectId)).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.BlogPostsPageController.view(blogPostObjectId)).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
   }
 
-  private def setExtraValues(bloggPosts: Option[BlogPost] = None): EditBloggPostsExtraValues = {
+  private def setExtraValues(blogPosts: Option[BlogPost] = None): EditBlogPostsExtraValues = {
 
-    if(bloggPosts.isDefined){
+    if(blogPosts.isDefined){
       // Other values not fit to be in form-classes
-      val mainImage = bloggPosts.get.getMainImage match {
+      val mainImage = blogPosts.get.getMainImage match {
         case null => None
         case image => Some(image.getStoreId)
       }
 
 
 
-      EditBloggPostsExtraValues(
+      EditBlogPostsExtraValues(
         mainImage match {
           case Some(item) => Some(List(routes.ImageController.imgChooserThumb(item).url))
           case None => None
@@ -169,29 +169,29 @@ class BloggPostsPageController extends Controller with SecureSocial {
     }else{
 
       // Not brilliant, consider moving config
-      //@todo new constructor new BloggPosts("temporary")
+      //@todo new constructor new BlogPosts("temporary")
       var tempRec = new BlogPost()
       val maxMainImage = tempRec.getMaxNrOfMainImages
 
       tempRec = null
 
-      EditBloggPostsExtraValues(None, 1)
+      EditBlogPostsExtraValues(None, 1)
     }
   }
 
 
-  def viewBloggPostByNameAndProfile(profileName: String, bloggPostId: String) = UserAwareAction { implicit request =>
+  def viewBlogPostByNameAndProfile(profileName: String, blogPostId: String) = UserAwareAction { implicit request =>
 
     println("###############################")
     println("profileName = " + profileName)
-    println("bloggPostId = " + bloggPostId)
+    println("blogPostId = " + blogPostId)
     println("###############################")
 
 
 
     // Try getting the recipe from name, if failure show 404
 
-    bloggPostsService.findById(UUID.fromString(bloggPostId)) match {
+    blogPostsService.findById(UUID.fromString(blogPostId)) match {
     //recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
       case Some(recipe) =>
         // Ok(views.html.recipe.recipe(recipe, metaData = buildMetaData(recipe, request), recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), isThisMyRecipe = isThisMyRecipe(recipe)))
@@ -204,16 +204,16 @@ class BloggPostsPageController extends Controller with SecureSocial {
   }
 
 
-  def viewListOfBloggPosts(profileName: String, page: Int) = UserAwareAction { implicit request =>
+  def viewListOfBlogPosts(profileName: String, page: Int) = UserAwareAction { implicit request =>
 
-    var t: Option[List[BloggPostItem]] = None
+    var t: Option[List[BlogPostItem]] = None
     var antal : Int = 0
     print("1 ok")
 
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) => {
         try {
-          t = bloggPostsService.getBlogPostsBoxesPage(profile.getOwner, page)
+          t = blogPostsService.getBlogPostsBoxesPage(profile.getOwner, page)
 
         } catch {
           case  ex: Exception =>
@@ -234,8 +234,8 @@ class BloggPostsPageController extends Controller with SecureSocial {
       // loop ....
       t match {
         case Some(t) => {
-          for (e: BloggPostItem <- t) {
-            print("\nObjectId" + e.bloggPostObjectId.toString)
+          for (e: BlogPostItem <- t) {
+            print("\nObjectId" + e.blogPostObjectId.toString)
             print("\nTitle : " + e.title)
             print("\ntext : " + e.text)
             antal = antal + 1
@@ -261,10 +261,10 @@ class BloggPostsPageController extends Controller with SecureSocial {
   }
 
 
-  def viewBloggPostByNameAndProfilePageJSON(profileName: String, page: Int) = UserAwareAction { implicit request =>
+  def viewBlogPostByNameAndProfilePageJSON(profileName: String, page: Int) = UserAwareAction { implicit request =>
 
     var list: ListBuffer[BlogPostBoxJSON] = new ListBuffer[BlogPostBoxJSON]
-    var t: Option[List[BloggPostItem]] = None
+    var t: Option[List[BlogPostItem]] = None
 
 
     println("profileLinkName(IN) : " + profileName)
@@ -274,7 +274,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
       case Some(profile) => {
         try {
 
-          t = bloggPostsService.getBlogPostsBoxesPage(profile.getOwner, page)
+          t = blogPostsService.getBlogPostsBoxesPage(profile.getOwner, page)
         } catch {
           case  ex: Exception =>
             Logger.error("Could not get list of Recipe boxes: " + ex.getMessage)
@@ -290,7 +290,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
       // loop ....
       t match {
         case Some(t) => {
-          for (e: BloggPostItem <- t) {
+          for (e: BlogPostItem <- t) {
             //val link: String = controllers.routes.RecipePageController.viewRecipeByNameAndProfile(profileName, e.linkToRecipe).url
 
             var cd : String = Helpers.formatDateForDisplay(e.dateCreated)
@@ -298,7 +298,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
 
             println("Mod date : " + md)
 
-            list += BlogPostBoxJSON(e.bloggPostObjectId.toString, e.title, e.text, cd, md, e.mainImage.getOrElse(""), e.hasNext, e.hasPrevious, e.totalPages) // ? antal sidor
+            list += BlogPostBoxJSON(e.blogPostObjectId.toString, e.title, e.text, cd, md, e.mainImage.getOrElse(""), e.hasNext, e.hasPrevious, e.totalPages) // ? antal sidor
           }
         }
         case None => {}
@@ -320,7 +320,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
   // edit
 
   def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
-    val editingRecipe = bloggPostsService.findById(objectId)
+    val editingRecipe = blogPostsService.findById(objectId)
 
     editingRecipe match {
       case None =>
@@ -342,7 +342,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
         // Get any images and sort them
         //val sortedImages = recipeService.getSortedRecipeImages(item)
 
-        Ok(views.html.blogg.addOrEdit(bloggPostForm = recForm.fill(form), editingBloggPosts = editingRecipe, extraValues = setExtraValues(editingRecipe)))
+        Ok(views.html.blog.addOrEdit(blogPostForm = recForm.fill(form), editingBlogPosts = editingRecipe, extraValues = setExtraValues(editingRecipe)))
     }
   }
 
@@ -376,7 +376,7 @@ class BloggPostsPageController extends Controller with SecureSocial {
   }
 
   def view(objectId: UUID) = UserAwareAction { implicit request =>
-    val blogPosting = bloggPostsService.findById(objectId)
+    val blogPosting = blogPostsService.findById(objectId)
 
     blogPosting match {
       case None =>
@@ -385,9 +385,33 @@ class BloggPostsPageController extends Controller with SecureSocial {
         print("error ..... ")
         NotFound(errorMsg)
       case Some(item) =>
-        Ok(views.html.blogg.view(blogPost = item, metaData = buildMetaData(item,request), isThisMyBlogPost = isThisMyBlogPost(item)))
+        Ok(views.html.blog.view(blogPost = item, metaData = buildMetaData(item,request), isThisMyBlogPost = isThisMyBlogPost(item)))
     }
   }
+
+
+  // Delete
+  def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
+    val blogPost: Option[BlogPost] = blogPostsService.findById(objectId)
+
+    if(blogPost.isEmpty){
+      val errorMessage = Messages("blog.delete.error")
+      Redirect(controllers.routes.UserProfileController.viewProfileByLoggedInUser()).flashing(FlashMsgConstants.Error -> errorMessage)
+    }
+
+    val result: Boolean = blogPostsService.deleteById(blogPost.get.objectId)
+
+    result match {
+      case true =>
+        val successMessage = Messages("blog.delete.success")
+        Redirect(controllers.routes.UserProfileController.viewProfileByLoggedInUser()).flashing(FlashMsgConstants.Success -> successMessage)
+      case false =>
+        val errorMessage = Messages("blog.delete.error")
+        Redirect(controllers.routes.BlogPostsPageController.view(blogPost.get.objectId)).flashing(FlashMsgConstants.Error -> errorMessage)
+    }
+
+  }
+
 
 }
 

@@ -1,6 +1,4 @@
 package models;
-
-
 import interfaces.IEditable;
 import models.content.ContentBase;
 import models.files.ContentFile;
@@ -15,11 +13,8 @@ import org.springframework.data.neo4j.support.index.IndexType;
 
 import java.util.UUID;
 
-
 @NodeEntity
 public class BlogPost extends ContentBase implements IEditable {
-
-
 
     @Indexed(indexType = IndexType.FULLTEXT,indexName = "title")
     private String title;
@@ -30,11 +25,7 @@ public class BlogPost extends ContentBase implements IEditable {
     @RelatedTo(type = RelationshipTypesJava.MAIN_IMAGE.Constant, direction = Direction.OUTGOING)
     private ContentFile mainImage;
 
-    // Blogger profile
-    // Blogger objectId
-
-
-    @RelatedTo(type = RelationshipTypesJava.HAS_BLOGGPOSTS.Constant, direction = Direction.INCOMING)
+    @RelatedTo(type = RelationshipTypesJava.HAS_BLOGPOSTS.Constant, direction = Direction.INCOMING)
     private UserProfile ownerProfile;
 
     // Verify the object owner
@@ -45,7 +36,6 @@ public class BlogPost extends ContentBase implements IEditable {
         else
             return false;
     }
-
 
     @Fetch
     public UserProfile getOwnerProfile() {
@@ -71,7 +61,6 @@ public class BlogPost extends ContentBase implements IEditable {
     public void deleteMainImage() {
         if(this.mainImage != null && this.mainImage.objectId != null)
         {
-            //InstancedServices.contentFileService().deleteFile(this.mainImage.objectId);
             this.mainImage = null;
         }
     }
@@ -92,9 +81,7 @@ public class BlogPost extends ContentBase implements IEditable {
 
 
     public void  removeReferences() {
-
         deleteMainImage();
-
         if(this.ownerProfile != null) {
             this.ownerProfile = null;
         }

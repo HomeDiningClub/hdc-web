@@ -89,9 +89,9 @@ public final class RelationshipTypesJava {
         public static final String Constant = "HAS_RECIPES";
     }
 
-    public final static class HAS_BLOGGPOSTS implements RelationshipType {
+    public final static class HAS_BLOGPOSTS implements RelationshipType {
         public String name() { return Constant; }
-        public static final String Constant = "HAS_BLOGGPOSTS";
+        public static final String Constant = "HAS_BLOGPOSTS";
     }
 
     public static class RECOMMENDED implements RelationshipType {
