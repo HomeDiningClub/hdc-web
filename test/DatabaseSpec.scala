@@ -32,8 +32,6 @@ class DatabaseSpec extends Specification {
 
       //recipeService.findByrecipeLinkName(recipeName, fetchAll = true) match {
 
-      true
-
     }
   }
 }

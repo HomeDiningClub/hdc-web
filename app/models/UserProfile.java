@@ -26,74 +26,33 @@ import java.util.Calendar;
 @NodeEntity
 public class UserProfile extends AuditEntity implements IEditable {
 
-  public String county = "";
-
-
-/*
-    @Fetch
-    @RelatedTo(type = RelationshipTypesJava.PROFILE_CREDENTIAL.Constant, direction = Direction.BOTH)
-    public UserCredential credential;
-
-    @Fetch
-    @RelatedTo(type = RelationshipTypesJava.PROFILE_LOCATION.Constant, direction = Direction.OUTGOING)
-    public UserCredential locations;
-*/
-
- //   public String group = "";
-
- /*
-    //@Indexed(indexType = IndexType.FULLTEXT, indexName = "userprofile_userid")
-    public String userId = "";
-
-   // @Indexed(indexType = IndexType.FULLTEXT, indexName = "userprofile_providerid")
-    public String providerId = "";
-*/
-
+    public String county = "";
     public Calendar termsOfUseApproved = Calendar.getInstance();
-
-    public boolean  isTermsOfUseApprovedAccepted = false;
-
-
-    public String childFfriendly = "";
-    public String handicapFriendly = "";
-    public String havePets = "";
-    public String smoke = "";
-    public String  allkoholServing = "";
-    public String  maxNoOfGuest = "";
-    public String  minNoOfGuest = "";
-
-    public String payCache      = "";
-    public String paySwish      = "";
-    public String payBankCard   = "";
-    public String payIZettle    = "";
-
-    public String fistName = "";
-
-    public String lastName = "";
-
-    public String userIdentity = "";
-
-    public String providerIdentity = "";
-
-    public String email = "";
-
-    // Street address
-    public String streetAddress = "";
-
-    // Postcode or Zip-code
-    public String zipCode       = "";
-
-    // City
-    public String city          = "";
-
-    // Phonenumber
-    public String phoneNumber = "";
-
+    public boolean isTermsOfUseApprovedAccepted = false;
+    public String childFfriendly    = "";
+    public String handicapFriendly  = "";
+    public String havePets          = "";
+    public String smoke             = "";
+    public String allkoholServing   = "";
+    public String maxNoOfGuest      = "";
+    public String minNoOfGuest      = "";
+    public String payCache          = "";
+    public String paySwish          = "";
+    public String payBankCard       = "";
+    public String payIZettle        = "";
+    public String fistName          = "";
+    public String lastName          = "";
+    public String userIdentity      = "";
+    public String providerIdentity  = "";
+    public String email             = "";
+    public String streetAddress     = "";
+    public String zipCode           = "";
+    public String city              = "";
+    public String phoneNumber       = "";
 
     // Profile look up name
     @Indexed(unique = true, indexType = IndexType.LABEL)
     public String profileLinkName = "";
-
 
     // Userid + "_" + providerId
     @Indexed(indexType = IndexType.LABEL)
