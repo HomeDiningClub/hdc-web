@@ -4,7 +4,7 @@ import java.util.UUID
 
 import constants.FlashMsgConstants
 import enums.RoleEnums
-import models.{UserCredential, Recipe}
+import models.{Event, UserCredential, Recipe}
 import models.viewmodels.{LikeForm}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
@@ -61,6 +61,24 @@ object LikeController extends Controller with SecureSocial {
     }
   }
 
+  def renderEventLikeForm(eventToBeLiked: Event) = { implicit request: RequestHeader =>
+
+    utils.Helpers.getUserFromRequest match {
+      case None =>
+        views.html.like.hdcLike.render(likeForm, None, eventToBeLiked.getNrOfLikes, request)
+      case Some(currentUser) =>
+        val likeType = "event"
+
+        // Set old values if user liked before, otherwise create form
+        likeService.hasUserLikedThisBefore(currentUser, eventToBeLiked) match {
+          case None =>
+            val formValues = LikeForm.apply(eventToBeLiked.objectId.toString, true, likeType)
+            views.html.like.hdcLike.render(likeForm.fill(formValues), None, eventToBeLiked.getNrOfLikes, request)
+          case Some(relation) =>
+            views.html.like.hdcLike.render(likeForm, Some(relation.getLastModifiedDate), eventToBeLiked.getNrOfLikes, request)
+        }
+    }
+  }
 
   def renderUserLikeForm(userToBeLiked: UserCredential) = { implicit request: RequestHeader =>
 

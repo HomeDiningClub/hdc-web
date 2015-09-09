@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-xs-12 col-md-9">
                 @defining(if(blogPost.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(blogPost.getOwnerProfile.getAvatarImage.getStoreId).url}else{""}) { avatarUrl =>
-                    @views.html.profile.profileHeader(blogPost.getOwnerProfile.profileLinkName, blogPost.getOwnerProfile.fistName, avatarUrl, true)
+                    @views.html.profile.profileHeader(blogPost.getOwnerProfile.profileLinkName, blogPost.getOwnerProfile.getOwner.firstName(), avatarUrl, true)
                 }
 
                 <div class="row">

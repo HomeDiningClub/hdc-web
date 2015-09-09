@@ -3,14 +3,19 @@
 <script>
 $(document).ready(function(){
 
-    var map = 0;
-    var resultsNextBtn = "#resultNext";
-    var resultsPrevBtn = "#resultPrev";
-    var resultsTotal = "#resultsTotal";
-    var resultsPagination = "#pagination-recipe";
+    var configRecipe = Object.create(null);
+    configRecipe.map = 0;
+    configRecipe.resultsPagination = "#pagination-recipe";
+    configRecipe.resultsNextBtn = configRecipe.resultsPagination + " .result-next";
+    configRecipe.resultsPrevBtn = configRecipe.resultsPagination + " .result-prev";
+    configRecipe.resultsTotal = configRecipe.resultsPagination + " .results-total";
+    configRecipe.resultsTarget = "#recipe-list";
+    configRecipe.jsonRequest = '@{routes.RecipePageController.viewRecipeByNameAndProfilePageJSON()}';
+    configRecipe.queryParam = 'profileName';
+    configRecipe.queryValue = '@profileName';
+    configRecipe.htmlTemplate = recipeHtmlTemplate;
 
-
-    function boxTemplate(value){
+    function recipeHtmlTemplate(value){
         var l = "";
         l = l + "<div class='col-xs-12 col-sm-6 col-sm-offset-0 col-md-4 col-md-offset-0 col-recipe-boxes'><a href='" + value.linkToRecipe + "' class='link-recipe-panel'>";
         l = l + "<div class='thumbnail panel-recipe hover-green-dropshadow'>";
@@ -24,68 +29,20 @@ $(document).ready(function(){
         return l;
     }
 
-    function getBoxesAsJSON(pageDirection){
-        $.getJSON('@{routes.RecipePageController.viewRecipeByNameAndProfilePageJSON()}?profileName=@profileName&page=' + (map+pageDirection) + '&tid=' + Date(), function(data){
-            var nrOfItems = 0;
-            var myArr = [];
-            var hasNext = false;
-            var hasPrev = false;
-            var totalCount = 0;
-            var totalPages = 0;
-
-            $.each(data,function(key,value) {
-                if(nrOfItems == 0){
-                    hasNext = value.hasNext;
-                    hasPrev = value.hasPrevious;
-                    totalCount = value.recipeBoxCount;
-                    totalPages = value.totalPages;
-                }
-
-                nrOfItems = nrOfItems + 1;
-                myArr.push(boxTemplate(value));
-            });
-
-            if(nrOfItems > 0) {
-                if(hasNext)
-                    $(resultsNextBtn).show();
-                else
-                    $(resultsNextBtn).hide();
-
-                if(hasPrev)
-                    $(resultsPrevBtn).show();
-                else
-                    $(resultsPrevBtn).hide();
-
-                map = map + pageDirection;
-
-                if(totalPages > 1)
-                    $(resultsTotal).html((map+1) + " / " + totalPages);
-
-                $('#recipeList').html(myArr.join(''));
-            }else{
-                $(resultsPagination).hide();
-            }
-
-        });
-    }
-
     // Get default
-    getBoxesAsJSON(0);
-
-    // Attach events to buttons
-    $(resultsNextBtn).off("click").on("click", function(){getBoxesAsJSON(1)});
-    $(resultsPrevBtn).off("click").on("click", function(){getBoxesAsJSON(-1)});
+    getPagedJSON(configRecipe, 0);
+    attachEventsToButtons(configRecipe);
 
 });
 </script>
 
-<div class="row" id="recipeList"></div>
+<div class="row" id="recipe-list"></div>
 <div id="pagination-recipe" class="row pagination-hdc">
     <div class="col-xs-6 col-sm-5">
-        <button id="resultPrev" class="btn btn-default pull-right"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;@Messages("button.previous")</button>
+        <button class="btn btn-default pull-right result-prev"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;@Messages("button.previous")</button>
     </div>
-    <div id="resultsTotal" class="col-xs-2 hidden-xs text-center"></div>
+    <div class="col-xs-2 hidden-xs text-center results-total"></div>
     <div class="col-xs-6 col-sm-5">
-        <button id="resultNext" class="btn btn-default pull-left">@Messages("button.next") &nbsp; <span class="glyphicon glyphicon-arrow-right"></span></button>
+        <button class="btn btn-default pull-left result-next">@Messages("button.next") &nbsp; <span class="glyphicon glyphicon-arrow-right"></span></button>
     </div>
 </div>

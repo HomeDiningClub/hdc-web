@@ -1,0 +1,24 @@
+@()(implicit flash: Flash)
+
+@mainedit(Messages("admin.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("admin.event.index.header")</h1>
+
+            <h3>@Messages("admin.event.index.header")</h3>
+            <div class="btn-group">
+                <a href="@controllers.admin.routes.AdminEventController.add()" class="btn btn-primary">@Messages("admin.actions.add")</a>
+                <a href="@controllers.admin.routes.AdminEventController.listAll()" class="btn btn-primary">@Messages("admin.actions.list")</a>
+            </div>
+            <hr>
+
+            <h3>@Messages("admin.meal-type.index.header")</h3>
+            <div class="btn-group">
+                <a href="@controllers.admin.routes.AdminMealTypeController.add()" class="btn btn-primary">@Messages("admin.actions.add")</a>
+                <a href="@controllers.admin.routes.AdminMealTypeController.listAll()" class="btn btn-primary">@Messages("admin.actions.list")</a>
+            </div>
+        </div>
+    </div>
+
+}

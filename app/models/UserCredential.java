@@ -2,6 +2,7 @@ package models;
 
 import interfaces.IEditable;
 import models.base.AuditEntity;
+import models.like.UserCredentialLikeEvent;
 import models.like.UserCredentialLikeRecipe;
 import models.like.UserCredentialLikeUserCredential;
 import models.message.Message;
@@ -111,6 +112,9 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     @RelatedToVia(type = RelationshipTypesJava.LIKES_RECIPE.Constant, direction = Direction.OUTGOING)
     private Set<UserCredentialLikeRecipe> hasLikedRecipes;
 
+    @RelatedToVia(type = RelationshipTypesJava.LIKES_EVENT.Constant, direction = Direction.OUTGOING)
+    private Set<UserCredentialLikeEvent> hasLikedEvents;
+
     public String getFullName() {
         String retString = "";
         if(firstName != null)
@@ -205,6 +209,14 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
         return this.hasLikedRecipes;
     }
 
+    @Fetch
+    public Set<UserCredentialLikeEvent> getHasLikedEvents() {
+        if(this.hasLikedEvents == null)
+            this.hasLikedEvents = new HashSet<>();
+
+        return this.hasLikedEvents;
+    }
+
     // Like count
     public int getNrOfLikes() {
         int count = 0;
@@ -274,6 +286,10 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
         this.ratings = new HashSet<>();
         this.providerId     = providerId;
         this.emailAddress   = email;
+    }
+
+    public UserProfile getUserProfile() {
+        return this.profiles.iterator().next();
     }
 
     public String getPhone() {

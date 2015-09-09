@@ -18,7 +18,7 @@
         <div class="row">
             <div class="col-xs-12 col-md-9">
                 @defining(if(recipe.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(recipe.getOwnerProfile.getAvatarImage.getStoreId).url}else{""}) { avatarUrl =>
-                    @views.html.profile.profileHeader(recipe.getOwnerProfile.profileLinkName, recipe.getOwnerProfile.fistName, avatarUrl, true)
+                    @views.html.profile.profileHeader(recipe.getOwnerProfile.profileLinkName, recipe.getOwnerProfile.getOwner.firstName(), avatarUrl, true)
                 }
 
                 <div class="row">
@@ -32,13 +32,15 @@
                                 @if(!recipe.getPreAmble.isEmpty) {
                                     <p class="lead">@recipe.getPreAmble</p>
                                 }
-                                @if(!recipe.getMainBody.isEmpty) {
-                                    <div class="breadtext">@Html(recipe.getMainBody)</div>
-                                }
                             </article>
                             <article>
                                 @shared.grade(inputId = "recipe-grade", initialValue = recipe.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = recipe.getNrOfRatings)
-                                @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.fistName, recipe.getLink).url)(request)
+                                @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url)(request)
+                            </article>
+                            <article>
+                            @if(!recipe.getMainBody.isEmpty) {
+                                <div class="breadtext">@Html(recipe.getMainBody)</div>
+                            }
                             </article>
                         </section>
                     </div>

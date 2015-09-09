@@ -265,5 +265,30 @@ class ImageController extends Controller with SecureSocial {
     }
   }
 
+  // Event
+  def eventThumb(fileUid: String) = {
+    fileUid match {
+      case "null" =>
+        faultyImageRequestAction
+      case id: String =>
+        utils.scalr.ScalrResAssets.at(id, 150, 100, mode = Resizer.Mode.CROP.toString)
+    }
+  }
+  def eventBox(fileUid: String) = {
+    fileUid match {
+      case "null" =>
+        faultyImageRequestAction
+      case id: String =>
+        utils.scalr.ScalrResAssets.at(id, 275, 160, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
+    }
+  }
+  def eventNormal(fileUid: String) = {
+    fileUid match {
+      case "null" =>
+        faultyImageRequestAction
+      case id: String =>
+        utils.scalr.ScalrResAssets.at(id, 460, 345, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
+    }
+  }
 
 }

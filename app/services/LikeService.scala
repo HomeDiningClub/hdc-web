@@ -1,9 +1,9 @@
 package services
 
-import models.like.{UserCredentialLikeRecipe, UserCredentialLikeUserCredential}
+import models.like.{UserCredentialLikeEvent, UserCredentialLikeRecipe, UserCredentialLikeUserCredential}
 import models.modelconstants.RelationshipTypesScala
 import models.rating.{RatesRecipe, RatesUserCredential}
-import models.{Recipe, UserCredential}
+import models.{Event, Recipe, UserCredential}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
@@ -100,16 +100,21 @@ class LikeService {
 
 
   // Recipe
+  // By using graphId we don't need to load all the relationships
   @Transactional(readOnly = true)
   def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Recipe): Option[UserCredentialLikeRecipe] = {
-    // By using graphId we don't need to load all the relationships
     currentUser.getHasLikedRecipes.asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
+  }
+
+  // Event
+  @Transactional(readOnly = true)
+  def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Event): Option[UserCredentialLikeEvent] = {
+    currentUser.getHasLikedEvents.asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
   }
 
   // UserCredential
   @Transactional(readOnly = true)
   def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: UserCredential): Option[UserCredentialLikeUserCredential] = {
-    // By using graphId we don't need to load all the relationships
     currentUser.getHasLikedUsers.asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
   }
 

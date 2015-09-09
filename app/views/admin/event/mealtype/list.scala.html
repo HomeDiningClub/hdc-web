@@ -1,0 +1,39 @@
+@(list: Option[List[models.event.MealType]])
+
+@mainedit(Messages("admin.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+        <h1 class="page-header">@Messages("admin.meal-type.list.header")</h1>
+        <p><a href="@controllers.admin.routes.AdminMealTypeController.add()" class="btn btn-primary">@Messages("admin.actions.add")</a></p>
+
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>@Messages("admin.meal-type.list.name")</th>
+                    <th>@Messages("admin.meal-type.list.order")</th>
+                    <th>@Messages("admin.meal-type.list.action")</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if(list.isDefined){
+                    @for(item: models.event.MealType <- list.get) {
+                        <tr>
+                            <td>@item.name</td>
+                            <td>@item.order</td>
+                            <td>
+                                <ul class="nav nav-pills">
+                                    <li><a href="@controllers.admin.routes.AdminMealTypeController.edit(item.objectId)"><span class="glyphicon glyphicon-edit"></span> &nbsp; @Messages("admin.actions.edit")</a></li>
+                                    <li><a href="@controllers.admin.routes.AdminMealTypeController.delete(item.objectId)"><span class="glyphicon glyphicon-trash"></span> &nbsp; @Messages("admin.actions.delete")</a></li>
+                                </ul>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+}

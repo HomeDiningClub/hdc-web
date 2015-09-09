@@ -49,6 +49,11 @@ public final class RelationshipTypesJava {
         public static final String Constant = "LIKES_RECIPE";
     }
 
+    public final static class LIKES_EVENT implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "LIKES_EVENT";
+    }
+
     public final static class MAIN_IMAGE implements RelationshipType {
         public String name() { return Constant; }
         public static final String Constant = "MAIN_IMAGE";
@@ -87,6 +92,16 @@ public final class RelationshipTypesJava {
     public final static class HAS_RECIPES implements RelationshipType {
         public String name() { return Constant; }
         public static final String Constant = "HAS_RECIPES";
+    }
+
+    public final static class MEAL_TYPE implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "MEAL_TYPE";
+    }
+
+    public final static class HOSTS_EVENTS implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "HOSTS_EVENTS";
     }
 
     public final static class HAS_BLOGPOSTS implements RelationshipType {

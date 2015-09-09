@@ -285,6 +285,11 @@ class UserProfileService {
     userProfile.addBlogPosts(blogPostsToAdd)
   }
 
+  @Transactional(readOnly = false)
+  def addEventToProfile(userProfile: UserProfile, eventToAdd: Event): UserProfile =
+  {
+    userProfile.addEvent(eventToAdd)
+  }
 
   @Transactional(readOnly = false)
   def addBlogPostsToProfile(user: UserCredential, blogPostsToAdd: BlogPost): UserProfile = {

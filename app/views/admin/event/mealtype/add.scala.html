@@ -1,0 +1,23 @@
+@(tagForm: Form[models.viewmodels.MealTypeForm])(implicit flash: Flash)
+@import helper.twitterBootstrap._
+
+@mainedit(Messages("admin.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("admin.meal-type.add.header")</h1>
+            @helper.form(action=controllers.admin.routes.AdminMealTypeController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
+                <fieldset>
+                    @helper.inputText(tagForm("name"), '_label -> Messages("admin.meal-type.add.name"), '_help -> Messages("admin.meal-type.add.name.validation"))
+                    @helper.inputText(tagForm("order"), '_label -> Messages("admin.meal-type.add.order"), '_help -> Messages("admin.meal-type.add.order.validation"))
+                    @helper.inputHidden(tagForm("id"))
+                </fieldset>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">@Messages("admin.add.save")</button>
+                    <a class="btn" href="@controllers.admin.routes.AdminMealTypeController.listAll()">@Messages("admin.add.abort")</a>
+                </div>
+            }
+        </div>
+    </div>
+
+}

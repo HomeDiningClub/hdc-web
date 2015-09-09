@@ -32,6 +32,7 @@
 @hdc-light-green: lighten(@hdc-green, 39%);
 @hdc-dark-green: darken(@hdc-green,20%);
 
+@hdc-medium-light-orange: lighten(@hdc-orange,5%);
 @hdc-light-orange: lighten(@hdc-orange,20%);
 @hdc-dark-orange: darken(@hdc-orange,20%);
 
@@ -396,6 +397,18 @@ input[type="reset"]:hover
   color: @hdc-orange;
 }
 
+.btn-orange-bg {
+  background-color:@hdc-orange;
+  border-color:@hdc-orange;
+  color: #fff;
+}
+.btn-orange-bg:hover,
+.btn-orange-bg:focus {
+  background-color:@hdc-medium-light-orange;
+  border-color:@hdc-orange;
+  color: #fff;
+}
+
 
 .btn-close {
   position: absolute;
@@ -425,6 +438,11 @@ input[type="reset"]:hover
 .col-centered {
   float: none;
   margin: 0 auto;
+}
+
+// Progress bars
+.progress-bar-orange {
+  background-color: @hdc-orange;
 }
 
 // Panels
@@ -1529,6 +1547,73 @@ h3.aside-title {
   color:#fff;
 }
 
+// Startpage - Wizard
+.startpage-wizards {
+  background-color: #efefef;
+  padding-top:25px;
+  padding-bottom:10px;
+}
+.startpage-wizards h3 {
+  margin-top:10px;
+  margin-bottom:10px;
+  color:@hdc-dark-gray;
+  font-weight:bold;
+  font-style: italic;
+}
+.startpage-wizards .tab-pane .overlay {
+  position: relative;
+  padding:15px 20px 10px 20px;
+  margin-top:-86px;
+  width:100%;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.startpage-wizards .tab-pane .select-step {
+  border-radius:6px;
+  padding:20px 20px 12px 20px;
+  margin-top:0px;
+}
+.startpage-wizards #guest-wizard .tab-pane .select-step {
+  background-color: rgba(@hdc-green-r, @hdc-green-g, @hdc-green-b, 0.8);
+}
+.startpage-wizards #host-wizard .tab-pane .select-step {
+  background-color: rgba(@hdc-orange-r, @hdc-orange-g, @hdc-orange-b, 0.8);
+}
+.startpage-wizards .tab-pane .overlay h2 {
+  color:#fff;
+  margin-top:0px;
+  font-weight:bold;
+}
+.startpage-wizards .tab-pane .overlay p {
+  color:#fff;
+}
+.startpage-wizards .pager {
+  margin:0px;
+}
+
+.startpage-wizards #guest-wizard .pager li > a {
+  background-color:@hdc-green;
+  border-color:@hdc-green;
+  color: #fff;
+}
+.startpage-wizards #guest-wizard .pager li > a:hover,
+.startpage-wizards #guest-wizard .pager li > a:active{
+  background-color:@hdc-medium-light-green;
+  border-color:@hdc-green;
+  color: #fff;
+}
+.startpage-wizards .pager li > a {
+  background-color:@hdc-orange;
+  border-color:@hdc-orange;
+  color: #fff;
+}
+.startpage-wizards .pager li > a:hover,
+.startpage-wizards .pager li > a:active{
+  background-color:@hdc-medium-light-orange;
+  border-color:@hdc-orange;
+  color: #fff;
+}
+
+
 // Startpage CTA
 .panel-cta {
   position: relative;
@@ -1741,6 +1826,8 @@ h3.aside-title {
   margin-top:15px;
 }
 .reviews-list .media-body {
+  max-width:100%;
+  width:auto;
   display: block;
   overflow: hidden;
   position: relative;
@@ -2409,6 +2496,11 @@ a.morelink {
     font-size:12px;
     padding: 0px 5px 0px 5px;
 
+  }
+
+  // Startpage - wizard
+  .startpage-wizards .tab-pane .overlay {
+    margin-top:5px;
   }
 
   // Footer

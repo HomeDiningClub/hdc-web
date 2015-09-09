@@ -1,0 +1,106 @@
+@(event: models.Event,
+        metaData: Option[viewmodels.MetaData] = None,
+        eventBoxes: Option[List[models.viewmodels.EventBox]] = None,
+        shareUrl: String = "",
+        isThisMyEvent: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
+@import scala.collection.JavaConverters._
+@import utils.Helpers
+
+@rotateCss(min: Int, max: Int) = @{
+    val res = Helpers.randomBetween(min,max)
+    "-ms-transform: rotate(" + res + "deg);-webkit-transform: rotate(" + res + "deg);transform: rotate(" + res + "deg);"
+}
+
+
+@main(Messages("event.title", event.getName), metaData = metaData) {
+
+    <div class="container host-container">
+        <div class="row">
+            <div class="col-xs-12 col-md-9">
+                @defining(if(event.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(event.getOwnerProfile.getAvatarImage.getStoreId).url}else{""}) { avatarUrl =>
+                    @views.html.profile.profileHeader(event.getOwnerProfile.profileLinkName, event.getOwnerProfile.getOwner.firstName(), avatarUrl, true)
+                }
+
+                <div class="row">
+                    <div class="col-xs-12 big-margin-top">
+                        @shared.flashmsg(flash)
+                        <h1 class="page-header">@event.getName</h1>
+                    </div>
+                    <div class="col-xs-12 col-md-4">
+                        <section>
+                            <article>
+                                @if(!event.getPreAmble.isEmpty) {
+                                    <p class="lead">@event.getPreAmble</p>
+                                }
+                                @if(!event.getMainBody.isEmpty) {
+                                    <div class="breadtext">@Html(event.getMainBody)</div>
+                                }
+                            </article>
+@*                            <article>
+                                @shared.grade(inputId = "event-grade", initialValue = recipe.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = recipe.getNrOfRatings)
+                                @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName(), recipe.getLink).url)(request)
+                            </article>*@
+                        </section>
+                    </div>
+                    <div class="col-xs-12 col-md-8">
+
+                        @event.getMainImage match {
+                            case null => {  }
+                            case image: models.files.ContentFile => {
+                                @defining(event.getEventImages.asScala) { eventImages =>
+
+                                    <div id="recipe-carousel" data-ride="carousel" data-interval="4000" class="carousel slide hdc-carousel host-image-gallery">
+                                            <!-- Slider carousel items -->
+                                        <div class="carousel-inner">
+                                            <div class="active item set-height crop-height" data-slide-number="0">@shared.img(routes.ImageController.eventNormal(image.getStoreId).url, cssClass = "img-responsive")</div>
+                                            @if(eventImages.nonEmpty) {
+                                                @for((eventImage,i) <- eventImages.zipWithIndex) {
+                                                    <div class="item set-height crop-height" data-slide-number="@(i+1)">@shared.img(routes.ImageController.eventNormal(eventImage.getStoreId).url, cssClass = "img-responsive")</div>
+                                                }
+                                            }
+                                        </div>
+                                        <!-- Carousel nav controls -->
+                                        <a class="carousel-control left hidden-md hidden-lg" href="#event-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                                        <a class="carousel-control right hidden-md hidden-lg" href="#event-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                                    </div>
+
+                                    @if(eventImages.nonEmpty) {
+                                        <!-- Thumbnails, don't show responsive -->
+                                        <ul class="event-carousel-thumbs list-inline hidden-xs hidden-sm">
+                                            <li class="col-md-3">
+                                                <a id="carousel-selector-0">@shared.img(routes.ImageController.eventThumb(image.getStoreId).url, cssClass = "img-responsive polaroid", cssStyle = rotateCss(-8,8))</a>
+                                            </li>
+                                            @if(eventImages.nonEmpty) {
+                                                @for((eventImage,i) <- eventImages.zipWithIndex) {
+                                                    <li class="col-md-3"><a id="carousel-selector-@(i+1)">@shared.img(routes.ImageController.eventThumb(eventImage.getStoreId).url, cssClass = "img-responsive polaroid", cssStyle = rotateCss(-8,8))</a></li>
+                                                }
+                                            }
+                                        </ul>
+                                    }
+
+                                }
+                            }
+                        }
+
+
+                        <div class="col-xs-12 margin-top">
+                            @LikeController.renderEventLikeForm(event)(request)
+                            @shared.fbShare(url = shareUrl)
+                        </div>
+                    </div>
+
+                    @if(isThisMyEvent){
+                        <div class="col-xs-12 big-margin-top">
+                            <a href="@controllers.routes.EventPageController.edit(event.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> @Messages("event.button.edit")</a><br>
+                        </div>
+                    }
+                </div>
+            </div>
+
+                <!-- Banner -->
+            <div class="col-xs-12 col-md-3 col-banner">
+                @shared.banner()
+            </div>
+        </div>
+    </div>
+}

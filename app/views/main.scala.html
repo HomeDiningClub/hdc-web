@@ -32,15 +32,18 @@
         <div id="fb-root"></div>
         @footerHtml
 
-        @*TODO - Create controllers with local backups, also bundle *@
+        @*TODO - Bundle *@
         <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")"></script>
         <script src="@routes.Assets.at("tinymce/tinymce.min.js")"></script>
         <script src="@routes.Assets.at("js/libs/jquery.gray.min.js")"></script>
         <script src="@routes.Assets.at("js/libs/jquery.collapser.2.0.min.js")"></script>
         <script src="@routes.Assets.at("js/libs/star-rating.2.0.0.min.js")"></script>
         <script src="@routes.Assets.at("js/libs/bootbox.4.3.0.min.js")"></script>
+        <script src="@routes.Assets.at("js/libs/jquery-validation-1.14.0/dist/jquery.validate.min.js")"></script>
         @views.html.file.fileScripts()
         <script src="@routes.Assets.at("js/site.js")"></script>
+        <script src="@routes.Assets.at("js/app/json-requests.js")"></script>
+        <script src="@routes.Assets.at("js/app/multi-form.js")"></script>
         @footerScripts
     </body>
 </html>

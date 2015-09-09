@@ -18,6 +18,12 @@ object InstancedServices {
   var recipeService: RecipeService = _
 
   @Autowired
+  var mealTypeService: MealTypeService = _
+
+  @Autowired
+  var eventService: EventService = _
+
+  @Autowired
   var userProfileService: UserProfileService = _
 
   @Autowired

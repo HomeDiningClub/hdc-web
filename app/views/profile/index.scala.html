@@ -4,7 +4,9 @@
         tab3: String,
         tab4: String,
         tab5: String,
+        tab6: String,
         recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
+        eventBoxes: Option[List[models.viewmodels.EventBox]] = None,
         myReviewBoxes: Option[List[models.viewmodels.ReviewBox]] = None,
         myRecipeReviewBoxes: Option[List[models.viewmodels.ReviewBox]] = None,
         reviewBoxesAboutMyFood: Option[List[models.viewmodels.ReviewBox]] = None,
@@ -196,7 +198,7 @@
                         <div class="panel panel-default panel-dropshadow big-margin-top">
                             <div class="panel-body">
                                 @shared.tagList(tagList, userProfile.getOwner.firstName())
-                                <br><strong>@Messages("profile.firstname.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.fistName)</span>
+                                <br><strong>@Messages("profile.firstname.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.getOwner.firstName())</span>
                                 <br><strong>@Messages("profile.city.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.city)</span>
                                 <br>@if(userProfile.getLocations.iterator().hasNext()){
                                 <strong>@Messages("profile.county.text")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.getLocations.iterator().next().county.name)</span>
@@ -264,12 +266,15 @@
                             <ul class="nav nav-tabs nav-tabs-profile">
                                 <li class="active"><a data-toggle="tab" href="#@tab1" title="@Messages("profile.tabs.food.title")"><span class="glyphicon glyphicon-cutlery"></span>&nbsp;@Messages("profile.tabs.food.name")</a></li>
                                 @if(userProfile.isUserHost) {
-                                    <li><a data-toggle="tab" href="#@tab2" title="@Messages("profile.tabs.blog.title")">@Messages("profile.tabs.blog.name")</a></li>
+                                    <li><a data-toggle="tab" href="#@tab2" title="@Messages("profile.tabs.blog.title")"><span class="glyphicon glyphicon-pencil"></span>&nbsp;@Messages("profile.tabs.blog.name")</a></li>
                                 }
                                 <li><a data-toggle="tab" href="#@tab3" title="@Messages("profile.tabs.ratings.title")"><span class="glyphicon glyphicon-star"></span>&nbsp;@Messages("profile.tabs.ratings.name")</a></li>
                                 @if(isThisMyProfile) {
                                     <li><a data-toggle="tab" href="#@tab4" title="@Messages("profile.tabs.inbox.title")"><span class="glyphicon glyphicon-envelope"></span>&nbsp;@Messages("profile.tabs.inbox.name")</a></li>
                                     <li><a data-toggle="tab" href="#@tab5" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
+                                }
+                                @if(utils.Helpers.isUserAdmin(request)) {
+                                    <li><a data-toggle="tab" href="#@tab6" title="@Messages("profile.tabs.event.title")"><span class="glyphicon glyphicon-calendar"></span>&nbsp;@Messages("profile.tabs.event.name")</a></li>
                                 }
                             </ul>
                         </nav>
@@ -291,18 +296,14 @@
                             </div>
                             @if(userProfile.isUserHost) {
                                 <div class="tab-pane tab-hdc fade" id="@tab2">
-                                    @if(utils.Helpers.isUserAdmin(request)) {
-                                        @if(isThisMyProfile) {
-                                            <div class="col-xs-12">
-                                                <div class="btn-group btn-edit-group">
-                                                    <a href="@controllers.routes.BlogPostsPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.blog.add")</a>
-                                                </div>
+                                    @if(isThisMyProfile) {
+                                        <div class="col-xs-12">
+                                            <div class="btn-group btn-edit-group">
+                                                <a href="@controllers.routes.BlogPostsPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.blog.add")</a>
                                             </div>
-                                        }
-                                        @blog.blogBox(userProfile.profileLinkName)
-                                    }else {
-                                        @Messages("profile.blog.tab.body.non-admin")
+                                        </div>
                                     }
+                                    @blog.blogBox(userProfile.profileLinkName)
                                 </div>
                             }
                             <div class="tab-pane tab-hdc fade" id="@tab3">
@@ -381,6 +382,23 @@
                             <div class="tab-pane tab-hdc fade" id="@tab5">
                                 @FavoritesController.renderFavorites(userProfile)
                             </div>
+                            }
+                            @if(utils.Helpers.isUserAdmin(request)) {
+                                <div class="tab-pane tab-hdc fade" id="@tab6">
+                                    <div class="row">
+                                    @if(isThisMyProfile) {
+                                        <div class="col-xs-12">
+                                            <div class="btn-group btn-edit-group">
+                                                <a href="@controllers.routes.EventPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.event.add")</a>
+                                            </div>
+                                        </div>
+                                    }
+                                    </div>
+                                    @if(eventBoxes.nonEmpty) {
+                                        @views.html.event.eventBox(userProfile.profileLinkName)
+                                    }
+
+                                </div>
                             }
                         </div>
 

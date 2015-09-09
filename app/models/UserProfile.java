@@ -40,7 +40,7 @@ public class UserProfile extends AuditEntity implements IEditable {
     public String paySwish          = "";
     public String payBankCard       = "";
     public String payIZettle        = "";
-    public String fistName          = "";
+    public String firstName          = "";
     public String lastName          = "";
     public String userIdentity      = "";
     public String providerIdentity  = "";
@@ -73,9 +73,11 @@ public class UserProfile extends AuditEntity implements IEditable {
     @RelatedTo(type = RelationshipTypesJava.HAS_RECIPES.Constant, direction = Direction.OUTGOING)
     private Set<Recipe> recipes;
 
-
     @RelatedTo(type = RelationshipTypesJava.HAS_BLOGPOSTS.Constant, direction = Direction.OUTGOING)
     private Set<BlogPost> blogPosts;
+
+    @RelatedTo(type = RelationshipTypesJava.HOSTS_EVENTS.Constant, direction = Direction.OUTGOING)
+    private Set<Event> events;
 
     @RelatedTo(type = "IN_PROFILE", direction = Direction.INCOMING)
     private UserCredential owner;
@@ -290,6 +292,22 @@ public class UserProfile extends AuditEntity implements IEditable {
             this.blogPosts = new HashSet<BlogPost>();
 
         this.blogPosts.add(addedBlogPosts);
+        return this;
+    }
+
+    public UserProfile addEvent(Event eventToAdd) {
+        if(this.events == null)
+            this.events = new HashSet<Event>();
+
+        this.events.add(eventToAdd);
+        return this;
+    }
+
+    public UserProfile removeEvent(Event addedEvent) {
+        if(this.events == null)
+            this.events = new HashSet<Event>();
+
+        this.events.remove(addedEvent);
         return this;
     }
 

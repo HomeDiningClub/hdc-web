@@ -47,6 +47,9 @@ class UserProfileController extends Controller with SecureSocial {
   private var recipeService: RecipeService = _
 
   @Autowired
+  private var eventService: EventService = _
+
+  @Autowired
   private var ratingService: RatingService = _
 
   @Autowired
@@ -64,6 +67,7 @@ class UserProfileController extends Controller with SecureSocial {
   val REVIEWS = "reviews-tab"
   val INBOX = "inbox-tab"
   val FAVOURITES = "favourites-tab"
+  val EVENT = "event-tab"
 
   // Form
   val userProfileForm : play.api.data.Form[models.formdata.UserProfileForm]  = play.api.data.Form(
@@ -274,6 +278,7 @@ class UserProfileController extends Controller with SecureSocial {
         val myProfile = isThisMyProfile(profile)
 
         val recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner)
+        val eventBoxes = eventService.getEventBoxes(profile.getOwner)
         val myReviewBoxes = if(myProfile) ratingService.getMyUserReviews(profile.getOwner) else None
         val myRecipeReviewBoxes = if(myProfile) ratingService.getMyUserReviewsAboutFood(profile.getOwner) else None
         val reviewBoxesAboutMyFood = ratingService.getUserReviewsAboutMyFood(profile.getOwner)
@@ -292,8 +297,9 @@ class UserProfileController extends Controller with SecureSocial {
 
 
         Ok(views.html.profile.index(profile,
-          FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,
+          FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,EVENT,
           recipeBoxes = recipeBoxes,
+          eventBoxes = eventBoxes,
           myReviewBoxes = myReviewBoxes,
           myRecipeReviewBoxes = myRecipeReviewBoxes,
           reviewBoxesAboutMyFood = reviewBoxesAboutMyFood,
@@ -540,7 +546,7 @@ if(userTags != null) {
     Option(theUser.allkoholServing),
     mainImage,
     avatarImage,
-    theUser.fistName,
+    theUser.firstName,
     theUser.lastName,
     theUser.getOwner.emailAddress,
     theUser.getOwner.emailAddress
@@ -898,277 +904,224 @@ if(userTags != null) {
    ***************************************************************************************************/
   def editSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-
     // My UserProfile
-    val userCred = Helpers.getUserFromRequest.get
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+    var userCredential = Helpers.getUserFromRequest.get
+    var theUserProfile = userCredential.getUserProfile
 
 
+    val typ = new models.Types                      // all tags selected
+    var map: Map[String, String] = Map()            // to update tags in user profile
 
-    //var service = new services.UserProfileService()
+    var aboutMeHeadlineText   : String = ""
+    var aboutMeText           : String = ""
+    var profileLinkName       : String = ""
+    var zipCode               : String = ""
+    var streetAddress         : String = ""
+    var city                  : String = ""
+    var phoneNumber           : String = ""
+    var countyId              : String = ""
+    var acceptTerms           : Boolean = false
 
-        // Fetch user
+    var childFfriendly        : String = ""
+    var handicapFriendly      : String = ""
+    var havePets              : String = ""
+    var smoke                 : String = ""
+    var allkoholServing       : String = ""
 
-        // Fetch usersprofile
+    var payBankCard           : String = ""
+    var payCache              : String = ""
+    var payIZettle            : String = ""
+    var paySwish              : String = ""
+    var roleGuest             : String = ""
+    var roleHost              : String = ""
+    var numberOfGuest         : String = ""
+    var minGuest              : String = ""
 
-        // remove all tags
+    var firstName             : String = ""
+    var lastName              : String = ""
 
-        // add all new tags
+    var emailAddress          : String = ""
 
+    OptionsForm.bindFromRequest.fold(
+      error => println("Error reading options "),
+      ok => {
+          payBankCard = ok.payBankCard.getOrElse("")
+          payCache = ok.payCache.getOrElse("")
+          payIZettle = ok.payIZettle.getOrElse("")
+          paySwish = ok.paySwish.getOrElse("")
 
-        val typ = new models.Types                      // all tags selected
-        var map: Map[String, String] = Map()            // to update tags in user profile
+          roleHost = ok.roleHost.getOrElse("")
+          numberOfGuest = ok.maxGuest
+          minGuest = ok.minGuest
 
-        var aboutMeHeadlineText   : String = ""
-        var aboutMeText           : String = ""
-        var profileLinkName       : String = ""
-        var zipCode               : String = ""
-        var streetAddress         : String = ""
-        var city                  : String = ""
-        var phoneNumber           : String = ""
-        var countyId              : String = ""
-        var acceptTerms          : Boolean = false
+          handicapFriendly  =  ok.handicapFriendly.getOrElse("")
+          childFfriendly    = ok.childFfriendly.getOrElse("")
+          havePets          = ok.havePets.getOrElse("")
+          smoke             = ok.smoke.getOrElse("")
 
-        var childFfriendly        : String = ""
-        var handicapFriendly      : String = ""
-        var havePets              : String = ""
-        var smoke                 : String = ""
-        var allkoholServing       : String = ""
-
-        var payBankCard               : String = ""
-        var payCache                  : String = ""
-        var payIZettle                : String = ""
-        var paySwish                  : String = ""
-        var roleGuest                 : String= ""
-        var roleHost                  : String = ""
-        var numberOfGuest             : String = ""
-        var minGuest                  : String = ""
-
-        var firstName                 : String = ""
-        var lastName                  : String = ""
-
-        var epostAddress              : String = ""
-
-
-        OptionsForm.bindFromRequest.fold(
-         error => println("Error reading options "),
-        ok=>
-            {
-
-
-              payBankCard = ok.payBankCard.getOrElse("")
-              payCache = ok.payCache.getOrElse("")
-              payIZettle = ok.payIZettle.getOrElse("")
-              paySwish = ok.paySwish.getOrElse("")
-
-              roleHost = ok.roleHost.getOrElse("")
-              numberOfGuest = ok.maxGuest
-              minGuest = ok.minGuest
-
-              handicapFriendly  =  ok.handicapFriendly.getOrElse("")
-              childFfriendly    = ok.childFfriendly.getOrElse("")
-              havePets          = ok.havePets.getOrElse("")
-              smoke             = ok.smoke.getOrElse("")
+          for(tags<-ok.quality) {
+            typ.addVald(tags)
+            map += (tags -> tags)
+          }
+        }
+    )
 
 
-              for(tags<-ok.quality) {
-                typ.addVald(tags)
-                map += (tags -> tags)
-              }
-
-
-
-            }
-        )
-
-
-    val uOptValues = new  UserProfileOptValues(
+    val uOptValues = new UserProfileOptValues(
       payCache, paySwish,
       payBankCard, payIZettle, roleGuest, roleHost,
       numberOfGuest, minGuest, handicapFriendly, childFfriendly, havePets, smoke)
 
-      // Handle tags from form ...
+    // Handle tags from form ...
+    // Fetch all tags
+    var d = tagWordService.listByGroupOption("profile")
+    var l : Long = 0
+    var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
 
+    if(d.isDefined){
+      for(theTag <- d.get) {
+        var newType : models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l+"]" )
+        l = l + 1
 
-
-        // Fetch all tags
-        var d = tagWordService.listByGroupOption("profile")
-        var l : Long = 0
-        var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
-
-        if(d.isDefined){
-          for(theTag <- d.get) {
-            var newType : models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l+"]" )
-            l = l + 1
-
-            tagList.add(newType)
-          }
-        }
+        tagList.add(newType)
+      }
+    }
     // Sort & List
     val retTagList = tagList.toList.sortBy(tw => tw.name)
 
     // Other values not fit to be in form-classes
-    val extraValues = setExtraValues(theUser)
+    val extraValues = setExtraValues(theUserProfile)
 
-      // Handle tags end ...
+    // Handle tags end ...
+    AnvandareForm.bindFromRequest.fold(
+      errors => {
+        BadRequest(views.html.profile.skapa(errors,
+          uOptValues,
+          retTagList, typ,
+          extraValues = extraValues,
+          optionsLocationAreas = countyService.getCounties,
+          termsAndConditions = contentService.getTermsAndConditions))
 
-        AnvandareForm.bindFromRequest.fold(
-          errors => {
+      },
+      reqUserProfile => {
 
+        aboutMeHeadlineText   = reqUserProfile.aboutmeheadline
+        aboutMeText           = reqUserProfile.aboutme
+        profileLinkName       = reqUserProfile.name
+        zipCode               = reqUserProfile.zipCode
+        streetAddress         = reqUserProfile.streetAddress
+        city                  = reqUserProfile.city
+        phoneNumber           = reqUserProfile.phoneNumber
+        countyId              = reqUserProfile.county
+        acceptTerms           = reqUserProfile.acceptTerms
+        firstName             = reqUserProfile.firstName
+        lastName              = reqUserProfile.lastName
+        allkoholServing       = convOptionStringToString(reqUserProfile.allkoholServing)
 
-            BadRequest(views.html.profile.skapa(errors,
-              uOptValues,
-              retTagList, typ,
-              extraValues = extraValues,
-              optionsLocationAreas = countyService.getCounties,
-              termsAndConditions = contentService.getTermsAndConditions))
+        // Gäst och värd
+        // The user are always guest
+        if(!theUserProfile.getRole.contains(UserLevelScala.GUEST.Constant)) theUserProfile.getRole.add(UserLevelScala.GUEST.Constant)
 
-          },
-          reqUserProfile => {
-
-            aboutMeHeadlineText   = reqUserProfile.aboutmeheadline
-            aboutMeText           = reqUserProfile.aboutme
-            profileLinkName       = reqUserProfile.name
-            zipCode               = reqUserProfile.zipCode
-            streetAddress         = reqUserProfile.streetAddress
-            city                  = reqUserProfile.city
-            phoneNumber           = reqUserProfile.phoneNumber
-            countyId              = reqUserProfile.county
-
-            acceptTerms         = reqUserProfile.acceptTerms
-
-
-
-           firstName = reqUserProfile.firstName
-           lastName  = reqUserProfile.lastName
-
-
-            allkoholServing   = convOptionStringToString(reqUserProfile.allkoholServing)
-
-
-
-
+        uOptValues.isBooleanSelectedHost match {
+          case true =>
+            if(!theUserProfile.getRole.contains(UserLevelScala.HOST.Constant)) theUserProfile.getRole.add(UserLevelScala.HOST.Constant)
+          case false =>
+            theUserProfile.getRole.remove(UserLevelScala.HOST.Constant)
+        }
 
 
+        // save: UserCredential
+        userCredential.personNummer = reqUserProfile.personnummer
+        userCredential.firstName = firstName
+        userCredential.lastName = lastName
+        userCredential.fullName = firstName + " " + lastName
 
-            // Gäst och värd
+        emailAddress = reqUserProfile.emailAddress
 
-            // The user are allways guest
-            if(!theUser.getRole.contains(UserLevelScala.GUEST.Constant)) theUser.getRole.add(UserLevelScala.GUEST.Constant)
+        userCredential.userId = emailAddress
+        userCredential.emailAddress = emailAddress
 
+        Logger.debug("userCredentials.userId : " + userCredential.userId)
+        Logger.debug("userCredentials.emailAddress : " + userCredential.emailAddress)
 
-            uOptValues.isBooleanSelectedHost match {
-              case true =>
-                if(!theUser.getRole.contains(UserLevelScala.HOST.Constant)) theUser.getRole.add(UserLevelScala.HOST.Constant)
-              case false =>
-                theUser.getRole.remove(UserLevelScala.HOST.Constant)
-            }
+        var t = userCredentialService.save(userCredential)
 
+        theUserProfile.firstName            = firstName
+        theUserProfile.lastName             = lastName
 
+        theUserProfile.aboutMeHeadline      = aboutMeHeadlineText
+        theUserProfile.aboutMe              = aboutMeText
+        theUserProfile.profileLinkName      = profileLinkName
+        theUserProfile.city                 = city
+        theUserProfile.zipCode              = zipCode
+        theUserProfile.streetAddress        = streetAddress
+        theUserProfile.phoneNumber          = phoneNumber
 
+        theUserProfile.childFfriendly = childFfriendly
+        theUserProfile.handicapFriendly = handicapFriendly
+        theUserProfile.havePets = havePets
+        theUserProfile.smoke = smoke
+        theUserProfile.allkoholServing = allkoholServing
+        theUserProfile.isTermsOfUseApprovedAccepted = acceptTerms
 
-
-           var userCredentials =  theUser.getOwner
-
-
-
-            // save: UserCredential
-            userCredentials.personNummer = reqUserProfile.personnummer
-            userCredentials.firstName = "test"
-            userCredentials.lastName = lastName
-            userCredentials.fullName = firstName + " " + lastName
-
-            epostAddress = reqUserProfile.emailAddress
-
-            userCredentials.userId = epostAddress
-            userCredentials.emailAddress = epostAddress
-
-            println("userCredentials.userId : " + userCredentials.userId)
-            println("userCredentials.emailAddress : " + userCredentials.emailAddress)
-
-            var t = userCredentialService.save(userCredentials)
-
-           theUser.fistName             = firstName
-           theUser.lastName             = lastName
-
-           theUser.aboutMeHeadline      = aboutMeHeadlineText
-           theUser.aboutMe              = aboutMeText
-           theUser.profileLinkName      = profileLinkName
-           theUser.city                 = city
-           theUser.zipCode              = zipCode
-           theUser.streetAddress        = streetAddress
-           theUser.phoneNumber          = phoneNumber
-
-            theUser.childFfriendly = childFfriendly
-            theUser.handicapFriendly = handicapFriendly
-            theUser.havePets = havePets
-            theUser.smoke = smoke
-            theUser.allkoholServing = allkoholServing
-            theUser.isTermsOfUseApprovedAccepted = acceptTerms
-
-            theUser.payBankCard = payBankCard
-            theUser.payCache = payCache
-            theUser.payIZettle = payIZettle
-            theUser.paySwish = paySwish
-            theUser.maxNoOfGuest = numberOfGuest
-            theUser.minNoOfGuest = uOptValues.minGuest
+        theUserProfile.payBankCard = payBankCard
+        theUserProfile.payCache = payCache
+        theUserProfile.payIZettle = payIZettle
+        theUserProfile.paySwish = paySwish
+        theUserProfile.maxNoOfGuest = numberOfGuest
+        theUserProfile.minNoOfGuest = uOptValues.minGuest
 
 
-          if(countyId == None || countyId == null || countyId.trim().size < 2) {
-            //theUser.removeLocation()
-            theUser = userProfileService.removeAllLocationTags(theUser)
-          } else {
-            countyService.findById(UUID.fromString(countyId)) match {
-              case None => // Do something when nothing found
+        if(countyId == None || countyId == null || countyId.trim().size < 2) {
+          //theUser.removeLocation()
+          theUserProfile = userProfileService.removeAllLocationTags(theUserProfile)
+        } else {
+          countyService.findById(UUID.fromString(countyId)) match {
+            case None => // Do something when nothing found
 
-                theUser = userProfileService.removeAllLocationTags(theUser)
-              case Some(item) =>
-                theUser = userProfileService.removeAllLocationTags(theUser)
-                theUser = userProfileService.addLocation(theUser, item)
+              theUserProfile = userProfileService.removeAllLocationTags(theUserProfile)
+            case Some(item) =>
+              theUserProfile = userProfileService.removeAllLocationTags(theUserProfile)
+              theUserProfile = userProfileService.addLocation(theUserProfile, item)
 
-            }
           }
+        }
 
-          // Images
-          // Avatar image
-          reqUserProfile.avatarimage match {
-            case Some(imageId) => UUID.fromString(imageId) match {
-              case imageUUID: UUID =>
-                fileService.getFileByObjectIdAndOwnerId(imageUUID, userCred.objectId) match {
-                  case Some(item) => theUser = userProfileService.setAndRemoveAvatarImage(theUser, item)
-                  case _  => None
-                }
+        // Images
+        // Avatar image
+        reqUserProfile.avatarimage match {
+          case Some(imageId) => UUID.fromString(imageId) match {
+            case imageUUID: UUID =>
+              fileService.getFileByObjectIdAndOwnerId(imageUUID, userCredential.objectId) match {
+                case Some(item) => theUserProfile = userProfileService.setAndRemoveAvatarImage(theUserProfile, item)
+                case _  => None
               }
-            case None => None
-          }
-
-          // Main image
-          reqUserProfile.mainimage match {
-            case Some(imageId) => UUID.fromString(imageId) match {
-              case imageUUID: UUID =>
-                fileService.getFileByObjectIdAndOwnerId(imageUUID, userCred.objectId) match {
-                  case Some(item) => theUser = userProfileService.setAndRemoveMainImage(theUser, item)
-                  case _  => None
-                }
             }
-            case None => None
+          case None => None
+        }
+
+        // Main image
+        reqUserProfile.mainimage match {
+          case Some(imageId) => UUID.fromString(imageId) match {
+            case imageUUID: UUID =>
+              fileService.getFileByObjectIdAndOwnerId(imageUUID, userCredential.objectId) match {
+                case Some(item) => theUserProfile = userProfileService.setAndRemoveMainImage(theUserProfile, item)
+                case _  => None
+              }
           }
+          case None => None
+        }
 
+        theUserProfile.keyIdentity = emailAddress +  "_userpass"
+        theUserProfile.userIdentity = emailAddress
 
+        Logger.debug("UP:userIdentity: " + theUserProfile.userIdentity)
+        Logger.debug("UP:keyIdentity: " + theUserProfile.keyIdentity)
 
+        userProfileService.updateUserProfileTags(theUserProfile, d, map)
 
-           theUser.keyIdentity = epostAddress +  "_userpass"
-           theUser.userIdentity = epostAddress
-
-
-            println("UP:userIdentity : " + theUser.userIdentity)
-            println("UP:keyIdentity : " + theUser.keyIdentity)
-
-          userProfileService.updateUserProfileTags(theUser, d, map)
-
-
-      Redirect(routes.UserProfileController.edit()).flashing(FlashMsgConstants.Success -> Messages("profile.create.saved-successfully"))
-    })
+        Redirect(routes.UserProfileController.edit()).flashing(FlashMsgConstants.Success -> Messages("profile.create.saved-successfully"))
+      })
   }
 
 }

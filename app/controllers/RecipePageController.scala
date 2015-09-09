@@ -381,9 +381,9 @@ class RecipePageController extends Controller with SecureSocial {
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
         val savedRecipe = recipeService.add(newRec.get)
-        val savedProfile = userProfileService.addRecipeToProfile(currentUser.get, savedRecipe)
+        val savedProfile = userProfileService.addRecipeToProfile(currentUser.get.getUserProfile, savedRecipe)
         val successMessage = Messages("recipe.add.success", savedRecipe.getName)
-        Redirect(controllers.routes.RecipePageController.viewRecipeByNameAndProfile(currentUser.get.profiles.iterator.next.profileLinkName,savedRecipe.getLink)).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.RecipePageController.viewRecipeByNameAndProfile(currentUser.get.getUserProfile.profileLinkName,savedRecipe.getLink)).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 

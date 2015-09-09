@@ -57,11 +57,18 @@ POST        /inbox/saveit                                        controllers.Mes
 # Recipe
 GET         /profile/view/:profileName/recipe/:recipeName        @controllers.RecipePageController.viewRecipeByNameAndProfile(profileName: String, recipeName: String)
 GET         /recipe/recipelist.json                              @controllers.RecipePageController.viewRecipeByNameAndProfilePageJSON(profileName: String ?= "", page: Int ?= 0)
-#GET         /recipe/view/:recipeName                             @controllers.RecipePageController.viewRecipeByName(recipeName: String)
 GET         /recipe/add                                          @controllers.RecipePageController.add
 POST        /recipe/add                                          @controllers.RecipePageController.addSubmit
 GET         /recipe/edit/:objectId                               @controllers.RecipePageController.edit(objectId: java.util.UUID)
 GET         /recipe/delete/:objectId                             @controllers.RecipePageController.delete(objectId: java.util.UUID)
+
+# Event
+GET         /profile/view/:profileName/event/:eventName          @controllers.EventPageController.viewEventByNameAndProfile(profileName: String, eventName: String)
+GET         /event/eventlist.json                                @controllers.EventPageController.viewEventByNameAndProfilePageJSON(profileName: String ?= "", page: Int ?= 0)
+GET         /event/add                                           @controllers.EventPageController.add
+POST        /event/add                                           @controllers.EventPageController.addSubmit
+GET         /event/edit/:objectId                                @controllers.EventPageController.edit(objectId: java.util.UUID)
+GET         /event/delete/:objectId                              @controllers.EventPageController.delete(objectId: java.util.UUID)
 
 # Blog
 GET         /blog/add                                          @controllers.BlogPostsPageController.add
@@ -129,6 +136,9 @@ GET         /dynassets/user/thumb/*file                          @controllers.Im
 GET         /dynassets/recipe/thumb/*file                        @controllers.ImageController.recipeThumb(file)
 GET         /dynassets/recipe/box/*file                          @controllers.ImageController.recipeBox(file)
 GET         /dynassets/recipe/normal/*file                       @controllers.ImageController.recipeNormal(file)
+GET         /dynassets/event/thumb/*file                         @controllers.ImageController.eventThumb(file)
+GET         /dynassets/event/box/*file                           @controllers.ImageController.eventBox(file)
+GET         /dynassets/event/normal/*file                        @controllers.ImageController.eventNormal(file)
 GET         /dynassets/profile/thumb/*file                       @controllers.ImageController.profileThumb(file)
 GET         /dynassets/profile/box/*file                         @controllers.ImageController.profileBox(file)
 GET         /dynassets/profile/normal/*file                      @controllers.ImageController.profileNormal(file)
@@ -187,6 +197,22 @@ GET         /admin/tagword/add                                   @controllers.ad
 POST        /admin/tagword/add                                   @controllers.admin.AdminTagWordController.addSubmit
 GET         /admin/tagword/edit/:objectId                        @controllers.admin.AdminTagWordController.edit(objectId: java.util.UUID)
 GET         /admin/tagword/delete/:objectId                      @controllers.admin.AdminTagWordController.delete(objectId: java.util.UUID)
+
+# ADMIN - Event
+GET         /admin/event                                         @controllers.admin.AdminEventController.editIndex
+GET         /admin/event/listall                                 @controllers.admin.AdminEventController.listAll
+GET         /admin/event/add                                     @controllers.admin.AdminEventController.add
+POST        /admin/event/add                                     @controllers.admin.AdminEventController.addSubmit
+GET         /admin/event/edit/:objectId                          @controllers.admin.AdminEventController.edit(objectId: java.util.UUID)
+GET         /admin/event/delete/:objectId                        @controllers.admin.AdminEventController.delete(objectId: java.util.UUID)
+
+# ADMIN - MealType
+GET         /admin/mealtype                                      @controllers.admin.AdminMealTypeController.editIndex
+GET         /admin/mealtype/listall                              @controllers.admin.AdminMealTypeController.listAll
+GET         /admin/mealtype/add                                  @controllers.admin.AdminMealTypeController.add
+POST        /admin/mealtype/add                                  @controllers.admin.AdminMealTypeController.addSubmit
+GET         /admin/mealtype/edit/:objectId                       @controllers.admin.AdminMealTypeController.edit(objectId: java.util.UUID)
+GET         /admin/mealtype/delete/:objectId                     @controllers.admin.AdminMealTypeController.delete(objectId: java.util.UUID)
 
 # ADMIN - Release & Batch
 GET         /admin/release                                       @controllers.admin.AdminReleaseController.editIndex

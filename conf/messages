@@ -85,6 +85,44 @@ startpage.boxes.location=<em>Finns i {0}</em>
 startpage.reviews.users.header=Omdömen om värdar
 startpage.reviews.recipes.header=Omdömen om recept
 
+startpage.wizard.header=Hur fungerar det?
+
+startpage.wizard.guest.select-step.header=Vill du boka middag hemma hos en medlem?
+startpage.wizard.guest.step1.header=Steg 1: Hitta din värd
+startpage.wizard.guest.step1.body=Gå till sidan Medlemmar, väl en Värd
+startpage.wizard.guest.step2.header=Steg 2: Skicka en förfrågan
+startpage.wizard.guest.step2.body=Passar bjudningen? Skicka en förfrågan!
+startpage.wizard.guest.step3.header=Steg 3: Bestäm detaljer
+startpage.wizard.guest.step3.body=Det är nu upp till er att bestämma datum, meny och kostnad.
+startpage.wizard.guest.step4.header=Steg 4: Klart! - Ge Värden ditt omdöme
+startpage.wizard.guest.step4.body=Ha det så trevligt – och gott!
+
+startpage.wizard.host.or.guest=...eller...
+
+startpage.wizard.host.select-step.header=Få bokningsförfrågningar på middagar hemma hos dig?
+startpage.wizard.host.step1.header=Steg 1: Markera dig som värd
+startpage.wizard.host.step1.body=Gå till Redigera profil / Inställningar - se till att du kryssat i "Värd"
+startpage.wizard.host.step2.header=Steg 2: Uppdatera din profil
+startpage.wizard.host.step2.body=Gärna ofta! - skriv ett förslag på en meny, aktuella datum och kostnad. Allt för att det ska bli inspirerande, intressant och enkelt för dina besökare.
+startpage.wizard.host.step3.header=Steg 3: Bestäm detaljer
+startpage.wizard.host.step3.body=Det är nu upp till er att bestämma datum, meny och kostnad.
+startpage.wizard.host.step4.header=Steg 4: Klart!
+startpage.wizard.host.step4.body=Ha det så trevligt – och gott!
+
+startpage.wizard.tab.select.header=Hur gör jag?
+startpage.wizard.tab.step1.header=Steg 1
+startpage.wizard.tab.step2.header=Steg 2
+startpage.wizard.tab.step3.header=Steg 3
+startpage.wizard.tab.step4.header=Steg 4
+startpage.wizard.tab.step5.header=Steg 5
+
+startpage.wizard.pager.first=Första
+startpage.wizard.pager.last=Sista
+startpage.wizard.pager.prev=Föreg.
+startpage.wizard.pager.guest.next=Ja, visa mig hur
+startpage.wizard.pager.host.next=Hur blir jag värd?
+startpage.wizard.pager.next=Nästa
+
 # Browse members page
 browse.title=Bläddra medlemmar
 browse.boxes.not-found=Kunde inte hitta några profiler som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
@@ -171,6 +209,7 @@ favorite.profile.others-favorites.header=Vilka har mig som favorit?
 # Profile
 profile.title={0} - Profil
 profile.button.recipe.add=Lägg till recept
+profile.button.event.add=Lägg till händelse
 profile.tags.header={0} är intresserad av
 
 profile.reviews.reviews.aboutme.header=Omdömen om mig:
@@ -290,6 +329,8 @@ profile.tabs.food.name=Mat & Dryck
 profile.tabs.food.title=Mat & Dryck
 profile.tabs.blog.name=Blogg
 profile.tabs.blog.title=Blogg
+profile.tabs.event.name=Händelser
+profile.tabs.event.title=Händelser
 profile.tabs.ratings.name=Omdömen
 profile.tabs.ratings.title=Omdömen
 profile.tabs.inbox.name=Inbox
@@ -355,6 +396,44 @@ recipe.edit.delete.ok=Ta bort!
 recipe.edit.delete.abort=Avbryt
 
 recipe.button.edit=Redigera recept
+
+# Event / Dine
+event.title={0} - Bjudning
+event.create.title=Lägg till / Redigera bjudning
+event.edit.index.header=Dine
+event.edit.add.header=Lägg till / Redigera bjudning
+event.edit.add.name=Namn
+event.edit.add.name.validation=(Min 6, max 60 tecken)
+event.edit.add.name.help-text=<em><strong>Ett namn på ditt event, som beskriver din bjudning t.ex.:</strong><br>Sommarfest: Svenska härligheter<br>Fransk middag<br>Brunch med skaldjurstvist<br></em>
+event.edit.add.body=Menu (Huvudsaklig text)
+event.edit.add.body.help-text=<em><strong>Skriv din menu:</strong><br></em>
+event.edit.add.preamble=Citat (valfritt)
+event.edit.add.preamble.validation=(Max 150 tecken)
+event.edit.add.preamble.help-text=<em><strong>Ett kort citat för att sälja in din bjudning:</strong><br>"Gott helt enkelt, italiensk pasta när den är som bäst."<br></em>
+event.edit.add.main-image=Huvudsaklig bild för din bjudning
+event.edit.add.main-image-preview=Förhandsgranskning
+event.edit.add.main-image-btn=Välj bild
+
+event.edit.add.images=Fler bilder (max {0} st)
+event.edit.add.images-preview=Förhandsgranskning
+event.edit.add.images-btn=Välj fler bilder
+
+event.edit.prev=Föregående
+event.edit.next=Nästa
+
+event.add.success=Sparat: {0}
+event.add.error=Formuläret innehåller något fel, vad god korrigera innan vi kan spara.
+event.delete.success=Dine borttagen
+event.delete.error=Kunde inte ta bort händelse
+event.edit.save=Spara
+event.edit.abort=Avbryt
+event.edit.saving=Sparar...
+event.edit.delete=Ta bort
+event.edit.delete.title=Varning
+event.edit.delete.confirm=Du kan inte ångra denna åtgärd, är du säker att du vill ta bort?
+event.edit.delete.ok=Ta bort!
+event.edit.delete.abort=Avbryt
+event.button.edit=Redigera händelse
 
 # Blog
 blog.title={0} - {1} - Home dining club - Blogg
@@ -432,6 +511,7 @@ admin.info=Information!
 admin.menu.title=HDC - Admin
 admin.menu.pages=Sidor
 admin.menu.recipe=Recept
+admin.menu.event=Händelser
 admin.menu.users=Användare
 admin.menu.files=Filer
 admin.menu.county=Län
@@ -550,6 +630,33 @@ admin.tagword.list.header=Lista av taggar
 admin.tagword.list.name=Namn
 admin.tagword.list.groupname=Tagg-grupp
 admin.tagword.list.action=Funktioner
+
+admin.event.index.header=Händelser
+admin.event.add.header=Lägg till / Redigera
+admin.event.add.name=Namn
+admin.event.add.route=Sökväg
+admin.event.add.preamble=Inledningstext
+admin.event.add.preamble.validation=(Max längd 255)
+admin.event.add.main-image=Huvudbild
+admin.event.add.images=Bilder
+admin.event.add.body=Huvudtext
+admin.event.add.name.validation=(Tvingande, max längd 255)
+admin.event.list.header=Lista av händelser
+admin.event.list.name=Namn
+admin.event.list.owner=Ägare
+admin.event.list.route=Sökväg
+admin.event.list.action=Funktioner
+
+admin.meal-type.index.header=Måltidstyper
+admin.meal-type.add.header=Lägg till / Redigera
+admin.meal-type.add.name=Namn
+admin.meal-type.add.name.validation=(Tvingande, max längd 255)
+admin.meal-type.add.order=Sorteringsordning
+admin.meal-type.add.order.validation=(Min 0, max 999)
+admin.meal-type.list.header=Lista
+admin.meal-type.list.name=Namn
+admin.meal-type.list.order=Ordning
+admin.meal-type.list.action=Funktioner
 
 admin.release.index.header=Release och batchjobb
 admin.release.actions.releaserun=Kör release rutin

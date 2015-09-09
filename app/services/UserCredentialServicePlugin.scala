@@ -345,7 +345,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
       userProfile.userIdentity = userCredential.userId
       userProfile.providerIdentity = userCredential.providerId
-      userProfile.fistName = userCredential.firstName
+      userProfile.firstName = userCredential.firstName
       userProfile.lastName = userCredential.lastName
       userProfile.keyIdentity = userProfile.userIdentity + "_" + userProfile.providerIdentity
 

@@ -1,0 +1,38 @@
+@(form: Form[models.viewmodels.EventForm], editingEvent: Option[models.Event] = None, sortedImages: Option[List[models.files.ContentFile]] = None)(implicit flash: Flash)
+@import helper.twitterBootstrap._
+
+@mainedit(Messages("admin.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("admin.event.add.header")</h1>
+            @helper.form(action=controllers.admin.routes.AdminEventController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal"){
+                <fieldset>
+                    @helper.inputText(form("name"), '_label -> Messages("admin.event.add.name"), '_help -> Messages("admin.event.add.name.validation"))
+                    @helper.textarea(form("preamble"), '_label -> Messages("admin.event.add.preamble"), '_help -> Messages("admin.event.add.preamble.validation"), '_class -> "event-addedit-form-preamble")
+
+                    @* Editing disabled for now *@
+                    @if(editingEvent.nonEmpty && editingEvent.get.getMainImage != null) {
+                        <label>@Messages("admin.event.add.main-image")</label><br>
+                        @shared.img(routes.ImageController.recipeNormal(editingEvent.get.getMainImage.getStoreId).url)<br>
+                    }
+
+                    @if(sortedImages.nonEmpty) {
+                        <label>@Messages("admin.event.add.images")</label><br>
+                        @for(item <- sortedImages.get) {
+                            @* Editing disabled for now *@
+                            @shared.img(routes.ImageController.recipeThumb(item.getStoreId).url)<br>
+                        }
+                    }
+                    @helper.textarea(form("mainbody"), '_label -> Messages("admin.event.add.body"), 'class -> "richtext")
+                    @helper.inputHidden(form("id"))
+                </fieldset>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">@Messages("admin.add.save")</button>
+                    <a class="btn" href="@controllers.admin.routes.AdminEventController.listAll()">@Messages("admin.add.abort")</a>
+                </div>
+            }
+        </div>
+    </div>
+
+}
