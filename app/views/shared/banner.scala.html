@@ -2,5 +2,9 @@
 
 <div class="banner">
     <div class="banner-header">@Messages("banner.header")</div>
-    <a href="@linkPath" title="@title" target="">@shared.img(imgPath.stripPrefix("/"), cssClass = "banner-dropshadow")</a>
+    <ul>
+        <li><a href="http://matochvanner.se/prenumerera" title="Prenumerera på Mat och vänner" target="_blank" onclick="ga('send', 'event', 'banner', 'click', 'matochvanner.se/prenumerera')">@shared.img("images/banners/banner-mat-vanner-01.gif", cssClass = "banner-dropshadow")</a></li>
+        <li><a href="http://matkarlek.nu/prenumerera" title="Prenumerera på matkärlek" target="_blank" onclick="ga('send', 'event', 'banner', 'click', 'matkarlek.se/prenumerera')">@shared.img("images/banners/banner-mat-karlek-01.gif", cssClass = "banner-dropshadow")</a></li>
+        <li><a href="@linkPath" title="@title" target="" onclick="ga('send', 'event', 'banner', 'click', 'hdc-banner')">@shared.img(imgPath.stripPrefix("/"), cssClass = "banner-dropshadow")</a></li>
+    </ul>
 </div>

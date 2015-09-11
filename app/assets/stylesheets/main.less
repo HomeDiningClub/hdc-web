@@ -28,6 +28,7 @@
 @hdc-gold: #a48b74;
 @hdc-black: #000;
 @hdc-red: #8E0000;
+@hdc-dark-light-green: lighten(@hdc-green, 5%);
 @hdc-medium-light-green: lighten(@hdc-green, 20%);
 @hdc-light-green: lighten(@hdc-green, 39%);
 @hdc-dark-green: darken(@hdc-green,20%);
@@ -462,6 +463,15 @@ input[type="reset"]:hover
 .col-banner
 {
   text-align: center;
+}
+.banner ul {
+  padding:0px;
+  margin:0px;
+}
+.banner ul li {
+  list-style-type: none;
+  margin:0px 0px 10px 0px;
+  padding:0px;
 }
 .banner img
 {
@@ -1554,11 +1564,12 @@ h3.aside-title {
   padding-bottom:10px;
 }
 .startpage-wizards h3 {
-  margin-top:10px;
-  margin-bottom:10px;
+  margin-top:0px;
+  margin-bottom:20px;
   color:@hdc-dark-gray;
   font-weight:bold;
   font-style: italic;
+  clear:both;
 }
 .startpage-wizards .tab-pane .overlay {
   position: relative;
@@ -1597,7 +1608,7 @@ h3.aside-title {
 }
 .startpage-wizards #guest-wizard .pager li > a:hover,
 .startpage-wizards #guest-wizard .pager li > a:active{
-  background-color:@hdc-medium-light-green;
+  background-color:@hdc-dark-light-green;
   border-color:@hdc-green;
   color: #fff;
 }
