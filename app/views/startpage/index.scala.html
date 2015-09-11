@@ -9,6 +9,7 @@
 
 @scripts = {
     <script src="@routes.Assets.at("js/libs/twitter-bootstrap-wizard-1.0.0/jquery.bootstrap.wizard.min.js")"></script>
+    <script src="@routes.Assets.at("js/libs/bootstrap-lightbox-0.6.1/bootstrap-lightbox.min.js")"></script>
     <script src="@routes.Assets.at("js/app/startpage.js")"></script>
 }
 
@@ -87,119 +88,12 @@
                         </div>
 
                         @if(utils.Helpers.getUserFromRequest.isEmpty) {
-                            <p><a class="btn btn-default btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
+                            <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
                         }
                     </div>
                 </div>
 
-                <div class="row margin-top">
-                    <div class="col-xs-12 startpage-wizards">
-                        <section>
-                            <div id="guest-wizard">
-                                <ul class="hidden">
-                                    <li><a href="#wiztabsel" data-toggle="tab">@Messages("startpage.wizard.tab.select.header")</a></li>
-                                    <li><a href="#wiztab1" data-toggle="tab">@Messages("startpage.wizard.tab.step1.header")</a></li>
-                                    <li><a href="#wiztab2" data-toggle="tab">@Messages("startpage.wizard.tab.step2.header")</a></li>
-                                    <li><a href="#wiztab3" data-toggle="tab">@Messages("startpage.wizard.tab.step3.header")</a></li>
-                                    <li><a href="#wiztab4" data-toggle="tab">@Messages("startpage.wizard.tab.step4.header")</a></li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div class="tab-pane animated bounceIn" id="wiztabsel">
-                                        <div class="overlay select-step text-center">
-                                            <h2>@Messages("startpage.wizard.guest.select-step.header")</h2>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane animated fadeIn" id="wiztab1">
-                                        @shared.img("images/startpage/wizard/guest-step1.png", alt = "", cssClass = "img-responsive")
-                                        <div class="overlay animated fadeInUp">
-                                            <h2>@Messages("startpage.wizard.guest.step1.header")</h2>
-                                            <p>@Messages("startpage.wizard.guest.step1.body")</p>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane animated fadeIn" id="wiztab2">
-                                        @shared.img("images/startpage/wizard/guest-step2.png", alt = "", cssClass = "img-responsive")
-                                        <div class="overlay animated fadeInUp">
-                                            <h2>@Messages("startpage.wizard.guest.step2.header")</h2>
-                                            <p>@Messages("startpage.wizard.guest.step2.body")</p>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane animated fadeIn" id="wiztab3">
-                                        @shared.img("images/startpage/wizard/guest-step3.png", alt = "", cssClass = "img-responsive")
-                                        <div class="overlay animated fadeInUp">
-                                            <h2>@Messages("startpage.wizard.guest.step3.header")</h2>
-                                            <p>@Messages("startpage.wizard.guest.step3.body")</p>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane animated fadeIn" id="wiztab4">
-                                        @shared.img("images/startpage/wizard/guest-step4.png", alt = "", cssClass = "img-responsive")
-                                        <div class="overlay animated fadeInUp">
-                                            <h2>@Messages("startpage.wizard.guest.step4.header")</h2>
-                                            <p>@Messages("startpage.wizard.guest.step4.body")</p>
-                                        </div>
-                                    </div>
-                                    <ul class="pager wizard">
-                                        <li class="previous" style="display: none"><a class="btn" href="javascript:void(0);"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;@Messages("startpage.wizard.pager.prev")</a></li>
-                                        <li class="next"><a class="btn" href="javascript:void(0);">@Messages("startpage.wizard.pager.guest.next")&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </section>
-                        <h3 class="text-center">@Messages("startpage.wizard.host.or.guest")</h3>
-                        <section>
-                            <div id="host-wizard">
-                                <ul class="hidden">
-                                    <li><a href="#wizhtabsel" data-toggle="tab">@Messages("startpage.wizard.tab.select.header")</a></li>
-                                    <li><a href="#wizhtab1" data-toggle="tab">@Messages("startpage.wizard.tab.step1.header")</a></li>
-                                    <li><a href="#wizhtab2" data-toggle="tab">@Messages("startpage.wizard.tab.step2.header")</a></li>
-                                    <li><a href="#wizhtab3" data-toggle="tab">@Messages("startpage.wizard.tab.step3.header")</a></li>
-                                    <li><a href="#wizhtab4" data-toggle="tab">@Messages("startpage.wizard.tab.step4.header")</a></li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div class="tab-pane animated bounceIn" id="wizhtabsel">
-                                        <div class="overlay select-step text-center">
-                                            <h2>@Messages("startpage.wizard.host.select-step.header")</h2>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane animated fadeIn" id="wizhtab1">
-                                        @shared.img("images/startpage/wizard/host-step1.png", alt = "", cssClass = "img-responsive")
-                                        <div class="overlay animated fadeInUp">
-                                            <h2>@Messages("startpage.wizard.host.step1.header")</h2>
-                                            <p>@Messages("startpage.wizard.host.step1.body")</p>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane animated fadeIn" id="wizhtab2">
-                                        @shared.img("images/startpage/wizard/host-step2.png", alt = "", cssClass = "img-responsive")
-                                        <div class="overlay animated fadeInUp">
-                                            <h2>@Messages("startpage.wizard.host.step2.header")</h2>
-                                            <p>@Messages("startpage.wizard.host.step2.body")</p>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane animated fadeIn" id="wizhtab3">
-                                        @shared.img("images/startpage/wizard/host-step3.png", alt = "", cssClass = "img-responsive")
-                                        <div class="overlay animated fadeInUp">
-                                            <h2>@Messages("startpage.wizard.host.step3.header")</h2>
-                                            <p>@Messages("startpage.wizard.host.step3.body")</p>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane animated fadeIn" id="wizhtab4">
-                                        @shared.img("images/startpage/wizard/host-step4.png", alt = "", cssClass = "img-responsive")
-                                        <div class="overlay animated fadeInUp">
-                                            <h2>@Messages("startpage.wizard.host.step4.header")</h2>
-                                            <p>@Messages("startpage.wizard.host.step4.body")</p>
-                                        </div>
-                                    </div>
-                                    <ul class="pager wizard">
-                                        <li class="previous" style="display: none"><a class="btn" href="javascript:void(0);"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;@Messages("startpage.wizard.pager.prev")</a></li>
-                                        <li class="next"><a class="btn" href="javascript:void(0);">@Messages("startpage.wizard.pager.host.next")&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-
-
-                <div class="row big-margin-top">
+                <div class="row">
                     <!-- Filtering push -->
                     <div class="col-xs-12 form-filter animated fadeIn">
                     @helper.form(action=routes.StartPageController.index(), 'class -> "form-horizontal"){
@@ -251,35 +145,31 @@
                 </div>
                 }
 
-
-                <!-- Functions -->
-                @*<div class="col-xs-12 col-md-3">*@
-                    @*<aside>*@
-                        @*<h2>Funktioner</h2>*@
-
-                    @*</aside>*@
-                @*</div>*@
             </div>
 
             <div class="col-xs-12 col-md-pull-6 col-md-3">
                 <aside>
-                @if(asideNews.nonEmpty) {
-                    @for(content <- asideNews.get){
-                            <!-- Content -->
-                        <div class="panel panel-dropshadow panel-default panel-startpage-aside">
-                            <div class="panel-body">
-                                @if(content.title.nonEmpty) {
-                                    <h3 class="aside-title">@content.title</h3>
-                                }
-                                @Html(content.preamble)
-                                @Html(content.mainBody)
+                    @if(asideNews.nonEmpty) {
+                        @for(content <- asideNews.get){
+                                <!-- Content -->
+                            <div class="panel panel-dropshadow panel-default panel-startpage-aside">
+                                <div class="panel-body">
+                                    @if(content.title.nonEmpty) {
+                                        <h3 class="aside-title">@content.title</h3>
+                                    }
+                                    @Html(content.preamble)
+                                    @Html(content.mainBody)
+                                </div>
                             </div>
-                        </div>
+                        }
                     }
-                }
                 </aside>
             </div>
 
+            <div class="col-xs-12 col-md-3">
+                @startpage.wizardButtons()
+                @startpage.wizardModals()
+            </div>
 
             <!-- Banner -->
             <div class="col-xs-12 col-md-3 col-banner">

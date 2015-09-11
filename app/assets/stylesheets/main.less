@@ -470,7 +470,7 @@ input[type="reset"]:hover
 }
 .banner ul li {
   list-style-type: none;
-  margin:0px 0px 10px 0px;
+  margin:0px 0px 20px 0px;
   padding:0px;
 }
 .banner img
@@ -1558,18 +1558,51 @@ h3.aside-title {
 }
 
 // Startpage - Wizard
-.startpage-wizards {
-  background-color: #efefef;
-  padding-top:25px;
-  padding-bottom:10px;
+.startpage-wizards-buttons {
+  padding:15px;
+  background-color:@hdc-light-gray;
+  border-radius:6px;
 }
-.startpage-wizards h3 {
-  margin-top:0px;
-  margin-bottom:20px;
-  color:@hdc-dark-gray;
+.startpage-wizards-buttons .wizard-header {
+  margin:5px 0px 10px 0px;
   font-weight:bold;
-  font-style: italic;
-  clear:both;
+}
+.startpage-wizards-buttons .wizard-lead {
+  font-size:13px;
+  line-height:16px;
+  font-style:italic;
+  display:block;
+  margin-bottom:20px;
+}
+.startpage-wizards-buttons .select-step {
+  border-radius:6px;
+  padding:0px;
+  margin-top:10px;
+}
+.startpage-wizards-buttons a.header {
+  display:block;
+  padding:15px;
+  color:#fff;
+  margin-top:0px;
+  font-weight:bold;
+}
+.startpage-wizards-buttons a:hover {
+  text-decoration:none;
+}
+.startpage-wizards-buttons .guest-wizard .select-step {
+  background-color: rgba(@hdc-green-r, @hdc-green-g, @hdc-green-b, 0.8);
+}
+.startpage-wizards-buttons .guest-wizard .select-step:hover {
+  background-color: rgba(@hdc-green-r, @hdc-green-g, @hdc-green-b, 1.0);
+}
+.startpage-wizards-buttons .host-wizard .select-step {
+  background-color: rgba(@hdc-orange-r, @hdc-orange-g, @hdc-orange-b, 0.8);
+}
+.startpage-wizards-buttons .host-wizard .select-step:hover {
+  background-color: rgba(@hdc-orange-r, @hdc-orange-g, @hdc-orange-b, 1.0);
+}
+.startpage-wizards .tab-pane img {
+  border-radius:6px 6px 0px 0px;
 }
 .startpage-wizards .tab-pane .overlay {
   position: relative;
@@ -1578,18 +1611,8 @@ h3.aside-title {
   width:100%;
   background-color: rgba(0, 0, 0, 0.6);
 }
-.startpage-wizards .tab-pane .select-step {
-  border-radius:6px;
-  padding:20px 20px 12px 20px;
-  margin-top:0px;
-}
-.startpage-wizards #guest-wizard .tab-pane .select-step {
-  background-color: rgba(@hdc-green-r, @hdc-green-g, @hdc-green-b, 0.8);
-}
-.startpage-wizards #host-wizard .tab-pane .select-step {
-  background-color: rgba(@hdc-orange-r, @hdc-orange-g, @hdc-orange-b, 0.8);
-}
 .startpage-wizards .tab-pane .overlay h2 {
+  display:block;
   color:#fff;
   margin-top:0px;
   font-weight:bold;
@@ -1598,9 +1621,15 @@ h3.aside-title {
   color:#fff;
 }
 .startpage-wizards .pager {
+  background-color:#333;
   margin:0px;
+  padding:0px 10px;
+  border-radius:0px 0px 5px 5px;
 }
-
+.startpage-wizards .modal-content {
+  background-color:#333;
+  border:none;
+}
 .startpage-wizards #guest-wizard .pager li > a {
   background-color:@hdc-green;
   border-color:@hdc-green;
