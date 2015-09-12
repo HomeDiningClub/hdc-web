@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.transaction.annotation.Transactional
 import play.api.i18n.Messages
+import play.api.cache.Cache
+import play.api.Play.current
 
 import securesocial.core._
 import scala.Some
@@ -27,6 +29,8 @@ class TagWordService {
 
   @Autowired
   var tagWordRepository: TagWordRepository = _
+
+  val tagWordCacheKey = "tagWord."
 
   @Transactional(readOnly = false)
    def createTag(name: String, idName: String, order: String = "", tagGroupName : String = "" ): TagWord = {
@@ -63,7 +67,14 @@ class TagWordService {
   def listByGroupOption(groupName: String): Option[List[TagWord]] = {
     tagWordRepository.findByTagGroupName(groupName).asScala.toList match {
       case null | Nil  => None
-      case tags => Some(tags)
+      case tags => {
+
+        val cachedTagWords = Cache.getOrElse[List[TagWord]](tagWordCacheKey + groupName) {
+          addToCache(tagWordCacheKey + groupName, tags)
+          tags
+        }
+        Some(cachedTagWords)
+      }
     }
   }
 
@@ -124,12 +135,16 @@ class TagWordService {
       case None => false
       case Some(item) =>
         tagWordRepository.delete(item)
+        removeFromCache(item)
         true
     }
   }
 
   @Transactional(readOnly = false)
   def deleteAll: Boolean = {
+    tagWordRepository.findAll.asScala.toList.foreach{ item =>
+      removeFromCache(item)
+    }
     tagWordRepository.deleteAll
     true
   }
@@ -138,7 +153,15 @@ class TagWordService {
   @Transactional(readOnly = false)
   def save(item: TagWord): TagWord = {
     val result = tagWordRepository.save(item)
+    removeFromCache(item)
     result
   }
 
+  def addToCache(key: String, objToCache: Any) = {
+    Cache.set(key, objToCache)
+  }
+
+  def removeFromCache(item: TagWord) = {
+    Cache.remove(tagWordCacheKey + item.tagGroupName)
+  }
 }

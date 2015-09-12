@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional
 import repositories._
 import models.location.County
 import java.util.UUID
+import play.api.Play.current
 
 import scala.collection.mutable
+import play.api.cache.Cache
 
 @Service
 class CountyService {
@@ -21,6 +23,8 @@ class CountyService {
 
   @Autowired
   private var countyRepository: CountyRepository = _
+
+  val cacheListKey = "county.list"
 
   def findByName(name: String): County = {
     countyRepository.findBySchemaPropertyValue("countyName", name)
@@ -48,12 +52,18 @@ class CountyService {
 
   @Transactional(readOnly = true)
   def getListOfAll: Option[List[County]] = {
-    val listOfAll: List[County] = template.findAll(classOf[County]).iterator.asScala.toList
 
-    if(listOfAll.isEmpty)
-      None
-    else
-      Some(listOfAll)
+    countyRepository.findAll().asScala.toList match {
+      case null | Nil  => None
+      case items => {
+
+        val cachedItems = Cache.getOrElse[List[County]](cacheListKey) {
+          addToCache(cacheListKey, items)
+          items
+        }
+        Some(cachedItems)
+      }
+    }
   }
 
   @Transactional(readOnly = true)
@@ -86,21 +96,29 @@ class CountyService {
       case None => false
       case Some(item) =>
         countyRepository.delete(item)
+        removeFromCache(cacheListKey)
         true
     }
   }
 
   @Transactional(readOnly = false)
   def deleteAll(): Boolean = {
+    removeFromCache(cacheListKey)
     countyRepository.deleteAll
     true
   }
 
   @Transactional(readOnly = false)
   def add(newItem: County): County = {
-    val newResult = countyRepository.save(newItem)
-    newResult
+    removeFromCache(cacheListKey)
+    countyRepository.save(newItem)
   }
 
+  def addToCache(key: String, objToCache: Any) = {
+    Cache.set(key, objToCache)
+  }
 
+  def removeFromCache(cacheIdent: String) = {
+    Cache.remove(cacheIdent)
+  }
 }
