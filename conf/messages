@@ -90,7 +90,7 @@ startpage.wizard.lead=Vi utvecklar just nu en kalenderfunktion, tills detta är 
 
 startpage.wizard.guest.select-step.header=Vill du boka middag hemma hos en medlem?
 startpage.wizard.guest.step1.header=Steg 1: Hitta din värd
-startpage.wizard.guest.step1.body=Gå till sidan Medlemmar, välj en Värd
+startpage.wizard.guest.step1.body=Gå till sidan Medlemmar, välj en Värd (se symbol) eller kryssa i rutan "Värdar
 startpage.wizard.guest.step2.header=Steg 2: Skicka en förfrågan
 startpage.wizard.guest.step2.body=Passar bjudningen? Skicka en förfrågan!
 startpage.wizard.guest.step3.header=Steg 3: Bestäm detaljer
