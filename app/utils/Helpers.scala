@@ -13,7 +13,7 @@ import utils.authorization.WithRole
 import enums.RoleEnums
 
 import scala.util.Random
-import org.joda.time.DateTime
+import org.joda.time.{LocalTime, DateTime}
 
 
 object Helpers {
@@ -99,6 +99,9 @@ object Helpers {
     Random.nextInt(upperBound - lowerBound) + lowerBound
   }
 
+  def getCurrentDateTime: java.util.Date = {
+    DateTime.now().toDate
+  }
 
   def titleCase(s: String) = {
     if (s != null && s.length > 0) {
