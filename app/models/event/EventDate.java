@@ -20,7 +20,6 @@ public class EventDate extends AuditEntity {
     public EventDate(Date date){
         setEventDateTime(date);
     }
-
     public EventDate(){
         setEventDateTime(utils.Helpers.getCurrentDateTime());
     }

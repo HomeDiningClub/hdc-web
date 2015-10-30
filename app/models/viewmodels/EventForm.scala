@@ -6,6 +6,7 @@ case class EventForm(
                        preAmble: Option[String],
                        mainBody: Option[String],
                        mainImage: Option[String],
-                       images: Option[String]
+                       images: Option[String],
+                       eventDates: Option[Seq[EventFormDate]]
                        )
 { }

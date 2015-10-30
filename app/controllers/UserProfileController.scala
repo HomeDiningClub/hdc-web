@@ -6,7 +6,7 @@ import java.util.{Date, UUID}
 import constants.FlashMsgConstants
 import enums.RoleEnums
 import models.modelconstants.UserLevelScala
-import models.viewmodels.{EditProfileExtraValues, MetaData}
+import models.viewmodels.{EnvData, TagsData, EditProfileExtraValues, MetaData}
 import models.{UserCredential, UserProfile}
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired

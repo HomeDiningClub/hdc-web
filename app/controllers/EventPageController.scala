@@ -228,7 +228,8 @@ class EventPageController extends Controller with SecureSocial {
             case null => None
             case item => Some(item.objectId.toString)
           },
-          images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item))
+          images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
+          eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item))
         )
 
         // Get any images and sort them
@@ -316,6 +317,7 @@ class EventPageController extends Controller with SecureSocial {
 
         newRec.get.setMainBody(contentData.mainBody.getOrElse(""))
         newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
+        eventService.updateOrCreateEventDates(contentData, newRec.get)
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
         val savedItem = eventService.add(newRec.get)

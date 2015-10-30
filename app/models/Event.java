@@ -2,6 +2,7 @@ package models;
 
 import interfaces.IEditable;
 import models.content.ContentBase;
+import models.event.EventDate;
 import models.event.MealType;
 import models.files.ContentFile;
 import models.like.UserCredentialLikeEvent;
@@ -39,6 +40,10 @@ public class Event extends ContentBase implements IEditable {
 
     @RelatedTo(type = RelationshipTypesJava.MEAL_TYPE.Constant, direction = Direction.INCOMING)
     private MealType mealType;
+
+    @Fetch
+    @RelatedTo(type = RelationshipTypesJava.EVENT_TIMES.Constant, direction = Direction.OUTGOING)
+    private Set<EventDate> eventDates;
 
     @Indexed(unique = true, indexType = IndexType.LABEL)
     private String eventLinkName = "";
@@ -262,6 +267,29 @@ public class Event extends ContentBase implements IEditable {
         return count;
     }
 
+
+
+    // Event dates
+    @Fetch
+    public Set<EventDate> getEventDates() {
+        if(this.eventDates == null)
+            this.eventDates = new HashSet<>();
+
+        return this.eventDates;
+    }
+    public void addEventDate(EventDate eventToAdd) {
+        if(this.eventDates == null)
+            this.eventDates = new HashSet<>();
+
+        this.eventDates.add(eventToAdd);
+    }
+    public void deleteEventDate(EventDate eventDate) {
+        if(this.eventDates == null){
+            this.eventDates = new HashSet<>();
+        }else {
+            this.eventDates.remove(eventDate);
+        }
+    }
 
 
 

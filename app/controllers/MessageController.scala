@@ -5,8 +5,9 @@ import play.api.data.Forms._
 
 import play.api._
 import play.api.mvc._
+import models.viewmodels.{MessageText, Repeat}
 
-object MessageController  extends  Controller{
+object MessageController extends Controller{
 
   val myForm = Form(
     mapping(

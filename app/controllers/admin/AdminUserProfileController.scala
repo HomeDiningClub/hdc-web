@@ -1,6 +1,5 @@
 package controllers.admin
 
-import _root_.controllers.EnvData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import securesocial.core.{SecuredRequest, SecureSocial}
@@ -9,6 +8,7 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api._
 import play.api.mvc._
+import models.viewmodels.EnvData
 
 @SpringController
 class AdminUserProfileController  extends Controller with SecureSocial {

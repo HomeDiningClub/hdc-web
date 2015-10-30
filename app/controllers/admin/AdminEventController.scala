@@ -15,6 +15,8 @@ import scala.Some
 import models.viewmodels.{EventForm}
 import utils.Helpers
 import play.api.Logger
+import models.event.EventDate
+import org.joda.time.DateTime
 
 @SpringController
 class AdminEventController extends Controller with SecureSocial {
@@ -79,6 +81,7 @@ class AdminEventController extends Controller with SecureSocial {
 
         newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
         newRec.get.setMainBody(contentData.mainBody.getOrElse(""))
+        eventService.updateOrCreateEventDates(contentData, newRec.get)
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
         val saved = eventService.add(newRec.get)
@@ -89,7 +92,6 @@ class AdminEventController extends Controller with SecureSocial {
     )
 
   }
-
 
   // Edit - Edit content
   def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
@@ -107,7 +109,8 @@ class AdminEventController extends Controller with SecureSocial {
             case null => None
             case item => Some(item.objectId.toString)
           },
-          images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item))
+          images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
+          eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item))
         )
 
         // Get any images and sort them

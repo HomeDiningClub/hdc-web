@@ -12,14 +12,18 @@ import models.{Event, UserProfile, UserCredential}
 import scala.collection.JavaConverters._
 import scala.List
 import java.util.UUID
-import models.viewmodels.{EventForm, EventBox}
+import models.viewmodels.{EventFormDate, EventForm, EventBox}
 import controllers.routes
 import utils.Helpers
 import scala.collection.mutable.ListBuffer
-import models.event.MealType
+import models.event.{EventDate, MealType}
 import play.api.data.Form
 import play.api.data.Forms._
 import scala.Some
+import enums.SortOrderEnums
+import enums.SortOrderEnums.SortOrderEnums
+import org.joda.time.DateTime
+import play.api.Logger
 
 @Service
 class EventService {
@@ -85,6 +89,25 @@ class EventService {
     }
   }
 
+  def getSortedEventDates(event: Event, sortOrder: SortOrderEnums = SortOrderEnums.DESC): Option[List[EventDate]] = {
+    event.getEventDates.asScala match {
+      case null => None
+      case items =>
+        Some(sortOrder match {
+          case SortOrderEnums.ASC => items.toList.sortBy(date => date.getEventDateTime)
+          case SortOrderEnums.DESC => items.toList.sortBy(date => date.getEventDateTime).reverse
+        })
+    }
+  }
+
+  def convertToEventFormDates(inputList: Option[List[EventDate]]): Option[Seq[EventFormDate]] = {
+    inputList match {
+      case None => None
+      case Some(items) =>
+        Some(items.map(x => EventFormDate(Some(x.objectId.toString), x.getEventDateTime, 0)).toSeq)
+    }
+  }
+
   def convertToCommaSepStringOfObjectIds(listOfFiles: Option[List[ContentFile]]): Option[String] = {
     listOfFiles match {
       case None => None
@@ -101,13 +124,60 @@ class EventService {
         "preamble" -> optional(text(maxLength = 150)),
         "body" -> optional(text),
         "mainimage" -> optional(text),
-        "images" -> optional(text)
+        "images" -> optional(text),
+        "eventDates" -> optional(seq(
+          mapping(
+            "id" -> optional(text),
+            "date" -> date,
+            "guestsbooked" -> number
+          )(EventFormDate.apply)(EventFormDate.unapply)
+        ))
       )(EventForm.apply)(EventForm.unapply)
     )
   }
 
 
-//  def parseDouble(s: String) = try { Some(s.toDouble) } catch { case _ : Throwable => None }
+  def updateOrCreateEventDates(contentData: EventForm, event: Event) {
+    if (contentData.eventDates.nonEmpty) {
+      val currentEventDates = this.getSortedEventDates(event)
+
+      contentData.eventDates.get.foreach { formDate =>
+
+        // Found id, verify it
+        if(formDate.id.nonEmpty){
+
+          if(currentEventDates.nonEmpty){
+            val formDateId = UUID.fromString(formDate.id.get)
+
+            currentEventDates.get.foreach { storedDate =>
+              storedDate.objectId.equals(formDateId) match {
+                case true => {
+                  updateOldEventDate(formDate, storedDate)
+                }
+                case false => {
+                  Logger.debug("Error updating event date: FormEventDate has a non-existing objectId")
+                }
+              }
+            } // end foreach
+          }
+
+        } else {
+          addEventDate(formDate, event)
+        }
+
+      } // end foreach
+    }
+  }
+
+  def updateOldEventDate(formDate: EventFormDate, storedDate: EventDate) {
+    // TODO: Add guest reminder email
+    storedDate.setEventDateTime(formDate.date)
+  }
+
+  def addEventDate(formDate: EventFormDate, event: Event){
+    event.addEventDate(new EventDate(formDate.date))
+  }
+
 
   @Transactional(readOnly = true)
   def getMealTypes(): Option[List[MealType]] = {
