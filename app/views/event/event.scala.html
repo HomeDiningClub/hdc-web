@@ -2,9 +2,10 @@
         metaData: Option[viewmodels.MetaData] = None,
         eventBoxes: Option[List[models.viewmodels.EventBox]] = None,
         shareUrl: String = "",
-        isThisMyEvent: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
+        isThisMyEvent: Boolean = false,
+        eventLikeForm: play.twirl.api.Html = play.twirl.api.Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages, appContext: AppContext)
 @import scala.collection.JavaConverters._
-@import utils.Helpers
+@import customUtils.Helpers
 
 @rotateCss(min: Int, max: Int) = @{
     val res = Helpers.randomBetween(min,max)
@@ -17,8 +18,8 @@
     <div class="container host-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                @defining(if(event.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(event.getOwnerProfile.getAvatarImage.getStoreId).url}else{""}) { avatarUrl =>
-                    @views.html.profile.profileHeader(event.getOwnerProfile.profileLinkName, event.getOwnerProfile.getOwner.firstName(), avatarUrl, true)
+                @defining(if(event.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(event.getOwnerProfile.getAvatarImage.getStoreId).url}else{""}) { avatarUrl: String =>
+                    @views.html.profile.profileHeader(event.getOwnerProfile.profileLinkName, event.getOwnerProfile.getOwner.firstName, avatarUrl, true)
                 }
 
                 <div class="row">
@@ -84,7 +85,7 @@
 
 
                         <div class="col-xs-12 margin-top">
-                            @LikeController.renderEventLikeForm(event)(request)
+                            @eventLikeForm
                             @shared.fbShare(url = shareUrl)
                         </div>
                     </div>

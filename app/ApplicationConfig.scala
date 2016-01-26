@@ -1,12 +1,12 @@
 import java.util.UUID
 
-import models.base.AbstractEntity
-import models.content.ContentPage
-import org.neo4j.graphdb.Node
-import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.context.ApplicationListener
-import org.springframework.data.neo4j.config.{Neo4jConfiguration, EnableNeo4jRepositories}
-import org.springframework.data.neo4j.lifecycle.BeforeSaveEvent
+//import models.base.AbstractEntity
+//import models.content.ContentPage
+//import org.neo4j.graphdb.Node
+//import org.springframework.context.annotation.{Bean, Configuration}
+//import org.springframework.context.ApplicationListener
+//import org.springframework.data.neo4j.config.{Neo4jConfiguration, EnableNeo4jRepositories}
+//import org.springframework.data.neo4j.lifecycle.BeforeSaveEvent
 
 //@Configuration
 //@EnableNeo4jRepositories

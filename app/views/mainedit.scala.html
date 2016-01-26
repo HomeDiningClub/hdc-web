@@ -1,4 +1,8 @@
-@(title: String, footerScripts: Html = Html(""), headerCss: Html = Html(""),footerHtml: Html = Html(""))(content: Html)(implicit flash: Flash = Flash.emptyCookie)
+@(title: String,
+        footerScripts: Html = Html(""),
+        headerCss: Html = Html(""),
+        footerHtml: Html = Html(""))(content: play.twirl.api.Html)(implicit flash: Flash = Flash.emptyCookie, messages: Messages)
+@import play.twirl.api.Html
 <!DOCTYPE html>
 
 <html lang="@Messages("main.language")">

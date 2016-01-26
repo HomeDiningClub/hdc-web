@@ -1,10 +1,8 @@
-@(user: securesocial.core.Identity)(implicit request: play.api.mvc.RequestHeader)
-@import securesocial.core.IdentityProvider
-
+@(user: securesocial.core.BasicProfile)(implicit request: RequestHeader, messages: Messages, env: securesocial.core.RuntimeEnvironment)
 <html>
     <body>
         <p>@Messages("mails.sendAlreadyRegisteredEmail.body.part1", user.firstName)</p>
-        @mailLink = { <a href="@securesocial.core.providers.utils.RoutesHelper.startResetPassword().absoluteURL(IdentityProvider.sslEnabled)(request)">@Messages("mails.sendAlreadyRegisteredEmail.body.linkToResetPassword")</a> }
+        @mailLink = { <a href="@env.routes.startResetPasswordUrl">@Messages("mails.sendAlreadyRegisteredEmail.body.linkToResetPassword")</a> }
         <p>@Html(Messages("mails.sendAlreadyRegisteredEmail.body.part2", mailLink))</p>
     </body>
 </html>

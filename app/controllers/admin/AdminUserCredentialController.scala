@@ -1,26 +1,28 @@
 package controllers.admin
 
+import javax.inject.{Named, Inject}
+
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
-import securesocial.core.SecureSocial
+
 import play.api.data.Form
 import play.api.data.Forms._
-import models.viewmodels.{UserCredentialForm, CountyForm}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
 import services.UserCredentialService
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
 import enums.RoleEnums
 import models.UserCredential
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import java.util.UUID
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.UserCredentialForm
 
-@SpringController
-class AdminUserCredentialController extends Controller with SecureSocial {
+//@Named
+class AdminUserCredentialController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
   @Autowired
   private var userCredentialService: UserCredentialService = _
-
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>

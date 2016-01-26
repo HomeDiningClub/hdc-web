@@ -1,9 +1,7 @@
 package repositories
 
-import org.springframework.data.neo4j.repository.GraphRepository
 import models.UserCredential
 import org.springframework.data.neo4j.annotation.Query
-import securesocial.core.{IdentityId, Identity}
 import org.springframework.data.neo4j.repository.GraphRepository
 import java.util.UUID
 import java.util
@@ -19,7 +17,7 @@ trait UserCredentialRepository extends GraphRepository[UserCredential] {
   def findByuserIdAndProviderId(userId : String, providerId: String) : UserCredential
 
   @Query("MATCH (n:`UserCredential`) WHERE n.emailAddress=lower({0}) AND n.providerId={1} RETURN n")
-  def findByemailAddressAndProviderId2(emailAddress : String, providerId: String) : UserCredential
+  def findByemailAddressAndProviderIdToLower(emailAddress : String, providerId: String) : UserCredential
 
   def findByemailAddressAndProviderId(emailAddress : String, providerId: String) : UserCredential
   def findByuserId(userId : String) : UserCredential
@@ -33,11 +31,7 @@ trait UserCredentialRepository extends GraphRepository[UserCredential] {
   @Query("start up=node:UserCredential(email={0}) return up")
   def getUserCredentials(email: String ): Array[UserCredential]
 
-  @Query("start up=node:UserCredential(identity={0}) return up")
-  def getUserCredential(identityId: IdentityId ): UserCredential
-
   @Query("MATCH (n:`UserCredential`) RETURN COUNT(*)")
   def getCountOfAll(): Int
-
 
 }

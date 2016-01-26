@@ -1,5 +1,5 @@
-@(form: Form[models.viewmodels.EventForm], editingEvent: Option[models.Event] = None, sortedImages: Option[List[models.files.ContentFile]] = None)(implicit flash: Flash)
-@import helper.twitterBootstrap._
+@(form: Form[models.formdata.EventForm], editingEvent: Option[models.Event] = None, sortedImages: Option[List[models.files.ContentFile]] = None)(implicit flash: Flash, messages: Messages)
+
 
 @mainedit(Messages("admin.title")){
 

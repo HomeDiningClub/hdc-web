@@ -1,4 +1,4 @@
-@(stat: Option[viewmodels.StatisticsData] = None)
+@(stat: Option[viewmodels.StatisticsData] = None)(implicit messages: Messages)
 
 @if(stat.isDefined) {
     <div class="col-xs-12 col-md-6">

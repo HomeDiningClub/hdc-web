@@ -1,20 +1,18 @@
-@(searchForm: Form[models.viewmodels.SearchStartPageForm],
+@(searchForm: Form[models.formdata.SearchStartPageForm],
         optionsFoodAreas: Option[Seq[(String,String)]],
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
         optionsIsHost: Option[Boolean] = None,
         startPageBoxes: Option[List[models.viewmodels.StartPageBox]],
         reviewBoxes: Option[List[models.viewmodels.ReviewBox]],
-        asideNews: Option[List[models.content.ContentPage]])(implicit request: RequestHeader)
-
+        asideNews: Option[List[models.content.ContentPage]],
+        currentUser: Option[UserCredential])(implicit request: RequestHeader, messages: Messages, appContext: AppContext)
 
 @scripts = {
     <script src="@routes.Assets.at("js/libs/twitter-bootstrap-wizard-1.0.0/jquery.bootstrap.wizard.min.js")"></script>
-    <script src="@routes.Assets.at("js/libs/bootstrap-lightbox-0.6.1/bootstrap-lightbox.min.js")"></script>
     <script src="@routes.Assets.at("js/app/startpage.js")"></script>
 }
 
-@main(Messages("startpage.title"), footerScripts = scripts) {
-
+@main(Messages("startpage.title"), footerScripts = scripts.asInstanceOf[play.twirl.api.Html]) {
 
         @*Working carousel, disabled
         <div id="carousel-startpage" class="carousel slide" data-ride="carousel" data-interval="4000">
@@ -82,12 +80,12 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <h1 class="startpage-head text-center hidden">@Messages("startpage.main-content.header")</h1>
-                        @Html(Messages("startpage.main-content.body"))
+                        @play.twirl.api.Html(Messages("startpage.main-content.body"))
                         <div class="startpage-video">
                             <iframe src="//player.vimeo.com/video/97540915?title=0&amp;byline=0&amp;portrait=0&amp;color=6fc2b5&amp;autoplay=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                         </div>
 
-                        @if(utils.Helpers.getUserFromRequest.isEmpty) {
+                        @if(currentUser.isEmpty) {
                             <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
                         }
                     </div>
@@ -112,12 +110,12 @@
                     @if(!startPageBoxes.isEmpty){
                         @startpage.startpageBox(startPageBoxes.get)
                     }else{
-                        <div class="col-xs-12 text-center">@Html(Messages("startpage.boxes.not-found", routes.StartPageController.index().url))</div>
+                        <div class="col-xs-12 text-center">@play.twirl.api.Html(Messages("startpage.boxes.not-found", routes.StartPageController.index().url))</div>
                     }
                     <div class="col-xs-12 text-center"><a class="btn btn-primary btn-lg btn-big-padding btn-cta" role="button" href="@routes.BrowsePageController.index()">@Messages("startpage.main.browse.link.text")</a></div>
                 </div>
 
-                @if(utils.Helpers.getUserFromRequest.isEmpty) {
+                @if(currentUser.isEmpty) {
                 <!-- CTA -->
                 <div class="row">
                     <div class="col-xs-12 big-margin-top panel-cta">
@@ -137,7 +135,7 @@
                 </div>
                 }
 
-                @if(utils.Helpers.getUserFromRequest.isEmpty) {
+                @if(currentUser.isEmpty) {
                 <div class="row">
                     <div class="col-xs-12">
                             <p><a class="btn btn-primary btn-lg btn-big-padding btn-block" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("startpage.main-content.body.btn.signup")</a></p>
@@ -157,8 +155,8 @@
                                     @if(content.title.nonEmpty) {
                                         <h3 class="aside-title">@content.title</h3>
                                     }
-                                    @Html(content.preamble)
-                                    @Html(content.mainBody)
+                                    @play.twirl.api.Html(content.preamble)
+                                    @play.twirl.api.Html(content.mainBody)
                                 </div>
                             </div>
                         }

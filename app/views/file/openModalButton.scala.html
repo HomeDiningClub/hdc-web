@@ -1,6 +1,8 @@
-@(btnId: String, inputSelector: String = "", selectorMaxItems: Int = 0, btnText: String = Messages("file.button.choose-files-default"), editMode: Boolean = false)
+@(btnId: String, inputSelector: String = "", selectorMaxItems: Int = 0, btnText: String = "", editMode: Boolean = false)(implicit messages: Messages)
 
-<button type="button" class="btn btn-default" id="@btnId">@btnText</button>
+@defining(if(btnText.isEmpty) { Messages("file.button.choose-files-default") }else{ btnText} ) { btnT: String =>
+    <button type="button" class="btn btn-default" id="@btnId">@btnT</button>
+}
 
 <script>
 var btn = document.getElementById('@btnId');

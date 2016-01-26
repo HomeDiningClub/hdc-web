@@ -1,4 +1,4 @@
-@()(content: Html)
+@()(content: play.twirl.api.Html)(implicit messages: Messages)
 
 <button class="btn btn-link pull-left btn-rate-popover collapsed" data-toggle="collapse" data-target=".rate-popover"><span class="glyphicon glyphicon-chevron-down"></span><span class="glyphicon glyphicon-chevron-up"></span>&nbsp;@Messages("rating.add.button.text")</button>
 <div class="row"><div class="col-xs-12 rate-popover collapse">@content</div></div>

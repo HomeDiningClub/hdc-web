@@ -4,17 +4,18 @@
 
 
 # Start page
-GET         /                                                    @controllers.StartPageController.index(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?=        false)
+GET         /                                                    @controllers.StartPageController.index(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0)
 
 # Browse page
-GET         /browse                                              @controllers.BrowsePageController.index(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?=        false)
-GET         /browse.json                                         @controllers.BrowsePageController.getBrowseBoxesPagedJSON(fTag: String ?= "",fCounty: String ?= "", fHost: Boolean ?=        false,        page: Int ?=        0)
+GET         /browse                                              @controllers.BrowsePageController.index(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0)
+GET         /browse.json                                         @controllers.BrowsePageController.getBrowseBoxesPagedJSON(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0, page: Int ?= 0)
 
 # Content pages
 GET         /content/:contentName                                @controllers.ContentPageController.viewContentByName(contentName: String)
 
 # Suggest feature
-POST        /suggest-feature                                     controllers.SuggestController.suggestFeatures
+GET        /suggest-form.ajax                                   @controllers.SuggestController.suggestForm
+POST       /suggest-feature                                     @controllers.SuggestController.suggestFeatures
 
 # Campaign
 # Temporarily disabled due to sharing cache issues with FB
@@ -42,13 +43,13 @@ GET         /profile/favorite/remove                             @controllers.Us
 GET         /profile/favorite/isFav                              @controllers.UserProfileController.isFavoriteToMe(userCredentialObjectId : String)
 #GET         /profile/favorite/show                               @controllers.UserProfileController.listFavorites
 
-GET         /profile/mark                                        controllers.MessagesController.markMessageAsRead(msgId: String)
+GET         /profile/mark                                        @controllers.MessagesController.markMessageAsRead(msgId: String)
 
 # Profile - Inbox
-GET         /inbox/show                                          controllers.MessageController.show
-POST        /inbox/save                                          controllers.MessageController.save
-GET         /inbox/display                                       controllers.MessageController.repatit
-POST        /inbox/saveit                                        controllers.MessageController.saveit
+GET         /inbox/show                                          @controllers.MessageController.show
+POST        /inbox/save                                          @controllers.MessageController.save
+GET         /inbox/display                                       @controllers.MessageController.repatit
+POST        /inbox/saveit                                        @controllers.MessageController.saveit
 
 # New profile
 #GET         /prodata/skapa                                       @controllers.UserProfileController.createTags
@@ -71,46 +72,49 @@ GET         /event/edit/:objectId                                @controllers.Ev
 GET         /event/delete/:objectId                              @controllers.EventPageController.delete(objectId: java.util.UUID)
 
 # Blog
-GET         /blog/add                                          @controllers.BlogPostsPageController.add
-POST        /blog/add                                          @controllers.BlogPostsPageController.addSubmit
-GET         /blog/list                                         @controllers.BlogPostsPageController.viewListOfBlogPosts(profileName: String, page: Int)
-GET         /blog/jsonList                                     @controllers.BlogPostsPageController.viewBlogPostByNameAndProfilePageJSON(profileName: String ?= "", page: Int ?= 0)
-# edit(objectId: UUID)
-GET         /blog/edit/:objectId                               @controllers.BlogPostsPageController.edit(objectId: java.util.UUID)
-GET         /blog/view/:objectId                               @controllers.BlogPostsPageController.view(objectId: java.util.UUID)
-GET         /blog/showList                                     @controllers.BlogPostsPageController.viewBlogPosts
-GET         /blog/delete/:objectId                             @controllers.BlogPostsPageController.delete(objectId: java.util.UUID)
+GET         /blog/add                                            @controllers.BlogPostsPageController.add
+POST        /blog/add                                            @controllers.BlogPostsPageController.addSubmit
+GET         /blog/list                                           @controllers.BlogPostsPageController.viewListOfBlogPosts(profileName: String, page: Int)
+GET         /blog/jsonList                                       @controllers.BlogPostsPageController.viewBlogPostByNameAndProfilePageJSON(profileName: String ?= "", page: Int ?= 0)
+GET         /blog/edit/:objectId                                 @controllers.BlogPostsPageController.edit(objectId: java.util.UUID)
+GET         /blog/view/:objectId                                 @controllers.BlogPostsPageController.view(objectId: java.util.UUID)
+GET         /blog/showList                                       @controllers.BlogPostsPageController.viewBlogPosts
+GET         /blog/delete/:objectId                               @controllers.BlogPostsPageController.delete(objectId: java.util.UUID)
 
 # Rating
-POST        /rate/user                                           controllers.RatingController.rateSubmit
+POST        /rate/user                                           @controllers.RatingController.rateSubmit
 
 # Like
-POST        /like/user                                           controllers.LikeController.likeSubmit
+POST        /like/user                                           @controllers.LikeController.likeSubmit
 
-POST        /apply/host                                          controllers.MessagesController.applyToHost
-POST        /reply/guest                                         controllers.MessagesController.replyToGuest
+POST        /apply/host                                          @controllers.MessagesController.applyToHost
+POST        /reply/guest                                         @controllers.MessagesController.replyToGuest
 
 # Login page
-GET         /login                                               securesocial.controllers.LoginPage.login
-GET         /logout                                              securesocial.controllers.LoginPage.logout
+#GET         /login                                               @securesocial.controllers.LoginPage.login
+#GET         /logout                                              @securesocial.controllers.LoginPage.logout
 
 # User Registration and password handling
-GET         /signup                                              securesocial.controllers.Registration.startSignUp
-POST        /signup                                              securesocial.controllers.Registration.handleStartSignUp
-GET         /signup/:token                                       securesocial.controllers.Registration.signUp(token)
-POST        /signup/:token                                       securesocial.controllers.Registration.handleSignUp(token)
-GET         /reset                                               securesocial.controllers.Registration.startResetPassword
-POST        /reset                                               securesocial.controllers.Registration.handleStartResetPassword
-GET         /reset/:token                                        securesocial.controllers.Registration.resetPassword(token)
-POST        /reset/:token                                        securesocial.controllers.Registration.handleResetPassword(token)
-GET         /password                                            securesocial.controllers.PasswordChange.page
-POST        /password                                            securesocial.controllers.PasswordChange.handlePasswordChange
+#GET         /signup                                              @securesocial.controllers.Registration.startSignUp
+#POST        /signup                                              @securesocial.controllers.Registration.handleStartSignUp
+#GET         /signup/:token                                       @securesocial.controllers.Registration.signUp(token)
+#POST        /signup/:token                                       @securesocial.controllers.Registration.handleSignUp(token)
+
+#GET         /reset                                               @securesocial.controllers.PasswordReset.startResetPassword
+#POST        /reset                                               @securesocial.controllers.PasswordReset.handleStartResetPassword
+#GET         /reset/:token                                        @securesocial.controllers.PasswordReset.resetPassword(token)
+#POST        /reset/:token                                        @securesocial.controllers.PasswordReset.handleResetPassword(token)
+
+#GET         /password                                            @securesocial.controllers.PasswordChange.page
+#POST        /password                                            @securesocial.controllers.PasswordChange.handlePasswordChange
 
 # Providers entry points
-GET         /authenticate/:provider                              securesocial.controllers.ProviderController.authenticate(provider)
-POST        /authenticate/:provider                              securesocial.controllers.ProviderController.authenticateByPost(provider)
-GET         /not-authorized                                      securesocial.controllers.ProviderController.notAuthorized
+#GET         /authenticate/:provider                              @securesocial.controllers.ProviderController.authenticate(provider)
+#POST        /authenticate/:provider                              @securesocial.controllers.ProviderController.authenticateByPost(provider)
 
+##GET        /not-authenticated                                   @securesocial.controllers.ProviderController.notAuthorizedPage
+
+->          /auth                                                securesocial.Routes
 
 # TEST
 #GET         /profile/loggain                                    @controllers.UserProfileController.login
@@ -218,7 +222,6 @@ GET         /admin/mealtype/delete/:objectId                     @controllers.ad
 GET         /admin/release                                       @controllers.admin.AdminReleaseController.editIndex
 GET         /admin/release/run                                   @controllers.admin.AdminReleaseController.createDefaultData
 GET         /admin/release/admin                                 @controllers.admin.AdminReleaseController.addAdmin
-GET         /admin/release/deleteall                             @controllers.admin.AdminReleaseController.deleteAllFromDB
 
 # ADMIN - Files
 GET         /admin/file                                          @controllers.admin.AdminFileController.editIndex
@@ -230,7 +233,6 @@ GET         /admin/backupjobb/backup                             @controllers.ad
 
 
 GET         /test/grund                                          @controllers.UserProfileController.testAction
-GET         /test/testsida                                       @controllers.UserProfileController.testsida
 GET         /test/grund2                                         @controllers.UserProfileController.testAction2(callingString : String)
 GET         /profile/addFavorite                                 @controllers.UserProfileController.showFavoritesPage
 

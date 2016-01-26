@@ -1,32 +1,35 @@
 package controllers.admin
 
+import javax.inject.{Named, Inject}
+import play.api.cache._
 import play.api.mvc._
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial.SecuredRequest
 import services.ContentService
 import models.content._
 import play.api.data._
 import play.api.data.Forms._
 import constants.FlashMsgConstants
-import models.viewmodels.AddContentForm
 import java.util.UUID
 import scala.collection.mutable
 import enums.{RoleEnums, ContentCategoryEnums, ContentStateEnums}
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
 import java.util
+import models.UserCredential
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.AddContentForm
 
-@SpringController
-class AdminContentController extends Controller with securesocial.core.SecureSocial {
+//@Named
+class AdminContentController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi, val cache: CacheApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
   @Autowired
   private var contentService: ContentService = _
 
-
-
   // Edit - Listing
-  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val listOfPage: Option[List[ContentPage]] = contentService.getListOfAll
     Ok(views.html.admin.content.list(listOfPage))
   }
@@ -47,17 +50,17 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
     )(AddContentForm.apply)(AddContentForm.unapply)
   )
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
     Ok(views.html.admin.content.index())
   }
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
     // Default values for new item
     val defaultContent = AddContentForm(None,None,"","",None,None,None,ContentStateEnums.UNPUBLISHED.toString,None,visibleInMenus = false)
     Ok(views.html.admin.content.add(contentForm.fill(defaultContent), contentService.getPagesAsDropDown(), contentService.getContentStatesAsDropDown, contentService.getCategoriesAsDropDown))
   }
 
-  def addSubmit() = SecuredAction(WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def addSubmit() = SecuredAction(WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     contentForm.bindFromRequest.fold(
       errors => {
@@ -152,6 +155,7 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
           newContent.get.unPublish()
         }
 
+        clearCache()
         val savedContentPage = contentService.addContentPage(newContent.get)
         val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", savedContentPage.name, savedContentPage.objectId.toString)
         Redirect(controllers.admin.routes.AdminContentController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
@@ -160,11 +164,13 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
 
   }
 
-
+  def clearCache(): Unit ={
+    cache.remove("main.menu")
+  }
 
 
   // Edit - Edit content
-  def edit(objectId: java.util.UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def edit(objectId: java.util.UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
     contentService.findContentById(objectId) match {
       case None =>
         Ok(views.html.admin.content.index())
@@ -195,11 +201,12 @@ class AdminContentController extends Controller with securesocial.core.SecureSoc
   }
 
   // Edit - Delete content
-  def delete(objectId: java.util.UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def delete(objectId: java.util.UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
     val result: Boolean = contentService.deleteContentPageById(objectId)
 
     result match {
       case true =>
+        clearCache()
         val successMessage = Messages("admin.success") + " - " + Messages("admin.delete.success", objectId.toString)
         Redirect(controllers.admin.routes.AdminContentController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>

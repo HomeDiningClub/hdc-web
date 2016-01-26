@@ -1,4 +1,4 @@
-@(errorString: String = "", ex: Throwable = null, isAdmin: Boolean = false)(implicit request: RequestHeader)
+@(errorString: String = "", ex: Throwable = null, isAdmin: Boolean = false)(implicit request: RequestHeader, messages: Messages, appContext: AppContext)
 @theLink = { <a href="@routes.StartPageController.index()">@Messages("error.linkhome")</a> }
 
 @main(Messages("error.title")) {
@@ -28,7 +28,8 @@
                                         <strong>Error Message:</strong> @ex.getMessage<br>
                                         <strong>Request Uri:</strong> @request.uri
                                         <hr>
-                                        @ex.getStackTraceString
+                                        @ex.printStackTrace()
+                                        @*ex.getStackTraceString*@
                                     }
                                 </div>
                             </div>

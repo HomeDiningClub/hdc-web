@@ -1,4 +1,4 @@
-@()(content: Html)
+@()(content: play.twirl.api.Html)(implicit messages: Messages)
 
 <button class="btn btn-request collapsed" data-toggle="collapse" data-target=".request-popover">@Messages("mails.hosting.send.request.host")</button>
 <div class="row"><div class="col-xs-12 request-popover collapse">@content</div></div>

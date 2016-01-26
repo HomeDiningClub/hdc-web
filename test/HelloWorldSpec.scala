@@ -1,5 +1,5 @@
 import org.specs2.mutable._
-import utils.ViewedByMemberUtil
+import customUtils.ViewedByMemberUtil
 
 class HelloWorldSpec extends Specification {
 

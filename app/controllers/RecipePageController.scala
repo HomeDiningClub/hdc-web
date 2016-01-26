@@ -1,32 +1,42 @@
 package controllers
 
+import javax.inject.{Named, Inject}
+
 import models.files.ContentFile
 import models.jsonmodels.RecipeBoxJSON
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
-import securesocial.core.SecureSocial
 import models.{UserCredential, Recipe}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
 import services.{UserProfileService, ContentFileService, RecipeService}
-import play.api.libs.Files.TemporaryFile
-import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
+import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
-import utils.authorization.{WithRoleAndOwnerOfObject, WithRole}
+import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
+import traits.ProvidesAppContext
 import scala.Some
-import models.viewmodels.{MetaData, EditRecipeExtraValues, RecipeBox, RecipeForm}
-import utils.Helpers
+import models.viewmodels.{MetaData, EditRecipeExtraValues, RecipeBox}
+import customUtils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
+import customUtils.security.SecureSocialRuntimeEnvironment
+import scala.collection.JavaConverters._
+import models.formdata.RecipeForm
 
-@SpringController
-class RecipePageController extends Controller with SecureSocial {
-
+//@Named
+class RecipePageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                      val ratingController: RatingController,
+                                      val likeController: LikeController,
+                                      val recipeService: RecipeService,
+                                      val userProfileService: UserProfileService,
+                                      val fileService: ContentFileService) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
+/*
   @Autowired
   private var recipeService: RecipeService = _
 
@@ -35,23 +45,73 @@ class RecipePageController extends Controller with SecureSocial {
 
   @Autowired
   private var fileService: ContentFileService = _
+*/
 
-
-  def viewRecipeByNameAndProfile(profileName: String, recipeName: String) = UserAwareAction { implicit request =>
+  def viewRecipeByNameAndProfile(profileName: String, recipeName: String) = UserAwareAction() { implicit request =>
 
     // Try getting the recipe from name, if failure show 404
     recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
       case Some(recipe) =>
-             Ok(views.html.recipe.recipe(recipe, metaData = buildMetaData(recipe, request), recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), shareUrl = createShareUrl(recipe), isThisMyRecipe = isThisMyRecipe(recipe)))
-          case None =>
-            val errMess = "Cannot find recipe using name:" + recipeName + " and profileName:" + profileName
-            Logger.debug(errMess)
-            BadRequest(errMess)
-        }
+        Ok(views.html.recipe.recipe(
+          recipe = recipe,
+          recipeMainImage = getMainImage(recipe),
+          recipeImages = getImages(recipe),
+          metaData = buildMetaData(recipe, request),
+          recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner),
+          shareUrl = createShareUrl(recipe),
+          currentUser = request.user,
+          isThisMyRecipe = isThisMyRecipe(recipe),
+          recipeRateForm = ratingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url, request.user),
+          recipeLikeForm = likeController.renderRecipeLikeForm(recipe, request.user)
+        ))
+      case None =>
+        val errMess = "Cannot find recipe using name:" + recipeName + " and profileName:" + profileName
+        Logger.debug(errMess)
+        BadRequest(errMess)
+    }
   }
 
+  /* Cannot find any refs to this code
+  def viewRecipeByNameAndProfilePage(profileName: String, recipeName: String, page: Int) = UserAwareAction() { implicit request =>
 
-  def viewRecipeByNameAndProfilePageJSON(profileName: String, page: Int) = UserAwareAction { implicit request =>
+    // Try getting the recipe from name, if failure show 404
+    recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
+      case Some(recipe) =>
+        Ok(views.html.recipe.recipe(
+          recipe = recipe,
+          recipeMainImage = getMainImage(recipe),
+          recipeImages = getImages(recipe),
+          metaData = buildMetaData(recipe, request),
+          recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner),
+          shareUrl = createShareUrl(recipe),
+          currentUser = request.user,
+          isThisMyRecipe = isThisMyRecipe(recipe),
+          recipeRateForm = ratingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url, request.user),
+          recipeLikeForm = likeController.renderRecipeLikeForm(recipe, request.user)
+        ))
+      case None =>
+        val errMess = "Cannot find recipe using name:" + recipeName + " and profileName:" + profileName
+        Logger.debug(errMess)
+        BadRequest(errMess)
+    }
+  }
+ */
+
+  private def getImages(recipe: Recipe): Option[List[ContentFile]] = {
+    recipe.getRecipeImages.asScala match {
+      case null => None
+      case images => Some(images.toList)
+    }
+  }
+
+  private def getMainImage(recipe: Recipe): Option[ContentFile] = {
+    recipe.getMainImage match {
+      case null => None
+      case image => Some(image)
+    }
+  }
+
+  def viewRecipeByNameAndProfilePageJSON(profileName: String, page: Int) = UserAwareAction() { implicit request =>
 
     var list: ListBuffer[RecipeBoxJSON] = new ListBuffer[RecipeBoxJSON]
     var t: Option[List[RecipeBox]] = None
@@ -96,21 +156,7 @@ class RecipePageController extends Controller with SecureSocial {
 
   def convertRecipesToJson(jsonCase: Seq[RecipeBoxJSON]): JsValue = Json.toJson(jsonCase)
 
-  def viewRecipeByNameAndProfilePage(profileName: String, recipeName: String, page: Int) = UserAwareAction { implicit request =>
-
-    // Try getting the recipe from name, if failure show 404
-    recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
-      case Some(recipe) =>
-        Ok(views.html.recipe.recipe(recipe, metaData = buildMetaData(recipe, request),recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner), shareUrl = createShareUrl(recipe), isThisMyRecipe = isThisMyRecipe(recipe)))
-      case None =>
-        val errMess = "Cannot find recipe using name:" + recipeName + " and profileName:" + profileName
-        Logger.debug(errMess)
-        BadRequest(errMess)
-    }
-  }
-
-
-  def viewRecipeByName(recipeName: String) = UserAwareAction { implicit request =>
+  def viewRecipeByName(recipeName: String) = UserAwareAction() { implicit request =>
 
     // Try getting the recipe from name, if failure show 404
     recipeService.findByrecipeLinkName(recipeName) match {
@@ -137,10 +183,10 @@ class RecipePageController extends Controller with SecureSocial {
         case null | "" =>
           recipe.getMainBody match {
             case null | "" => ""
-            case item: String => utils.Helpers.limitLength(Helpers.removeHtmlTags(item), 125)
+            case item: String => customUtils.Helpers.limitLength(Helpers.removeHtmlTags(item), 125)
           }
         case item => {
-          utils.Helpers.limitLength(item, 125)
+          customUtils.Helpers.limitLength(item, 125)
         }
       },
       fbImage = recipe.getMainImage match {
@@ -151,8 +197,8 @@ class RecipePageController extends Controller with SecureSocial {
   }
 
 
-  private def isThisMyRecipe(recipe: Recipe)(implicit request: RequestHeader): Boolean = {
-    utils.Helpers.getUserFromRequest match {
+  private def isThisMyRecipe(recipe: Recipe)(implicit request: RequestWithUser[AnyContent,UserCredential]): Boolean = {
+    request.user match {
       case None =>
         false
       case Some(user) =>
@@ -216,11 +262,11 @@ class RecipePageController extends Controller with SecureSocial {
   }
 
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
+  def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.recipe.addOrEdit(recipeForm = recForm, extraValues = setExtraValues(None)))
   }
 
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
+  def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val editingRecipe = recipeService.findById(objectId)
 
     editingRecipe match {
@@ -229,7 +275,7 @@ class RecipePageController extends Controller with SecureSocial {
         Logger.debug(errorMsg)
         NotFound(errorMsg)
       case Some(item) =>
-        item.isEditableBy(Helpers.getUserFromRequest.get.objectId)
+        item.isEditableBy(request.user.objectId)
         val form = RecipeForm.apply(
           id = Some(item.objectId.toString),
           name = item.getName,
@@ -252,7 +298,7 @@ class RecipePageController extends Controller with SecureSocial {
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-    val currentUser: Option[UserCredential] = Helpers.getUserFromRequest
+    val currentUser = request.user
 
     recForm.bindFromRequest.fold(
       errors => {
@@ -266,7 +312,7 @@ class RecipePageController extends Controller with SecureSocial {
             recipeService.findById(UUID.fromString(id)) match {
               case None => None
               case Some(item) =>
-                item.isEditableBy(currentUser.get.objectId).asInstanceOf[Boolean] match {
+                item.isEditableBy(currentUser.objectId).asInstanceOf[Boolean] match {
                   case true =>
                     item.setName(contentData.name)
                     Some(item)
@@ -288,7 +334,7 @@ class RecipePageController extends Controller with SecureSocial {
         contentData.mainImage match {
           case Some(imageId) => UUID.fromString(imageId) match {
             case imageUUID: UUID =>
-              fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.get.objectId) match {
+              fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.objectId) match {
                 case Some(item) => newRec.get.setAndRemoveMainImage(item)
                 case _  => None
               }
@@ -309,7 +355,7 @@ class RecipePageController extends Controller with SecureSocial {
             imageStr.split(",").take(newRec.get.getMaxNrOfRecipeImages).foreach { imageId =>
               UUID.fromString(imageId) match {
                 case imageUUID: UUID =>
-                  fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.get.objectId) match {
+                  fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.objectId) match {
                     case Some(item) =>
                       // Found at least one valid image, clean the current list, but only one time
                       if (!hasDeletedImages) {
@@ -381,16 +427,16 @@ class RecipePageController extends Controller with SecureSocial {
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
         val savedRecipe = recipeService.add(newRec.get)
-        val savedProfile = userProfileService.addRecipeToProfile(currentUser.get.getUserProfile, savedRecipe)
+        val savedProfile = userProfileService.addRecipeToProfile(currentUser.getUserProfile, savedRecipe)
         val successMessage = Messages("recipe.add.success", savedRecipe.getName)
-        Redirect(controllers.routes.RecipePageController.viewRecipeByNameAndProfile(currentUser.get.getUserProfile.profileLinkName,savedRecipe.getLink)).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.RecipePageController.viewRecipeByNameAndProfile(currentUser.getUserProfile.profileLinkName,savedRecipe.getLink)).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
   }
 
   // Delete
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
+  def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val recipe: Option[Recipe] = recipeService.findById(objectId)
 
     if(recipe.isEmpty){

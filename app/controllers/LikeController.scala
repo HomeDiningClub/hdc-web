@@ -1,28 +1,29 @@
 package controllers
 
 import java.util.UUID
+import javax.inject.{Named, Inject}
 
 import constants.FlashMsgConstants
 import enums.RoleEnums
 import models.{Event, UserCredential, Recipe}
-import models.viewmodels.{LikeForm}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages
-import play.api.mvc.{RequestHeader, Controller}
-import securesocial.core.SecureSocial
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.mvc.{AnyContent, RequestHeader, Controller}
+import play.twirl.api.Html
+import securesocial.core.SecureSocial.SecuredRequest
 import services.{LikeService, RecipeService, UserCredentialService}
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
 import scala.collection.JavaConverters._
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.LikeForm
 
-// Object just needs a default constructor
-class LikeController extends Controller { }
-
-@SpringController
-object LikeController extends Controller with SecureSocial {
+//@Named
+class LikeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
   @Autowired
   private var userCredentialService : UserCredentialService = _
@@ -42,66 +43,66 @@ object LikeController extends Controller with SecureSocial {
     )(LikeForm.apply)(LikeForm.unapply)
   )
 
-  def renderRecipeLikeForm(recipeToBeLiked: Recipe) = { implicit request: RequestHeader =>
+  def renderRecipeLikeForm(recipeToBeLiked: Recipe, currentUser: Option[UserCredential])(implicit request: RequestHeader): Html = {
 
-    utils.Helpers.getUserFromRequest match {
+    currentUser match {
       case None =>
-        views.html.like.hdcLike.render(likeForm, None, recipeToBeLiked.getNrOfLikes, request)
-      case Some(currentUser) =>
+        views.html.like.hdcLike.render(likeForm, None, recipeToBeLiked.getNrOfLikes, None, request2Messages)
+      case Some(cu) =>
         val likeType = "recipe"
 
         // Set old values if user liked before, otherwise create form
-        likeService.hasUserLikedThisBefore(currentUser, recipeToBeLiked) match {
+        likeService.hasUserLikedThisBefore(cu, recipeToBeLiked) match {
           case None =>
-            val formValues = LikeForm.apply(recipeToBeLiked.objectId.toString, true, likeType)
-            views.html.like.hdcLike.render(likeForm.fill(formValues), None, recipeToBeLiked.getNrOfLikes, request)
+            val formValues = LikeForm.apply(recipeToBeLiked.objectId.toString, likeValue = true, likeType)
+            views.html.like.hdcLike.render(likeForm.fill(formValues), None, recipeToBeLiked.getNrOfLikes, Some(cu), request2Messages)
           case Some(relation) =>
-            views.html.like.hdcLike.render(likeForm, Some(relation.getLastModifiedDate), recipeToBeLiked.getNrOfLikes, request)
+            views.html.like.hdcLike.render(likeForm, Some(relation.getLastModifiedDate), recipeToBeLiked.getNrOfLikes, Some(cu), request2Messages)
         }
     }
   }
 
-  def renderEventLikeForm(eventToBeLiked: Event) = { implicit request: RequestHeader =>
+  def renderEventLikeForm(eventToBeLiked: Event, currentUser: Option[UserCredential])(implicit request: RequestHeader): Html = {
 
-    utils.Helpers.getUserFromRequest match {
+    currentUser match {
       case None =>
-        views.html.like.hdcLike.render(likeForm, None, eventToBeLiked.getNrOfLikes, request)
-      case Some(currentUser) =>
+        views.html.like.hdcLike.render(likeForm, None, eventToBeLiked.getNrOfLikes, None, request2Messages)
+      case Some(cu) =>
         val likeType = "event"
 
         // Set old values if user liked before, otherwise create form
-        likeService.hasUserLikedThisBefore(currentUser, eventToBeLiked) match {
+        likeService.hasUserLikedThisBefore(cu, eventToBeLiked) match {
           case None =>
-            val formValues = LikeForm.apply(eventToBeLiked.objectId.toString, true, likeType)
-            views.html.like.hdcLike.render(likeForm.fill(formValues), None, eventToBeLiked.getNrOfLikes, request)
+            val formValues = LikeForm.apply(eventToBeLiked.objectId.toString, likeValue = true, likeType)
+            views.html.like.hdcLike.render(likeForm.fill(formValues), None, eventToBeLiked.getNrOfLikes, Some(cu), request2Messages)
           case Some(relation) =>
-            views.html.like.hdcLike.render(likeForm, Some(relation.getLastModifiedDate), eventToBeLiked.getNrOfLikes, request)
+            views.html.like.hdcLike.render(likeForm, Some(relation.getLastModifiedDate), eventToBeLiked.getNrOfLikes, Some(cu), request2Messages)
         }
     }
   }
 
-  def renderUserLikeForm(userToBeLiked: UserCredential) = { implicit request: RequestHeader =>
+  def renderUserLikeForm(userToBeLiked: UserCredential, currentUser: Option[UserCredential])(implicit request: RequestHeader): Html = {
 
-    utils.Helpers.getUserFromRequest match {
+    currentUser match {
       case None =>
-        views.html.like.hdcLike.render(likeForm, None, userToBeLiked.getNrOfLikes, request)
-      case Some(currentUser) =>
+        views.html.like.hdcLike.render(likeForm, None, userToBeLiked.getNrOfLikes, None, request2Messages)
+      case Some(cu) =>
         val likeType = "user"
 
         // Set old values if user liked before, otherwise create form
-        likeService.hasUserLikedThisBefore(currentUser, userToBeLiked) match {
+        likeService.hasUserLikedThisBefore(cu, userToBeLiked) match {
           case None =>
-            val formValues = LikeForm.apply(userToBeLiked.objectId.toString, true, likeType)
-            views.html.like.hdcLike.render(likeForm.fill(formValues), None, userToBeLiked.getNrOfLikes, request)
+            val formValues = LikeForm.apply(userToBeLiked.objectId.toString, likeValue = true, likeType)
+            views.html.like.hdcLike.render(likeForm.fill(formValues), None, userToBeLiked.getNrOfLikes, Some(cu), request2Messages)
           case Some(relation) =>
-            views.html.like.hdcLike.render(likeForm, Some(relation.getLastModifiedDate), userToBeLiked.getNrOfLikes, request)
+            views.html.like.hdcLike.render(likeForm, Some(relation.getLastModifiedDate), userToBeLiked.getNrOfLikes, Some(cu), request2Messages)
         }
     }
   }
 
 
-  def likeSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request =>
-    val currentUser = utils.Helpers.getUserFromRequest.get
+  def likeSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+    val currentUser = request.user
 
     likeForm.bindFromRequest.fold(
       errors => {

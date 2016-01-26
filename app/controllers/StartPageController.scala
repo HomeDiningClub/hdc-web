@@ -1,29 +1,33 @@
 package controllers
 
-import models.content.ContentPage
-import play.api.mvc._
+import javax.inject.{Named, Inject}
+
 import org.springframework.stereotype.{Controller => SpringController}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Controller
 import play.api.data._
 import play.api.data.Forms._
-import models.viewmodels.{ReviewBox, StartPageBox, SearchStartPageForm}
-import securesocial.core.SecureSocial
+import models.viewmodels.StartPageBox
 import org.springframework.beans.factory.annotation.Autowired
 import services._
 import models.{UserCredential, UserProfile}
-import models.rating.RatesUserCredential
+import traits.ProvidesAppContext
 import views.html.helper.{select, options}
 import models.profile.TagWord
-import play.api.i18n.Messages
-import scala.collection.mutable
 import models.location.County
 import java.util.UUID
 import scala.collection.JavaConverters._
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.SearchStartPageForm
 
+//@Named
+class StartPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                     val userProfileService: UserProfileService,
+                                     val tagWordService: TagWordService,
+                                     val countyService: CountyService,
+                                     val ratingService: RatingService) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
 
-@SpringController
-class StartPageController extends Controller with SecureSocial {
-
+  /*
   @Autowired
   var userProfileService: UserProfileService = _
 
@@ -38,6 +42,7 @@ class StartPageController extends Controller with SecureSocial {
 
   @Autowired
   var ratingService: RatingService = _
+*/
 
   // Search form
   val searchForm = Form(
@@ -49,23 +54,26 @@ class StartPageController extends Controller with SecureSocial {
     )(SearchStartPageForm.apply)(SearchStartPageForm.unapply)
   )
 
-  def index(fTag: String, fCounty: String, fHost: Boolean) = UserAwareAction { implicit request =>
+  def index(fTag: String, fCounty: String, fHost: Int) = UserAwareAction() { implicit request =>
 
-    val startPageBoxes = getStartPageBoxes(fTag, fCounty, fHost, 8)
+    val isHost = if(fHost == 1) true else false
+
+    val startPageBoxes = getStartPageBoxes(fTag, fCounty, isHost, 8)
     val form = SearchStartPageForm.apply(
       fCounty match { case null | "" => None case item => Some(item)},
       fTag match { case null | "" => None case item => Some(item)},
-      fHost match { case false => None case item => Some(item)}
+      isHost match { case false => None case item => Some(item)}
     )
 
     Ok(views.html.startpage.index(
       searchForm = searchForm.fill(form),
       optionsFoodAreas = tagWordService.getFoodAreas,
       optionsLocationAreas = countyService.getCounties,
-      optionsIsHost = if(fHost) Some(true) else Some(false),
+      optionsIsHost = if(isHost) Some(true) else Some(false),
       startPageBoxes = startPageBoxes,
-      reviewBoxes = ratingService.getUserReviewBoxesStartPage(4),
-      asideNews = contentService.getAsideNewsItems
+      reviewBoxes = None, //ratingService.getUserReviewBoxesStartPage(4), //TODO: Fix reviewBoxes speed
+      asideNews = contentService.getAsideNewsItems,
+      currentUser = request.user
     ))
   }
 

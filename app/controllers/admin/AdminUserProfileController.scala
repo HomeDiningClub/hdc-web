@@ -1,17 +1,21 @@
 package controllers.admin
 
+import javax.inject.{Named, Inject}
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
-import securesocial.core.{SecuredRequest, SecureSocial}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import services.{CountyService, UserProfileService, TagWordService}
 import play.api.data._
 import play.api.data.Forms._
 import play.api._
 import play.api.mvc._
 import models.viewmodels.EnvData
+import models.UserCredential
+import customUtils.security.SecureSocialRuntimeEnvironment
 
-@SpringController
-class AdminUserProfileController  extends Controller with SecureSocial {
+//@Named
+class AdminUserProfileController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport{
 
   // Services
   @Autowired

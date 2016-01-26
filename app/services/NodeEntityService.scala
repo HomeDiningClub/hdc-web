@@ -1,28 +1,28 @@
 package services
 
 import java.util.UUID
-
+import javax.inject.{Named,Inject}
 import interfaces.IEditable
 import models.UserCredential
-import models.entity.EmptyNode
-import org.apache.commons.collections.map.HashedMap
 import org.neo4j.graphdb.Node
 import org.neo4j.helpers.collection.MapUtil
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.neo4j.conversion.Result
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import repositories.NodeEntityRepository
 
+//@Named
 @Service
-class NodeEntityService {
+class NodeEntityService @Inject()(val template: Neo4jTemplate, val nodeEntityRepository: NodeEntityRepository) {
 
+  /*
   @Autowired
   var template: Neo4jTemplate = _
 
   @Autowired
   private var nodeEntityRepository: NodeEntityRepository = _
+*/
 
   def getAnyNodeUsingId(objectId: UUID): Option[Node] = {
 
@@ -51,6 +51,6 @@ class NodeEntityService {
 
   @Transactional(readOnly = true)
   def isNodeEditableBy(anyItem: Node, userCred: UserCredential): Boolean = {
-    InstancedServices.nodeEntityService.template.findOne(anyItem.getId,InstancedServices.userCredentialService.template.getStoredEntityType(anyItem).getType).asInstanceOf[IEditable].isEditableBy(userCred.objectId).asInstanceOf[Boolean]
+    template.findOne(anyItem.getId,template.getStoredEntityType(anyItem).getType).asInstanceOf[IEditable].isEditableBy(userCred.objectId).asInstanceOf[Boolean]
   }
 }

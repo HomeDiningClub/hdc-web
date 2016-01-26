@@ -1,5 +1,5 @@
-@(recipeForm: Form[models.viewmodels.RecipeForm], editingRecipe: Option[models.Recipe] = None, sortedImages: Option[List[models.files.ContentFile]] = None)(implicit flash: Flash)
-@import helper.twitterBootstrap._
+@(recipeForm: Form[models.formdata.RecipeForm], editingRecipe: Option[models.Recipe] = None, sortedImages: Option[List[models.files.ContentFile]] = None)(implicit flash: Flash, messages: Messages)
+
 
 @mainedit(Messages("admin.title")){
 

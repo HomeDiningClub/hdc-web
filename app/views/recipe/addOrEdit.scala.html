@@ -1,7 +1,7 @@
-@(recipeForm: Form[models.viewmodels.RecipeForm], editingRecipe: Option[models.Recipe] = None, extraValues: models.viewmodels.EditRecipeExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
-@import helper.twitterBootstrap._
+@(recipeForm: Form[models.formdata.RecipeForm], editingRecipe: Option[models.Recipe] = None, extraValues: models.viewmodels.EditRecipeExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages, appContext: AppContext)
 
-@main(Messages("recipe.create.title"), footerHtml = file.modalImages.render()){
+
+@main(Messages("recipe.create.title"), footerHtml = file.modalImages.render(messages)){
 
     <div class="container maincontent-container">
         <div class="row">
@@ -61,7 +61,7 @@
                                     controllers.routes.RecipePageController.viewRecipeByNameAndProfile(editingRecipe.get.getOwnerProfile.profileLinkName,editingRecipe.get.getLink).url
                                 }else{
                                     controllers.routes.UserProfileController.viewProfileByLoggedInUser().url
-                                }) { abortLink =>
+                                }) { abortLink: String =>
                                     <a class="btn" data-loading-text="@Messages("recipe.edit.saving")" href="@abortLink">@Messages("recipe.edit.abort")</a>
                                 }
                                 @if(recipeForm("receipeid").value.nonEmpty) {

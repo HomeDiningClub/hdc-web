@@ -1,30 +1,39 @@
 package controllers.admin
 
 import java.io.File
+import javax.inject.{Named, Inject}
 
+import models.files.ContentFile
 import org.springframework.beans.factory.annotation.Autowired
 import play.api.Play
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import play.twirl.api.Html
+import securesocial.core.SecureSocial.SecuredRequest
 import services.ContentFileService
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.libs.Files.TemporaryFile
-import securesocial.core.SecureSocial
+
 import enums.{FileTypeEnums, RoleEnums}
-import utils.Helpers
-import utils.authorization.WithRole
+import customUtils.Helpers
+import customUtils.authorization.WithRole
 import models.UserCredential
 import constants.FlashMsgConstants
 import java.util.UUID
 import play.api.libs.json.{JsNull, Json}
+import customUtils.security.SecureSocialRuntimeEnvironment
 
-@SpringController
-class AdminFileController extends Controller with SecureSocial {
+//@Named
+class AdminFileController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
   @Autowired
   private var contentFileService: ContentFileService = _
 
-  def editIndex = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-    Ok(views.html.admin.file.index())
+  @Autowired
+  private var fileService: ContentFileService = _
+
+  def editIndex = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+    Ok(views.html.admin.file.index(listOfImages = getAllImagesListAsHtml))
   }
 
   def add = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
@@ -37,13 +46,17 @@ class AdminFileController extends Controller with SecureSocial {
           val contentType = file.contentType
           file.ref.moveTo(newFile, true)
 
-          contentFileService.uploadFile(newFile, fileName, contentType, Helpers.getUserFromRequest.get.objectId, FileTypeEnums.IMAGE, isAdminFile = true) match {
+          contentFileService.uploadFile(newFile, fileName, contentType, request.user.objectId, FileTypeEnums.IMAGE, isAdminFile = true) match {
             case Some(value) => Redirect(controllers.admin.routes.AdminFileController.editIndex()).flashing(FlashMsgConstants.Success -> {"File uploaded successfully:" + value.name})
             case None => BadRequest(views.html.admin.file.index()).flashing(FlashMsgConstants.Error -> "Something went wrong during upload, make sure it is a valid file (jpg,png,gif) and is less than 2MB.")
           }
       }.getOrElse {
         BadRequest(views.html.admin.file.index()).flashing(FlashMsgConstants.Error -> "No file selected")
       }
+  }
+
+  def getAllImagesListAsHtml(implicit request: RequestHeader): Html = {
+    views.html.admin.file.imagelist.render(fileService.getAllImages, request2Messages)
   }
 
   def deleteImage(id: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>

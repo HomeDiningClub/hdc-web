@@ -1,9 +1,12 @@
 package services
 
+import javax.inject.{Named, Inject}
+
+import customUtils.security.SecureSocialRuntimeEnvironment
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
-import play.api.i18n.Messages
+import play.api.i18n.{MessagesApi, I18nSupport, Messages}
 import scala.collection.JavaConverters._
 import scala.List
 import org.springframework.transaction.annotation.Transactional
@@ -15,14 +18,17 @@ import play.api.Play.current
 import scala.collection.mutable
 import play.api.cache.Cache
 
+//@Named
 @Service
-class CountyService {
+class CountyService @Inject() (val template: Neo4jTemplate, val countyRepository: CountyRepository, val messagesApi: MessagesApi) extends I18nSupport  {
 
+  /*
   @Autowired
   private var template: Neo4jTemplate = _
 
   @Autowired
   private var countyRepository: CountyRepository = _
+*/
 
   val cacheListKey = "county.list"
 

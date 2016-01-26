@@ -1,27 +1,34 @@
 package controllers
 
+import javax.inject.{Named, Inject}
+
 import models.files.ContentFile
 import models.jsonmodels.{EventBoxJSON}
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
-import securesocial.core.SecureSocial
 import models.{UserCredential, Event}
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
+import play.twirl.api.Html
+import securesocial.core.SecureSocial.{SecuredRequest, RequestWithUser}
 import services.{EventService, UserProfileService, ContentFileService}
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
-import utils.authorization.{WithRoleAndOwnerOfObject, WithRole}
+import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
+import traits.ProvidesAppContext
 import scala.Some
-import models.viewmodels.{MetaData, EditEventExtraValues, EventBox, EventForm}
-import utils.Helpers
+import models.viewmodels.{MetaData, EditEventExtraValues, EventBox}
+import customUtils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.EventForm
 
-@SpringController
-class EventPageController extends Controller with SecureSocial {
+//@Named
+class EventPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                     val likeController: LikeController) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
 
   @Autowired
   private var eventService: EventService = _
@@ -32,18 +39,18 @@ class EventPageController extends Controller with SecureSocial {
   @Autowired
   private var fileService: ContentFileService = _
 
-
-  def viewEventByNameAndProfile(profileName: String, eventName: String) = UserAwareAction { implicit request =>
+  def viewEventByNameAndProfile(profileName: String, eventName: String) = UserAwareAction() { implicit request =>
 
     // Try getting the item from name, if failure show 404
     eventService.findByownerProfileProfileLinkNameAndEventLinkName(profileName,eventName) match {
       case Some(event) =>
-             Ok(views.html.event.event(
-               event,
-               metaData = buildMetaData(event, request),
-               eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
-               shareUrl = createShareUrl(event),
-               isThisMyEvent = isThisMyEvent(event)))
+          Ok(views.html.event.event(
+            event,
+            metaData = buildMetaData(event, request),
+            eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
+            shareUrl = createShareUrl(event),
+            isThisMyEvent = isThisMyEvent(event),
+            eventLikeForm = getEventLikeForm(event)))
           case None =>
             val errMess = "Cannot find event using name:" + eventName + " and profileName:" + profileName
             Logger.debug(errMess)
@@ -52,7 +59,12 @@ class EventPageController extends Controller with SecureSocial {
   }
 
 
-  def viewEventByNameAndProfilePageJSON(profileName: String, page: Int) = UserAwareAction { implicit request =>
+  def getEventLikeForm(event: Event)(implicit request: RequestWithUser[AnyContent,UserCredential]): Html = {
+    val likeForm = likeController.renderEventLikeForm(event, request.user)
+    likeForm
+  }
+
+  def viewEventByNameAndProfilePageJSON(profileName: String, page: Int) = UserAwareAction() { implicit request =>
 
     val listOfEvents: Option[List[EventBox]] = userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) => {
@@ -90,7 +102,7 @@ class EventPageController extends Controller with SecureSocial {
 
   def convertToJson(jsonCase: Seq[EventBoxJSON]): JsValue = Json.toJson(jsonCase)
 
-  def viewEventByNameAndProfilePage(profileName: String, eventName: String, page: Int) = UserAwareAction { implicit request =>
+  def viewEventByNameAndProfilePage(profileName: String, eventName: String, page: Int) = UserAwareAction() { implicit request =>
 
     // Try getting from name, if failure show 404
     eventService.findByownerProfileProfileLinkNameAndEventLinkName(profileName,eventName) match {
@@ -100,7 +112,9 @@ class EventPageController extends Controller with SecureSocial {
           metaData = buildMetaData(event, request),
           eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
           shareUrl = createShareUrl(event),
-          isThisMyEvent = isThisMyEvent(event)))
+          isThisMyEvent = isThisMyEvent(event),
+          eventLikeForm = getEventLikeForm(event)
+        ))
       case None =>
         val errMess = "Cannot find event using name:" + eventName + " and profileName:" + profileName
         Logger.debug(errMess)
@@ -136,10 +150,10 @@ class EventPageController extends Controller with SecureSocial {
         case null | "" =>
           event.getMainBody match {
             case null | "" => ""
-            case item: String => utils.Helpers.limitLength(Helpers.removeHtmlTags(item), 125)
+            case item: String => customUtils.Helpers.limitLength(Helpers.removeHtmlTags(item), 125)
           }
         case item => {
-          utils.Helpers.limitLength(item, 125)
+          customUtils.Helpers.limitLength(item, 125)
         }
       },
       fbImage = event.getMainImage match {
@@ -150,8 +164,8 @@ class EventPageController extends Controller with SecureSocial {
   }
 
 
-  private def isThisMyEvent(item: Event)(implicit request: RequestHeader): Boolean = {
-    utils.Helpers.getUserFromRequest match {
+  private def isThisMyEvent(item: Event)(implicit request: RequestWithUser[AnyContent,UserCredential]): Boolean = {
+    request.user match {
       case None =>
         false
       case Some(user) =>
@@ -182,7 +196,7 @@ class EventPageController extends Controller with SecureSocial {
 
       EditEventExtraValues(
         mainImage match {
-          case Some(item) => Some(List(routes.ImageController.imgChooserThumb(item).url))
+          case Some(mItem) => Some(List(routes.ImageController.imgChooserThumb(mItem).url))
           case None => None
         },
         recipeImages match {
@@ -209,7 +223,7 @@ class EventPageController extends Controller with SecureSocial {
     Ok(views.html.event.addOrEdit(eventForm = evtForm, extraValues = setExtraValues(None)))
   }
 
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
+  def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val editingItem = eventService.findById(objectId)
 
     editingItem match {
@@ -218,7 +232,7 @@ class EventPageController extends Controller with SecureSocial {
         Logger.debug(errorMsg)
         NotFound(errorMsg)
       case Some(item) =>
-        item.isEditableBy(Helpers.getUserFromRequest.get.objectId)
+        item.isEditableBy(request.user.objectId)
         val form = EventForm.apply(
           id = Some(item.objectId.toString),
           name = item.getName,
@@ -242,7 +256,7 @@ class EventPageController extends Controller with SecureSocial {
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-    val currentUser: Option[UserCredential] = Helpers.getUserFromRequest
+    val currentUser = request.user
 
     evtForm.bindFromRequest.fold(
       errors => {
@@ -256,7 +270,7 @@ class EventPageController extends Controller with SecureSocial {
             eventService.findById(UUID.fromString(id)) match {
               case None => None
               case Some(item) =>
-                item.isEditableBy(currentUser.get.objectId).asInstanceOf[Boolean] match {
+                item.isEditableBy(currentUser.objectId).asInstanceOf[Boolean] match {
                   case true =>
                     item.setName(contentData.name)
                     Some(item)
@@ -278,7 +292,7 @@ class EventPageController extends Controller with SecureSocial {
         contentData.mainImage match {
           case Some(imageId) => UUID.fromString(imageId) match {
             case imageUUID: UUID =>
-              fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.get.objectId) match {
+              fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.objectId) match {
                 case Some(item) => newRec.get.setAndRemoveMainImage(item)
                 case _  => None
               }
@@ -299,7 +313,7 @@ class EventPageController extends Controller with SecureSocial {
             imageStr.split(",").take(newRec.get.getMaxNrOfEventImages).foreach { imageId =>
               UUID.fromString(imageId) match {
                 case imageUUID: UUID =>
-                  fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.get.objectId) match {
+                  fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.objectId) match {
                     case Some(item) =>
                       // Found at least one valid image, clean the current list, but only one time
                       if (!hasDeletedImages) {
@@ -321,16 +335,16 @@ class EventPageController extends Controller with SecureSocial {
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
         val savedItem = eventService.add(newRec.get)
-        val savedProfile = userProfileService.addEventToProfile(currentUser.get.getUserProfile, savedItem)
+        val savedProfile = userProfileService.addEventToProfile(currentUser.getUserProfile, savedItem)
         val successMessage = Messages("event.add.success", savedItem.getName)
-        Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(currentUser.get.getUserProfile.profileLinkName,savedItem.getLink)).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(currentUser.getUserProfile.profileLinkName,savedItem.getLink)).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
   }
 
   // Delete
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
+  def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val item: Option[Event] = eventService.findById(objectId)
 
     if(item.isEmpty){

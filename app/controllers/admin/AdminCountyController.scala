@@ -1,29 +1,33 @@
 package controllers.admin
 
+import javax.inject.{Named, Inject}
+
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.mvc.Controller
-import securesocial.core.SecureSocial
+import play.api.mvc.{AnyContent, RequestHeader, Controller}
+
 import play.api.data.Form
 import play.api.data.Forms._
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial.SecuredRequest
 import services.CountyService
 import models.location.County
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
 import enums.RoleEnums
-import models.viewmodels.CountyForm
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import java.util.UUID
+import models.UserCredential
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.CountyForm
 
-@SpringController
-class AdminCountyController extends Controller with SecureSocial {
+//@Named
+class AdminCountyController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
   @Autowired
   private var countyService: CountyService = _
 
-
   // Edit - Listing
-  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val list: Option[List[County]] = countyService.getListOfAll
     Ok(views.html.admin.county.list(list))
   }
@@ -37,15 +41,15 @@ class AdminCountyController extends Controller with SecureSocial {
     )(CountyForm.apply)(CountyForm.unapply)
   )
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.county.index())
   }
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.county.add(countyForm))
   }
 
-  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     countyForm.bindFromRequest.fold(
       errors => {
@@ -91,7 +95,7 @@ class AdminCountyController extends Controller with SecureSocial {
 
 
   // Edit - Edit content
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     countyService.findById(objectId) match {
       case None =>
         Ok(views.html.admin.county.index())
@@ -107,7 +111,7 @@ class AdminCountyController extends Controller with SecureSocial {
   }
 
   // Edit - Delete content
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val result: Boolean = countyService.deleteById(objectId)
 
     result match {

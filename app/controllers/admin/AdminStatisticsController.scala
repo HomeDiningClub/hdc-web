@@ -1,19 +1,20 @@
 package controllers.admin
 
+import javax.inject.{Named, Inject}
+
 import enums.{FileTypeEnums, RoleEnums}
 import models.viewmodels.StatisticsData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.mvc.Controller
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{RequestHeader, Controller}
 import services.{RatingService, ContentFileService, UserCredentialService, RecipeService}
-import utils.authorization.WithRole
-import securesocial.core.SecureSocial
+import customUtils.authorization.WithRole
+import models.UserCredential
+import customUtils.security.SecureSocialRuntimeEnvironment
 
-// Object just needs a default constructor
-class AdminStatisticsController extends Controller with SecureSocial {}
-
-@SpringController
-object AdminStatisticsController extends Controller with SecureSocial {
+//@Named
+class AdminStatisticsController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
   @Autowired
   private var recipeService: RecipeService = _
@@ -27,8 +28,7 @@ object AdminStatisticsController extends Controller with SecureSocial {
   @Autowired
   private var fileService: ContentFileService = _
 
-
-  def getStatBox = {
+  def getStatBox: StatisticsData = {
 
     val currentStats = StatisticsData(
       imagesTotal = fileService.getCountOfAllType(FileTypeEnums.IMAGE.toString),
@@ -38,7 +38,9 @@ object AdminStatisticsController extends Controller with SecureSocial {
       ratingsMemberTotal = ratingService.getCountOfAllMemberRatings
     )
 
-    views.html.admin.statistics.stat.render(Some(currentStats))
+    currentStats
+
+    //views.html.admin.statistics.stat.render(Some(currentStats), request2Messages)
   }
 
 }

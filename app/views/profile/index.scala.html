@@ -1,40 +1,34 @@
 @(userProfile: models.UserProfile,
-        tab1: String,
-        tab2: String,
-        tab3: String,
-        tab4: String,
-        tab5: String,
-        tab6: String,
-        recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
-        eventBoxes: Option[List[models.viewmodels.EventBox]] = None,
-        myReviewBoxes: Option[List[models.viewmodels.ReviewBox]] = None,
-        myRecipeReviewBoxes: Option[List[models.viewmodels.ReviewBox]] = None,
-        reviewBoxesAboutMyFood: Option[List[models.viewmodels.ReviewBox]] = None,
-        reviewBoxesAboutMe: Option[List[models.viewmodels.ReviewBox]] = None,
-        userMessages: Option[List[models.message.Message]] = None,
+        tabMenu: TabMenu,
+        recipeBoxes: Option[List[RecipeBox]] = None,
+        eventBoxes: Option[List[EventBox]] = None,
+        myReviewBoxes: Option[List[ReviewBox]] = None,
+        myRecipeReviewBoxes: Option[List[ReviewBox]] = None,
+        reviewBoxesAboutMyFood: Option[List[ReviewBox]] = None,
+        reviewBoxesAboutMe: Option[List[ReviewBox]] = None,
+        userMessages: Option[List[ReplyToGuestMessage]] = None,
         tagList: Option[List[models.profile.TagWord]] = None,
-        metaData: Option[viewmodels.MetaData] = None,
+        metaData: Option[MetaData] = None,
         shareUrl: String = "",
-        isThisMyProfile: Boolean = false)(implicit request: RequestHeader, flash: Flash)
+        isThisMyProfile: Boolean = false,
+        currentUser: Option[models.UserCredential],
+        userRateForm: Html = Html(""),
+        userLikeForm: Html = Html(""),
+        requestForm: Html = Html(""),
+        favorites: Html = Html(""))(implicit request: RequestHeader, flash: Flash, messages: Messages, appContext: AppContext)
+@import play.twirl.api.Html
 
-    @pageScripts= {
-        <script>
-            /*
-            var showChar = 50;
-            var ellipsestext = "...";
-            var moretext = "mer";
-            var lesstext = "mindre";
-            */
+@pageScripts = {
+    <script>
+        /* Code to open a mail directly, not working atm */
+        $(document).ready(function(){
+            var url = document.location.toString();
+            if (url.match('#')){
+                $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show') ;
+                var msgId = url.split('#')[2].split("Some(")[1].substring(0, url.split('#')[2 ].split("Some(")[1 ].length -1);
 
-            /* Code to open a mail directly, not working atm */
-            $(document).ready(function(){
-                var url = document.location.toString();
-                if (url.match('#')){
-                    $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show') ;
-                    var msgId = url.split('#')[2].split("Some(")[1].substring(0, url.split('#')[2 ].split("Some(")[1 ].length -1);
-
-                    $('#mail_' + msgId).click();
-                }
+                $('#mail_' + msgId).click();
+            }
 
             /* Mark mail as read, also read more functionality */
             $(".mail-inbox-row").click(function(){
@@ -77,51 +71,50 @@
             });
             */
 
-        $("#rf").click(function(){
-        $.get("/profile/favorite/remove?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
-            $( "#af" ).show();
-            $( "#rf" ).hide();
-         alert('Favorit borttagen!');
-        });
-        });
+    $("#rf").click(function(){
+    $.get("/profile/favorite/remove?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
+        $( "#af" ).show();
+        $( "#rf" ).hide();
+     alert('Favorit borttagen!');
+    });
+    });
 
 
-        $("#af").click(function(){
-        $.get("/profile/favorite/add?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
+    $("#af").click(function(){
+    $.get("/profile/favorite/add?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
+    $( "#af" ).hide();
+    $( "#rf" ).show();
+     alert('Favorit tillagd!')
+    });
+    });
+
+
+
+    $.get("/profile/favorite/isFav?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
+    if(data =="YES") {
         $( "#af" ).hide();
         $( "#rf" ).show();
-         alert('Favorit tillagd!')
-        });
-        });
+    } else if(data == "NO") {
+        $( "#af" ).show();
+        $( "#rf" ).hide();
 
-
-
-        $.get("/profile/favorite/isFav?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
-        if(data =="YES") {
-            $( "#af" ).hide();
-            $( "#rf" ).show();
-        } else if(data == "NO") {
-            $( "#af" ).show();
-            $( "#rf" ).hide();
-
-        } else {
-            $( "#af,#rf,#afrf-wrapper" ).hide();
-        }
-
-        });
-
-        });
-        </script>
+    } else {
+        $( "#af,#rf,#afrf-wrapper" ).hide();
     }
 
+    });
 
-@main(title = Messages("profile.title", userProfile.profileLinkName), footerScripts = pageScripts, metaData = metaData) {
+    });
+    </script>
+}
+
+@avatarUrl = @{if(userProfile.getAvatarImage != null){routes.ImageController.userThumb(userProfile.getAvatarImage.getStoreId).url}else{""} }
+
+@main(title = Messages("profile.title", userProfile.profileLinkName), footerScripts = play.twirl.api.Html(pageScripts.toString), metaData = metaData) {
     <div class="container host-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                @defining(if(userProfile.getAvatarImage != null){controllers.routes.ImageController.userThumb(userProfile.getAvatarImage.getStoreId).url}else{""}){ avatarUrl =>
-                    @views.html.profile.profileHeader(userProfile.profileLinkName, userProfile.getOwner.firstName, avatarUrl, false)
-                }
+                @views.html.profile.profileHeader(userProfile.profileLinkName, userProfile.getOwner.firstName, avatarUrl, showLinkBack = false)
                 <div class="row">
                     <div class="col-xs-12 col-md-6 big-margin-top">
                         <section>
@@ -129,7 +122,8 @@
                                 <h1 class="page-header hidden">@userProfile.profileLinkName</h1>
                                 @shared.grade(inputId = "host-grade", initialValue = userProfile.getOwner.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = userProfile.getOwner.getNrOfRatings)
                                 @if(!isThisMyProfile) {
-                                    @RatingController.renderUserRateForm(userProfile.getOwner, routes.UserProfileController.viewProfileByName(userProfile.profileLinkName).url)(request)
+                                    @*RatingController.renderUserRateForm(userProfile.getOwner, routes.UserProfileController.viewProfileByName(userProfile.profileLinkName).url, currentUser)*@
+                                    @userRateForm
                                 }
 
                                 @* Member id hidden for now:
@@ -142,7 +136,8 @@
                                             <a id="af" hidden="true" class="btn btn-default btn-favorite" title="@Messages("favorite.add.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.add.text")</a>
                                             <a id="rf" hidden="true" class="btn btn-default btn-favorite btn-favorite-active" title="@Messages("favorite.remove.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.remove.text")</a>
                                         </div>
-                                        @LikeController.renderUserLikeForm(userProfile.getOwner)(request)
+                                        @*LikeController.renderUserLikeForm(userProfile.getOwner, currentUser)*@
+                                        @userLikeForm
                                         @shared.fbShare(url = shareUrl)
                                     </div>
                                 </div>
@@ -158,8 +153,8 @@
                                 @shared.flashmsg(flash)
                                 @* Send request *@
                                 @if(!isThisMyProfile && userProfile.isUserHost) {
-
-                                    @MessagesController.renderHostForm(userProfile.getOwner)(request)
+                                    @*MessagesController.renderHostForm(userProfile.getOwner, currentUser)*@
+                                    @requestForm
                                 }
                             </article>
                         </section>
@@ -194,18 +189,18 @@
 
                         <div class="panel panel-default panel-dropshadow big-margin-top">
                             <div class="panel-body">
-                                @shared.tagList(tagList, userProfile.getOwner.firstName())
-                                <br><strong>@Messages("profile.firstname.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.getOwner.firstName())</span>
-                                <br><strong>@Messages("profile.city.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.city)</span>
+                                @shared.tagList(tagList, userProfile.getOwner.firstName)
+                                <br><strong>@Messages("profile.firstname.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.getOwner.firstName)</span>
+                                <br><strong>@Messages("profile.city.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.city)</span>
                                 <br>@if(userProfile.getLocations.iterator().hasNext()){
-                                <strong>@Messages("profile.county.text")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.getLocations.iterator().next().county.name)</span>
+                                <strong>@Messages("profile.county.text")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.getLocations.iterator().next().county.name)</span>
                                 }
-                                <br><strong>@Messages("profile.options.childFfriendly.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.childFfriendly)</span>
-                                <br><strong>@Messages("profile.options.handicapFriendly.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.handicapFriendly)</span>
-                                <br><strong>@Messages("profile.options.havePets.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.havePets)</span>
-                                <br><strong>@Messages("profile.options.smoke.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.smoke)</span>
-                                <br><strong>@Messages("profile.options.allkoholServing.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.allkoholServing)</span>
-                                <br><strong>@Messages("profile.payment.label")</strong> <span class="sentence-case">@utils.Helpers.titleCase(userProfile.payBankCard) @utils.Helpers.titleCase(userProfile.payCache) @utils.Helpers.titleCase(userProfile.payIZettle) @utils.Helpers.titleCase(userProfile.paySwish)</span>
+                                <br><strong>@Messages("profile.options.childFfriendly.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.childFfriendly)</span>
+                                <br><strong>@Messages("profile.options.handicapFriendly.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.handicapFriendly)</span>
+                                <br><strong>@Messages("profile.options.havePets.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.havePets)</span>
+                                <br><strong>@Messages("profile.options.smoke.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.smoke)</span>
+                                <br><strong>@Messages("profile.options.allkoholServing.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.allkoholServing)</span>
+                                <br><strong>@Messages("profile.payment.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.payBankCard) @customUtils.Helpers.titleCase(userProfile.payCache) @customUtils.Helpers.titleCase(userProfile.payIZettle) @customUtils.Helpers.titleCase(userProfile.paySwish)</span>
                                 <br><strong>@Messages("profile.nr-of-guests.label")</strong> <span class="sentence-case">
                                     @{userProfile.minNoOfGuest match {
                                         case "" | null => { 1 }
@@ -261,23 +256,23 @@
                     <div class="col-xs-12 col-md-12 big-margin-top">
                         <nav>
                             <ul class="nav nav-tabs nav-tabs-profile">
-                                <li class="active"><a data-toggle="tab" href="#@tab1" title="@Messages("profile.tabs.food.title")"><span class="glyphicon glyphicon-cutlery"></span>&nbsp;@Messages("profile.tabs.food.name")</a></li>
+                                <li class="active"><a data-toggle="tab" href="#@tabMenu.tab1" title="@Messages("profile.tabs.food.title")"><span class="glyphicon glyphicon-cutlery"></span>&nbsp;@Messages("profile.tabs.food.name")</a></li>
                                 @if(userProfile.isUserHost) {
-                                    <li><a data-toggle="tab" href="#@tab2" title="@Messages("profile.tabs.blog.title")"><span class="glyphicon glyphicon-pencil"></span>&nbsp;@Messages("profile.tabs.blog.name")</a></li>
+                                    <li><a data-toggle="tab" href="#@tabMenu.tab2" title="@Messages("profile.tabs.blog.title")"><span class="glyphicon glyphicon-pencil"></span>&nbsp;@Messages("profile.tabs.blog.name")</a></li>
                                 }
-                                <li><a data-toggle="tab" href="#@tab3" title="@Messages("profile.tabs.ratings.title")"><span class="glyphicon glyphicon-star"></span>&nbsp;@Messages("profile.tabs.ratings.name")</a></li>
+                                <li><a data-toggle="tab" href="#@tabMenu.tab3" title="@Messages("profile.tabs.ratings.title")"><span class="glyphicon glyphicon-star"></span>&nbsp;@Messages("profile.tabs.ratings.name")</a></li>
                                 @if(isThisMyProfile) {
-                                    <li><a data-toggle="tab" href="#@tab4" title="@Messages("profile.tabs.inbox.title")"><span class="glyphicon glyphicon-envelope"></span>&nbsp;@Messages("profile.tabs.inbox.name")</a></li>
-                                    <li><a data-toggle="tab" href="#@tab5" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
+                                    <li><a data-toggle="tab" href="#@tabMenu.tab4" title="@Messages("profile.tabs.inbox.title")"><span class="glyphicon glyphicon-envelope"></span>&nbsp;@Messages("profile.tabs.inbox.name")</a></li>
+                                    <li><a data-toggle="tab" href="#@tabMenu.tab5" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
                                 }
-                                @if(utils.Helpers.isUserAdmin(request)) {
-                                    <li><a data-toggle="tab" href="#@tab6" title="@Messages("profile.tabs.event.title")"><span class="glyphicon glyphicon-calendar"></span>&nbsp;@Messages("profile.tabs.event.name")</a></li>
+                                @if(customUtils.Helpers.isUserAdmin(currentUser)) {
+                                    <li><a data-toggle="tab" href="#@tabMenu.tab6" title="@Messages("profile.tabs.event.title")"><span class="glyphicon glyphicon-calendar"></span>&nbsp;@Messages("profile.tabs.event.name")</a></li>
                                 }
                             </ul>
                         </nav>
 
                         <div class="tab-content">
-                            <div class="tab-pane tab-hdc fade in active" id="@tab1">
+                            <div class="tab-pane tab-hdc fade in active" id="@tabMenu.tab1">
                                 <div class="row">
                                 @if(isThisMyProfile) {
                                     <div class="col-xs-12">
@@ -292,7 +287,7 @@
                                 }
                             </div>
                             @if(userProfile.isUserHost) {
-                                <div class="tab-pane tab-hdc fade" id="@tab2">
+                                <div class="tab-pane tab-hdc fade" id="@tabMenu.tab2">
                                     @if(isThisMyProfile) {
                                         <div class="col-xs-12">
                                             <div class="btn-group btn-edit-group">
@@ -303,7 +298,7 @@
                                     @blog.blogBox(userProfile.profileLinkName)
                                 </div>
                             }
-                            <div class="tab-pane tab-hdc fade" id="@tab3">
+                            <div class="tab-pane tab-hdc fade" id="@tabMenu.tab3">
                                 @if(reviewBoxesAboutMe.nonEmpty){
                                     <!-- Reviews about user -->
                                     <div class="row">
@@ -354,7 +349,7 @@
                                 }
 
                             </div>
-                            <div class="tab-pane tab-hdc fade" id="@tab4">
+                            <div class="tab-pane tab-hdc fade" id="@tabMenu.tab4">
                                 @if(isThisMyProfile && userMessages.nonEmpty) {
 
                                     <table class="table inbox-table">
@@ -367,21 +362,23 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @for(msg <- userMessages.get) {
-                                                @MessagesController.renderMessage(msg)(request)
-                                            }
+                                            @views.html.host.listMessages(userMessages,currentUser)
+                                            @*for(msg <- userMessages.get) {
+                                                @MessagesController.renderMessage(msg, currentUser)(request)
+                                            }*@
                                         </tbody>
                                     </table>
 
                                 }
                             </div>
                             @if(isThisMyProfile) {
-                            <div class="tab-pane tab-hdc fade" id="@tab5">
-                                @FavoritesController.renderFavorites(userProfile)
+                            <div class="tab-pane tab-hdc fade" id="@tabMenu.tab5">
+                                @favorites
+                                @*FavoritesController.renderFavorites(userProfile)*@
                             </div>
                             }
-                            @if(utils.Helpers.isUserAdmin(request)) {
-                                <div class="tab-pane tab-hdc fade" id="@tab6">
+                            @if(customUtils.Helpers.isUserAdmin(currentUser)) {
+                                <div class="tab-pane tab-hdc fade" id="@tabMenu.tab6">
                                     <div class="row">
                                     @if(isThisMyProfile) {
                                         <div class="col-xs-12">

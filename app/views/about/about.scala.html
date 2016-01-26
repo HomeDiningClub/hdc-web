@@ -1,10 +1,9 @@
-@(aboutUsForm: Form[models.viewmodels.AboutUsForm])(implicit request: RequestHeader, flash: Flash)
-@import helper.twitterBootstrap._
+@(aboutUsForm: Form[models.formdata.AboutUsForm])(implicit flash: Flash = Flash.emptyCookie, messages: Messages)
 
 <div class="col-xs-12">
     @helper.form(action = routes.SuggestController.suggestFeatures()) {
         <div>
-            @shared.flashmsg(flash)
+        @shared.flashmsg(flash)
         </div>
         <fieldset>
             @helper.inputTextHorizontal(aboutUsForm("to"), '_label -> Messages("Till"), 'readonly -> "readonly", 'class -> "col-sm-10", '_labelClass -> "col-sm-2")

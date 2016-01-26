@@ -10,8 +10,7 @@ import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
-import services.InstancedServices;
-import utils.Helpers;
+import customUtils.Helpers;
 
 import java.util.ArrayList;
 import java.util.HashSet;

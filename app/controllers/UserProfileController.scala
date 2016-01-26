@@ -1,12 +1,12 @@
 package controllers
 
-import java.text.SimpleDateFormat
 import java.util.{Date, UUID}
+import javax.inject.{Named, Inject}
 
 import constants.FlashMsgConstants
 import enums.RoleEnums
 import models.modelconstants.UserLevelScala
-import models.viewmodels.{EnvData, TagsData, EditProfileExtraValues, MetaData}
+import models.viewmodels._
 import models.{UserCredential, UserProfile}
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,34 +14,50 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api._
 import play.api.data.Forms._
 import play.api.data._
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc._
-import securesocial.core.{RequestWithUser, SecureSocial}
+import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
 import services._
-import utils.Helpers
-import utils.authorization.WithRole
+import customUtils.Helpers
+import customUtils.authorization.WithRole
+import traits.ProvidesAppContext
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
-import utils.ViewedByMemberUtil
-import utils.ViewedByUnKnownUtil
+import customUtils.ViewedByMemberUtil
+import customUtils.ViewedByUnKnownUtil
+import customUtils.security.SecureSocialRuntimeEnvironment
 
-@SpringController
-class UserProfileController extends Controller with SecureSocial {
+//@Named
+class UserProfileController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                       val ratingController: RatingController,
+                                       val likeController: LikeController,
+                                       val messagesController: MessagesController,
+                                       val favoritesController: FavoritesController,
+                                       val userProfileService: UserProfileService,
+                                       val tagWordService: TagWordService,
+                                       val countyService: CountyService,
+                                       val recipeService: RecipeService,
+                                       val eventService: EventService,
+                                       val ratingService: RatingService,
+                                       val fileService: ContentFileService,
+                                       val userCredentialService: UserCredentialService,
+                                       val messageService: MessageService) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
 
+/*
   // Services
   @Autowired
   var userProfileService: UserProfileService = _
 
   @Autowired
-  var tagWordService : TagWordService = _
+  var tagWordService: TagWordService = _
 
   @Autowired
   var contentService: ContentService = _
 
   @Autowired
-  var countyService : CountyService = _
+  var countyService: CountyService = _
 
   @Autowired
   private var recipeService: RecipeService = _
@@ -56,10 +72,12 @@ class UserProfileController extends Controller with SecureSocial {
   private var fileService: ContentFileService = _
 
   @Autowired
-  var userCredentialService : UserCredentialService = _
+  var userCredentialService: UserCredentialService = _
 
   @Autowired
   var messageService: MessageService = _
+*/
+
 
   // Constants
   val FOOD = "food-tab"
@@ -69,15 +87,17 @@ class UserProfileController extends Controller with SecureSocial {
   val FAVOURITES = "favourites-tab"
   val EVENT = "event-tab"
 
+  val tabMenu: TabMenu = TabMenu(FOOD, BLOG, REVIEWS, INBOX, FAVOURITES, EVENT)
+
   // Form
-  val userProfileForm : play.api.data.Form[models.formdata.UserProfileForm]  = play.api.data.Form(
+  val userProfileForm: play.api.data.Form[models.formdata.UserProfileForm] = play.api.data.Form(
     mapping(
       "userName" -> text,
       "emailAddress" -> email,
       "firstName" -> text,
       "lastName" -> text,
       "aboutme" -> text,
-     // "quality" -> list(boolean),
+      // "quality" -> list(boolean),
       "county" -> text,
       "streetAddress" -> text,
       "zipCode" -> text,
@@ -88,7 +108,7 @@ class UserProfileController extends Controller with SecureSocial {
   )
 
 
-// text.verifying("Inte ett unikt användarnamn", txt=>isNew(txt))
+  // text.verifying("Inte ett unikt användarnamn", txt=>isNew(txt))
 
   val AnvandareForm = Form(
     mapping(
@@ -102,7 +122,7 @@ class UserProfileController extends Controller with SecureSocial {
       "city" -> text,
       "phoneNumber" -> text,
       "personnummer" -> text,
-      "acceptTerms"  -> boolean,
+      "acceptTerms" -> boolean,
       //"childFfriendly" -> optional(text),
       //"handicapFriendly" -> optional(text),
       //"havePets" -> optional(text),
@@ -114,190 +134,146 @@ class UserProfileController extends Controller with SecureSocial {
       "lastName" -> text,
       "emailAddress" -> text,
       "emailAddress2" -> text
-  )(EnvData.apply) (EnvData.unapply)
-    verifying (Messages("profile.create.form.emailAddress.uniq"), e => isUniqueEmailAddress(e.emailAddress, e.emailAddress2))
-    verifying (Messages("profile.control.unique"), f => isUniqueProfileName(f.name, f.name2))
-    verifying (Messages("profile.personalidentitynumber.unique"), g => isCorrectPersonnummer(g.personnummer))
-    verifying (Messages("profile.approve.memberterms"), h => h.acceptTerms == true)
+    )(EnvData.apply)(EnvData.unapply)
+      verifying(Messages("profile.create.form.emailAddress.uniq"), e => isUniqueEmailAddress(e.emailAddress, e.emailAddress2))
+      verifying(Messages("profile.control.unique"), f => isUniqueProfileName(f.name, f.name2))
+      verifying(Messages("profile.personalidentitynumber.unique"), g => isCorrectPersonnummer(g.personnummer))
+      verifying(Messages("profile.approve.memberterms"), h => h.acceptTerms == true)
   )
 
 
   val OptionsForm = Form(
     mapping(
-    "payCache" -> optional(text),
-    "paySwish" -> optional(text),
-    "payBankCard" -> optional(text),
-    "payIZettle" -> optional(text),
-    //"roleGuest" -> optional(text),
-    "roleHost" -> optional(text),
-    "maxGuest" -> text,
-    "minGuest" -> text,
-    "quality" -> list(text),
-    "handicapFriendly" -> optional(text),
-    "childFfriendly" -> optional(text),
-    "havePets" -> optional(text),
-    "smoke" -> optional(text)
-  )
-  (UserProfileOptions.apply) (UserProfileOptions.unapply))
+      "payCache" -> optional(text),
+      "paySwish" -> optional(text),
+      "payBankCard" -> optional(text),
+      "payIZettle" -> optional(text),
+      //"roleGuest" -> optional(text),
+      "roleHost" -> optional(text),
+      "maxGuest" -> text,
+      "minGuest" -> text,
+      "quality" -> list(text),
+      "handicapFriendly" -> optional(text),
+      "childFfriendly" -> optional(text),
+      "havePets" -> optional(text),
+      "smoke" -> optional(text)
+    )
+      (UserProfileOptions.apply)(UserProfileOptions.unapply))
 
   val tagForm = Form(
     mapping(
       "quality" -> list(text)
     )
-      (TagsData.apply) (TagsData.unapply)
+      (TagsData.apply)(TagsData.unapply)
   )
 
-  def isCorrectPersonnummer(personnummer : String) : Boolean = {
-    if(personnummer.size < 1) return true
+  def isCorrectPersonnummer(personnummer: String): Boolean = {
+    if (personnummer.size < 1) return true
 
-    if(personnummer.matches("[1-2][0-9]{11}")) return true
-    if(personnummer.matches("[0-9]{6}[-][0-9]{4}")) return true
+    if (personnummer.matches("[1-2][0-9]{11}")) return true
+    if (personnummer.matches("[0-9]{6}[-][0-9]{4}")) return true
 
 
     false
   }
 
- def isUniqueProfileName(profileName : String, storedProfileName : String) : Boolean = {
+  def isUniqueProfileName(profileName: String, storedProfileName: String): Boolean = {
 
-   //var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+    // Länknamn måste börja på en bokstav, stor eller liten
+    // därefter kan det koimma en stor eller liten bokstav elln siffra eller ett bindesträck
+    if (!profileName.matches("[a-z,A-Z]+[a-z,A-Z,0-9,-]*")) return false
 
-   var profileWithLinkName = userProfileService.findByprofileLinkName(profileName)
-
-   // Länknamn måste börja på en bokstav, stor eller liten
-   // därefter kan det koimma en stor eller liten bokstav elln siffra eller ett bindesträck
-   //
-   if (!profileName.matches("[a-z,A-Z]+[a-z,A-Z,0-9,-]*")) return false
-
-
-
-   var profileNameExists =
-   profileWithLinkName match {
-     case None =>{
-       return true
-     }
-     case Some(up)=> {
-       // profilelinkname has not been changed
-       if(profileName == storedProfileName) {
-         return true
-       }
-
-      // params.flash();
-      // flash.error("Please correct the error below!");
-
-       return false
-     }
-
-   }
-
-   false
-   //profileName.startsWith("test")
- }
+    userProfileService.findByprofileLinkName(profileName) match {
+      case None => true
+      case Some(up) => {
+        if (profileName == storedProfileName) {
+          true
+        }else{
+          false
+        }
+      }
+    }
+  }
 
 
-
-  private def isThisMyProfile(profile: UserProfile)(implicit request: RequestHeader): Boolean = {
-    utils.Helpers.getUserFromRequest match {
+  private def isThisMyProfile(profile: UserProfile)(implicit request: RequestWithUser[AnyContent,UserCredential]): Boolean = {
+    request.user match {
       case None =>
         false
       case Some(user) =>
-        if(profile.getOwner.objectId == user.objectId)
+        if (profile.getOwner.objectId == user.objectId)
           true
         else
           false
     }
   }
 
+  def isUniqueEmailAddress(emailAddress: String, storedEmailAddress: String): Boolean = {
 
-
-  // Is email uniq
-  def isUniqueEmailAddress(emailAddress : String, storedEmailAddress : String) : Boolean = {
-
-    //var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+    val emailRegExpPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+    if (!emailAddress.matches(emailRegExpPattern)) return false
 
     // Fetch UserCredential with email address and autentication usernamn/password
-    var ucwithEmail = userCredentialService.findUserPasswordUserByEmail(emailAddress)
-
-    // Länknamn måste börja på en bokstav, stor eller liten
-    // därefter kan det koimma en stor eller liten bokstav elln siffra eller ett bindesträck
-    //
-
-    var emailRegExpPatern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
-
-    if (!emailAddress.matches(emailRegExpPatern)) return false
-
-    var ucExits =
-      ucwithEmail match {
-        case None =>{
-          return true
+    userCredentialService.findUserPasswordUserByEmail(emailAddress) match {
+      case None => true
+      case Some(up) => {
+        // emailaddress has not been changed
+        if (emailAddress == storedEmailAddress) {
+          true
+        }else{
+          false
         }
-        case Some(up)=> {
-          // emailaddress has not been changed
-          if(emailAddress == storedEmailAddress) {
-            return true
-          }
-
-          // params.flash();
-          // flash.error("Please correct the error below!");
-
-
-          // emailaddress exists in the storage and have
-          // been changed mening an other user i usning the same emailadress.
-          return false
-        }
-
       }
-
-    false
-    //profileName.startsWith("test")
+    }
   }
 
 
-
-
-
-
-
-
-  def verifyUserProfile = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: RequestHeader =>
-    val curUser = utils.Helpers.getUserFromRequest.get
+  def verifyUserProfile = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+    val curUser = request.user
 
     // Check so that all important information is filled, otherwise redirect to profile editing
-    if(curUser.profiles.asScala.head.profileLinkName.isEmpty) {
+    if (curUser.profiles.asScala.head.profileLinkName.isEmpty) {
       Redirect(routes.UserProfileController.edit()).flashing(FlashMsgConstants.Error -> Messages("profile.profilelinkname.isempty"))
-    }else{
+    } else {
       Redirect(routes.StartPageController.index())
       //Redirect(routes.UserProfileController.viewProfileByName(curUser.profiles.asScala.head.profileLinkName))
     }
   }
 
-  def viewProfileByName(profileName: String) = UserAwareAction { implicit request =>
+  def viewProfileByName(profileName: String) = UserAwareAction() { implicit request =>
 
     // Try getting the profile from name, if failure show 404
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) =>
-        val myProfile = isThisMyProfile(profile)
+        val profileOwner = profile.getOwner
 
-        val recipeBoxes = recipeService.getRecipeBoxes(profile.getOwner)
-        val eventBoxes = eventService.getEventBoxes(profile.getOwner)
-        val myReviewBoxes = if(myProfile) ratingService.getMyUserReviews(profile.getOwner) else None
-        val myRecipeReviewBoxes = if(myProfile) ratingService.getMyUserReviewsAboutFood(profile.getOwner) else None
-        val reviewBoxesAboutMyFood = ratingService.getUserReviewsAboutMyFood(profile.getOwner)
-        val reviewBoxesAboutMe = ratingService.getUserReviewsAboutMe(profile.getOwner)
-        val tags = tagWordService.findByProfileAndGroup(profile,"profile")
-        val messages = if(myProfile) messageService.findIncomingMessagesForUser(profile.getOwner) else None
+        val myProfile = isThisMyProfile(profile)
+        val recipeBoxes = recipeService.getRecipeBoxes(profileOwner)
+        val eventBoxes = eventService.getEventBoxes(profileOwner)
+        val myReviewBoxes = if (myProfile) ratingService.getMyUserReviews(profileOwner) else None
+        val myRecipeReviewBoxes = if (myProfile) ratingService.getMyUserReviewsAboutFood(profileOwner) else None
+        val reviewBoxesAboutMyFood = ratingService.getUserReviewsAboutMyFood(profileOwner)
+        val reviewBoxesAboutMe = ratingService.getUserReviewsAboutMe(profileOwner)
+        val tags = tagWordService.findByProfileAndGroup(profile, "profile")
+        val messages = if (myProfile) buildMessageList(profileOwner) else None
         val metaData = buildMetaData(profile, request)
         val shareUrl = createShareUrl(profile)
+        val userRateForm = ratingController.renderUserRateForm(profileOwner, routes.UserProfileController.viewProfileByName(profile.profileLinkName).url, request.user)
+        val userLikeForm = likeController.renderUserLikeForm(profileOwner, request.user)
+        val requestForm = messagesController.renderHostForm(profileOwner, request.user)
+        val favorites = favoritesController.renderFavorites(profile)
 
         // should the event be registred or not
-        val doCountEvent : Boolean = true
+        val doCountEvent: Boolean = true
 
-        if(doCountEvent) {
+        if (doCountEvent) {
           doLogViewOfUserProfile(request, profile)
         } // false
 
 
-        Ok(views.html.profile.index(profile,
-          FOOD,BLOG,REVIEWS,INBOX,FAVOURITES,EVENT,
+        Ok(views.html.profile.index(
+          userProfile = profile,
+          tabMenu = tabMenu,
           recipeBoxes = recipeBoxes,
           eventBoxes = eventBoxes,
           myReviewBoxes = myReviewBoxes,
@@ -308,11 +284,18 @@ class UserProfileController extends Controller with SecureSocial {
           tagList = tags,
           metaData = metaData,
           shareUrl = shareUrl,
-          isThisMyProfile = myProfile))
+          isThisMyProfile = myProfile,
+          currentUser = request.user,
+          userRateForm = userRateForm,
+          userLikeForm = userLikeForm,
+          requestForm = requestForm,
+          favorites = favorites
+        ))
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
         Logger.debug(errMess)
-        NotFound(views.html.error.notfound(refUrl = request.path)(request))
+        //NotFound(views.html.error.notfound(refUrl = request.path)(request, request2Messages))
+        NotFound(views.html.error.notfound(refUrl = request.path))
     }
   }
 
@@ -322,11 +305,11 @@ class UserProfileController extends Controller with SecureSocial {
    * @param request the users requesting viewing the profile
    * @param profile the user of the profile page
    */
-  def doLogViewOfUserProfile(request: RequestWithUser[AnyContent], profile: UserProfile) {
-    if (request.user == None) {
+  def doLogViewOfUserProfile(request: RequestWithUser[AnyContent,UserCredential], profile: UserProfile) {
+    if (request.user.isEmpty) {
 
-      if (profile.getUnKnownVisited() != null && profile.getUnKnownVisited() != None) {
-        var ipAddress = request.remoteAddress
+      if (profile.getUnKnownVisited != null && profile.getUnKnownVisited != None) {
+        val ipAddress = request.remoteAddress
 
         var log = profile.getUnKnownVisited
         var util: ViewedByUnKnownUtil = new ViewedByUnKnownUtil()
@@ -347,18 +330,18 @@ class UserProfileController extends Controller with SecureSocial {
     } else {
 
       // fetch logged in user
-      var theUser: Option[UserProfile] = Helpers.getUserFromRequest(request) match {
+      val theUser: Option[UserProfile] = request.user match {
         case Some(user) => Some(user.profiles.asScala.head)
         case None => None
       }
 
-      var vOId: String = theUser match {
+      val vOId: String = theUser match {
         case Some(v) => v.objectId.toString
         case None => ""
       }
 
       // Member access
-      if (profile.getmemberVisited() != null && profile.getmemberVisited() != None) {
+      if (profile.getmemberVisited() != null && profile.getmemberVisited != None) {
         var log = profile.getmemberVisited()
         var util: ViewedByMemberUtil = new ViewedByMemberUtil()
 
@@ -378,28 +361,21 @@ class UserProfileController extends Controller with SecureSocial {
   }
 
 
-  def viewProfileByLoggedInUser = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: RequestHeader =>
+  def viewProfileByLoggedInUser = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
-    SecureSocial.currentUser match {
-      case Some(reqUser) =>
-        userProfileService.findByowner(reqUser.asInstanceOf[UserCredential]) match {
-          case Some(profile) =>
-            if(profile.profileLinkName.isEmpty){
-              Logger.debug("Profilelinkname is empty!")
-              Redirect(routes.UserProfileController.edit()).flashing(FlashMsgConstants.Error -> Messages("profile.profilelinkname.isempty"))
-            }else{
+    userProfileService.findByowner(request.user) match {
+      case Some(profile) =>
+        if (profile.profileLinkName.isEmpty) {
+          Logger.debug("Profilelinkname is empty!")
+          Redirect(routes.UserProfileController.edit()).flashing(FlashMsgConstants.Error -> Messages("profile.profilelinkname.isempty"))
+        } else {
 
-              Redirect(routes.UserProfileController.viewProfileByName(profile.profileLinkName)) // TODO: This causes double lookup, improve later
-            }
-          case None =>
-            val errMess = "Cannot find user profile using current user:" + reqUser.asInstanceOf[UserCredential].objectId
-            Logger.debug(errMess)
-            NotFound(views.html.error.notfound(refUrl = request.path)(request))
+          Redirect(routes.UserProfileController.viewProfileByName(profile.profileLinkName)) // TODO: This causes double lookup, improve later
         }
       case None =>
-        val errMess = "Cannot find any user to fetch profile for"
+        val errMess = "Cannot find user profile using current user:" + request.user.objectId
         Logger.debug(errMess)
-        NotFound(views.html.error.notfound(refUrl = request.path)(request))
+        NotFound(views.html.error.notfound(refUrl = request.path))
     }
   }
 
@@ -407,6 +383,10 @@ class UserProfileController extends Controller with SecureSocial {
     routes.UserProfileController.viewProfileByName(profile.profileLinkName).url + "?ts=" + Helpers.getDateForSharing(profile)
   }
 
+
+  private def buildMessageList(uc: UserCredential): Option[List[ReplyToGuestMessage]] = {
+    messagesController.createListOfMessages(messageService.findIncomingMessagesForUser(uc), uc)
+  }
 
   private def buildMetaData(profile: UserProfile, request: RequestHeader): Option[MetaData] = {
     val domain = "//" + request.domain
@@ -418,101 +398,108 @@ class UserProfileController extends Controller with SecureSocial {
         case null | "" =>
           profile.aboutMeHeadline match {
             case null | "" => ""
-            case item => utils.Helpers.limitLength(item, 125)
+            case item => customUtils.Helpers.limitLength(item, 125)
           }
         case item => {
-          utils.Helpers.limitLength(Helpers.removeHtmlTags(item), 125)
+          customUtils.Helpers.limitLength(Helpers.removeHtmlTags(item), 125)
         }
       },
       fbImage = profile.getMainImage match {
-        case image: models.files.ContentFile => { domain + routes.ImageController.profileNormal(image.getStoreId).url }
-        case _ => { domain + "/images/profile/profile-default-main-image.jpg" }
+        case image: models.files.ContentFile => {
+          domain + routes.ImageController.profileNormal(image.getStoreId).url
+        }
+        case _ => {
+          domain + "/images/profile/profile-default-main-image.jpg"
+        }
       }
     ))
   }
 
-  /****************************************************************************************************
+  /** **************************************************************************************************
    Show userProfile for edit
    display profile data for the current user to be changed
    my profile
-   ****************************************************************************************************/
-def edit = SecuredAction { implicit request =>
+    * ***************************************************************************************************/
+  def edit = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
 
-  // Fetch UserProfile from UserCredentials
-  // c
-  var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
+    // Fetch UserProfile from UserCredentials
+    // c
+    var theUser = request.user.profiles.iterator().next()
 
-  var personnummer = theUser.getOwner.personNummer
+    var personnummer = theUser.getOwner.personNummer
 
-  var countiesList = countyService.getCounties
+    var countiesList = countyService.getCounties
 
-  var countyItter = countiesList.iterator
-  while(countyItter.hasNext) {
-    var nextCo = countyItter.next()
-  }
-
-  //  Test
-  var host: String = ""
-  var guest: String = ""
-
-  if (theUser.getRole.contains(UserLevelScala.HOST.Constant)) { host = UserLevelScala.HOST.Constant}
-  if (theUser.getRole.contains(UserLevelScala.GUEST.Constant)) { guest = UserLevelScala.GUEST.Constant}
-
-  val provider = request.user.identityId.providerId
-  val user = request.user.identityId.userId
-
-
-  // show profile
-
-  // 1. Get the correct profile
-
-  // 2. Load the tags
-
-  var locationId : String = ""
-
-
-  // Pre selected
-  val typ = new models.Types
-
-var userTags = theUser.getTags
-
-if(userTags != null) {
-  var itterTags = userTags.iterator
-
-  while (itterTags.hasNext) {
-    typ.addVald(itterTags.next().tagWord.tagName)
-  }
-}
-
-  // Fetch all tags
-  var d = tagWordService.listByGroupOption("profile")
-
-
-  var l : Long = 0
-  var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
-
-
-
-  if(d.isDefined){
-    for(theTag <- d.get) {
-      var newType : models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l+"]" )
-      l = l + 1
-
-      tagList.add(newType)
+    var countyItter = countiesList.iterator
+    while (countyItter.hasNext) {
+      var nextCo = countyItter.next()
     }
-  }
 
-  // Sort & List
-  val retTagList = tagList.toList.sortBy(tw => tw.name)
+    //  Test
+    var host: String = ""
+    var guest: String = ""
+
+    if (theUser.getRole.contains(UserLevelScala.HOST.Constant)) {
+      host = UserLevelScala.HOST.Constant
+    }
+    if (theUser.getRole.contains(UserLevelScala.GUEST.Constant)) {
+      guest = UserLevelScala.GUEST.Constant
+    }
+
+    val provider = request.user.providerId
+    val user = request.user.userId
 
 
-  try {
-    locationId = theUser.getLocations.iterator.next().county.objectId.toString
-    //locationId = "0ec35cae-495c-43b8-b99c-bc14755288f2"
-  } catch
-    {
-      case e : Exception => println("COUNTY EXCEPTION : " + e.getMessage)
+    // show profile
+
+    // 1. Get the correct profile
+
+    // 2. Load the tags
+
+    var locationId: String = ""
+
+
+    // Pre selected
+    val typ = new models.Types
+
+    var userTags = theUser.getTags
+
+    if (userTags != null) {
+      var itterTags = userTags.iterator
+
+      while (itterTags.hasNext) {
+        typ.addVald(itterTags.next().tagWord.tagName)
+      }
+    }
+
+    // Fetch all tags
+    var d = tagWordService.listByGroupOption("profile")
+
+
+    var l: Long = 0
+    var tagList: mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
+
+
+
+    if (d.isDefined) {
+      for (theTag <- d.get) {
+        var newType: models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l + "]")
+        l = l + 1
+
+        tagList.add(newType)
+      }
+    }
+
+    // Sort & List
+    val retTagList = tagList.toList.sortBy(tw => tw.name)
+
+
+    try {
+      locationId = theUser.getLocations.iterator.next().county.objectId.toString
+      //locationId = "0ec35cae-495c-43b8-b99c-bc14755288f2"
+    } catch {
+      case e: Exception => println("COUNTY EXCEPTION : " + e.getMessage)
     }
 
     // Other values not fit to be in form-classes
@@ -527,64 +514,64 @@ if(userTags != null) {
 
 
     // File with stored values
-  val eData : EnvData = new EnvData(
-    theUser.profileLinkName,
-    theUser.profileLinkName,
-    theUser.aboutMeHeadline,
-    theUser.aboutMe,
-    locationId,         // county
-    theUser.streetAddress, // street Address,
-    theUser.zipCode, // zip code
-    theUser.city, // city
-    theUser.phoneNumber, // phone number
-    personnummer, // TODO
-    theUser.isTermsOfUseApprovedAccepted, // isTermsOfUseApprovedAccepted
-    // Option(theUser.childFfriendly),
-    // Option(theUser.handicapFriendly),
-    // Option(theUser.havePets),
-    //Option(theUser.smoke),
-    Option(theUser.allkoholServing),
-    mainImage,
-    avatarImage,
-    theUser.firstName,
-    theUser.lastName,
-    theUser.getOwner.emailAddress,
-    theUser.getOwner.emailAddress
-  )
+    val eData: EnvData = new EnvData(
+      theUser.profileLinkName,
+      theUser.profileLinkName,
+      theUser.aboutMeHeadline,
+      theUser.aboutMe,
+      locationId, // county
+      theUser.streetAddress, // street Address,
+      theUser.zipCode, // zip code
+      theUser.city, // city
+      theUser.phoneNumber, // phone number
+      personnummer, // TODO
+      theUser.isTermsOfUseApprovedAccepted, // isTermsOfUseApprovedAccepted
+      // Option(theUser.childFfriendly),
+      // Option(theUser.handicapFriendly),
+      // Option(theUser.havePets),
+      //Option(theUser.smoke),
+      Option(theUser.allkoholServing),
+      mainImage,
+      avatarImage,
+      theUser.firstName,
+      theUser.lastName,
+      theUser.getOwner.emailAddress,
+      theUser.getOwner.emailAddress
+    )
 
 
 
-  val uOptValues = new  UserProfileOptValues(
-    safeJava(theUser.payCache),
-    safeJava(theUser.paySwish),
-    safeJava(theUser.payBankCard),
-    safeJava(theUser.payIZettle),
-    safeJava(guest),
-    safeJava(host),
-    safeJava(theUser.maxNoOfGuest),
-    safeJava(theUser.minNoOfGuest),
-    safeJava(theUser.handicapFriendly), // moved from EnvData.
-    safeJava(theUser.childFfriendly),
-    safeJava(theUser.havePets),
-    safeJava(theUser.smoke)
-  )
+    val uOptValues = new UserProfileOptValues(
+      safeJava(theUser.payCache),
+      safeJava(theUser.paySwish),
+      safeJava(theUser.payBankCard),
+      safeJava(theUser.payIZettle),
+      safeJava(guest),
+      safeJava(host),
+      safeJava(theUser.maxNoOfGuest),
+      safeJava(theUser.minNoOfGuest),
+      safeJava(theUser.handicapFriendly), // moved from EnvData.
+      safeJava(theUser.childFfriendly),
+      safeJava(theUser.havePets),
+      safeJava(theUser.smoke)
+    )
 
     // Other values not fit to be in form-classes
     val extraValues = setExtraValues(theUser)
 
 
-  val nyForm =  AnvandareForm.fill(eData)
-  Ok(views.html.profile.skapa(nyForm,uOptValues,
-    retTagList, typ,
-    optionsLocationAreas = countyService.getCounties,
-    extraValues = extraValues,
-    editingProfile = Some(theUser),
-    termsAndConditions = contentService.getTermsAndConditions)
-  )
+    val nyForm = AnvandareForm.fill(eData)
+    Ok(views.html.profile.skapa(nyForm, uOptValues,
+      retTagList, typ,
+      optionsLocationAreas = countyService.getCounties,
+      extraValues = extraValues,
+      editingProfile = Some(theUser),
+      termsAndConditions = contentService.getTermsAndConditions)
+    )
 
-}
+  }
 
-  private def setExtraValues(userProfile: UserProfile): EditProfileExtraValues ={
+  private def setExtraValues(userProfile: UserProfile): EditProfileExtraValues = {
     // Other values not fit to be in form-classes
     val mainImage = userProfile.getMainImage match {
       case null => None
@@ -609,16 +596,15 @@ if(userTags != null) {
     )
   }
 
-  def safeJava(value : String) : String =  {
-    var outString : String = ""
+  def safeJava(value: String): String = {
+    var outString: String = ""
 
-    if(value != null && value != None) {
+    if (value != null && value != None) {
       outString = value
     }
 
     outString
   }
-
 
 
   /** ******************************************************
@@ -636,7 +622,7 @@ if(userTags != null) {
 
     var userTags = theUser.getTags
 
-    if(userTags != null) {
+    if (userTags != null) {
       var itterTags = userTags.iterator
 
       while (itterTags.hasNext) {
@@ -648,14 +634,14 @@ if(userTags != null) {
     var d = tagWordService.listByGroupOption("profile")
 
 
-    var l : Long = 0
-    var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
+    var l: Long = 0
+    var tagList: mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
 
 
 
-    if(d.isDefined){
-      for(theTag <- d.get) {
-        var newType : models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l+"]" )
+    if (d.isDefined) {
+      for (theTag <- d.get) {
+        var newType: models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l + "]")
         l = l + 1
 
         tagList.add(newType)
@@ -667,67 +653,66 @@ if(userTags != null) {
 
 
     // File with stored values
-    val tData : TagsData = new TagsData(
+    val tData: TagsData = new TagsData(
       List("adam", "bertil")
     )
 
-    val nyForm =  tagForm.fill(tData)
+    val nyForm = tagForm.fill(tData)
 
     Ok(views.html.profile.tags(tagForm, retTagList, typ))
   }
 
 
-
   // add favorite
-  def addFavorite(userCredentialObjectId : String) = SecuredAction(ajaxCall=true) { implicit request =>
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+  def addFavorite(userCredentialObjectId: String) = SecuredAction() { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+    var theUser = request.user.profiles.asScala.head
 
-    var uuid : UUID = UUID.fromString(userCredentialObjectId)
+    var uuid: UUID = UUID.fromString(userCredentialObjectId)
     var friendsUserCredential = userCredentialService.findById(uuid)
-    userProfileService.addFavorites(theUser,friendsUserCredential.get)
+    userProfileService.addFavorites(theUser, friendsUserCredential.get)
 
     Ok("Ok")
   }
 
   // remove favorite
-  def removeFavorite(userCredentialObjectId : String) = SecuredAction(ajaxCall=true) { implicit request =>
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+  def removeFavorite(userCredentialObjectId: String) = SecuredAction() { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+    var theUser = request.user.profiles.asScala.head
 
-    var uuid : UUID = UUID.fromString(userCredentialObjectId)
+    var uuid: UUID = UUID.fromString(userCredentialObjectId)
     var friendsUserCredential = userCredentialService.findById(uuid)
 
     // todo calll new method to remove favorite
 
-    userProfileService.removeFavorites(theUser,friendsUserCredential.get)
+    userProfileService.removeFavorites(theUser, friendsUserCredential.get)
 
     Ok("Ok")
   }
 
 
   // remove favorite
-  def isFavoriteToMe(userCredentialObjectId : String) = UserAwareAction { implicit request =>
+  def isFavoriteToMe(userCredentialObjectId: String) = UserAwareAction() { implicit request =>
 
     var user = request.user
     var isLoggedIn = false
     var svar = ""
     var errorOcurs = false
-    var execAnwer  = false
+    var execAnwer = false
 
-    var hasAccess =  Helpers.getUserFromRequest(request) match {
+    var hasAccess = user match {
       case Some(user) => true
       case None => false
     }
 
-    var theUser : Option[models.UserProfile] =  Helpers.getUserFromRequest(request) match {
+    var theUser: Option[models.UserProfile] = user match {
       case Some(user) => Some(user.profiles.asScala.head)
       case None => None
     }
 
 
 
-   // var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+    // var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
 
-    if(hasAccess) {
+    if (hasAccess) {
 
       var uuid: UUID = UUID.fromString(userCredentialObjectId)
       var friendsUserCredential = userCredentialService.findById(uuid)
@@ -768,18 +753,15 @@ if(userTags != null) {
   }
 
 
-
-
-
-  def testAction = Action  { implicit request =>
+  def testAction = Action { implicit request =>
 
     var host = request.remoteAddress
 
 
     var keys = request.headers.keys.iterator
-    var str : String = ""
+    var str: String = ""
 
-    while(keys.hasNext) {
+    while (keys.hasNext) {
       var obj = keys.next()
       str = str + "\n key = " + obj + " value= " + request.headers.apply(obj)
     }
@@ -792,42 +774,32 @@ if(userTags != null) {
   // SecuredAction
   // UserAwareAction
   // Action
-  def testAction2(callingString : String) = UserAwareAction { implicit request =>
+  def testAction2(callingString: String) = UserAwareAction() { implicit request =>
 
-    var user = request.user
-    var isLoggedIn = false
-    var svar = ""
+    val user: Option[UserCredential] = request.user
+    var response = ""
 
-    var hasAccess =  Helpers.getUserFromRequest(request) match {
+    val hasAccess = user match {
       case Some(user) => true
       case None => false
     }
 
-    var loggedIdUserProfile : Option[models.UserProfile] =  Helpers.getUserFromRequest(request) match {
+    val loggedIdUserProfile: Option[models.UserProfile] = user match {
       case Some(user) => Some(user.profiles.asScala.head)
       case None => None
     }
 
-    if(hasAccess == true) {
+    if (hasAccess == true) {
 
-      svar = loggedIdUserProfile.get.profileLinkName
+      response = loggedIdUserProfile.get.profileLinkName
     } else {
-      svar = "NO_USER_LOGGED_IN"
+      response = "NO_USER_LOGGED_IN"
     }
 
-    Ok(svar)
-
+    Ok(response)
   }
 
-  def testsida = Action { implicit request =>
-    Ok(views.html.test.json("test"))
-  }
-
-
-
-
-  def showFavoritesPage = SecuredAction
-  { implicit request =>
+  def showFavoritesPage = SecuredAction { implicit request =>
 
     var userProfile = request.user.asInstanceOf[UserCredential].profiles.asScala.head
 
@@ -836,14 +808,9 @@ if(userTags != null) {
   }
 
 
-
-
-
-
-
   /**
    * Save chaged tages
-    * @return
+   * @return
    */
   def saveTags = SecuredAction { implicit request =>
 
@@ -859,8 +826,7 @@ if(userTags != null) {
       reqUserProfile => {
         // test
 
-        for (d <- reqUserProfile.quality)
-        {
+        for (d <- reqUserProfile.quality) {
           map += (d -> d)
 
         }
@@ -868,15 +834,15 @@ if(userTags != null) {
 
       })
 
-      var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
-      var d = tagWordService.listByGroupOption("profile")
-      userProfileService.updateUserProfileTags(theUser, d, map)
+    var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
+    var d = tagWordService.listByGroupOption("profile")
+    userProfileService.updateUserProfileTags(theUser, d, map)
 
     Redirect(routes.UserProfileController.showTags())
   }
 
 
-  def convYesToTrueElseToFalse(arg : String) : Boolean = arg match {
+  def convYesToTrueElseToFalse(arg: String): Boolean = arg match {
     case "" => false
     case "JA" => true
     case "YES" => true
@@ -886,14 +852,13 @@ if(userTags != null) {
   }
 
 
-  def convOptionStringToString(arg : Option[String]) : String = arg match {
+  def convOptionStringToString(arg: Option[String]): String = arg match {
     case Some(arg) => arg
     case _ => ""
   }
 
 
-
-  def convBooleanTOYesOrNo(arg : Boolean) : String = arg match {
+  def convBooleanTOYesOrNo(arg: Boolean): String = arg match {
     case true => "JA"
     case false => "NEJ"
   }
@@ -901,69 +866,69 @@ if(userTags != null) {
 
   /** **************************************************************************************************
     Save UserProfile
-   ***************************************************************************************************/
+    * **************************************************************************************************/
   def editSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
     // My UserProfile
-    var userCredential = Helpers.getUserFromRequest.get
+    var userCredential = request.user
     var theUserProfile = userCredential.getUserProfile
 
 
-    val typ = new models.Types                      // all tags selected
-    var map: Map[String, String] = Map()            // to update tags in user profile
+    val typ = new models.Types // all tags selected
+    var map: Map[String, String] = Map() // to update tags in user profile
 
-    var aboutMeHeadlineText   : String = ""
-    var aboutMeText           : String = ""
-    var profileLinkName       : String = ""
-    var zipCode               : String = ""
-    var streetAddress         : String = ""
-    var city                  : String = ""
-    var phoneNumber           : String = ""
-    var countyId              : String = ""
-    var acceptTerms           : Boolean = false
+    var aboutMeHeadlineText: String = ""
+    var aboutMeText: String = ""
+    var profileLinkName: String = ""
+    var zipCode: String = ""
+    var streetAddress: String = ""
+    var city: String = ""
+    var phoneNumber: String = ""
+    var countyId: String = ""
+    var acceptTerms: Boolean = false
 
-    var childFfriendly        : String = ""
-    var handicapFriendly      : String = ""
-    var havePets              : String = ""
-    var smoke                 : String = ""
-    var allkoholServing       : String = ""
+    var childFfriendly: String = ""
+    var handicapFriendly: String = ""
+    var havePets: String = ""
+    var smoke: String = ""
+    var allkoholServing: String = ""
 
-    var payBankCard           : String = ""
-    var payCache              : String = ""
-    var payIZettle            : String = ""
-    var paySwish              : String = ""
-    var roleGuest             : String = ""
-    var roleHost              : String = ""
-    var numberOfGuest         : String = ""
-    var minGuest              : String = ""
+    var payBankCard: String = ""
+    var payCache: String = ""
+    var payIZettle: String = ""
+    var paySwish: String = ""
+    var roleGuest: String = ""
+    var roleHost: String = ""
+    var numberOfGuest: String = ""
+    var minGuest: String = ""
 
-    var firstName             : String = ""
-    var lastName              : String = ""
+    var firstName: String = ""
+    var lastName: String = ""
 
-    var emailAddress          : String = ""
+    var emailAddress: String = ""
 
     OptionsForm.bindFromRequest.fold(
       error => println("Error reading options "),
       ok => {
-          payBankCard = ok.payBankCard.getOrElse("")
-          payCache = ok.payCache.getOrElse("")
-          payIZettle = ok.payIZettle.getOrElse("")
-          paySwish = ok.paySwish.getOrElse("")
+        payBankCard = ok.payBankCard.getOrElse("")
+        payCache = ok.payCache.getOrElse("")
+        payIZettle = ok.payIZettle.getOrElse("")
+        paySwish = ok.paySwish.getOrElse("")
 
-          roleHost = ok.roleHost.getOrElse("")
-          numberOfGuest = ok.maxGuest
-          minGuest = ok.minGuest
+        roleHost = ok.roleHost.getOrElse("")
+        numberOfGuest = ok.maxGuest
+        minGuest = ok.minGuest
 
-          handicapFriendly  =  ok.handicapFriendly.getOrElse("")
-          childFfriendly    = ok.childFfriendly.getOrElse("")
-          havePets          = ok.havePets.getOrElse("")
-          smoke             = ok.smoke.getOrElse("")
+        handicapFriendly = ok.handicapFriendly.getOrElse("")
+        childFfriendly = ok.childFfriendly.getOrElse("")
+        havePets = ok.havePets.getOrElse("")
+        smoke = ok.smoke.getOrElse("")
 
-          for(tags<-ok.quality) {
-            typ.addVald(tags)
-            map += (tags -> tags)
-          }
+        for (tags <- ok.quality) {
+          typ.addVald(tags)
+          map += (tags -> tags)
         }
+      }
     )
 
 
@@ -975,12 +940,12 @@ if(userTags != null) {
     // Handle tags from form ...
     // Fetch all tags
     var d = tagWordService.listByGroupOption("profile")
-    var l : Long = 0
-    var tagList : mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
+    var l: Long = 0
+    var tagList: mutable.HashSet[models.Type] = new mutable.HashSet[models.Type]()
 
-    if(d.isDefined){
-      for(theTag <- d.get) {
-        var newType : models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l+"]" )
+    if (d.isDefined) {
+      for (theTag <- d.get) {
+        var newType: models.Type = new models.Type(l, theTag.tagName, theTag.tagName, "quality[" + l + "]")
         l = l + 1
 
         tagList.add(newType)
@@ -1005,26 +970,26 @@ if(userTags != null) {
       },
       reqUserProfile => {
 
-        aboutMeHeadlineText   = reqUserProfile.aboutmeheadline
-        aboutMeText           = reqUserProfile.aboutme
-        profileLinkName       = reqUserProfile.name
-        zipCode               = reqUserProfile.zipCode
-        streetAddress         = reqUserProfile.streetAddress
-        city                  = reqUserProfile.city
-        phoneNumber           = reqUserProfile.phoneNumber
-        countyId              = reqUserProfile.county
-        acceptTerms           = reqUserProfile.acceptTerms
-        firstName             = reqUserProfile.firstName
-        lastName              = reqUserProfile.lastName
-        allkoholServing       = convOptionStringToString(reqUserProfile.allkoholServing)
+        aboutMeHeadlineText = reqUserProfile.aboutmeheadline
+        aboutMeText = reqUserProfile.aboutme
+        profileLinkName = reqUserProfile.name
+        zipCode = reqUserProfile.zipCode
+        streetAddress = reqUserProfile.streetAddress
+        city = reqUserProfile.city
+        phoneNumber = reqUserProfile.phoneNumber
+        countyId = reqUserProfile.county
+        acceptTerms = reqUserProfile.acceptTerms
+        firstName = reqUserProfile.firstName
+        lastName = reqUserProfile.lastName
+        allkoholServing = convOptionStringToString(reqUserProfile.allkoholServing)
 
         // Gäst och värd
         // The user are always guest
-        if(!theUserProfile.getRole.contains(UserLevelScala.GUEST.Constant)) theUserProfile.getRole.add(UserLevelScala.GUEST.Constant)
+        if (!theUserProfile.getRole.contains(UserLevelScala.GUEST.Constant)) theUserProfile.getRole.add(UserLevelScala.GUEST.Constant)
 
         uOptValues.isBooleanSelectedHost match {
           case true =>
-            if(!theUserProfile.getRole.contains(UserLevelScala.HOST.Constant)) theUserProfile.getRole.add(UserLevelScala.HOST.Constant)
+            if (!theUserProfile.getRole.contains(UserLevelScala.HOST.Constant)) theUserProfile.getRole.add(UserLevelScala.HOST.Constant)
           case false =>
             theUserProfile.getRole.remove(UserLevelScala.HOST.Constant)
         }
@@ -1046,16 +1011,16 @@ if(userTags != null) {
 
         var t = userCredentialService.save(userCredential)
 
-        theUserProfile.firstName            = firstName
-        theUserProfile.lastName             = lastName
+        theUserProfile.firstName = firstName
+        theUserProfile.lastName = lastName
 
-        theUserProfile.aboutMeHeadline      = aboutMeHeadlineText
-        theUserProfile.aboutMe              = aboutMeText
-        theUserProfile.profileLinkName      = profileLinkName
-        theUserProfile.city                 = city
-        theUserProfile.zipCode              = zipCode
-        theUserProfile.streetAddress        = streetAddress
-        theUserProfile.phoneNumber          = phoneNumber
+        theUserProfile.aboutMeHeadline = aboutMeHeadlineText
+        theUserProfile.aboutMe = aboutMeText
+        theUserProfile.profileLinkName = profileLinkName
+        theUserProfile.city = city
+        theUserProfile.zipCode = zipCode
+        theUserProfile.streetAddress = streetAddress
+        theUserProfile.phoneNumber = phoneNumber
 
         theUserProfile.childFfriendly = childFfriendly
         theUserProfile.handicapFriendly = handicapFriendly
@@ -1072,7 +1037,7 @@ if(userTags != null) {
         theUserProfile.minNoOfGuest = uOptValues.minGuest
 
 
-        if(countyId == None || countyId == null || countyId.trim().size < 2) {
+        if (countyId == None || countyId == null || countyId.trim().size < 2) {
           //theUser.removeLocation()
           theUserProfile = userProfileService.removeAllLocationTags(theUserProfile)
         } else {
@@ -1094,9 +1059,9 @@ if(userTags != null) {
             case imageUUID: UUID =>
               fileService.getFileByObjectIdAndOwnerId(imageUUID, userCredential.objectId) match {
                 case Some(item) => theUserProfile = userProfileService.setAndRemoveAvatarImage(theUserProfile, item)
-                case _  => None
+                case _ => None
               }
-            }
+          }
           case None => None
         }
 
@@ -1106,13 +1071,13 @@ if(userTags != null) {
             case imageUUID: UUID =>
               fileService.getFileByObjectIdAndOwnerId(imageUUID, userCredential.objectId) match {
                 case Some(item) => theUserProfile = userProfileService.setAndRemoveMainImage(theUserProfile, item)
-                case _  => None
+                case _ => None
               }
           }
           case None => None
         }
 
-        theUserProfile.keyIdentity = emailAddress +  "_userpass"
+        theUserProfile.keyIdentity = emailAddress + "_userpass"
         theUserProfile.userIdentity = emailAddress
 
         Logger.debug("UP:userIdentity: " + theUserProfile.userIdentity)

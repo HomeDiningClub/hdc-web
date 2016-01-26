@@ -1,35 +1,36 @@
 package controllers
 
 import java.text.SimpleDateFormat
-import java.util
 import java.util.{Calendar, UUID, Date}
-
-import com.typesafe.plugin.MailerAPI
+import javax.inject.{Named, Inject}
 import constants.FlashMsgConstants
-import controllers.SuggestController._
 import enums.RoleEnums
 import models.message.{Message}
 import models.{UserProfile, UserCredential}
-import models.viewmodels.{MessageForm, EmailAndName}
+import models.viewmodels.{ReplyToGuestMessage, EmailAndName}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
-import play.Play
 import play.api.Logger
-import play.api.data.{Mapping, Form}
+import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.{RequestHeader, Controller}
-import securesocial.core.SecureSocial
+import securesocial.core.SecureSocial.SecuredRequest
 import services.{MailService, MessageService, UserCredentialService}
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ListBuffer
+import customUtils.security.SecureSocialRuntimeEnvironment
+import play.api.mvc._
+import models.formdata.MessageForm
 
-class MessagesController extends  Controller { }
+//@Named
+class MessagesController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                    val messagesApi: MessagesApi,
+                                    val userCredentialService: UserCredentialService,
+                                    val messageService: MessageService,
+                                    val mailService: MailService) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
-@SpringController
-object MessagesController extends Controller with SecureSocial {
-
+  /*
   @Autowired
   private var userCredentialService : UserCredentialService = _
 
@@ -38,6 +39,7 @@ object MessagesController extends Controller with SecureSocial {
 
   @Autowired
   private var mailService: MailService = _
+*/
 
   val messageFormMapping = Form(
     mapping(
@@ -58,52 +60,67 @@ object MessagesController extends Controller with SecureSocial {
     )(MessageForm.apply)(MessageForm.unapply)
   )
 
-  def markMessageAsRead(messageId : String) = SecuredAction(ajaxCall=true) { implicit request =>
-    val currentUser = utils.Helpers.getUserFromRequest
+  def markMessageAsRead(messageId : String) = SecuredAction { implicit request =>
 
-    if(currentUser.nonEmpty){
-      messageService.findById(UUID.fromString(messageId)) match {
-        case None =>
-          Ok("No Message found")
-        case Some(msg) =>
-          if(msg.getRecipient.objectId == currentUser.get.objectId){
-            msg.read = true
-            messageService.saveMessage(msg)
-            Ok("Ok")
-          }else{
-            Ok("User tried to read someone else's messages")
-          }
-      }
-    }else{
-      Ok("No logged in user")
-    }
-  }
-
-  def renderMessage(message: Message) = { implicit request: RequestHeader =>
-
-    utils.Helpers.getUserFromRequest match {
+    messageService.findById(UUID.fromString(messageId)) match {
       case None =>
-
-      case Some(currentUser) =>
-
-        if (message.getRecipient != null && message.getRecipient.equals(currentUser)) {
-          val hostReply = MessageForm.apply(message.getOwner().firstName, message.getOwner().lastName, Option(message.phone), Option(message.getOwner().objectId.toString),
-            Option(currentUser.objectId.toString), message.date, message.time, message.numberOfGuests, Option(message.request), Option(""), Option(message.`type`),
-            Option(message.getCreatedDate), Option(message.objectId.toString),message.getOwner().profiles.iterator().next().profileLinkName)
-
-          views.html.host.replyGuest.render(messageFormMapping.fill(hostReply), message.getOwner(), message.objectId.toString, message, request)
+        Ok("No Message found")
+      case Some(msg) =>
+        if(msg.getRecipient.objectId == request.user.asInstanceOf[UserCredential].objectId){
+          msg.read = true
+          messageService.saveMessage(msg)
+          Ok("Ok")
+        }else{
+          Ok("User tried to read someone else's messages")
         }
-
     }
   }
 
-  def replyToGuest = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request =>
+  def createListOfMessages(listOfMessages: Option[List[Message]], currentUser: UserCredential): Option[List[ReplyToGuestMessage]] = {
+    listOfMessages match {
+      case Some(items) =>
+        if(items.nonEmpty)
+          None
 
-    val currentUser = utils.Helpers.getUserFromRequest.get
+        Some(items.flatMap {x =>
+          mapMessageAndFillReplyForm(x, currentUser)
+        })
+      case _ => None
+    }
+  }
+
+  def mapMessageAndFillReplyForm(messageToRender: Message, currentUser: UserCredential): Option[ReplyToGuestMessage] = {
+    if (messageToRender.getRecipient != null && messageToRender.getRecipient.equals(currentUser)) {
+      val hostReply = MessageForm.apply(messageToRender.getOwner().firstName,
+        messageToRender.getOwner().lastName,
+        Option(messageToRender.phone),
+        Option(messageToRender.getOwner().objectId.toString),
+        Option(currentUser.objectId.toString),
+        messageToRender.date, messageToRender.time,
+        messageToRender.numberOfGuests,
+        Option(messageToRender.request),
+        Option(""),
+        Option(messageToRender.`type`),
+        Option(messageToRender.getCreatedDate),
+        Option(messageToRender.objectId.toString),
+        messageToRender.getOwner().profiles.iterator().next().profileLinkName)
+
+      Some(ReplyToGuestMessage(messageFormMapping.fill(hostReply),
+        messageToRender.getOwner(),
+        messageToRender.objectId.toString,
+        messageToRender))
+    }else{
+      None
+    }
+  }
+
+  def replyToGuest = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+
+    val currentUser = request.user
 
     messageFormMapping.bindFromRequest.fold(
       errors => {
-        BadRequest(views.html.host.hostErrorMsg.render(Messages("rating.add.error"), "error"))
+        BadRequest(views.html.host.hostErrorMsg.render(Messages("rating.add.error"), "error", request2Messages))
       },
       content => {
 
@@ -144,7 +161,11 @@ object MessagesController extends Controller with SecureSocial {
 
                     val appUrl: String = " " + currentUser.getFullName + " <a href='" + (baseUrl + userUrl) + "'>" + Messages("mails.hosting.mail.link-text") + "</a>"
 
-                    mailService.createMailNoReply(Messages("main.title") + " " + Messages("mails.hosting.mail.title"), Messages("mail.hdc.text") + appUrl, guest, hdc)
+                    mailService.createAndSendMailNoReply(
+                      subject = Messages("main.title") + " " + Messages("mails.hosting.mail.title"),
+                      message = Messages("mail.hdc.text") + appUrl,
+                      recipient = guest,
+                      from = hdc)
 
                   } else {
                     Logger.debug("Message not equal to request")
@@ -164,36 +185,36 @@ object MessagesController extends Controller with SecureSocial {
   }
 
 
-  def renderHostForm(hostingUser: UserCredential) = { implicit request: RequestHeader =>
+  def renderHostForm(hostingUser: UserCredential, currentUser: Option[UserCredential])(implicit request: RequestHeader) = {
 
-    utils.Helpers.getUserFromRequest match {
+    currentUser match {
       case None =>
         views.html.host.hostNotLoggedIn()
-      case Some(currentUser) =>
+      case Some(cu) =>
 
         // Disallow user to apply to themselves
-        if(hostingUser.objectId.toString.equalsIgnoreCase(currentUser.objectId.toString)){
-          views.html.host.hostErrorMsg.render(Messages("You can´t apply to yourself"), "info")
+        if(hostingUser.objectId.toString.equalsIgnoreCase(cu.objectId.toString)){
+          views.html.host.hostErrorMsg.render(Messages("You can´t apply to yourself"), "info", request2Messages)
         }else{
 
           val today = Calendar.getInstance().getTime()
           val format = new SimpleDateFormat("HH:mm")
           val currentTime = format.parse(format.format(new Date()))
 
-          val host = MessageForm.apply(currentUser.firstName(), currentUser.lastName(), Option(currentUser.getPhone), Option(currentUser.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(""), Option(new Date()), Option(""), currentUser.profiles.asScala.head.profileLinkName)
+          val host = MessageForm.apply(cu.firstName, cu.lastName, Option(cu.getPhone), Option(cu.objectId.toString), Option(hostingUser.objectId.toString), new Date(), currentTime, 1, Option(""), Option(""), Option(""), Option(new Date()), Option(""), cu.profiles.asScala.head.profileLinkName)
 
-          views.html.host.applyHost.render(messageFormMapping.fill(host), Some(hostingUser), request)
+          views.html.host.applyHost.render(messageFormMapping.fill(host), Some(hostingUser), Some(cu), request2Messages)
         }
     }
   }
 
 
-  def applyToHost = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request =>
-    val currentUser = utils.Helpers.getUserFromRequest.get
+  def applyToHost = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+    val currentUser = request.user
 
     messageFormMapping.bindFromRequest.fold(
       errors => {
-        BadRequest(views.html.host.applyHost(errors, Option(currentUser)))
+        BadRequest(views.html.host.applyHost(errors, Option(currentUser), Some(request.user)))
       },
       content => {
 
@@ -203,14 +224,14 @@ object MessagesController extends Controller with SecureSocial {
             case Some(hostingUser) =>
               Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName)).flashing(FlashMsgConstants.Error -> Messages("mails.error.no.message"))
             case None =>
-              BadRequest(views.html.host.hostErrorMsg.render(Messages("mails.error.no.message"), "error"))
+              BadRequest(views.html.host.hostErrorMsg.render(Messages("mails.error.no.message"), "error", request2Messages))
           }
 
         } else {
 
           userCredentialService.findById(UUID.fromString(content.hostId.getOrElse(""))) match {
             case None =>
-              BadRequest(views.html.host.hostErrorMsg.render(Messages("rating.add.error"), "error"))
+              BadRequest(views.html.host.hostErrorMsg.render(Messages("rating.add.error"), "error", request2Messages))
             case Some(hostingUser) => {
 
               messageService.createRequest(currentUser, hostingUser, content.date, content.time, content.numberOfGuests, content.request.getOrElse(""), content.phone)
@@ -235,7 +256,11 @@ object MessagesController extends Controller with SecureSocial {
 
               val appUrl: String = " " + currentUser.profiles.asScala.head.profileLinkName + " <a href='" + (baseUrl + userUrl) + "'>" + Messages("mails.hosting.mail.link-text") + "</a>"
 
-              mailService.createMailNoReply(Messages("main.title") + " " + Messages("mails.hosting.mail.title"), Messages("mail.hdc.text") + appUrl, host, hdc)
+              mailService.createAndSendMailNoReply(
+                subject = Messages("main.title") + " " + Messages("mails.hosting.mail.title"),
+                message = Messages("mail.hdc.text") + appUrl,
+                recipient = host,
+                from = hdc)
 
               Redirect(routes.UserProfileController.viewProfileByName(hostingUser.profiles.asScala.head.profileLinkName))
             }

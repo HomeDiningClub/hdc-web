@@ -1,8 +1,7 @@
-@(userAddToRoleForm: Form[models.viewmodels.AddUserToRoleForm],
+@(userAddToRoleForm: Form[models.formdata.AddUserToRoleForm],
         optionUsers: Option[Seq[(String,String)]],
-        optionRoles: Option[Seq[(String,String)]])(implicit flash: Flash)
+        optionRoles: Option[Seq[(String,String)]])(implicit flash: Flash, messages: Messages)
 
-@import helper.twitterBootstrap._
 
 @mainedit(Messages("admin.title")) {
 

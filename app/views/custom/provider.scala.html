@@ -1,19 +1,17 @@
-@(providerId: String, loginForm: Option[play.api.data.Form[(String, String)]] = None, providerHeader: Option[String] = None)(implicit request: play.api.mvc.RequestHeader)
+@(providerId: String, loginForm: Option[Form[(String, String)]] = None, providerHeader: Option[String] = None)(implicit request: RequestHeader, env: securesocial.core.RuntimeEnvironment, messages: Messages, appContext: AppContext)
 
-@import securesocial.core.Registry
-@import securesocial.core.IdentityProvider
 @import securesocial.core.providers.UsernamePasswordProvider
 @import securesocial.core.AuthenticationMethod._
-@import securesocial.core.providers.utils.RoutesHelper
 @import play.api.Logger
 @import helper._
+
 @implicitFieldConstructor = @{ FieldConstructor(securesocial.views.html.inputFieldConstructor.f) }
 
-@Registry.providers.get(providerId).map { provider =>
+@env.providers.get(providerId).map { provider =>
             @if( provider.authMethod == OAuth1 || provider.authMethod == OAuth2 ) {
                 <div class="col-xs-12 col-md-10 col-md-offset-1 login-form">
-                @defining( "securesocial/images/providers/%s.png".format(provider.id) ) { imageUrl =>
-                    <a href="@provider.authenticationUrl"> <img src="@RoutesHelper.at(imageUrl)"/></a>
+                @defining("securesocial/images/providers/%s.png".format(provider.id)) { imageUrl: String =>
+                    <a href="@env.routes.authenticationUrl(provider.id)"> <img src="@controllers.routes.Assets.at(imageUrl)"/></a>
                 }
                 </div>
             }
@@ -21,9 +19,10 @@
             @if( provider.authMethod == UserPassword ) {
                 <div class="col-xs-12 col-md-4 col-md-offset-1 login-form">
                 @if(providerHeader.nonEmpty){ <h3>@providerHeader</h3> }
-                <form action = "@securesocial.core.providers.utils.RoutesHelper.authenticateByPost("userpass").absoluteURL(IdentityProvider.sslEnabled)(request)"
+                <form action = "@env.routes.authenticationUrl("userpass")"
                       class="form-horizontal" autocomplete="off" method="POST">
                     <fieldset>
+                        @CSRF.formField
 
                         @if( UsernamePasswordProvider.withUserNameSupport ) {
                             @helper.inputText(
@@ -52,7 +51,7 @@
 
                         <div class="form-actions clearfix">
                             <button type="submit" class="btn btn-primary pull-left">@Messages("securesocial.login.title")</button>
-                            <a class="btn pull-left" href="@securesocial.core.providers.utils.RoutesHelper.startResetPassword()">@Messages("securesocial.login.forgotPassword")</a>
+                            <a class="btn pull-left" href="@env.routes.startResetPasswordUrl">@Messages("securesocial.login.forgotPassword")</a>
                         </div>
                     </fieldset>
                 </form>
@@ -62,7 +61,7 @@
 
                 <div class="col-xs-12 col-md-4 col-md-offset-1 login-form">
                     <h3>@Messages("securesocial.login.signUp")</h3><br>
-                    <p><a class="btn btn-primary" href="@securesocial.core.providers.utils.RoutesHelper.startSignUp()">@Messages("securesocial.login.here")</a></p>
+                    <p><a class="btn btn-primary" href="@env.routes.startSignUpUrl">@Messages("securesocial.login.here")</a></p>
                 </div>
             }
 }.getOrElse {

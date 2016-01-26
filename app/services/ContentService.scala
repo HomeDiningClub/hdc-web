@@ -1,5 +1,7 @@
 package services
 
+import javax.inject.{Named,Inject}
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
@@ -18,9 +20,11 @@ import scala.collection.immutable.HashSet
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
+//@Named
 @Service
-class ContentService {
+class ContentService @Inject()(val template: Neo4jTemplate, val contentPageRepository: ContentPageRepository, val relatedPageRepository: RelatedPageRepository) {
 
+  /*
   @Autowired
   private var template: Neo4jTemplate = _
 
@@ -29,6 +33,7 @@ class ContentService {
 
   @Autowired
   private var relatedPageRepository: RelatedPageRepository = _
+  */
 
   @Transactional(readOnly = true)
   def findContentPageByName(pageName: String): ContentPage = {

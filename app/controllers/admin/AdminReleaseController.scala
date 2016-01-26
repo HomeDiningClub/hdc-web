@@ -1,32 +1,36 @@
 package controllers.admin
 
+import javax.inject.{Named, Inject}
+
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc._
-import securesocial.core.SecureSocial
+
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial.SecuredRequest
 import services._
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import enums.RoleEnums
 import models.UserCredential
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
+import customUtils.security.SecureSocialRuntimeEnvironment
 
-@SpringController
-class AdminReleaseController extends Controller with SecureSocial {
+//@Named
+class AdminReleaseController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
   @Autowired
   private var countyService: CountyService = _
+
   @Autowired
   private var tagWordService: TagWordService = _
+
   @Autowired
   private var userRoleService: UserRoleService = _
+
   @Autowired
   private var userCredentialService: UserCredentialService = _
-  @Autowired
-  private var neo4jDatabaseCleanerService: Neo4jDatabaseCleanerService = _
 
-
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.release.index())
   }
 
@@ -108,18 +112,6 @@ class AdminReleaseController extends Controller with SecureSocial {
     }
 
     Ok("User added to admin-role")
-  }
-
-  // Clean up the whole database, use with extreme caution
-  def deleteAllFromDB = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
-
-    if(1 == 0){ // Disabled for now
-      val results = neo4jDatabaseCleanerService.cleanDb
-      val successMessage = Messages("admin.success")
-      Ok(successMessage)
-    }
-
-    Ok("Disabled for now")
   }
 
 }

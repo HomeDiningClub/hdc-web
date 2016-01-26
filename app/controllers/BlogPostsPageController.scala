@@ -5,29 +5,37 @@ import models.jsonmodels.{BlogPostBoxJSON}
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
-import securesocial.core.SecureSocial
 import models.{BlogPost, UserCredential}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages, Lang}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
 import services.{UserProfileService, ContentFileService, BlogPostsService}
 import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
 import java.util.UUID
-import utils.authorization.{WithRoleAndOwnerOfObject, WithRole}
+import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
+import traits.ProvidesAppContext
 import scala.Some
 import models.viewmodels._
-import utils.Helpers
+import customUtils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
+import javax.inject.{Named, Inject}
+//import com.google.inject.name.Named
+//import com.google.inject.Inject
 import scala.collection.mutable.ListBuffer
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.BlogPostsForm
 
+//@Named
+class BlogPostsPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                         val blogPostsService: BlogPostsService,
+                                         val userProfileService: UserProfileService,
+                                         val fileService: ContentFileService) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
 
-@SpringController
-class BlogPostsPageController extends Controller with SecureSocial {
-
-
+  /*
   @Autowired
   private var blogPostsService: BlogPostsService = _
 
@@ -36,7 +44,7 @@ class BlogPostsPageController extends Controller with SecureSocial {
 
   @Autowired
   private var fileService: ContentFileService = _
-
+*/
 
   val recForm = Form(
     mapping(
@@ -60,10 +68,10 @@ class BlogPostsPageController extends Controller with SecureSocial {
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-    val currentUser: Option[UserCredential] = Helpers.getUserFromRequest
+    val currentUser: UserCredential = request.user
 
     // Only HOSTS are allowed to create blog items
-    if(!currentUser.get.profiles.iterator().next().isUserHost)
+    if(!currentUser.profiles.iterator().next().isUserHost)
       Unauthorized("Not authorized to perform this function")
 
 
@@ -83,7 +91,7 @@ class BlogPostsPageController extends Controller with SecureSocial {
               case Some(item) =>
 
 
-                item.isEditableBy(currentUser.get.objectId).asInstanceOf[Boolean] match {
+                item.isEditableBy(currentUser.objectId).asInstanceOf[Boolean] match {
                   case true =>
                     item.setTitle(contentData.title.get)
                     Some(item)
@@ -116,7 +124,7 @@ class BlogPostsPageController extends Controller with SecureSocial {
         contentData.mainImage match {
           case Some(imageId) => UUID.fromString(imageId) match {
             case imageUUID: UUID =>
-              fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.get.objectId) match {
+              fileService.getFileByObjectIdAndOwnerId(imageUUID, currentUser.objectId) match {
                 case Some(item) => newRec.get.setAndRemoveMainImage(item)
                 case _ => None
               }
@@ -141,7 +149,7 @@ class BlogPostsPageController extends Controller with SecureSocial {
 
 
         val savedBlogPost = blogPostsService.add(newRec.get)
-        val savedProfile = userProfileService.addBlogPostsToProfile(currentUser.get, savedBlogPost)
+        val savedProfile = userProfileService.addBlogPostsToProfile(currentUser, savedBlogPost)
         val blogPostObjectId = savedBlogPost.objectId
         val successMessage = Messages("blog.add.success", savedBlogPost.getTitle)
         Redirect(controllers.routes.BlogPostsPageController.view(blogPostObjectId)).flashing(FlashMsgConstants.Success -> successMessage)
@@ -319,7 +327,24 @@ class BlogPostsPageController extends Controller with SecureSocial {
 
   // edit
 
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
+  private def buildMetaData(blogPost: BlogPost, request: RequestHeader): Option[MetaData] = {
+    val domain = "//" + request.domain
+
+    Some(MetaData(
+      fbUrl = domain + request.path,
+      fbTitle = blogPost.getTitle,
+      fbDesc = blogPost.getText match {
+        case null | "" => ""
+        case item: String => customUtils.Helpers.limitLength(Helpers.removeHtmlTags(item), 125)
+      },
+      fbImage = blogPost.getMainImage match {
+        case image: ContentFile => { domain + routes.ImageController.profileNormal(image.getStoreId).url }
+        case _ => { "" }
+      }
+    ))
+  }
+
+  def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val editingRecipe = blogPostsService.findById(objectId)
 
     editingRecipe match {
@@ -329,14 +354,15 @@ class BlogPostsPageController extends Controller with SecureSocial {
         print("error ..... ")
         NotFound(errorMsg)
       case Some(item) =>
-        item.isEditableBy(Helpers.getUserFromRequest.get.objectId)
+        item.isEditableBy(request.user.objectId)
         item.setTitle(item.getTitle)
         print("svar objectId : " + item.objectId)
+
         val form = BlogPostsForm.apply(
-        id = Some(item.objectId.toString),
-        title = Some(item.getTitle),
-        maintext = Some(item.getText),
-        mainImage = Some(""))
+          id = Some(item.objectId.toString),
+          title = Some(item.getTitle),
+          maintext = Some(item.getText),
+          mainImage = Some(""))
 
 
         // Get any images and sort them
@@ -346,25 +372,8 @@ class BlogPostsPageController extends Controller with SecureSocial {
     }
   }
 
-  private def buildMetaData(blogPost: BlogPost, request: RequestHeader): Option[MetaData] = {
-    val domain = "//" + request.domain
-
-    Some(MetaData(
-      fbUrl = domain + request.path,
-      fbTitle = blogPost.getTitle,
-      fbDesc = blogPost.getText match {
-        case null | "" => ""
-        case item: String => utils.Helpers.limitLength(Helpers.removeHtmlTags(item), 125)
-      },
-      fbImage = blogPost.getMainImage match {
-        case image: ContentFile => { domain + routes.ImageController.profileNormal(image.getStoreId).url }
-        case _ => { "" }
-      }
-    ))
-  }
-
-  private def isThisMyBlogPost(blogPost: BlogPost)(implicit request: RequestHeader): Boolean = {
-    utils.Helpers.getUserFromRequest match {
+  private def isThisMyBlogPost(blogPost: BlogPost)(implicit request: RequestWithUser[AnyContent,UserCredential]): Boolean = {
+    request.user match {
       case None =>
         false
       case Some(user) =>
@@ -391,7 +400,7 @@ class BlogPostsPageController extends Controller with SecureSocial {
 
 
   // Delete
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request =>
+  def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: RequestHeader =>
     val blogPost: Option[BlogPost] = blogPostsService.findById(objectId)
 
     if(blogPost.isEmpty){

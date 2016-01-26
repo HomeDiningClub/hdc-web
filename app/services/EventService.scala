@@ -1,5 +1,6 @@
 package services
 
+import javax.inject.{Singleton, Named, Inject}
 import models.files.ContentFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
@@ -12,9 +13,9 @@ import models.{Event, UserProfile, UserCredential}
 import scala.collection.JavaConverters._
 import scala.List
 import java.util.UUID
-import models.viewmodels.{EventFormDate, EventForm, EventBox}
+import models.viewmodels.EventBox
 import controllers.routes
-import utils.Helpers
+import customUtils.Helpers
 import scala.collection.mutable.ListBuffer
 import models.event.{EventDate, MealType}
 import play.api.data.Form
@@ -24,15 +25,19 @@ import enums.SortOrderEnums
 import enums.SortOrderEnums.SortOrderEnums
 import org.joda.time.DateTime
 import play.api.Logger
+import models.formdata.{EventDateForm, EventForm}
 
+//@Named
 @Service
-class EventService {
+class EventService @Inject()(val template: Neo4jTemplate, val eventRepository: EventRepository, val mealTypeService: MealTypeService) {
 
+  /*
   @Autowired
   private var template: Neo4jTemplate = _
 
   @Autowired
   private var eventRepository: EventRepository = _
+*/
 
   @Transactional(readOnly = true)
   def findByownerProfileProfileLinkNameAndEventLinkName(profileLinkName: String, eventLinkName: String): Option[Event] = {
@@ -100,11 +105,11 @@ class EventService {
     }
   }
 
-  def convertToEventFormDates(inputList: Option[List[EventDate]]): Option[Seq[EventFormDate]] = {
+  def convertToEventFormDates(inputList: Option[List[EventDate]]): Option[List[EventDateForm]] = {
     inputList match {
       case None => None
       case Some(items) =>
-        Some(items.map(x => EventFormDate(Some(x.objectId.toString), x.getEventDateTime, 0)).toSeq)
+        Some(items.map(x => EventDateForm(Some(x.objectId.toString), x.getEventDateTime, 0)))
     }
   }
 
@@ -125,12 +130,12 @@ class EventService {
         "body" -> optional(text),
         "mainimage" -> optional(text),
         "images" -> optional(text),
-        "eventDates" -> optional(seq(
+        "eventDates" -> optional(list(
           mapping(
             "id" -> optional(text),
             "date" -> date,
             "guestsbooked" -> number
-          )(EventFormDate.apply)(EventFormDate.unapply)
+          )(EventDateForm.apply)(EventDateForm.unapply)
         ))
       )(EventForm.apply)(EventForm.unapply)
     )
@@ -169,19 +174,19 @@ class EventService {
     }
   }
 
-  def updateOldEventDate(formDate: EventFormDate, storedDate: EventDate) {
+  def updateOldEventDate(formDate: EventDateForm, storedDate: EventDate) {
     // TODO: Add guest reminder email
     storedDate.setEventDateTime(formDate.date)
   }
 
-  def addEventDate(formDate: EventFormDate, event: Event){
+  def addEventDate(formDate: EventDateForm, event: Event){
     event.addEventDate(new EventDate(formDate.date))
   }
 
 
   @Transactional(readOnly = true)
   def getMealTypes(): Option[List[MealType]] = {
-    InstancedServices.mealTypeService.listAll()
+    mealTypeService.listAll()
   }
 
   @Transactional(readOnly = true)
@@ -299,7 +304,7 @@ class EventService {
 
 
   @Transactional(readOnly = false)
-  private def deleteAll {
+  private def deleteAll() {
     eventRepository.deleteAll()
   }
 

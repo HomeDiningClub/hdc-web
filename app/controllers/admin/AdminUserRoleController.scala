@@ -1,35 +1,38 @@
 package controllers.admin
 
+import javax.inject.{Named, Inject}
+
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc._
-import securesocial.core.SecureSocial
+
 import play.api.data.Form
 import play.api.data.Forms._
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
 import models.{UserCredential, UserRole}
+import securesocial.core.SecureSocial.SecuredRequest
 import services.{UserCredentialService, UserRoleService}
-import models.viewmodels.UserRoleForm
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import scala.collection.mutable
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
 import enums.RoleEnums
-import utils.authorization.WithRole
-import models.viewmodels.AddUserToRoleForm
-import models.viewmodels.UserRoleForm
+import customUtils.authorization.WithRole
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.{UserRoleForm, AddUserToRoleForm}
+import models.formdata.UserRoleForm
 
-@SpringController
-class AdminUserRoleController extends Controller with SecureSocial {
+//@Named
+class AdminUserRoleController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
   @Autowired
   private var userRoleService: UserRoleService = _
+
   @Autowired
   private var userCredentialService: UserCredentialService = _
 
-
   // Edit - Listing
-  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val list: Option[List[UserRole]] = userRoleService.getListOfAll
     Ok(views.html.admin.roles.list(list))
   }
@@ -42,15 +45,15 @@ class AdminUserRoleController extends Controller with SecureSocial {
     )(UserRoleForm.apply)(UserRoleForm.unapply)
   )
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.roles.index())
   }
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.roles.add(userRoleForm))
   }
 
-  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     userRoleForm.bindFromRequest.fold(
       errors => {
@@ -83,11 +86,11 @@ class AdminUserRoleController extends Controller with SecureSocial {
     )(AddUserToRoleForm.apply)(AddUserToRoleForm.unapply)
   )
 
-  def addUserToRole() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def addUserToRole() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.roles.addUserToRole(userAddToRoleForm,getUsersAsDropDown,getRolesAsDropDown))
   }
 
-  def addUserToRoleSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def addUserToRoleSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     userAddToRoleForm.bindFromRequest.fold(
       errors => {
@@ -144,7 +147,7 @@ class AdminUserRoleController extends Controller with SecureSocial {
 
 
   // Edit - Edit content
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val item = userRoleService.findById(objectId)
 
     item match {
@@ -161,7 +164,7 @@ class AdminUserRoleController extends Controller with SecureSocial {
   }
 
   // Edit - Delete content
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val result: Boolean = userRoleService.deleteById(objectId)
 
     result match {

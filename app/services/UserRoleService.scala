@@ -1,23 +1,27 @@
 package services
 
+import javax.inject.{Named,Inject}
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import repositories._
 import models.{UserCredential, UserRole}
 import scala.collection.JavaConverters._
-import scala.List
 import java.util.UUID
 import enums.RoleEnums.RoleEnums
 
+//@Named
 @Service
-class UserRoleService {
+class UserRoleService @Inject() (val userRoleRepository: UserRoleRepository, val userCredentialService: UserCredentialService) {
 
+  /*
   @Autowired
   private var userRoleRepository: UserRoleRepository = _
 
   @Autowired
   private var userCredentialService: UserCredentialService = _
+*/
 
   def findByName(name: String): Option[UserRole] = {
     val retItem = userRoleRepository.findByname(name)

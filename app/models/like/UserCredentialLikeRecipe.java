@@ -6,7 +6,6 @@ import models.modelconstants.RelationshipTypesJava;
 import org.springframework.data.neo4j.annotation.EndNode;
 import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
-import services.InstancedServices;
 
 @RelationshipEntity(type = RelationshipTypesJava.LIKES_RECIPE.Constant)
 public class UserCredentialLikeRecipe extends BaseLike {
@@ -18,11 +17,17 @@ public class UserCredentialLikeRecipe extends BaseLike {
     public Recipe userLikes;
 
     public UserCredential getUserWhoLikes() {
-        return InstancedServices.userCredentialService().fetchUserCredential(userWhoLikes);
+        if(userWhoLikes == null)
+            throw new NullPointerException("getUserWhoLikes() in UserCredentialLikeRecipe is null, you need to @Fetch");
+        return userWhoLikes;
+        //return InstancedServices.userCredentialService().fetchUserCredential(userWhoLikes);
     }
 
     public Recipe getUserLikes() {
-        return InstancedServices.recipeService().fetchRecipe(userLikes);
+        if(userLikes == null)
+            throw new NullPointerException("getUserLikes() in UserCredentialLikeRecipe is null, you need to @Fetch");
+        return userLikes;
+        //return InstancedServices.recipeService().fetchRecipe(userLikes);
     }
 
 

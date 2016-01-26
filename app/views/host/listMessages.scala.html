@@ -1,0 +1,7 @@
+@(listOfMessages: Option[List[ReplyToGuestMessage]], currentUser: Option[UserCredential])(implicit request: RequestHeader, messages: Messages)
+@if(listOfMessages.nonEmpty && currentUser.nonEmpty) {
+    @for(msg <- listOfMessages.get) {
+        @views.html.host.replyGuest(msg.form, msg.owner, msg.msgId, msg.message,Some(currentUser.get))
+        @*MessagesController.renderMessage(msg, currentUser)(request)*@
+    }
+}

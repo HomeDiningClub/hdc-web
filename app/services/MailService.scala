@@ -1,82 +1,67 @@
 package services
 
-import java.util.Date
+import javax.inject.{Named, Inject}
 import models.viewmodels.{EmailAndName}
 import org.springframework.stereotype.Service
-import play.api.Play.current
-import com.typesafe.plugin._
-import play.api.Logger
-import play.api.i18n.Messages
+import play.api.i18n.{MessagesApi, I18nSupport, Messages}
+import play.api.libs.mailer.MailerClient
+import play.api.libs.mailer._
 
+//@Named
 @Service
-class MailService {
+class MailService @Inject() (mailer: MailerClient, val messagesApi: MessagesApi) extends I18nSupport {
 
-  def createMail(subject: String, message: String, recipients: List[EmailAndName], bbc: List[EmailAndName], from: EmailAndName, replyTo: EmailAndName): MailerAPI = {
-    val mail = use[MailerPlugin].email
-    val recipientsList: List[String] = null
-    val bbcList: List[String] = null
+  def createMail(subject: String, message: String, recipients: List[EmailAndName], bcc: Option[List[EmailAndName]], from: EmailAndName, replyTo: EmailAndName): Email = {
 
-    mail.setSubject(subject)
-
-    if (!recipients.isEmpty) {
-      recipients.foreach{r =>
-        recipientsList + buildNameAndEmailString(r).toString
+    val email = Email(
+      subject = subject,
+      from = buildNameAndEmailString(from).toString,
+      to = buildRecipientsList(recipients),
+      replyTo = Some(buildNameAndEmailString(replyTo).toString),
+      bodyHtml = Some("<html>" + message + "</html>"),
+      bcc = bcc match {
+        case Some(items) =>
+          buildRecipientsList(items)
+        case None => Seq.empty
       }
-      mail.setRecipient(recipientsList:_*)
-    }
-
-    if (!bbc.isEmpty) {
-      bbc.foreach{bbc =>
-        bbcList + buildNameAndEmailString(bbc).toString
-      }
-      mail.setBcc(bbcList:_*)
-    }
-
-    mail.setFrom(buildNameAndEmailString(from).toString)
-    mail.setReplyTo(buildNameAndEmailString(replyTo).toString)
-    mail.sendHtml("<html>" + message + "</html>" )
-
-    mail
+    )
+    email
   }
 
-  def createMail(subject: String, message: String, recipient: EmailAndName, bbc: EmailAndName, from: EmailAndName, replyTo: EmailAndName) : MailerAPI = {
-    val mail = use[MailerPlugin].email
+  def createAndSendMailNoReply(subject: String, message: String, recipient: EmailAndName, from: EmailAndName): Email = {
 
-
-    mail.setSubject(subject)
-    mail.setRecipient(buildNameAndEmailString(recipient))
-    mail.setFrom(buildNameAndEmailString(from))
-    mail.setReplyTo(buildNameAndEmailString(replyTo))
-    mail.sendHtml("<html>" + message + "</html>" )
-
-    mail
-  }
-
-  def createMailNoReply(subject: String, message: String, recipient: EmailAndName, from: EmailAndName) : MailerAPI = {
-    val mail = use[MailerPlugin].email
-
-    val noReply = EmailAndName(
+    val noReplyMessage: EmailAndName = EmailAndName(
       name = Messages("main.title"),
       email = Messages("mail.text.no.reply")
     )
 
-    mail.setSubject(subject)
-    mail.setRecipient(buildNameAndEmailString(recipient))
-    mail.setReplyTo(buildNameAndEmailString(noReply))
-    mail.setFrom(buildNameAndEmailString(from))
-    mail.sendHtml("<html>" + message + "</html>" )
-
-    mail
+    val email = createMail(
+      subject = subject,
+      recipients = List(recipient),
+      message = message,
+      bcc = None,
+      from = from,
+      replyTo = noReplyMessage
+    )
+    sendMail(email)
+    email
   }
 
-  def sendMail(mailToSend: MailerAPI) {
-    val nowDate: Date = new Date
-      mailToSend.send("text")
-      Logger.debug("Mail sent at:" + nowDate)
-
+  def sendMail(email:Email): String = {
+    mailer.send(email)
   }
 
-  def buildNameAndEmailString(emailObject: EmailAndName): String = {
+  private def buildRecipientsList(recipients: List[EmailAndName]): Seq[String] = {
+    val ret: Seq[String] = Seq.empty
+    if (recipients.nonEmpty) {
+      recipients.foreach { r =>
+        ret + buildNameAndEmailString(r).toString
+      }
+    }
+    ret
+  }
+
+  private def buildNameAndEmailString(emailObject: EmailAndName): String = {
     val returnStr: String = emailObject.name + "<" + emailObject.email + ">"
     returnStr
   }

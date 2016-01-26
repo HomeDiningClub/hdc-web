@@ -1,4 +1,6 @@
-@(eventForm: Form[models.viewmodels.EventForm], editingEvent: Option[models.Event] = None, extraValues: models.viewmodels.EditEventExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
+@import models.formdata.EventForm
+
+@(eventForm: Form[EventForm], editingEvent: Option[models.Event] = None, extraValues: models.viewmodels.EditEventExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages, appContext: AppContext)
 
 @script = {
     <script>
@@ -13,7 +15,7 @@
                     required: '@{Messages("event.edit.add.name.validation")}'
                 }
             }
-        }
+        };
 
         $('.form-control.date input[type=date]').datetimepicker(
             {
@@ -27,7 +29,7 @@
     });
     </script>
 }
-@main(Messages("event.create.title"), footerHtml = file.modalImages.render(), footerScripts = script){
+@main(Messages("event.create.title"), footerHtml = file.modalImages.render(messages), footerScripts = script){
 
     <div class="container maincontent-container">
         <div class="row">
@@ -57,7 +59,7 @@
                         </div>
 
                         <div class="step">
-                            @helper.repeat(eventForm("eventDates"), min = 1) { eventDatesField =>
+                            @helper.repeat(field = eventForm("eventDates"), min = 1) { eventDatesField =>
                                 <div class="form-group">
                                     <div class="input-group date">
                                         @helper.inputDate(eventDatesField("date"), '_label -> Messages("event.edit.add.date"), '_help -> Messages("event.edit.add.date.validation"), '_class -> "form-control date")

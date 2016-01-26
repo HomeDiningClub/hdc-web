@@ -62,3 +62,24 @@ function attachEventsToButtons(config){
     $(config.resultsNextBtn).off("click").on("click", function(){getPagedJSON(config, 1)});
     $(config.resultsPrevBtn).off("click").on("click", function(){getPagedJSON(config, -1)});
 }
+
+
+
+// Example config:
+//var config = Object.create(null);
+//config.url = '@{routes.EventPageController.viewEventByNameAndProfilePageJSON()}';
+//config.queryParam = 'profileName';
+//config.queryValue = '@profileName';
+//config.htmlTemplate = htmlTemplate;
+function getAjax(config){
+    $.get(config.url + '?' + config.queryParam + '=' + config.queryValue, function(data){
+        var myArr = [];
+        if(config.htmlTemplate){
+            $.each(data,function(key,value) {
+                myArr.push(config.htmlTemplate(value));
+            });
+            return myArr;
+        }
+        return data;
+    });
+}

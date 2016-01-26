@@ -1,10 +1,11 @@
 package models.rating;
 
 import models.UserCredential;
-import models.base.AuditEntity;
 import models.modelconstants.RelationshipTypesJava;
-import org.springframework.data.neo4j.annotation.*;
-import services.InstancedServices;
+import org.springframework.data.neo4j.annotation.EndNode;
+import org.springframework.data.neo4j.annotation.Fetch;
+import org.springframework.data.neo4j.annotation.RelationshipEntity;
+import org.springframework.data.neo4j.annotation.StartNode;
 
 @RelationshipEntity(type = RelationshipTypesJava.RATED_USER.Constant)
 public class RatesUserCredential extends BaseRating {

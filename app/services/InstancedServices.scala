@@ -1,5 +1,7 @@
 package services
 
+import javax.inject.{Singleton, Named, Inject}
+
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -8,9 +10,25 @@ import org.springframework.beans.factory.annotation.Autowired
 // Example on real life calls:
 // InstancedServices.userCredentialService.userCredentialRepository.save(userCredential)
 // InstancedServices.userCredentialService.findUserById(userId)
-@Service
+/*
 object InstancedServices {
 
+}
+
+//@Named
+@Singleton
+@Service
+class InstancedServices @Inject()(val userCredentialService: UserCredentialService,
+                                  val recipeService: RecipeService,
+                                  val mealTypeService: MealTypeService,
+                                  val eventService: EventService,
+                                  val userProfileService: UserProfileService,
+                                  val tagWordService: TagWordService,
+                                  val userRoleService: UserRoleService,
+                                  val contentFileService: ContentFileService,
+                                  val nodeEntityService: NodeEntityService,
+                                  val messageService: MessageService) {
+/*
   @Autowired
   var userCredentialService: UserCredentialService = _
 
@@ -40,9 +58,6 @@ object InstancedServices {
 
   @Autowired
   var messageService: MessageService = _
+  */
 }
-
-// Just here for default constructor, don't add code in this class!
-class InstancedServices {
-
-}
+*/

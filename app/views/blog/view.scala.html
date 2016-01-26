@@ -1,16 +1,15 @@
 @(blogPost: models.BlogPost,
         metaData: Option[viewmodels.MetaData] = None,
-        isThisMyBlogPost: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
+        isThisMyBlogPost: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages, appContext: AppContext)
+
+@avatarUrl = @{if(blogPost.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(blogPost.getOwnerProfile.getAvatarImage.getStoreId).url}else{""} }
 
 @main(Messages("blog.title", blogPost.getTitle, blogPost.getOwnerProfile.profileLinkName), metaData = metaData){
 
     <div class="container maincontent-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                @defining(if(blogPost.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(blogPost.getOwnerProfile.getAvatarImage.getStoreId).url}else{""}) { avatarUrl =>
-                    @views.html.profile.profileHeader(blogPost.getOwnerProfile.profileLinkName, blogPost.getOwnerProfile.getOwner.firstName(), avatarUrl, true)
-                }
-
+                @views.html.profile.profileHeader(blogPost.getOwnerProfile.profileLinkName, blogPost.getOwnerProfile.getOwner.firstName, avatarUrl, showLinkBack = true)
                 <div class="row">
                     <div class="col-xs-12 blog-item">
                         <article>
@@ -18,9 +17,9 @@
                             @shared.flashmsg(flash)
                             <div class="row">
                                 <div class="col-xs-12 col-md-3"><strong>@Messages("blog.created.date")</strong></div>
-                                <div class="col-xs-12 col-md-9"><time>@utils.Helpers.formatDateForDisplay(blogPost.getCreatedDate)</time></div>
+                                <div class="col-xs-12 col-md-9"><time>@customUtils.Helpers.formatDateForDisplay(blogPost.getCreatedDate)</time></div>
                                 <div class="col-xs-12 col-md-3"><strong>@Messages("blog.modified.date")</strong></div>
-                                <div class="col-xs-12 col-md-9"><time>@utils.Helpers.formatDateForDisplay(blogPost.getLastModifiedDate)</time></div>
+                                <div class="col-xs-12 col-md-9"><time>@customUtils.Helpers.formatDateForDisplay(blogPost.getLastModifiedDate)</time></div>
                             </div>
                             <hr>
                             @blogPost.getMainImage match {

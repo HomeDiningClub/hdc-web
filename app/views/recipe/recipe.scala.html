@@ -1,26 +1,27 @@
 @(recipe: models.Recipe,
+        recipeMainImage: Option[models.files.ContentFile],
+        recipeImages: Option[List[models.files.ContentFile]],
         metaData: Option[viewmodels.MetaData] = None,
         recipeBoxes: Option[List[models.viewmodels.RecipeBox]] = None,
         shareUrl: String = "",
-        isThisMyRecipe: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
-@import scala.collection.JavaConverters._
-@import utils.Helpers
+        currentUser: Option[UserCredential],
+        isThisMyRecipe: Boolean = false,
+        recipeRateForm: Html = Html(""),
+        recipeLikeForm: Html = Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages, appContext: AppContext)
 
 @rotateCss(min: Int, max: Int) = @{
-    val res = Helpers.randomBetween(min,max)
+    val res = customUtils.Helpers.randomBetween(min,max)
     "-ms-transform: rotate(" + res + "deg);-webkit-transform: rotate(" + res + "deg);transform: rotate(" + res + "deg);"
 }
 
+@avatarUrl = @{if(recipe.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(recipe.getOwnerProfile.getAvatarImage.getStoreId).url}else{""} }
 
 @main(Messages("recipe.title", recipe.getName), metaData = metaData) {
 
     <div class="container host-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
-                @defining(if(recipe.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(recipe.getOwnerProfile.getAvatarImage.getStoreId).url}else{""}) { avatarUrl =>
-                    @views.html.profile.profileHeader(recipe.getOwnerProfile.profileLinkName, recipe.getOwnerProfile.getOwner.firstName(), avatarUrl, true)
-                }
-
+                @views.html.profile.profileHeader(recipe.getOwnerProfile.profileLinkName, recipe.getOwnerProfile.getOwner.firstName, avatarUrl, showLinkBack = true)
                 <div class="row">
                     <div class="col-xs-12 big-margin-top">
                         @shared.flashmsg(flash)
@@ -35,58 +36,52 @@
                             </article>
                             <article>
                                 @shared.grade(inputId = "recipe-grade", initialValue = recipe.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = recipe.getNrOfRatings)
-                                @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url)(request)
+                                @*RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url, currentUser)*@
+                                @recipeRateForm
                             </article>
                             <article>
                             @if(!recipe.getMainBody.isEmpty) {
-                                <div class="breadtext">@Html(recipe.getMainBody)</div>
+                                <div class="breadtext">@play.twirl.api.Html(recipe.getMainBody)</div>
                             }
                             </article>
                         </section>
                     </div>
                     <div class="col-xs-12 col-md-8">
 
-                        @recipe.getMainImage match {
-                            case null => {  }
-                            case image: models.files.ContentFile => {
-                                @defining(recipe.getRecipeImages.asScala) { recipeImages =>
-
-                                    <div id="recipe-carousel" data-ride="carousel" data-interval="4000" class="carousel slide hdc-carousel host-image-gallery">
-                                            <!-- Slider carousel items -->
-                                        <div class="carousel-inner">
-                                            <div class="active item set-height crop-height" data-slide-number="0">@shared.img(routes.ImageController.recipeNormal(image.getStoreId).url, cssClass = "img-responsive")</div>
-                                            @if(recipeImages.nonEmpty) {
-                                                @for((recipeImage,i) <- recipeImages.zipWithIndex) {
-                                                    <div class="item set-height crop-height" data-slide-number="@(i+1)">@shared.img(routes.ImageController.recipeNormal(recipeImage.getStoreId).url, cssClass = "img-responsive")</div>
-                                                }
-                                            }
-                                        </div>
-                                        <!-- Carousel nav controls -->
-                                        <a class="carousel-control left hidden-md hidden-lg" href="#recipe-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                                        <a class="carousel-control right hidden-md hidden-lg" href="#recipe-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
-                                    </div>
-
+                        @if(recipeMainImage.nonEmpty) {
+                            <div id="recipe-carousel" data-ride="carousel" data-interval="4000" class="carousel slide hdc-carousel host-image-gallery">
+                                    <!-- Slider carousel items -->
+                                <div class="carousel-inner">
+                                    <div class="active item set-height crop-height" data-slide-number="0">@shared.img(routes.ImageController.recipeNormal(recipeMainImage.get.getStoreId).url, cssClass = "img-responsive")</div>
                                     @if(recipeImages.nonEmpty) {
-                                        <!-- Thumbnails, don't show responsive -->
-                                        <ul class="recipe-carousel-thumbs list-inline hidden-xs hidden-sm">
-                                            <li class="col-md-3">
-                                                <a id="carousel-selector-0">@shared.img(routes.ImageController.recipeThumb(image.getStoreId).url, cssClass = "img-responsive polaroid", cssStyle = rotateCss(-8,8))</a>
-                                            </li>
-                                            @if(recipeImages.nonEmpty) {
-                                                @for((recipeImage,i) <- recipeImages.zipWithIndex) {
-                                                    <li class="col-md-3"><a id="carousel-selector-@(i+1)">@shared.img(routes.ImageController.recipeThumb(recipeImage.getStoreId).url, cssClass = "img-responsive polaroid", cssStyle = rotateCss(-8,8))</a></li>
-                                                }
-                                            }
-                                        </ul>
+                                        @for((recipeImage, i) <- recipeImages.get.zipWithIndex) {
+                                            <div class="item set-height crop-height" data-slide-number="@(i + 1)">@shared.img(routes.ImageController.recipeNormal(recipeImage.getStoreId).url, cssClass = "img-responsive")</div>
+                                        }
                                     }
+                                </div>
+                                    <!-- Carousel nav controls -->
+                                <a class="carousel-control left hidden-md hidden-lg" href="#recipe-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                                <a class="carousel-control right hidden-md hidden-lg" href="#recipe-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                            </div>
 
-                                }
+                            @if(recipeImages.nonEmpty) {
+                                    <!-- Thumbnails, don't show responsive -->
+                                <ul class="recipe-carousel-thumbs list-inline hidden-xs hidden-sm">
+                                    <li class="col-md-3">
+                                        <a id="carousel-selector-0">@shared.img(routes.ImageController.recipeThumb(recipeMainImage.get.getStoreId).url, cssClass = "img-responsive polaroid", cssStyle = rotateCss(-8, 8))</a>
+                                    </li>
+                                    @if(recipeImages.nonEmpty) {
+                                        @for((recipeImage, i) <- recipeImages.get.zipWithIndex) {
+                                            <li class="col-md-3"><a id="carousel-selector-@(i + 1)">@shared.img(routes.ImageController.recipeThumb(recipeImage.getStoreId).url, cssClass = "img-responsive polaroid", cssStyle = rotateCss(-8, 8))</a></li>
+                                        }
+                                    }
+                                </ul>
                             }
                         }
 
-
                         <div class="col-xs-12 margin-top">
-                            @LikeController.renderRecipeLikeForm(recipe)(request)
+                            @*LikeController.renderRecipeLikeForm(recipe, currentUser)*@
+                            @recipeLikeForm
                             @shared.fbShare(url = shareUrl)
                         </div>
                     </div>

@@ -1,15 +1,11 @@
 package controllers
+/*
+import javax.inject.{Named, Inject}
 
 import play.api.mvc._
-import play.api.i18n.Messages
-import securesocial.core.SecureSocial
-import play.api.Logger
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import models.UserCredential
-import securesocial.core.java.SecureSocial.UserAwareAction
-import play.api.templates.Html
-import utils.Helpers
-import utils.authorization.WithRole
-import enums.RoleEnums
+import customUtils.Helpers
 import scala.collection
 import org.springframework.beans.factory.annotation.Autowired
 import services.ContentService
@@ -17,24 +13,18 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
 import models.viewmodels.MenuItem
 import models.content.ContentPage
+import customUtils.security.SecureSocialRuntimeEnvironment
+import securesocial.core.RuntimeEnvironment
+import scala.concurrent.ExecutionContext
 
-class HeaderController extends Controller with SecureSocial {
-}
+//@Named
+@deprecated("Use the ProvidesAppContext instead","Since play 2.4 upgrade")
+class HeaderController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi, val contentService: ContentService) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
-@SpringController
-object HeaderController extends Controller with SecureSocial {
-
+  /*
   @Autowired
   private var contentService: ContentService = _
-
-  // Name, Title, Href, Class
-//  val menuItemsList = Seq[(String,String,Call,String)](
-//    ("Start page", "Start page title", routes.StartPageController.index(), ""),
-//    ("My Profile", "My profile", routes.UserProfileController.viewProfileByLoggedInUser(), ""),
-//    ("Login", "Login", securesocial.controllers.routes.LoginPage.login(), ""),
-//    ("About us", "About us", routes.ContentPageController.aboutUs(), ""),
-//    ("Campaign page", "Campaign title", routes.CampaignController.index(), "")
-//  )
+*/
 
   def bodyBg = {
     val r = scala.util.Random
@@ -42,15 +32,18 @@ object HeaderController extends Controller with SecureSocial {
     "background-image:url('/assets/images/general/body-bg-faded/2048x1360-" + number.toString + ".jpg')"
   }
 
+  def index(implicit request: RequestHeader) { //implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
-  def index(request: RequestHeader) = {
+    //val currentUser = request.user
+
+    val currentUser: Option[UserCredential] = customUtils.Helpers.getUserFromRequest(request)
 
     // Quick links
     var quickLinkTitle: String = ""
     // Name, Title, Href, Class, Extra HTML
-    val quickLinkList: Seq[(String,String,String,String,String)] = Helpers.getUserFromRequest(request) match {
+    val quickLinkList: Seq[(String,String,String,String,String)] = currentUser match {
       case Some(user) =>
-        quickLinkTitle = Messages("header.link.host-profile-header", "<span class=\"hidden-xs\">" + user.fullName() + "</span>")
+        quickLinkTitle = Messages("header.link.host-profile-header", "<span class=\"hidden-xs\">" + user.fullName + "</span>")
         val menu = collection.mutable.Buffer[(String,String,String,String,String)](
           (Messages("header.link.host-profile"), Messages("header.link.host-profile"), routes.UserProfileController.viewProfileByLoggedInUser().url, "", ""),
           (Messages("header.link.host-profile-edit"), Messages("header.link.host-profile-edit"), routes.UserProfileController.edit().url, "", ""),
@@ -130,8 +123,9 @@ object HeaderController extends Controller with SecureSocial {
 
 
 
-    views.html.header.header.render(Some(retMenuItemsList.result()), quickLinkTitle, quickLinkList)
+    views.html.header.header.render(menuItems = Some(retMenuItemsList.result()), quickLinkTitle = quickLinkTitle, quicklinkItems = quickLinkList, messages = request2Messages)
   }
 
 
 }
+*/

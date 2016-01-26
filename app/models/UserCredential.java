@@ -5,7 +5,6 @@ import models.base.AuditEntity;
 import models.like.UserCredentialLikeEvent;
 import models.like.UserCredentialLikeRecipe;
 import models.like.UserCredentialLikeUserCredential;
-import models.message.Message;
 import models.modelconstants.RelationshipTypesJava;
 import models.rating.RatesRecipe;
 import models.rating.RatesUserCredential;
@@ -15,8 +14,6 @@ import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
 import play.libs.Scala;
 import scala.Option;
-import securesocial.core.*;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -32,7 +29,7 @@ import java.lang.Boolean;
 
 
 @NodeEntity
-public class UserCredential extends AuditEntity implements Identity, IEditable {
+public class UserCredential extends AuditEntity implements securesocial.core.GenericProfile, IEditable {
 
     @Indexed(indexType = IndexType.FULLTEXT, indexName = "userId")
     public String userId = "";
@@ -42,7 +39,6 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
 
     @Indexed(indexType = IndexType.FULLTEXT, indexName = "providerId")
     public String providerId = "";
-
 
     @Indexed(indexType = IndexType.FULLTEXT, indexName = "firstName")
     public String firstName = "";
@@ -304,27 +300,38 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
         return  "";
     }
 
-    // implements Identity
+    // Implements securesocial.core.GenericProfile
 
+    /*
     @Override
     public IdentityId identityId() {
         IdentityId identityId = new IdentityId(this.userId, this.providerId);
         return identityId;
+    }*/
+
+    @Override
+    public String providerId() {
+        return this.providerId;
     }
 
     @Override
-    public String firstName() {
-        return this.firstName;
+    public String userId() {
+        return this.userId;
     }
 
     @Override
-    public String lastName() {
-        return this.lastName;
+    public Option<String> firstName() {
+        return Scala.Option(this.firstName);
     }
 
     @Override
-    public String fullName() {
-        return fullName;
+    public Option<String> lastName() {
+        return Scala.Option(this.lastName);
+    }
+
+    @Override
+    public Option<String> fullName() {
+        return Scala.Option(fullName);
     }
 
     @Override
@@ -338,18 +345,18 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     }
 
     @Override
-    public AuthenticationMethod authMethod() {
-        return new AuthenticationMethod(this.authMethod);
+    public securesocial.core.AuthenticationMethod authMethod() {
+        return new securesocial.core.AuthenticationMethod(this.authMethod);
     }
 
     @Override
-    public Option<OAuth1Info> oAuth1Info() {
-        return Scala.Option(new OAuth1Info(this.oAuth1InfoToken, this.oAuth1InfoSecret));
+    public Option<securesocial.core.OAuth1Info> oAuth1Info() {
+        return Scala.Option(new securesocial.core.OAuth1Info(this.oAuth1InfoToken, this.oAuth1InfoSecret));
     }
 
     @Override
-    public Option<OAuth2Info> oAuth2Info() {
-        OAuth2Info oAuth2Info = new OAuth2Info
+    public Option<securesocial.core.OAuth2Info> oAuth2Info() {
+        securesocial.core.OAuth2Info oAuth2Info = new securesocial.core.OAuth2Info
                 (
                         oAuth2InfoAccessToken,
                         Scala.Option(oAuth2InfoTokenType.toString()),
@@ -361,11 +368,12 @@ public class UserCredential extends AuditEntity implements Identity, IEditable {
     }
 
     @Override
-    public Option<PasswordInfo> passwordInfo() {
+    public Option<securesocial.core.PasswordInfo> passwordInfo() {
 
-       PasswordInfo passwordInfo = null;
-       passwordInfo = new PasswordInfo(this.hasher, this.password, Scala.Option(this.salt));
+       securesocial.core.PasswordInfo passwordInfo = null;
+       passwordInfo = new securesocial.core.PasswordInfo(this.hasher, this.password, Scala.Option(this.salt));
 
         return Scala.Option(passwordInfo);
     }
+
 }

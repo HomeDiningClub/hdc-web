@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
+<!--beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -13,13 +13,12 @@ http://www.springframework.org/schema/context/spring-context.xsd
 http://www.springframework.org/schema/data/neo4j
 http://www.springframework.org/schema/data/neo4j/spring-neo4j.xsd
 http://www.springframework.org/schema/tx
-http://www.springframework.org/schema/tx/spring-tx.xsd">
+http://www.springframework.org/schema/tx/spring-tx.xsd" -->
 
 
 
     <!-- Neo4j Local data store configuration: -->
-    <neo4j:config storeDirectory="/neo4j/hdc-web.db" base-package="models" />
-
+    <!-- neo4j:config storeDirectory="/neo4j/hdc-web.2.1.8.db" base-package="models" /-->
 
 
     <!--
@@ -52,18 +51,23 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
      -->
 
     <!-- Base config for DB -->
-    <context:annotation-config/>
-    <context:component-scan base-package="controllers, services, repositories, models" />
-    <neo4j:repositories base-package="repositories" />
+    <!--context:annotation-config/ -->
+    <!--context:component-scan base-package="controllers, services, repositories, models" /-->
+    <!--neo4j:repositories base-package="repositories" /-->
 
     <!-- Auditing -->
-    <neo4j:auditing auditor-aware-ref="entityAuditor" date-time-provider-ref="customDateProvider" />
-    <bean id="entityAuditor" class="utils.auditing.UserCredentialAuditor" />
-    <bean id="customDateProvider" class="utils.auditing.CustomDateTimeProvider" />
+    <!--neo4j:auditing auditor-aware-ref="entityAuditor" date-time-provider-ref="customDateProvider" /-->
+    <!--bean id="entityAuditor" class="customUtils.auditing.UserCredentialAuditor" /-->
+    <!--bean id="customDateProvider" class="customUtils.auditing.CustomDateTimeProvider" /-->
 
-    <tx:annotation-driven mode="proxy"/>
+    <!-- Secure Social -->
+    <!--bean id="secureSocialRuntimeEnvironment" class="customUtils.security.SecureSocialRuntimeEnvironment" /-->
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+    <!-- PlaceholderConfigurerSupport subclass that resolves ${...} placeholders against local properties and/or system properties and environment variables. -->
+    <!--bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/-->
+
+    <!--tx:annotation-driven mode="proxy"/-->
+
 
     <!-- Listeners -->
     <!--<bean id="customerSaveListener" class="c.b.listener.Neo4JCustomerSaveListener" />-->
@@ -81,4 +85,4 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
         </bean>
         <bean id="PlayApplicationImpl" class="beans.PlayApplicationImpl" lazy-init="true" />
     -->
-</beans>
+<!-- /beans -->

@@ -1,4 +1,5 @@
+@()(implicit messages: Messages)
 <div>
-    <p>@Html(Messages("aboutus.not.logged.in"))</p>
-    <a class="btn btn-primary" role="button" href="@securesocial.controllers.routes.LoginPage.login">@Messages("rating.not-logged-in.link.text")</a>
+    <p>@play.twirl.api.Html(Messages("aboutus.not.logged.in"))</p>
+    <a class="btn btn-primary" role="button" href="@securesocial.controllers.routes.LoginPage">@Messages("rating.not-logged-in.link.text")</a>
 </div>

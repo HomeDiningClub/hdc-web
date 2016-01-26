@@ -2,8 +2,15 @@
 @import play.api.Play.resource
 @import play.api.Play.current
 
-@if(resource("public/" + path.stripPrefix("/")).isDefined || path.toLowerCase.startsWith("http") || path.contains("dynassets/")) {
-    @defining(if(path.toLowerCase.startsWith("http") || path.toLowerCase.contains("dynassets/")){ path }else{ routes.Assets.at(path.stripPrefix("/")) }){ parsedPath =>
-        <img src="@parsedPath" @if(cssClass.nonEmpty){ class="@cssClass" } @if(cssStyle.nonEmpty){ style="@cssStyle" } border="0" @if(title.nonEmpty){ title="@title" } @if(alt.nonEmpty){ alt="@alt" } @if(id.nonEmpty){ id="@id" }>
+@parsedPath = @{
+    if(path.toLowerCase.startsWith("http") || path.toLowerCase.contains("dynassets/")) {
+        path
+    } else {
+        routes.Assets.at(path.stripPrefix("/"))
     }
+}
+
+
+@if(resource("public/" + path.stripPrefix("/")).isDefined || path.toLowerCase.startsWith("http") || path.contains("dynassets/")) {
+    <img src="@parsedPath" @if(cssClass.nonEmpty){ class="@cssClass" } @if(cssStyle.nonEmpty){ style="@cssStyle" } border="0" @if(title.nonEmpty){ title="@title" } @if(alt.nonEmpty){ alt="@alt" } @if(id.nonEmpty){ id="@id" }>
 }

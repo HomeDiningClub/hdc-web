@@ -1,6 +1,6 @@
 @(TagDataForm: Form[models.viewmodels.TagsData],
         element: List[Type],
-        klass: Types)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
+        klass: Types)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages, appContext: AppContext)
 
 @main(Messages("profile.create.title")){
 
@@ -16,7 +16,6 @@
                 @shared.flashmsg(flash)
 
                 @helper.form(action = routes.UserProfileController.saveTags()) {
-
 
                     <div class="panel panel-default">
                         <div class="panel-heading">@Messages("profile.create.header.food")</div>

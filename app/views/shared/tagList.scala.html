@@ -1,6 +1,6 @@
-@(listOfTags: Option[List[models.profile.TagWord]], userName: String)
+@(listOfTags: Option[List[models.profile.TagWord]], userName: String)(implicit messages: Messages)
 
-@if(!listOfTags.isEmpty) {
+@if(listOfTags.isDefined) {
     <div class="row">
         <div class="col-xs-12">
             <div class="tag-header"><strong>@Messages("profile.tags.header", userName)</strong></div>

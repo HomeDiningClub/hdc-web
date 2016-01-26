@@ -1,4 +1,4 @@
-@(user: models.UserCredential, message: models.message.Message, msgId: String)(content: Html)(implicit request: RequestHeader)
+@(user: models.UserCredential, message: models.message.Message, msgId: String)(content: play.twirl.api.Html)(implicit request: RequestHeader, messages: Messages)
 
 <tr id="mail_@msgId" class="mail-inbox-row collapsed" data-toggle="collapse" data-target="#respond_@msgId">
     <td>
@@ -19,7 +19,7 @@
             }
         }
     </td>
-    <td>@message.getCreatedDate.date.format("yyyy-MM-dd HH:mm")</td>
+    <td>@customUtils.Helpers.formatDate(message.getCreatedDate, "yyyy-MM-dd HH:mm")</td>
 </tr>
 <tr id="respond_@msgId" class="respond-row collapse">
     <td colspan="6" class="mail-details">@content</td>

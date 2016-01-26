@@ -1,4 +1,4 @@
-@(favorites: List[models.viewmodels.FavoriteForm], favMe: List[models.viewmodels.FavoriteForm])
+@(favorites: List[models.formdata.FavoriteForm], favMe: List[models.formdata.FavoriteForm])(implicit messages: Messages)
 
 @if(favorites.nonEmpty) {
     <div class="row">

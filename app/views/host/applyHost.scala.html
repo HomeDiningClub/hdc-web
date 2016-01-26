@@ -1,13 +1,13 @@
-@(hostForm: Form[models.viewmodels.MessageForm], userToBeHost: Option[models.UserCredential])(implicit request: RequestHeader)
+@(hostForm: Form[models.formdata.MessageForm], userToBeHost: Option[models.UserCredential], currentUser: Option[models.UserCredential])(implicit messages: Messages)
 
 @views.html.host.hostMain() {
     <div class="well well-hdc">
         <h3>@Messages("mails.hosting.form.title") @userToBeHost.get.profiles.iterator().next().profileLinkName</h3>
         <p><em>@Messages("mails.hosting.form.text")</em></p>
-        @utils.Helpers.getUserFromRequest match {
+        @currentUser match {
             case None => {}
-            case Some(currentUser) => {
-                @if(hostForm.get.memberId.nonEmpty && !hostForm.get.hostId.toString.equalsIgnoreCase(currentUser.objectId.toString)){
+            case Some(cu) => {
+                @if(hostForm.get.memberId.nonEmpty && !hostForm.get.hostId.toString.equalsIgnoreCase(cu.objectId.toString)){
                         @helper.form(action = routes.MessagesController.applyToHost()) {
                             <div class="row big-margin-top">
                             <fieldset>

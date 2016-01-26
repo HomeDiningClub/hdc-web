@@ -1,3 +1,4 @@
+/*
 package services
 
 import java.util.Arrays
@@ -13,7 +14,6 @@ import play.api.Logger
 import scala.collection.JavaConverters._
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.neo4j.template.Neo4jOperations
 import models._
 
 @Service
@@ -40,7 +40,6 @@ class Neo4jDatabaseCleanerService {
   }
 
   private def removeNodes(result: Map[String, Any]) {
-    //val refNode = getReferenceNodeOrNull
     var nodes = 0
     var relationships = 0
     for (node: Node <- graph.getAllNodes.asScala) {
@@ -48,21 +47,11 @@ class Neo4jDatabaseCleanerService {
         rel.delete()
         relationships += 1
       }
-      //if(node != refNode) {
         node.delete()
         nodes += 1
-      //}
     }
     result.put("nodes", nodes)
     result.put("relationships", relationships)
-  }
-
-  private def getReferenceNodeOrNull(): Node = {
-    try {
-      graph.getReferenceNode(false)
-    } catch {
-      case e: NotFoundException => null
-    }
   }
 
   private def clearIndex(result: Map[String, Any]) {
@@ -107,21 +96,21 @@ class Neo4jDatabaseCleanerService {
   // Not tested yet
   def rebuildIndex() {
 
-    /* begin a transaction */
+    // begin a transaction
     val tx: Transaction = graph.beginTx()
     try {
-      /* for all nodes in the database */
+      // for all nodes in the database
       for (node: Node <- graph.getAllNodes.asScala) {
-        /* reconstruct the saved object based on the __type__ property on the node - the result is a class that was annotated with @NodeEntity */
+        // reconstruct the saved object based on the __type__ property on the node - the result is a class that was annotated with @NodeEntity
         val ddn: Node = template.createEntityFromStoredType(node, null)
 
-        /* reindex this node, adding it to the __types__ index, with key "className" (it is used by spring-data-neo4j) with the value __type__ */
+        // reindex this node, adding it to the __types__ index, with key "className" (it is used by spring-data-neo4j) with the value __type__
         graph.index().forNodes("__types__")
           .add(node, "className", node.getProperty("__type__"))
 
-        /* if the reconstructed object is a Profile object */
+        // if the reconstructed object is a Profile object
         if (ddn.isInstanceOf[UserProfile]) {
-          /* add it to the User index, with the key "username" (which is also the saved fields name) */
+          // add it to the User index, with the key "username" (which is also the saved fields name)
           graph.index().forNodes("UserProfile")
             .add(node, "profileLinkName", node.getProperty("profileLinkName"))
         }
@@ -135,4 +124,6 @@ class Neo4jDatabaseCleanerService {
       tx.close()
     }
   }
+
 }
+*/

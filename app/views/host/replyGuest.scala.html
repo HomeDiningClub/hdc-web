@@ -1,11 +1,9 @@
-@(hostReplyForm: Form[models.viewmodels.MessageForm], owner: models.UserCredential, msgId: String, message: models.message.Message)(implicit request: RequestHeader)
-@import helper.twitterBootstrap._
-
+@(hostReplyForm: Form[models.formdata.MessageForm], owner: models.UserCredential, msgId: String, message: models.message.Message, currentUser: Option[models.UserCredential])(implicit request: RequestHeader, messages: Messages)
 
 @views.html.host.messageMain(owner, message, msgId) {
-        @utils.Helpers.getUserFromRequest match {
+        @currentUser match {
             case None => {}
-            case Some(currentUser) => {
+            case Some(cu) => {
                 <div class="row">
                     <div class="col-xs-12">
                     @helper.form(action = routes.MessagesController.replyToGuest()) {
@@ -48,7 +46,7 @@
                                         <tbody>
                                             <tr>
                                                 <td class="req-header"><strong>@Messages("mails.inbox.header.date"):</strong></td>
-                                                <td>@hostReplyForm.get.date.format("yyyy-MM-dd") @hostReplyForm.get.time.format("HH:mm")</td>
+                                                <td>@customUtils.Helpers.formatDate(hostReplyForm.get.date, "yyyy-MM-dd") @customUtils.Helpers.formatDate(hostReplyForm.get.time, "HH:mm")</td>
                                             </tr>
                                             <tr>
                                                 <td class="req-header"><strong>@Messages("mails.inbox.header.guest.number"):</strong></td>

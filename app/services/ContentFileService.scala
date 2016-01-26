@@ -1,50 +1,36 @@
 package services
 
-import javax.imageio.ImageIO
+import javax.inject.{Named,Inject}
 
-import models.viewmodels.ImageData
 import org.apache.commons.codec.digest.DigestUtils
-import org.apache.commons.io.FilenameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import repositories._
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import models.files._
-import fly.play.s3.{BucketItem, S3Exception, BucketFile, S3}
 import play.api.Logger
 import play.api.Play
 import play.api.Play.current
-import play.api.mvc.MultipartFormData
-import play.api.libs.Files.TemporaryFile
-import org.parboiled.common.FileUtils
-import play.api.libs.concurrent.Execution.Implicits._
-import se.digiplant.res.api.Res
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration._
 import java.util.{Locale, UUID}
 import org.neo4j.helpers.collection.IteratorUtil
 import scala.collection.JavaConverters._
 import play.api.libs.MimeTypes
-import scala.collection.mutable.ListBuffer
 import java.io.{IOException, FileInputStream, File}
-import com.sksamuel.scrimage._
 import models.UserCredential
-import constants.FileTransformationConstants
 import enums.FileTypeEnums
 import FileTypeEnums.FileTypeEnums
-import fly.play.s3.BucketFile
 
-import scala.util.Random
-
+//@Named
 @Service
-class ContentFileService {
+class ContentFileService @Inject() (val contentFileRepository: ContentFileRepository, val userCredentialRepository: UserCredentialRepository) {
 
+  /*
   @Autowired
   private var contentFileRepository: ContentFileRepository = _
-  @Autowired
-  private var bucketRepository: BucketRepository = _
+
   @Autowired
   private var userCredentialRepository: UserCredentialRepository = _
+*/
 
   def localWorkingDir = {
     var wrkDir = Play.application.configuration.getString("hdc.wrkDir").getOrElse("/hdc-files/wrk-dir/")
@@ -62,13 +48,6 @@ class ContentFileService {
   def createTemporaryFile(fileName: String): File = {
     new File(this.localWorkingDir + this.temporaryFileName + fetchExtension(fileName))
   }
-//  // Just for testing, don't use in production
-//  def listFilesRawFromS3(prefix: String = ""): List[String] = {
-//    val result = Await.result(bucketRepository.S3Bucket.list(prefix), 10 seconds)
-//    val returnRes: List[String] = result.map(item => item.name).toList
-//    returnRes
-//  }
-//
 
   // Accepts Unique ID, returns ContentFile if any
   def getFileByKey(objectId: UUID): Option[ContentFile] = {
@@ -321,7 +300,7 @@ class ContentFileService {
         metaData.append("admin")
       }
 
-      storeToRes(file, metaData.toSeq, fetchExtension(cleanedFileName)) match {
+      return storeToRes(file, metaData.toSeq, fetchExtension(cleanedFileName)) match {
       //storeToRes(file,storageFileName,fetchExtension(cleanedFileName)) match {
         case Some(storeId) =>
 
@@ -330,13 +309,11 @@ class ContentFileService {
           val savedFile = saveFile(newFile)
 
           Logger.info("Uploaded and saved file: " + storeId)
-          return Some(savedFile)
+          Some(savedFile)
         case _ =>
           Logger.error("Error: Cannot upload file.")
-          return None
+          None
       }
-
-      return None
     }
   }
 
@@ -345,7 +322,7 @@ class ContentFileService {
   private def storeToRes(fileToStore: File, metaData: Seq[String], fileExtension: String): Option[String] = {
   //private def storeToRes(fileToStore: File, fileNameToStore: String, fileExtension: String): Option[String] = {
     try {
-      utils.res.api.Res.put(fileToStore, meta = metaData, extension = Some(fileExtension)) match {
+      customUtils.res.api.Res.put(fileToStore, meta = metaData, extension = Some(fileExtension)) match {
       //utils.res.api.Res.put(fileToStore, filename = Some(fileNameToStore), extension = Some(fileExtension)) match {
         case id: String =>
           Some(id)
@@ -427,7 +404,7 @@ class ContentFileService {
     // Delete from DB, then delete from Store - returns true or false
     deleteFileFromDB(fileToDelete.get) match {
       case true =>
-        utils.res.api.Res.delete(fileToDelete.get.getStoreId)
+        customUtils.res.api.Res.delete(fileToDelete.get.getStoreId)
       case false =>
         false
     }

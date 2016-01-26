@@ -1,9 +1,6 @@
 package models.files;
 
 import models.UserCredential;
-import java.util.HashSet;
-import java.util.Set;
-
 import models.base.AuditEntity;
 import models.modelconstants.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
@@ -11,7 +8,6 @@ import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
-import services.InstancedServices;
 
 @NodeEntity
 public class ContentFile extends AuditEntity {

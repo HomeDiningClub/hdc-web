@@ -6,7 +6,9 @@
         headerMeta: Html = Html(""),
         footerHtml: Html = Html(""),
         metaData: Option[viewmodels.MetaData] = None
-        )(content: Html)(implicit request: RequestHeader)
+        )(content: Html)(implicit request: RequestHeader, messages: Messages, appContext: AppContext)
+@import play.twirl.api.Html
+
 <!DOCTYPE html>
 
 <html lang="@Messages("main.language")">
@@ -23,9 +25,11 @@
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")">
         @headerCss
     </head>
-    <body style="@HeaderController.bodyBg">
+    <body style="@appContext.headBodyBg">
         <div class="content-wrap">
-            @if(headerVisible){ @HeaderController.index(request) }
+            @if(headerVisible){
+                @header.header(appContext.headMenuItems, quickLinkTitle = appContext.headQuickLinkTitle,quicklinkItems = appContext.headQuickLinks)
+            }
             @content
             <div id="footer-push"></div>
         </div>

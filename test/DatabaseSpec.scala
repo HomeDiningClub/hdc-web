@@ -3,9 +3,10 @@ import org.specs2.runner._
 import org.junit.runner._
 import org.springframework.beans.factory.annotation.Autowired
 import play.api.Logger
-
 import play.api.test._
 import play.api.test.Helpers._
+import play.test.WithApplication
+import javax.inject.Inject
 
 import services._
 
@@ -15,7 +16,7 @@ import services._
  * For more information, consult the wiki.
  */
 @RunWith(classOf[JUnitRunner])
-class DatabaseSpec extends Specification {
+class DatabaseSpec @Inject()(val userProfileService: UserProfileService) extends Specification {
 
 
   "Database indexes" should {
@@ -23,7 +24,7 @@ class DatabaseSpec extends Specification {
     "userprofileIndex" in new WithApplication {
 
       var startTime = System.currentTimeMillis
-      var results = InstancedServices.userProfileService.findByprofileLinkName("testname")
+      var results = userProfileService.findByprofileLinkName("testname")
       var endTime = System.currentTimeMillis
       var requestTime = endTime - startTime
 

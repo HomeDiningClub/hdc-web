@@ -1,4 +1,4 @@
-@(uploadResult: Option[String] = None)
+@(uploadResult: Option[String] = None)(implicit messages: Messages)
 
 
         @helper.form(action = routes.ImageController.uploadImageSubmit(), 'id -> "fileupload", 'enctype -> "multipart/form-data", 'accept -> "image/png") {

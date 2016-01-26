@@ -1,14 +1,13 @@
-@(worlds: List[models.World], path: List[models.World])(implicit request: RequestHeader)
+@(worlds: List[models.World], path: List[models.World])(implicit request: RequestHeader, messages: Messages, appContext: AppContext)
 
-@main("Worlds page") {
-
+@main("Worlds page"){
     <ul>
     @for(world <- worlds) {
         <li>WorldID: @world.objectId<br>
             World name: @world.name<br>
             Spoken languages: @world.spokenLanguage<br>
             Nr of moons: @world.moons<br>
-            @for(otherWorld <- world.reachableByRocket) {
+            @for(otherWorld: World <- world.reachableByRocket) {
                 Reachable by rocket: @otherWorld.name<br>
                 }
             <br>

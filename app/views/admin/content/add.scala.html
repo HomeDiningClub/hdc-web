@@ -1,9 +1,9 @@
-@(contentForm: Form[models.viewmodels.AddContentForm],
+@(contentForm: Form[models.formdata.AddContentForm],
         optionPages: Option[Seq[(String,String)]],
         contentStates: Seq[(String,String)],
         contentCategories: Option[Seq[(String,String)]]
-        )(implicit flash: Flash)
-@import helper.twitterBootstrap._
+        )(implicit flash: Flash, messages: Messages)
+
 
 @mainedit(Messages("admin.title")){
 

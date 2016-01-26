@@ -1,6 +1,7 @@
 package services
 
 import java.util.UUID
+import javax.inject.{Named,Inject}
 
 import models.files.ContentFile
 import models.modelconstants.UserLevelScala
@@ -12,49 +13,32 @@ import org.springframework.data.domain.{Sort, Page, PageRequest, Pageable}
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import repositories.{ViewedByUnKnownRepository, UserProfileRepository, ViewedByMemberRepository}
-import securesocial.core.Identity
-import utils.ViewedByMemberUtil
 import scala.collection.JavaConverters._
-import scala.List
 import scala.language.implicitConversions
 import org.springframework.transaction.annotation.Transactional
 import org.neo4j.graphdb.index.Index
-import org.springframework.context.annotation.Lazy
-import play.api.mvc.Results._
 import models.location.County
-import models.profile.{TaggedFavoritesToUserProfile, TaggedUserProfile, TagWord}
+import models.profile.{TaggedFavoritesToUserProfile, TagWord}
 import scala.collection.JavaConverters._
-import utils.ViewedByMemberUtil
+import customUtils.ViewedByMemberUtil
 
+//@Named
 @Service
-object  UserProfileService {
+class UserProfileService @Inject()(val template: Neo4jTemplate, val userProfileRepository: UserProfileRepository, val viewedByMemberRepository: ViewedByMemberRepository, val viewedByUnKnownRepository: ViewedByUnKnownRepository) {
+
   /*
   @Autowired
   private var template: Neo4jTemplate = _
 
   @Autowired
   private var userProfileRepository: UserProfileRepository = _
-  */
-}
-
-
-@Service
-class UserProfileService {
-
-  // http://books.google.se/books?id=DeTO4xbC-eoC&pg=PT158&lpg=PT158&dq=:+Neo4jTemplate+%3D+_&source=bl&ots=kTYWRxqdkm&sig=nNZ8mMMFgx4CmCFw13zWeQdnzFA&hl=en&sa=X&ei=RK9eU7v-KI7jO5m9gegO&ved=0CCwQ6AEwATgK#v=onepage&q=%3A%20Neo4jTemplate%20%3D%20_&f=false
 
   @Autowired
-  private var template: Neo4jTemplate = _
-
-  @Autowired
-  private var userProfileRepository: UserProfileRepository = _
-
-  @Autowired
-  private var viewdByMemberRepository: ViewedByMemberRepository = _
+  private var viewedByMemberRepository: ViewedByMemberRepository = _
 
   @Autowired
   private var viewedByUnKnownRepository: ViewedByUnKnownRepository = _
-
+*/
 
   // save UnKnow user access to page
   @Transactional(readOnly = false)
@@ -66,7 +50,7 @@ class UserProfileService {
   // save member access to page
   @Transactional(readOnly = false)
   def saveMemberAccess(view: models.ViewedByMember): models.ViewedByMember = {
-    var newView = viewdByMemberRepository.save(view)
+    var newView = viewedByMemberRepository.save(view)
     newView
   }
 
@@ -101,7 +85,7 @@ class UserProfileService {
 
     var ob : Option[ViewedByMember] = None
 
-    var list = viewdByMemberRepository.findAll()
+    var list = viewedByMemberRepository.findAll()
 
 
     // @todo
@@ -333,7 +317,7 @@ class UserProfileService {
     }
   }
 
-  def findUserProfileByUserId(id: Identity) : Option[UserProfile] =
+  def findUserProfileByUserId(id: UserCredential) : Option[UserProfile] =
   {
 //    var key : String = id.identityId.userId + "_" + id.identityId.providerId
 //    var up = UserProfileService.userProfileRepository.findByUserIdentityAndProviderIdentity(id.identityId.userId, id.identityId.providerId)
@@ -346,7 +330,7 @@ class UserProfileService {
       println("userId " + v.userIdentity + " provider id :" + v.providerIdentity)
       println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 
-      if(v.userIdentity.equalsIgnoreCase(id.identityId.userId) && v.providerIdentity.equalsIgnoreCase(id.identityId.providerId)){
+      if(v.userIdentity.equalsIgnoreCase(id.userId) && v.providerIdentity.equalsIgnoreCase(id.providerId)){
         println("OK")
         return Some(v)
       } else {

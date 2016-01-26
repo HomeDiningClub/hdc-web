@@ -1,12 +1,13 @@
 package services
 
 import _root_.java.util.UUID
+import javax.inject.{Named, Inject}
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.transaction.annotation.Transactional
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.cache.Cache
 import play.api.Play.current
 
@@ -20,15 +21,17 @@ import models.UserProfile
 
 import scala.collection.mutable
 
-
+//@Named
 @Service
-class TagWordService {
+class TagWordService @Inject() (val tagWordRepository: TagWordRepository, val messagesApi: MessagesApi) extends I18nSupport {
 
+  /*
   @Autowired
   var template: Neo4jTemplate = _
 
   @Autowired
   var tagWordRepository: TagWordRepository = _
+*/
 
   val tagWordCacheKey = "tagWord."
 
@@ -141,11 +144,11 @@ class TagWordService {
   }
 
   @Transactional(readOnly = false)
-  def deleteAll: Boolean = {
+  def deleteAll(): Boolean = {
     tagWordRepository.findAll.asScala.toList.foreach{ item =>
       removeFromCache(item)
     }
-    tagWordRepository.deleteAll
+    tagWordRepository.deleteAll()
     true
   }
 

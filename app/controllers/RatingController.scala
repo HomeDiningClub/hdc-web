@@ -1,29 +1,33 @@
 package controllers
 
 import java.util.UUID
+import javax.inject.{Named, Inject}
 import constants.FlashMsgConstants
 import enums.RoleEnums
 import models.{Recipe, UserCredential}
-import models.viewmodels.RatingForm
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages
-import play.api.mvc.{SimpleResult, RequestHeader, Controller}
-import play.api.templates.Html
-import securesocial.core.SecureSocial
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.mvc.{AnyContent, RequestHeader, Controller}
+import play.twirl.api.Html
+import securesocial.core.SecureSocial.SecuredRequest
 import services.{RecipeService, RatingService, UserCredentialService}
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
 import scala.collection.JavaConverters._
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.RatingForm
 
-// Object just needs a default constructor
-class RatingController extends Controller { }
+//@Named
+class RatingController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                  val messagesApi: MessagesApi,
+                                  val userCredentialService: UserCredentialService,
+                                  val recipeService: RecipeService,
+                                  val ratingService: RatingService) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
-@SpringController
-object RatingController extends Controller with SecureSocial {
-
+  /*
   @Autowired
   private var userCredentialService : UserCredentialService = _
 
@@ -32,6 +36,7 @@ object RatingController extends Controller with SecureSocial {
 
   @Autowired
   private var ratingService : RatingService = _
+*/
 
   // Rating form mapping
   val ratingForm = Form(
@@ -44,23 +49,23 @@ object RatingController extends Controller with SecureSocial {
     )(RatingForm.apply)(RatingForm.unapply)
   )
 
-  def renderRecipeRateForm(recipeToBeRated: Recipe, ratingReferrer: String = "/") = { implicit request: RequestHeader =>
+  def renderRecipeRateForm(recipeToBeRated: Recipe, ratingReferrer: String = "/", currentUser: Option[UserCredential])(implicit request: RequestHeader): Html = {
 
-    utils.Helpers.getUserFromRequest match {
+    currentUser match {
       case None =>
         views.html.rating.rateNotLoggedIn()
-      case Some(currentUser) =>
+      case Some(cu) =>
 
         // Disallow user to rate themselves
-        if(ratingService.doesUserTryToRateHimself(currentUser,recipeToBeRated)){
-          views.html.rating.rateErrorMsg.render(Messages("rating.add.give-rate-to-self"), "info")
+        if(ratingService.doesUserTryToRateHimself(cu,recipeToBeRated)){
+          views.html.rating.rateErrorMsg.render(Messages("rating.add.give-rate-to-self"), "info", request2Messages)
         }else{
 
           var ratedBeforeDate: Option[java.util.Date] = None
           val ratingType = "recipe"
 
           // Set old values if user ranked before
-          val formValues = ratingService.hasUserRatedThisBefore(currentUser, recipeToBeRated) match {
+          val formValues = ratingService.hasUserRatedThisBefore(cu, recipeToBeRated) match {
             case None =>
               RatingForm.apply(recipeToBeRated.objectId.toString, 0, None, Some(ratingReferrer), ratingType)
             case Some(relation) =>
@@ -68,29 +73,29 @@ object RatingController extends Controller with SecureSocial {
               RatingForm.apply(recipeToBeRated.objectId.toString, relation.ratingValue, Some(relation.ratingComment), Some(ratingReferrer), ratingType)
           }
 
-          views.html.rating.rateRecipe.render(ratingForm.fill(formValues), Some(recipeToBeRated), ratedBeforeDate, request)
+          views.html.rating.rateRecipe.render(ratingForm.fill(formValues), Some(recipeToBeRated), ratedBeforeDate, Some(cu), request2Messages)
         }
     }
   }
 
 
-  def renderUserRateForm(userToBeRated: UserCredential, ratingReferrer: String = "/") = { implicit request: RequestHeader =>
+  def renderUserRateForm(userToBeRated: UserCredential, ratingReferrer: String = "/", currentUser: Option[UserCredential])(implicit request: RequestHeader) = {
 
-    utils.Helpers.getUserFromRequest match {
+    currentUser match {
       case None =>
         views.html.rating.rateNotLoggedIn()
-      case Some(currentUser) =>
+      case Some(cu) =>
 
         // Disallow user to rate themselves
-        if(ratingService.doesUserTryToRateHimself(currentUser,userToBeRated)){
-          views.html.rating.rateErrorMsg.render(Messages("rating.add.give-rate-to-self"), "info")
+        if(ratingService.doesUserTryToRateHimself(cu,userToBeRated)){
+          views.html.rating.rateErrorMsg.render(Messages("rating.add.give-rate-to-self"), "info", request2Messages)
         }else{
 
           var ratedBeforeDate: Option[java.util.Date] = None
           val ratingType = "user"
 
           // Set old values if user ranked before
-          val formValues = ratingService.hasUserRatedThisBefore(currentUser, userToBeRated) match {
+          val formValues = ratingService.hasUserRatedThisBefore(cu, userToBeRated) match {
             case None =>
               RatingForm.apply(userToBeRated.objectId.toString, 0, None, Some(ratingReferrer), ratingType)
             case Some(relation) =>
@@ -98,13 +103,13 @@ object RatingController extends Controller with SecureSocial {
               RatingForm.apply(userToBeRated.objectId.toString, relation.ratingValue, Some(relation.ratingComment), Some(ratingReferrer), ratingType)
           }
 
-          views.html.rating.rateUserCred.render(ratingForm.fill(formValues), Some(userToBeRated), ratedBeforeDate, request)
+          views.html.rating.rateUserCred.render(ratingForm.fill(formValues), Some(userToBeRated), ratedBeforeDate, Some(cu), request2Messages)
         }
     }
   }
 
-  def rateSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request =>
-    val currentUser = utils.Helpers.getUserFromRequest.get
+  def rateSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+    val currentUser = request.user
 
     ratingForm.bindFromRequest.fold(
       errors => {
@@ -121,7 +126,7 @@ object RatingController extends Controller with SecureSocial {
           case "user" =>
             userCredentialService.findById(UUID.fromString(formContent.id)) match {
               case None =>
-                BadRequest(views.html.rating.rateErrorMsg.render(Messages("rating.add.error"), "error"))
+                BadRequest(views.html.rating.rateErrorMsg.render(Messages("rating.add.error"), "error", request2Messages))
               case Some(userToBeRated) => {
                     ratingService.rateUser(
                       currentUser,
@@ -136,7 +141,7 @@ object RatingController extends Controller with SecureSocial {
           case "recipe" =>
             recipeService.findById(UUID.fromString(formContent.id)) match {
               case None =>
-                BadRequest(views.html.rating.rateErrorMsg.render(Messages("rating.add.error"), "error"))
+                BadRequest(views.html.rating.rateErrorMsg.render(Messages("rating.add.error"), "error", request2Messages))
               case Some(recipeToBeRated) => {
                 ratingService.rateRecipe(
                   currentUser,

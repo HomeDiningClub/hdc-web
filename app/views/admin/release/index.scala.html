@@ -1,4 +1,4 @@
-@()(implicit flash: Flash)
+@()(implicit flash: Flash, messages: Messages)
 
 @mainedit(Messages("admin.title")){
 
@@ -7,7 +7,6 @@
             <h1 class="page-header">@Messages("admin.release.index.header")</h1>
             <div class="btn-group">
                 <a href="@controllers.admin.routes.AdminReleaseController.createDefaultData()" class="btn btn-primary">@Messages("admin.release.actions.releaserun")</a>
-                <a href="@controllers.admin.routes.AdminReleaseController.deleteAllFromDB()" disabled="disabled" class="btn btn-primary btn-danger">@Messages("admin.release.actions.deleteall")</a>
             </div>
         </div>
     </div>

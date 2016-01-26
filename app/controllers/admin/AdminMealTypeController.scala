@@ -1,27 +1,32 @@
 package controllers.admin
 
+import javax.inject.{Named, Inject}
+
 import org.springframework.stereotype.{Controller => SpringController}
-import securesocial.core.SecureSocial
+
 import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
-import models.viewmodels.{MealTypeForm}
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial.SecuredRequest
 import services.{MealTypeService}
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import java.util.UUID
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
 import enums.RoleEnums
+import models.UserCredential
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.MealTypeForm
 
-@SpringController
-class AdminMealTypeController extends Controller with SecureSocial {
+//@Named
+class AdminMealTypeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
   @Autowired
   private var mealTypeService: MealTypeService = _
 
   // Edit - Listing
-  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.event.mealtype.list(mealTypeService.listAll()))
   }
 
@@ -34,15 +39,15 @@ class AdminMealTypeController extends Controller with SecureSocial {
     )(MealTypeForm.apply)(MealTypeForm.unapply)
   )
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.event.mealtype.index())
   }
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.event.mealtype.add(mealForm.fill(MealTypeForm.apply(None,"",0))))
   }
 
-  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     mealForm.bindFromRequest.fold(
       errors => {
@@ -74,7 +79,7 @@ class AdminMealTypeController extends Controller with SecureSocial {
 
 
   // Edit - Edit content
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     mealTypeService.findById(objectId) match {
       case None =>
         Ok(views.html.admin.event.mealtype.index())
@@ -89,7 +94,7 @@ class AdminMealTypeController extends Controller with SecureSocial {
   }
 
   // Edit - Delete content
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val result: Boolean = mealTypeService.deleteById(objectId)
 
     result match {

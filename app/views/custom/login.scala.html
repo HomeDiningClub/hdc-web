@@ -1,8 +1,6 @@
-@(loginForm: play.api.data.Form[(String,String)], errorMsg: Option[String] = None)(implicit request: play.api.mvc.RequestHeader)
+@(loginForm: play.api.data.Form[(String,String)], errorMsg: Option[String] = None)(implicit request: RequestHeader, env:securesocial.core.RuntimeEnvironment, messages: Messages, appContext: AppContext)
 
-@import helper._
-@import securesocial.core.Registry
-@import securesocial.core.AuthenticationMethod._
+@import securesocial.core.IdentityProvider
 @import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
 
 @main(Messages("securesocial.login.title")){
@@ -33,24 +31,21 @@
                 }
 
 
-                @defining( Registry.providers.all.values.filter( _.id != UsernamePassword) ) { externalProviders =>
+                @defining( env.providers.values.filter( _.id != UsernamePassword) ) { externalProviders: Iterable[securesocial.core.IdentityProvider] =>
 
-                        @Registry.providers.get(UsernamePassword).map { up =>
-
-                            @defining(if( externalProviders.size > 0 ) { Messages("securesocial.login.useEmailAndPassword") }else{ Messages("securesocial.login.useEmailAndPasswordOnly") }) { providerHeader =>
-                               @custom.provider("userpass", Some(loginForm), Some(providerHeader))(request)
+                        @env.providers.get(UsernamePassword).map { up =>
+                            @defining(if( externalProviders.size > 0 ) { Messages("securesocial.login.useEmailAndPassword") }else{ Messages("securesocial.login.useEmailAndPasswordOnly") }) { providerHeader: String =>
+                               @custom.provider("userpass", Some(loginForm), Some(providerHeader))
                             }
                         }
 
-                        @if( externalProviders.size > 0 ) {
-
-                                <h3>@Messages("securesocial.login.instructions")</h3>
-                                <p class="provider-icons margin-top">
-                                @for(p <- externalProviders) {
-                                    @custom.provider(p.id)(request)
-                                }
-                                </p>
-
+                        @if(externalProviders.size > 0 ) {
+                            <h3>@Messages("securesocial.login.instructions")</h3>
+                            <p class="provider-icons margin-top">
+                            @for(p <- externalProviders) {
+                                @custom.provider(p.id)
+                            }
+                            </p>
                         }
                     }
 

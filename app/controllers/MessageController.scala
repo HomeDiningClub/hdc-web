@@ -1,13 +1,19 @@
 package controllers
 
+import javax.inject.{Named, Inject}
+
+import customUtils.security.SecureSocialRuntimeEnvironment
 import play.api.data._
 import play.api.data.Forms._
 
 import play.api._
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import models.viewmodels.{MessageText, Repeat}
 
-object MessageController extends Controller{
+//@Named
+class MessageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                   val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
   val myForm = Form(
     mapping(

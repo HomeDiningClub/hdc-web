@@ -4,7 +4,7 @@ import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedToVia;
-import utils.Helpers;
+import customUtils.Helpers;
 
 import java.util.ArrayList;
 import java.util.HashSet;

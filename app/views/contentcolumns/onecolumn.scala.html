@@ -3,9 +3,19 @@
         menuList: Option[List[models.viewmodels.MenuItem]] = None,
         column1Header: String = "",
         column1PreAmble: String = "",
-        column1Body: String = "")(implicit request: RequestHeader)
+        column1Body: String = "",
+        currentUser: Option[models.UserCredential]
+        )(implicit request: RequestHeader, messages: Messages, appContext: AppContext)
 
-@main(urlTitle) {
+    @scripts = {
+        $(document).ready(function() {
+            var config = Object.create(null);
+            config.url = '@{routes.SuggestController.suggestForm()}';
+            $(".suggest-form").html(getAjax(configRecipe));
+        });
+    }
+
+@main(urlTitle, footerScripts = scripts) {
 
     <div class="container maincontent-container">
         <div class="row">
@@ -16,7 +26,7 @@
                         @if(!column1PreAmble.isEmpty){ <div class="lead">@Html(column1PreAmble)</div> }
                         @if(!column1Body.isEmpty){ <div class="content-body">@Html(column1Body)</div> }
                         @if(urlTitle.equalsIgnoreCase(Messages("aboutus.title"))) {
-                            @SuggestController.aboutUs(request)
+                            <div class="suggest-form"></div>
                         }
                     </div>
                     @contentcolumns.columnitems.menu(asideHeader = menuHeader, asideMenu = menuList)

@@ -1,16 +1,15 @@
-@(searchForm: Form[models.viewmodels.SearchFilterForm],
+@(searchForm: Form[models.formdata.SearchFilterForm],
         optionsFoodAreas: Option[Seq[(String,String)]],
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
         optionsIsHost: Option[Boolean] = None
-        //browseBoxes: Option[List[models.viewmodels.BrowseBox]]
-        )(implicit request: RequestHeader)
+        )(implicit request: RequestHeader, messages: Messages, appContext: AppContext)
 
 @main(Messages("browse.title")) {
     <div class="container maincontent-container">
         <div class="row margin-top">
             <!-- Filtering push -->
             <div class="col-xs-12 col-sm-12 form-filter animated fadeIn">
-            @helper.form(action=routes.BrowsePageController.index(), 'class -> "form-horizontal"){
+            @helper.form(action=routes.BrowsePageController.index(), 'class -> "form-horizontal") {
                 <div class="form-group">
                     @* @helper.inputText(searchForm("freeText"), '_label -> Messages("filterform.freetext")) *@
                     @if(optionsFoodAreas.nonEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fTag"), optionsFoodAreas.get, '_label -> Messages("filterform.foodarea"), 'class -> "form-control") </div>}
@@ -25,11 +24,11 @@
         <!-- Boxes -->
         @defining(
             if(searchForm("fHost").value.isDefined && searchForm("fHost").value.get.contains(searchForm("fHost").value.get)) {
-                true
+                1
             }else{
-                false
-            }) { isHostValue =>
-                @browse.browseList(searchForm("fTag").value, searchForm("fCounty").value, isHostValue,0)
+                0
+            }) { isHostValue: Int =>
+                @browse.browseList(searchForm("fTag").value, searchForm("fCounty").value, isHostValue, 0)
         }
     </div>
 }

@@ -1,9 +1,9 @@
-@(implicit request: play.api.mvc.RequestHeader)
+@()(implicit request: RequestHeader, messages: Messages)
 <html>
-<body>
-    <p>@Messages("mails.unknownEmail.body.part1")</p>
-    <p>@Messages("mails.unknownEmail.body.part2")</p>
-    @mailLink = { <a href="mailto:@Messages("mails.unknownEmail.body.maillink")">@Messages("mails.unknownEmail.body.mailtitle")</a> }
-    <p>@Html(Messages("mails.unknownEmail.body.part3", mailLink))</p>
-</body>
+    <body>
+        <p>@Messages("mails.unknownEmail.body.part1")</p>
+        <p>@Messages("mails.unknownEmail.body.part2")</p>
+        @mailLink = { <a href="mailto:@Messages("mails.unknownEmail.body.maillink")">@Messages("mails.unknownEmail.body.mailtitle")</a> }
+        <p>@play.twirl.api.Html(Messages("mails.unknownEmail.body.part3", mailLink))</p>
+    </body>
 </html>

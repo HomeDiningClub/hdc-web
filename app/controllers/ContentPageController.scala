@@ -1,30 +1,26 @@
 package controllers
 
-import com.typesafe.plugin.MailerAPI
-import constants.FlashMsgConstants
-import enums.RoleEnums
-import play.api.data.Form
-import play.api.data.Forms._
-import play.api.mvc._
+import javax.inject.{Named, Inject}
+
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.mvc.Controller
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{RequestHeader, Controller}
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial.RequestWithUser
 import services.{MailService, ContentService}
-import models.viewmodels.{EmailAndName, AboutUsForm, MenuItem, AddContentForm}
 import play.api.Logger
-import java.util.UUID
-import models.content.ContentPage
-import utils.authorization.WithRole
 
-@SpringController
-class ContentPageController extends Controller with securesocial.core.SecureSocial {
+import models.UserCredential
+import customUtils.security.SecureSocialRuntimeEnvironment
+import traits.ProvidesAppContext
 
+//@Named
+class ContentPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
+
+  /*
   @Autowired
   private var contentService: ContentService = _
-
-  @Autowired
-  private var mailService: MailService = _
+*/
 
   // Dynamic content
   def viewContentByName(contentName: String) = UserAwareAction { implicit request =>
@@ -33,164 +29,11 @@ class ContentPageController extends Controller with securesocial.core.SecureSoci
     contentService.findContentPageByRoute(contentName: String) match {
       case Some(item) =>
         val childPages = contentService.getAndMapRelatedPages(item.objectId)
-          Ok(views.html.contentcolumns.onecolumn(urlTitle = item.title, menuList = childPages, column1Header = item.title, column1PreAmble = item.preamble, column1Body = item.mainBody))
+          Ok(views.html.contentcolumns.onecolumn(urlTitle = item.title, menuList = childPages, column1Header = item.title, column1PreAmble = item.preamble, column1Body = item.mainBody, currentUser = request.user))
       case None =>
         val errMess = "Cannot find content using name:" + contentName
         Logger.debug(errMess)
         NotFound(errMess)
     }
   }
-
-
-/*
-
-  // About us, Press and UserTerms
-  // Menu
-  lazy val aboutUsAsideMenu = List[MenuItem](
-    new MenuItem(Messages("aboutus.header"),Messages("aboutus.header"),Messages("aboutus.header"), routes.ContentPageController.aboutUs().url, ""),
-    new MenuItem(Messages("press.header"),Messages("press.header"),Messages("press.header"), routes.ContentPageController.press().url, ""),
-    new MenuItem(Messages("usertermsandconditions.header"),Messages("usertermsandconditions.header"),Messages("usertermsandconditions.header"), routes.ContentPageController.userTermsAndConditions().url, "")
-  )
-  // Actions
-  def aboutUs = Action { implicit request =>
-    Ok(views.html.contentcolumns.onecolumn(
-      urlTitle = Messages("aboutus.title"),
-      column1Header = Messages("aboutus.header"),
-      column1Body = Messages("aboutus.body"),
-      menuList = None,
-      menuHeader = Messages("aboutus.header"))
-    )
-  }
-  def press = Action { implicit request =>
-    Ok(views.html.contentcolumns.onecolumn(
-      urlTitle = Messages("press.title"),
-      column1Header = Messages("press.header"),
-      column1Body = Messages("press.body"),
-      menuList = None,
-      menuHeader = Messages("press.header"))
-    )
-  }
-  def userTermsAndConditions = Action { implicit request =>
-    Ok(views.html.contentcolumns.onecolumn(
-      urlTitle = Messages("usertermsandconditions.title"),
-      column1Header = Messages("usertermsandconditions.header"),
-      column1Body = Messages("usertermsandconditions.body"),
-      menuList = None,
-      menuHeader = Messages("usertermsandconditions.header"))
-    )
-  }
-
-
-
-
-  // How does it work
-  def howDoesItWork = Action { implicit request =>
-    Ok(views.html.contentcolumns.onecolumn(
-      urlTitle = Messages("howdoesitwork.title"),
-      column1Header = Messages("howdoesitwork.header"),
-      column1Body = Messages("howdoesitwork.body"))
-    )
-  }
-
-
-
-  // Become a member & Perfect guest
-  // Menu
-  lazy val becomeAMemberAsideMenu = List[MenuItem](
-    new MenuItem(Messages("becomeamember.header"),Messages("becomeamember.header"),Messages("becomeamember.header"), routes.ContentPageController.becomeAMember().url, ""),
-    new MenuItem(Messages("theperfectguest.header"),Messages("theperfectguest.header"),Messages("theperfectguest.header"), routes.ContentPageController.thePerfectGuest().url, "")
-  )
-  // Actions
-  def becomeAMember = Action { implicit request =>
-    Ok(views.html.contentcolumns.onecolumn(
-      urlTitle = Messages("becomeamember.title"),
-      column1Header = Messages("becomeamember.header"),
-      column1Body = Messages("becomeamember.body"),
-      menuList = None,
-      menuHeader = Messages("becomeamember.header"))
-    )
-  }
-  def thePerfectGuest = Action { implicit request =>
-    Ok(views.html.contentcolumns.onecolumn(
-      urlTitle = Messages("theperfectguest.title"),
-      column1Header = Messages("theperfectguest.header"),
-      column1Body = Messages("theperfectguest.body"),
-      menuList = None,
-      menuHeader = Messages("theperfectguest.header"))
-    )
-  }
-
-
-
-  // Become a host & practical info & profiletext
-  // Menu
-  lazy val becomeAHostAsideMenu = List[MenuItem](
-    new MenuItem(Messages("becomeahost.header"),Messages("becomeahost.header"),Messages("becomeahost.header"), routes.ContentPageController.becomeAHost().url, ""),
-    new MenuItem(Messages("practicalinfo.header"),Messages("practicalinfo.header"),Messages("practicalinfo.header"), routes.ContentPageController.practicalInfo().url, ""),
-    new MenuItem(Messages("examplehosttext.header"),Messages("examplehosttext.header"),Messages("examplehosttext.header"), routes.ContentPageController.exampleHostText().url, "")
-  )
-  // Actions
-  def becomeAHost = Action { implicit request =>
-    Ok(views.html.contentcolumns.onecolumn(
-      urlTitle = Messages("becomeahost.title"),
-      column1Header = Messages("becomeahost.header"),
-      column1Body = Messages("becomeahost.body"),
-      menuList = None,
-      menuHeader = Messages("becomeahost.header"))
-    )
-  }
-  def practicalInfo = Action { implicit request =>
-    Ok(views.html.contentcolumns.onecolumn(
-      urlTitle = Messages("practicalinfo.title"),
-      column1Header = Messages("practicalinfo.header"),
-      column1Body = Messages("practicalinfo.body"),
-      menuList = None,
-      menuHeader = Messages("practicalinfo.header"))
-    )
-  }
-  def exampleHostText = Action { implicit request =>
-    Ok(views.html.contentcolumns.onecolumn(
-      urlTitle = Messages("examplehosttext.title"),
-      column1Header = Messages("examplehosttext.header"),
-      column1Body = Messages("examplehosttext.body"),
-      menuList = None,
-      menuHeader = Messages("examplehosttext.header"))
-    )
-  }
-
-
-
-
-  // References
-  def references = Action { implicit request =>
-    Ok(views.html.contentcolumns.onecolumn(
-      urlTitle = Messages("references.title"),
-      column1Header = Messages("references.header"),
-      column1Body = Messages("references.body"))
-    )
-  }
-
-
-  // FAQ
-  def faq = Action { implicit request =>
-    Ok(views.html.contentcolumns.onecolumn(
-      urlTitle = Messages("faq.title"),
-      column1Header = Messages("faq.header"),
-      column1Body = Messages("faq.body"))
-    )
-  }
-
-
-  // Contact us
-  def contact = Action { implicit request =>
-    Ok(views.html.contentcolumns.twocolumn(
-      urlTitle = Messages("contact.title"),
-      column1Header = Messages("contact.header1"),
-      column1Body = Messages("contact.body1"),
-      column2Header = Messages("contact.header2"),
-      column2Body = Messages("contact.body2"))
-    )
-  }
-*/
-
 }

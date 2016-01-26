@@ -1,7 +1,7 @@
-@(blogPostForm: Form[models.viewmodels.BlogPostsForm], editingBlogPosts: Option[models.BlogPost] = None, extraValues: models.viewmodels.EditBlogPostsExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader)
-@import helper.twitterBootstrap._
+@(blogPostForm: Form[models.formdata.BlogPostsForm], editingBlogPosts: Option[models.BlogPost] = None, extraValues: models.viewmodels.EditBlogPostsExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages, appContext: AppContext)
 
-@main(Messages("blog.create.title"), footerHtml = file.modalImages.render()){
+
+@main(Messages("blog.create.title"), footerHtml = file.modalImages.render(messages)){
 
     <div class="container maincontent-container">
         <div class="row">
@@ -34,7 +34,7 @@
                                         controllers.routes.BlogPostsPageController.view(editingBlogPosts.get.objectId).url
                                 }else{
                                     controllers.routes.UserProfileController.viewProfileByLoggedInUser().url
-                                }) { abortLink =>
+                                }) { abortLink : String =>
                                     <a class="btn" data-loading-text="@Messages("blog.edit.saving")" href="@abortLink">@Messages("blog.edit.abort")</a>
                                 }
                                 @if(blogPostForm("blogpostid").value.nonEmpty) {

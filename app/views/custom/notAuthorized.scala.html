@@ -1,6 +1,6 @@
-@()(implicit request: RequestHeader)
-@main(Messages("securesocial.notAuthorized.title")) {
+@()(implicit request: RequestHeader, lang: play.api.i18n.Lang, env: securesocial.core.RuntimeEnvironment, messages: Messages, appContext: AppContext)
 
+@main(Messages("securesocial.notAuthorized.title")){
     <div class="container maincontent-container">
         <div class="row">
             <div class="col-xs-12">
@@ -9,9 +9,10 @@
                 </div>
 
                 <div class="alert alert-error animated fadeIn">
-                    @Messages("securesocial.notAuthorized.message")
+                @Messages("securesocial.notAuthorized.message")
                 </div>
             </div>
         </div>
     </div>
+
 }

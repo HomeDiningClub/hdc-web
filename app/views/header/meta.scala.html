@@ -1,6 +1,6 @@
 @(metaData: Option[viewmodels.MetaData] = None)
 @if(metaData.nonEmpty) {
-    @defining(metaData.get) { meta =>
+    @defining(metaData.get) { meta: viewmodels.MetaData =>
         @if(meta.metaTitle.nonEmpty){<meta property="title" content="@meta.metaTitle" />}        @* Normal meta *@
         @if(meta.metaDesc.nonEmpty){<meta property="description" content="@meta.metaDesc" />}
         @if(meta.metaKeywords.nonEmpty){<meta property="title" content="@meta.metaKeywords" />}

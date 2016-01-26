@@ -1,6 +1,7 @@
 package services
 
 import java.util.UUID
+import javax.inject.{Named,Inject}
 
 import controllers.routes
 import models.viewmodels.ReviewBox
@@ -12,13 +13,15 @@ import repositories._
 import models.rating.{RatesRecipe, RatesUserCredential}
 import models.{Recipe, UserCredential}
 import models.modelconstants.RelationshipTypesScala
-import utils.Helpers
+import customUtils.Helpers
 import scala.collection.JavaConverters._
 import scala.List
 
+//@Named
 @Service
-class RatingService {
+class RatingService @Inject()(val template: Neo4jTemplate, val userCredentialRepository: UserCredentialRepository, val ratingUserCredentialRepository: RatingUserCredentialRepository, val ratingRecipeRepository: RatingRecipeRepository){
 
+  /*
   @Autowired
   private var template: Neo4jTemplate = _
 
@@ -30,7 +33,7 @@ class RatingService {
 
   @Autowired
   private var ratingRecipeRepository: RatingRecipeRepository = _
-
+*/
 
   // RatingUserCredential
   @Transactional(readOnly = true)

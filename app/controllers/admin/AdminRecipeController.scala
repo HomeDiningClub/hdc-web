@@ -1,26 +1,30 @@
 package controllers.admin
 
+import javax.inject.{Named, Inject}
+
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc._
-import securesocial.core.SecureSocial
+
 import models.{UserCredential, Recipe}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial.SecuredRequest
 import services.{UserProfileService, ContentFileService, RecipeService}
 import play.api.libs.Files.TemporaryFile
 import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
 import java.util.UUID
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
 import scala.Some
-import models.viewmodels.RecipeForm
-import utils.Helpers
+import customUtils.Helpers
 import play.api.Logger
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.RecipeForm
 
-@SpringController
-class AdminRecipeController extends Controller with SecureSocial {
+//@Named
+class AdminRecipeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
   @Autowired
   private var recipeService: RecipeService = _
@@ -30,7 +34,6 @@ class AdminRecipeController extends Controller with SecureSocial {
 
   @Autowired
   private var fileService: ContentFileService = _
-
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
@@ -62,7 +65,7 @@ class AdminRecipeController extends Controller with SecureSocial {
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
 
-    var currentUser: Option[UserCredential] = Helpers.getUserFromRequest
+    var currentUser = request.user
 
     contentForm.bindFromRequest.fold(
       errors => {
@@ -78,7 +81,7 @@ class AdminRecipeController extends Controller with SecureSocial {
               case None => None
               case Some(item) =>
                 item.setName(contentData.name)
-                currentUser = Some(item.getOwnerProfile.getOwner)
+                currentUser = item.getOwnerProfile.getOwner
                 Some(item)
             }
           case None =>
@@ -96,7 +99,7 @@ class AdminRecipeController extends Controller with SecureSocial {
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
         val saved = recipeService.add(newRec.get)
-        val savedProfile = userProfileService.addRecipeToProfile(currentUser.get, saved)
+        val savedProfile = userProfileService.addRecipeToProfile(currentUser, saved)
         val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.getName, saved.objectId.toString)
         Redirect(controllers.admin.routes.AdminRecipeController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       }

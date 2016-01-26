@@ -1,4 +1,4 @@
-@(boxes: List[models.viewmodels.ReviewBox] = Nil)
+@(boxes: List[models.viewmodels.ReviewBox] = Nil)(implicit messages: Messages)
 
 @if(boxes.nonEmpty) {
     <div class="col-xs-12">
@@ -13,7 +13,7 @@
                 <div class="media-body">
                     <div class="pull-left">@Messages("reviewbox.rated.object.text")&nbsp;</div><a href="@box.linkToRatedItem" class="review-ranked-item-link pull-left">@Html(box.rankedName)</a>
                     @shared.grade(inputId = "host-grade", initialValue = box.rating, showCustomCaption = true, disabled = true, size = "xxxs")
-                    <em class="review-date">@box.ratedDate.format(Messages("reviewbox.date.rated.date-format"))</em>
+                    <em class="review-date">@customUtils.Helpers.formatDate(box.ratedDate,Messages("reviewbox.date.rated.date-format"))</em>
                     @if(box.reviewText.nonEmpty){
                         <hr>
                         <div class="review-text truncate-text-review-boxes">@box.reviewText.get</div>

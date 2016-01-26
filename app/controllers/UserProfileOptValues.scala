@@ -1,40 +1,39 @@
 package controllers
 
 class UserProfileOptValues(
-  var payCache      : String,
-  var paySwish      : String,
-  var payBankCard   : String,
-  var payIZettle    : String,
-  var roleGuest     : String,
-  var roleHost      : String,
-  var numberOfGuest : String,
-  var minGuest      : String,
-  var handicapFriendly : String,
-  var childFfriendly : String,
-  var havePets      : String,
-  var smoke         : String
-                        )
-{
+                            var payCache: String,
+                            var paySwish: String,
+                            var payBankCard: String,
+                            var payIZettle: String,
+                            var roleGuest: String,
+                            var roleHost: String,
+                            var numberOfGuest: String,
+                            var minGuest: String,
+                            var handicapFriendly: String,
+                            var childFfriendly: String,
+                            var havePets: String,
+                            var smoke: String
+                            ) {
 
-    def maxGuestsSelected(value : String) : String = {
-
-      var defSelected = "selected"
-      var isThisSelected = ""
-
-      if(value == numberOfGuest ){
-        isThisSelected = defSelected
-      }
-
-      isThisSelected
-    }
-
-
-  def minGuestsSelected(value : String) : String = {
+  def maxGuestsSelected(value: String): String = {
 
     var defSelected = "selected"
     var isThisSelected = ""
 
-    if(value == minGuest ){
+    if (value == numberOfGuest) {
+      isThisSelected = defSelected
+    }
+
+    isThisSelected
+  }
+
+
+  def minGuestsSelected(value: String): String = {
+
+    var defSelected = "selected"
+    var isThisSelected = ""
+
+    if (value == minGuest) {
       isThisSelected = defSelected
     }
 
@@ -49,12 +48,12 @@ class UserProfileOptValues(
    * @param checkedValue
    * @return
    */
-  def isValueToCheck(value : String, checkedValue : String) : String = {
+  def isValueToCheck(value: String, checkedValue: String): String = {
 
-    var defSelected    : String = "CHECKED"
-    var selectedString : String = ""
+    var defSelected: String = "CHECKED"
+    var selectedString: String = ""
 
-    if(value.equalsIgnoreCase(checkedValue)) {
+    if (value.equalsIgnoreCase(checkedValue)) {
       selectedString = defSelected
     }
 
@@ -62,102 +61,102 @@ class UserProfileOptValues(
   }
 
 
-  def smokingPermittedJa() : String = {
+  def smokingPermittedJa(): String = {
     isValueToCheck(smoke, "Ja")
   }
 
-  def smokingPermittedNej() : String = {
+  def smokingPermittedNej(): String = {
     isValueToCheck(smoke, "Nej")
   }
 
 
-  def havePetsJa() : String = {
+  def havePetsJa(): String = {
     isValueToCheck(havePets, "Ja")
   }
 
-  def havePetsNej() : String = {
+  def havePetsNej(): String = {
     isValueToCheck(havePets, "Nej")
   }
 
 
-  def childFfriendlyJa() : String = {
+  def childFfriendlyJa(): String = {
     isValueToCheck(childFfriendly, "Ja")
   }
 
-  def childFfriendlyNej() : String = {
+  def childFfriendlyNej(): String = {
     isValueToCheck(childFfriendly, "Nej")
   }
 
 
-  def handicapFriendlyJa() : String = {
+  def handicapFriendlyJa(): String = {
     isValueToCheck(handicapFriendly, "Ja")
   }
 
-  def handicapFriendlyNej() : String = {
+  def handicapFriendlyNej(): String = {
     isValueToCheck(handicapFriendly, "Nej")
   }
 
 
-  def isVald(value : String) : String = {
+  def isVald(value: String): String = {
 
-      var defSelected    : String = "CHECKED"
-      var selectedString : String = ""
+    var defSelected: String = "CHECKED"
+    var selectedString: String = ""
 
-      if(value.size > 0) {
-        selectedString = defSelected
-      }
-      selectedString
+    if (value.size > 0) {
+      selectedString = defSelected
     }
+    selectedString
+  }
 
-  def isBooleanSelected(value : String) : Boolean = {
+  def isBooleanSelected(value: String): Boolean = {
 
-    var isSelected : Boolean = false
+    var isSelected: Boolean = false
 
-    if(value.size > 0) {
+    if (value.size > 0) {
       isSelected = true
     }
     isSelected
   }
 
 
-    def ispayCache : String = {
-      isVald(payCache)
-    }
+  def ispayCache: String = {
+    isVald(payCache)
+  }
 
-  def ispaySwish : String = {
+  def ispaySwish: String = {
     isVald(paySwish)
   }
 
-  def ispayBankCard : String = {
+  def ispayBankCard: String = {
     isVald(payBankCard)
   }
 
-  def ispayIZettle : String = {
+  def ispayIZettle: String = {
     isVald(payIZettle)
   }
 
-  def isroleGuest : String = {
+  def isroleGuest: String = {
     isVald(roleGuest)
   }
 
-  def isBooleanSelectedGuest : Boolean = {
+  def isBooleanSelectedGuest: Boolean = {
     isBooleanSelected(roleGuest)
   }
 
 
-  def isroleHost : String = {
+  def isroleHost: String = {
     isVald(roleHost)
   }
 
-  def isBooleanSelectedHost : Boolean = {
+  def isBooleanSelectedHost: Boolean = {
     isBooleanSelected(roleHost)
   }
 
-  def getnumberOfGuest : String = {
+  def getnumberOfGuest: String = {
     numberOfGuest
   }
 
-  def getmMinNumberOfGuest : String = {
+  def getmMinNumberOfGuest: String = {
     minGuest
   }
 

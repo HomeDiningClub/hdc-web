@@ -1,4 +1,4 @@
-@(images: List[models.files.ContentFile] = Nil)
+@(images: List[models.files.ContentFile] = Nil)(implicit messages: Messages)
 
 @if(images.nonEmpty){
     <table class="table table-striped table-hover table-bordered">

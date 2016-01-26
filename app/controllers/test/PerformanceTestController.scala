@@ -1,24 +1,17 @@
 package controllers.test
 
-import org.springframework.beans.factory.annotation.Autowired
+import javax.inject.{Named, Inject}
+
 import play.api.Logger
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import services.{InstancedServices, WorldService}
-import models.World
 import org.springframework.stereotype.{Controller => SpringController}
-import utils.authorization.WithRole
-import enums.RoleEnums
-import securesocial.core.SecureSocial
+import customUtils.security.SecureSocialRuntimeEnvironment
 
-
-@SpringController
-class PerformanceTestController extends Controller with SecureSocial{
-
-  @Autowired
-  var worldService: WorldService = _
+//@Named
+class PerformanceTestController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport{
 
   def index = UserAwareAction { implicit request =>
-
 
     var a = 0
     var result: String = ""

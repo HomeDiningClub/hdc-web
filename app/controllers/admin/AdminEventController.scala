@@ -1,25 +1,29 @@
 package controllers.admin
 
+import javax.inject.{Named, Inject}
+
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc._
-import securesocial.core.SecureSocial
+
 import models.{Event, UserCredential}
-import play.api.i18n.Messages
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial.SecuredRequest
 import services.{EventService, UserProfileService, ContentFileService}
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
 import scala.Some
-import models.viewmodels.{EventForm}
-import utils.Helpers
+import customUtils.Helpers
 import play.api.Logger
 import models.event.EventDate
 import org.joda.time.DateTime
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.EventForm
 
-@SpringController
-class AdminEventController extends Controller with SecureSocial {
+//@Named
+class AdminEventController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport{
 
   @Autowired
   private var eventService: EventService = _
@@ -30,9 +34,8 @@ class AdminEventController extends Controller with SecureSocial {
   @Autowired
   private var fileService: ContentFileService = _
 
-
   // Edit - Listing
-  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val listOfPage: List[Event] = eventService.getListOfAll
     Ok(views.html.admin.event.list(listOfPage))
   }
@@ -40,17 +43,17 @@ class AdminEventController extends Controller with SecureSocial {
   // Edit - Add Content
   def contentForm = eventService.eventFormMapping
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.event.index())
   }
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.event.add(contentForm))
   }
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
 
-    var currentUser: Option[UserCredential] = Helpers.getUserFromRequest
+    var currentUser = request.user
 
     contentForm.bindFromRequest.fold(
       errors => {
@@ -66,7 +69,7 @@ class AdminEventController extends Controller with SecureSocial {
               case None => None
               case Some(item) =>
                 item.setName(contentData.name)
-                currentUser = Some(item.getOwnerProfile.getOwner)
+                currentUser = item.getOwnerProfile.getOwner
                 Some(item)
             }
           case None =>
@@ -85,7 +88,7 @@ class AdminEventController extends Controller with SecureSocial {
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
         val saved = eventService.add(newRec.get)
-        val savedProfile = userProfileService.addEventToProfile(currentUser.get.getUserProfile, saved)
+        val savedProfile = userProfileService.addEventToProfile(currentUser.getUserProfile, saved)
         val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.getName, saved.objectId.toString)
         Redirect(controllers.admin.routes.AdminEventController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       }
@@ -94,7 +97,7 @@ class AdminEventController extends Controller with SecureSocial {
   }
 
   // Edit - Edit content
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val editingItem = eventService.findById(objectId)
     editingItem match {
       case None =>
@@ -121,7 +124,7 @@ class AdminEventController extends Controller with SecureSocial {
   }
 
   // Edit - Delete content
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val result: Boolean = eventService.deleteById(objectId)
 
     result match {

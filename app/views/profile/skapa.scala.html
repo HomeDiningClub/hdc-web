@@ -4,10 +4,10 @@
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
         editingProfile: Option[UserProfile] = None,
         termsAndConditions: Option[models.content.ContentPage] = None,
-        extraValues: models.viewmodels.EditProfileExtraValues)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie)
-@import helper.twitterBootstrap._
+        extraValues: models.viewmodels.EditProfileExtraValues)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages, appContext: AppContext)
 
-@main(Messages("profile.create.title"), footerHtml = file.modalImages.render()){
+
+@main(Messages("profile.create.title"), footerHtml = file.modalImages.render(messages)){
 
     <div class="container maincontent-container">
         <div class="row">
@@ -225,8 +225,7 @@
                             '_error -> EnvDataForm.error("personnummer")
                         )
 
-
-                        <a class="btn" href="@securesocial.core.providers.utils.RoutesHelper.handleStartResetPassword()">@Messages("hdc.securesocial.login.newPassword")</a>
+                        <a class="btn" href="@securesocial.controllers.routes.PasswordReset.startResetPassword">@Messages("hdc.securesocial.login.newPassword")</a>
 
                     </div>
                 </div>
@@ -322,14 +321,14 @@
 
             <div class="col-xs-12 text-center margin-top">
                 <hr>
-                @defining("<a data-toggle=\"modal\" href=\"#modalAcceptTerms\">" + Messages("profile.create.accept.link.text") + "&nbsp;<span class=\"glyphicon glyphicon-new-window\"></span></a>"){ linkToTerms =>
+                @defining("<a data-toggle=\"modal\" href=\"#modalAcceptTerms\">" + Messages("profile.create.accept.link.text") + "&nbsp;<span class=\"glyphicon glyphicon-new-window\"></span></a>"){ linkToTerms: String =>
                         @helper.checkbox(EnvDataForm("acceptTerms"),
                             '_label -> Messages("profile.create.accept.label"),
                             '_showErrors -> true,
                             '_help -> "",
                             'style -> "display:inline;"
                         )
-                        @Html(Messages("profile.create.accept.help", linkToTerms))
+                        @play.twirl.api.Html(Messages("profile.create.accept.help", linkToTerms))
                 }
             </div>
 

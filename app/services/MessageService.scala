@@ -2,6 +2,7 @@ package services
 
 import java.util
 import java.util.{UUID, Date, Set}
+import javax.inject.Named
 
 import models.message.{Message}
 import models.modelconstants.RelationshipTypesScala
@@ -14,9 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 import repositories.{MessageRepository, UserCredentialRepository}
 import scala.collection.JavaConverters._
 
-/**
- * Created by Tommy on 01/10/2014.
- */
+//@Named
 @Service
 class MessageService {
 

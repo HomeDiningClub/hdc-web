@@ -7,7 +7,6 @@ import org.springframework.data.neo4j.annotation.EndNode;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
-import services.InstancedServices;
 
 @RelationshipEntity(type = RelationshipTypesJava.RATED_RECIPE.Constant)
 public class RatesRecipe extends BaseRating {

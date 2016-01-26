@@ -1,4 +1,4 @@
-@(uploadResult: Option[String] = None)
+@(uploadResult: Option[String] = None)(implicit messages: Messages)
 
 @helper.form(action = controllers.admin.routes.AdminFileController.add(), 'enctype -> "multipart/form-data") {
     <input type="file" name="file">

@@ -1,107 +1,150 @@
 package services
 
 import _root_.java.util.UUID
-import enums.RoleEnums
+import javax.inject.{Named,Inject}
 import enums.RoleEnums.RoleEnums
-import models.{ViewedByUnKnown, UserCredential, UserProfileData, UserProfile}
+import models.{ViewedByUnKnown, UserCredential, UserProfile}
 import org.neo4j.helpers.collection.IteratorUtil
-import repositories.UserProfileRepository
-
+import org.springframework.stereotype.Service
 import scala.collection.JavaConverters._
-
-import repositories.UserCredentialRepository
-
-import scala.collection.mutable.ListBuffer
-
-import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.neo4j.support.Neo4jTemplate
-import org.neo4j.graphdb.index.Index
-import org.neo4j.graphdb.Node
-import securesocial.core._
-import play.api.{Logger, Application}
-import securesocial.core._
-import securesocial.core.providers.Token
-import securesocial.core.IdentityId
 import enums.RoleEnums
-import org.springframework.data.neo4j.support.Neo4jTemplate
-import org.springframework.beans.factory.annotation.Autowired
-import repositories.UserProfileRepository
-import org.springframework.stereotype.Service
-import securesocial.core
-import securesocial.core.providers.utils.BCryptPasswordHasher
+import scala.concurrent.Future
+import securesocial.core.PasswordInfo
+import securesocial.core.providers.MailToken
 
-/**
- * UserCredentialService
- * Methods for manages SecureSocial storage in Neo4J graphic database
- *
- * 1. Username/Password storage
- * 2. Facebook autentication
- * 3. Google autentication
- */
-class UserCredentialServicePlugin (application: Application) extends UserServicePlugin(application) {
+//@Named
+class UserCredentialServicePlugin extends securesocial.core.services.UserService[UserCredential] {
 
-  private var tokens = Map[String, Token]()
+  @Inject var userProfileService: UserProfileService = null
+  @Inject var userCredentialService: UserCredentialService = null
+
+  private var tokens = Map[String, MailToken]()
   var users = Map[String, UserCredential]()
+  var isUserCacheON : Boolean = false /// @todo
+  //implicit val implicitEnv = env
 
-    var isUserCacheON : Boolean = false /// @todo
 
-
-  /** *
+ /* /** *
     * Fetch user by IdentityId meaning userId and ProviderId
     * from the database
     * @param id
     * @return
     */
-  def find(id: IdentityId): Option[UserCredential] = {
-    var log : Long = utils.Helpers.startPerfLog()
+  def find(id: securesocial.core.GenericProfile): Option[UserCredential] = {
+    //var log : Long = customUtils.Helpers.startPerfLog()
     var uc =  findByUserIdAndProviderId(id.userId, id.providerId)
 
-    utils.Helpers.endPerfLog("UserCredentialServicePlugin - find with id: " + id.userId, log)
+    //customUtils.Helpers.endPerfLog("UserCredentialServicePlugin - find with id: " + id.userId, log)
 
-   if(uc != null && uc != None) {
+    if(uc != null && uc != None) {
      Some(uc)
-   } else {
+    } else {
      None
-   }
+    }
 
+  }
+*/
+  def link(current: UserCredential, to: securesocial.core.BasicProfile): Future[UserCredential] = {
+    // We don't support more than one login at this time, please implement a list of BasicProfiles on UserCredential and update all the lookup methods in this class
+
+    /*
+    if (current.identities.exists(i => i.providerId == to.providerId && i.userId == to.userId)) {
+      Future.successful(current)
+    } else {
+      val added = to :: current.identities
+      val updatedUser = current.copy(identities = added)
+      users = users + ((current.main.providerId, current.main.userId) -> updatedUser)
+      Future.successful(updatedUser)
+    }
+    */
+    Future.successful(current)
+  }
+
+  override def passwordInfoFor(user: UserCredential): Future[Option[securesocial.core.PasswordInfo]] = {
+    // We don't support linked logins at this time, please extend this method to look thru all current UserCredentials link to other BasicProfiles-passwordInfo
+    /*
+    Future.successful {
+      for (
+        found <- users.values.find(_ == user);
+        identityWithPasswordInfo <- found.identities.find(_.providerId == UsernamePasswordProvider.UsernamePassword)
+      ) yield {
+        identityWithPasswordInfo.passwordInfo.get
+      }
+    }
+    */
+    Future.successful{user.passwordInfo()}
+  }
+
+  def find(providerId: String, userId: String): Future[Option[securesocial.core.BasicProfile]] = {
+    /* We don't support linked logins at this time, to enable parse thru all linked logins for all the found users
+    if (play.api.Logger.isDebugEnabled) {
+      play.api.Logger.debug("users = %s".format(users))
+    }
+    val result = for (
+      user <- users.values;
+      basicProfile <- user.identities.find(su => su.providerId == providerId && su.userId == userId)
+    ) yield {
+      basicProfile
+    }
+    Future.successful(result.headOption)
+    */
+
+    val u = findByUserIdAndProviderId(userId, providerId) match {
+      case null => None
+      case uc => Some(uc.asInstanceOf[securesocial.core.BasicProfile])
+    }
+    Future.successful(u)
   }
 
 
+  override def updatePasswordInfo(user: UserCredential, info: securesocial.core.PasswordInfo): Future[Option[securesocial.core.BasicProfile]] = {
+    // We don't support linked logins at this time, please extend this method to look thru all current UserCredentials link to other BasicProfiles-passwordInfo
+    /*
+    Future.successful {
+      for (
+        found <- users.values.find(_ == user);
+        identityWithPasswordInfo <- found.identities.find(_.providerId == UsernamePasswordProvider.UsernamePassword)
+      ) yield {
+        val idx = found.identities.indexOf(identityWithPasswordInfo)
+        val updated = identityWithPasswordInfo.copy(passwordInfo = Some(info))
+        val updatedIdentities = found.identities.patch(idx, Seq(updated), 1)
+        found.copy(identities = updatedIdentities)
+        updated
+      }
+    }
+    */
 
-  def findByEmailAndProvider(email: String, providerId: String): Option[UserCredential] = {
+    val userCopy: securesocial.core.BasicProfile = userCredentialService.userCredential2socialUser(user)
+    userCopy.copy(passwordInfo = Some(info))
+    Future.successful{Some(userCopy)}
 
-    var log : Long = utils.Helpers.startPerfLog()
+  }
 
-    val uc : Option[UserCredential] = Some(getUserByEmailAndProvider(email.toLowerCase, providerId))
+  def findByEmailAndProvider(email: String, providerId: String): Future[Option[securesocial.core.BasicProfile]] = {
+    /* No linked support yet, to enable, as per normal loop thru all existing linked logins
+    if (logger.isDebugEnabled) {
+      logger.debug("users = %s".format(users))
+    }
+    val someEmail = Some(email)
+    val result = for (
+      user <- users.values;
+      basicProfile <- user.identities.find(su => su.providerId == providerId && su.email == someEmail)
+    ) yield {
+      basicProfile
+    }
+     */
 
-    var isFoundEmail : Boolean = false
-    if(uc == null || uc == None) {
-      // null or None
-      isFoundEmail = false
-    } else if(uc.get == null) {
-      // Some(null)
-      isFoundEmail = false
-    } else {
-      isFoundEmail = true
+    //val log : Long = customUtils.Helpers.startPerfLog()
+
+    val retUser: Option[securesocial.core.BasicProfile] = getUserByEmailAndProvider(email.toLowerCase, providerId) match {
+      case None => None
+      case Some(user) => Some(user.asInstanceOf[securesocial.core.BasicProfile])
     }
 
+    Future.successful(retUser)
 
-
-
-    //val exitsUser = exists(email, providerId)
-
-    utils.Helpers.endPerfLog("findByEmailAndProvider - find with id: " + email, log)
-
-
-    if(isFoundEmail){
-
-      return uc
-
-    }
-
-    None
+    //customUtils.Helpers.endPerfLog("findByEmailAndProvider - find with id: " + email, log)
   }
 
 
@@ -112,12 +155,42 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     * @param user
     * @return
     */
-  def save(user: Identity): Identity = {
-    var log : Long = utils.Helpers.startPerfLog()
-    val userCredential : UserCredential = InstancedServices.userCredentialService.socialUser2UserCredential(user)
+  def save(user: securesocial.core.BasicProfile, mode: securesocial.core.services.SaveMode ): Future[UserCredential] = {
+    // We don't support linked logins at this time, please extend this method to look thru all current UserCredentials link to other BasicProfiles-passwordInfo
+    /*
+    mode match {
+          case SaveMode.SignUp =>
+            val newUser = DemoUser(user, List(user))
+            users = users + ((user.providerId, user.userId) -> newUser)
+          case SaveMode.LoggedIn =>
+
+        }
+        // first see if there is a user with this BasicProfile already.
+        val maybeUser = users.find {
+          case (key, value) if value.identities.exists(su => su.providerId == user.providerId && su.userId == user.userId) => true
+          case _ => false
+        }
+        maybeUser match {
+          case Some(existingUser) =>
+            val identities = existingUser._2.identities
+            val updatedList = identities.patch(identities.indexWhere(i => i.providerId == user.providerId && i.userId == user.userId), Seq(user), 1)
+            val updatedUser = existingUser._2.copy(identities = updatedList)
+            users = users + (existingUser._1 -> updatedUser)
+            Future.successful(updatedUser)
+
+          case None =>
+            val newUser = DemoUser(user, List(user))
+            users = users + ((user.providerId, user.userId) -> newUser)
+            Future.successful(newUser)
+        }
+     */
+
+    //var log : Long = customUtils.Helpers.startPerfLog()
+    val userCredential : UserCredential = userCredentialService.socialUser2UserCredential(user)
     val userCredential2 = createOrUpdateUser(userCredential)
-    utils.Helpers.endPerfLog("save - find with id: " + user.email, log)
-    userCredential2
+    //customUtils.Helpers.endPerfLog("save - find with id: " + user.email, log)
+
+    Future.successful(userCredential2)
   }
 
 
@@ -133,7 +206,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   @Transactional(readOnly = true)
   def exists(userId: String, providerId: String) :  (UUID, Boolean, Long) = {
 
-    var log : Long = utils.Helpers.startPerfLog()
+    //var log : Long = customUtils.Helpers.startPerfLog()
 
     var user = findByUserIdAndProviderId(userId, providerId)
     var finns : Boolean = false
@@ -165,7 +238,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       graphId = -1L
     }
 
-    utils.Helpers.endPerfLog("exists - find with id: " + userId, log)
+    //customUtils.Helpers.endPerfLog("exists - find with id: " + userId, log)
 
     val t = (idNo, finns, graphId)
     t
@@ -184,7 +257,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
    * @return UserCredential information to be able to authenticate the user
    */
   @Transactional(readOnly = true)
-  def findByUserIdAndProviderId(userId: String, providerId: String) :  UserCredential =  {
+  def findByUserIdAndProviderId(userId: String, providerId: String) : UserCredential =  {
 
     var mUserId : String = userId.toLowerCase
 
@@ -195,7 +268,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       return u.get
     }
 
-    var user = InstancedServices.userCredentialService.userCredentialRepository.findByuserIdAndProviderId(mUserId,providerId)
+    var user = userCredentialService.userCredentialRepository.findByuserIdAndProviderId(mUserId,providerId)
 
     if(user != null && user != None && isUserCacheON) {
       addUserCache(user)
@@ -207,18 +280,18 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
   // Fetch user by emailAddress and providerId
   @Transactional(readOnly = true)
-  def getUserByEmailAndProvider(emailAddress: String, providerId: String) :  UserCredential =  {
-    var lowerCaseEmailAddress = emailAddress.toLowerCase
-   // var user = InstancedServices.userCredentialService.userCredentialRepository.findByemailAddressAndProviderId(lowerCaseEmailAddress, providerId)
-   var user = InstancedServices.userCredentialService.userCredentialRepository.findByemailAddressAndProviderId2(lowerCaseEmailAddress, providerId)
-    return user
+  def getUserByEmailAndProvider(emailAddress: String, providerId: String) : Option[UserCredential] = {
+    userCredentialService.userCredentialRepository.findByemailAddressAndProviderIdToLower(emailAddress.toLowerCase, providerId) match {
+      case null => None
+      case item:UserCredential => Some(item)
+    }
   }
 
 
   // List alla users
   @Transactional(readOnly = true)
   def getUsers() :  List[UserCredential] =  {
-    IteratorUtil.asCollection(InstancedServices.userCredentialService.userCredentialRepository.findAll()).asScala.toList
+    IteratorUtil.asCollection(userCredentialService.userCredentialRepository.findAll()).asScala.toList
    }
 
 
@@ -237,7 +310,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   @Transactional(readOnly = false)
   def createOrUpdateUser(userCredential: UserCredential): UserCredential = {
 
-    var log : Long = utils.Helpers.startPerfLog()
+    //var log : Long = customUtils.Helpers.startPerfLog()
 
     var userId = userCredential.userId
 
@@ -288,7 +361,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
             print("Create ViewedByMember")
             var view : models.ViewedByMember = new models.ViewedByMember()
             println("size : " + view.getSize)
-            InstancedServices.userProfileService.setAndRemoveViewByMember(theProfile, view)
+            userProfileService.setAndRemoveViewByMember(theProfile, view)
             //InstancedServices.userProfileService.saveUserProfile(theProfile)
             saveProfile = true
           }
@@ -297,14 +370,14 @@ class UserCredentialServicePlugin (application: Application) extends UserService
           if(theProfile.getUnKnownVisited() == null || theProfile.getUnKnownVisited == None) {
             print("Create ViewedByUnKnown")
             var view : models.ViewedByUnKnown = new ViewedByUnKnown()
-            InstancedServices.userProfileService.setAndRemoveViewByUnKnown(theProfile, view)
+            userProfileService.setAndRemoveViewByUnKnown(theProfile, view)
             saveProfile = true
 
           }
 
           if(saveProfile) {
             println("Save profile ....  ")
-            InstancedServices.userProfileService.saveUserProfile(theProfile)
+            userProfileService.saveUserProfile(theProfile)
           }
 
 
@@ -335,12 +408,12 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
         var newUserCredential                   = saveUser(modUserCredential)
 
-      utils.Helpers.endPerfLog("createOrUpdateUser - update", log)
+      //customUtils.Helpers.endPerfLog("createOrUpdateUser - update", log)
         return newUserCredential
 
     } else {
         // Add default group
-        InstancedServices.userCredentialService.addRole(userCredential, RoleEnums.USER)
+        userCredentialService.addRole(userCredential, RoleEnums.USER)
         var userProfile : UserProfile = new UserProfile()
 
       userProfile.userIdentity = userCredential.userId
@@ -352,12 +425,12 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       userCredential.userId = userId // lowercase
       userCredential.emailAddress = userCredential.emailAddress.toLowerCase // lowcase
 
-      var storedUserProfile = InstancedServices.userProfileService.saveUserProfile(userProfile)
-      InstancedServices.userCredentialService.addUserProfile(userCredential, storedUserProfile)
+      var storedUserProfile = userProfileService.saveUserProfile(userProfile)
+      userCredentialService.addUserProfile(userCredential, storedUserProfile)
       var newUserCredential = saveUser(userCredential)
 
 
-      utils.Helpers.endPerfLog("createOrUpdateUser insert", log)
+      //customUtils.Helpers.endPerfLog("createOrUpdateUser insert", log)
         return newUserCredential
     }
 
@@ -367,7 +440,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
   @Transactional(readOnly = false)
   def addRole(userCredential: UserCredential, role: RoleEnums): UserCredential = {
 
-    var log : Long = utils.Helpers.startPerfLog()
+    //var log : Long = customUtils.Helpers.startPerfLog()
 
     // check if the same userId and providerId is already stored in the database
     val exitsUser = exists(userCredential.userId, userCredential.providerId)
@@ -396,18 +469,18 @@ class UserCredentialServicePlugin (application: Application) extends UserService
       modUserCredential.salt                    = userCredential.salt
       modUserCredential.hasher                  = userCredential.hasher
 
-      InstancedServices.userCredentialService.addRole(userCredential, role)
+      userCredentialService.addRole(userCredential, role)
 
       var newUserCredential                   = saveUser(modUserCredential)
 
-      utils.Helpers.endPerfLog("addRole", log)
+      //customUtils.Helpers.endPerfLog("addRole", log)
       return newUserCredential
 
     } else {
       // Add default group
-      InstancedServices.userCredentialService.addRole(userCredential, role)
+      userCredentialService.addRole(userCredential, role)
       var newUserCredential = saveUser(userCredential)
-      utils.Helpers.endPerfLog("addRole", log)
+      //customUtils.Helpers.endPerfLog("addRole", log)
       return newUserCredential
     }
 
@@ -430,7 +503,7 @@ class UserCredentialServicePlugin (application: Application) extends UserService
     if(isUserCacheON) {
       deleteUserCache(userCredential.userId, userCredential.providerId)
     }
-    val modUser = InstancedServices.userCredentialService.userCredentialRepository.save(userCredential)
+    val modUser = userCredentialService.userCredentialRepository.save(userCredential)
     modUser
   }
 
@@ -442,16 +515,32 @@ class UserCredentialServicePlugin (application: Application) extends UserService
 
 
   // Tokens
-  def save(token: Token) {
+/*
+  def save(token: MailToken) {
     tokens += (token.uuid -> token)
   }
+*/
 
-  def findToken(token: String): Option[Token] = {
-    tokens.get(token)
+  def saveToken(token: MailToken): Future[MailToken] = {
+    Future.successful {
+      tokens += (token.uuid -> token)
+      token
+    }
   }
 
-  def deleteToken(uuid: String) {
-    tokens -= uuid
+  def findToken(token: String): Future[Option[MailToken]] = {
+    Future.successful { tokens.get(token) }
+  }
+
+  def deleteToken(uuid: String): Future[Option[MailToken]] = {
+    Future.successful {
+      tokens.get(uuid) match {
+        case Some(token) =>
+          tokens -= uuid
+          Some(token)
+        case None => None
+      }
+    }
   }
 
   def deleteTokens() {

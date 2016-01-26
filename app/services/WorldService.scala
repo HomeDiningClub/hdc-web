@@ -1,5 +1,7 @@
 package services
 
+import javax.inject.{Named,Inject}
+
 import org.neo4j.graphalgo.GraphAlgoFactory
 import org.neo4j.graphdb._
 import org.neo4j.helpers.collection.IteratorUtil
@@ -14,14 +16,17 @@ import scala.List
 import org.springframework.transaction.annotation.Transactional
 import models.modelconstants.RelationshipTypesScala
 
+//@Named
 @Service
-class WorldService {
+class WorldService @Inject()(val template: Neo4jTemplate, val worldRepository: WorldRepository) {
 
+  /*
   @Autowired
   private var template: Neo4jTemplate = _
 
   @Autowired
   private var worldRepository: WorldRepository = _
+*/
 
   def getNumberOfWorlds: Long = worldRepository.count()
 

@@ -1,4 +1,4 @@
-@(startForm:play.api.data.Form[String])(implicit request: play.api.mvc.RequestHeader)
+@(startForm:play.api.data.Form[String])(implicit request: RequestHeader, env: securesocial.core.RuntimeEnvironment, messages: Messages, appContext: AppContext)
 @import helper._
 @import securesocial.core.IdentityProvider
 @implicitFieldConstructor = @{ FieldConstructor(securesocial.views.html.inputFieldConstructor.f) }
@@ -20,11 +20,12 @@
 
 
                 <div class="col-xs-12 col-md-10 col-md-offset-1 login-form">
-                    <form action="@securesocial.core.providers.utils.RoutesHelper.handleStartSignUp().absoluteURL(IdentityProvider.sslEnabled)(request)"
+                    <form action="@env.routes.handleStartSignUpUrl"
                           class="form-horizontal"
                           autocomplete="off" method="post"
                     >
                         <fieldset>
+                            @CSRF.formField
                             @helper.inputText(
                             startForm("email"),
                             '_label -> Messages("securesocial.signup.email1"),
@@ -35,7 +36,7 @@
 
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-primary">@Messages("securesocial.signup.createAccount")</button>
-                                <a class="btn" href="@securesocial.core.providers.utils.RoutesHelper.login()">@Messages("securesocial.signup.cancel")</a>
+                                <a class="btn" href="@env.routes.loginPageUrl">@Messages("securesocial.signup.cancel")</a>
                             </div>
 
                         </fieldset>

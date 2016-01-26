@@ -1,6 +1,7 @@
 package services
 
 import _root_.java.util.UUID
+import javax.inject.{Named,Inject}
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -10,14 +11,15 @@ import securesocial.core._
 import scala.collection.JavaConverters._
 import securesocial.core.OAuth2Info
 import securesocial.core.OAuth1Info
-import securesocial.core.IdentityId
 import scala.Some
 import org.springframework.transaction.annotation.Transactional
 import enums.RoleEnums.RoleEnums
 
+//@Named
 @Service
-class UserCredentialService {
+class UserCredentialService @Inject()(val template: Neo4jTemplate, val userCredentialRepository: UserCredentialRepository, val userRoleRepository: UserRoleRepository) {
 
+  /*
   @Autowired
   var template: Neo4jTemplate = _
 
@@ -26,6 +28,7 @@ class UserCredentialService {
 
   @Autowired
   var userRoleRepository: UserRoleRepository = _
+*/
 
   @Transactional(readOnly = true)
   def fetchUserCredential(user: UserCredential): UserCredential = {
@@ -35,7 +38,7 @@ class UserCredentialService {
   // Från databasen till SecureSocial
   // IdentityId = userId + providerId
   //
-  def userCredential2socialUser(userCredential: UserCredential): Identity = {
+  def userCredential2socialUser(userCredential: UserCredential): securesocial.core.BasicProfile = {
 
     var oAuth2InfoExpiresIn : Int = 0
     var salt : String  = ""
@@ -52,17 +55,15 @@ class UserCredentialService {
 
 
     val returv =
-      new SocialUser(
-        identityId=new IdentityId(
-          userId = userCredential.userId,
-          providerId = userCredential.providerId
-        ),
-        firstName=userCredential.firstName,
-        lastName=userCredential.lastName,
-        fullName=userCredential.fullName,
+      new securesocial.core.BasicProfile(
+        userId = userCredential.userId,
+        providerId = userCredential.providerId,
+        firstName=Some(userCredential.firstName),
+        lastName=Some(userCredential.lastName),
+        fullName=Some(userCredential.fullName),
         email=Some(userCredential.emailAddress),
         avatarUrl= Some(userCredential.avatarUrl),
-        authMethod= new AuthenticationMethod(
+        authMethod = new AuthenticationMethod(
           userCredential.authMethod
         ),
 
@@ -96,19 +97,19 @@ class UserCredentialService {
     returv
   }
 
-  def socialUser2UserCredential(socialUser:Identity ): UserCredential = {
+  def socialUser2UserCredential(socialUser:securesocial.core.BasicProfile): UserCredential = {
 
     var userCredential : UserCredential = new UserCredential()
 
     val oauth2:   OAuth2Info    = socialUser.oAuth2Info.getOrElse(new OAuth2Info(""))
     var pinfo:    PasswordInfo  = socialUser.passwordInfo.getOrElse( new PasswordInfo("","",Some("")) )
 
-    userCredential.providerId         = socialUser.identityId.providerId   // name
-    userCredential.userId             = socialUser.identityId.userId       // userid
-    userCredential.firstName          = socialUser.firstName
-    userCredential.lastName           = socialUser.lastName
-    userCredential.fullName           = socialUser.fullName
-    //userCredential.authMethod       = socialUser.authMethod.toString // ???? Kontrollera  ????????
+    userCredential.providerId         = socialUser.providerId   // name
+    userCredential.userId             = socialUser.userId       // userid
+    userCredential.firstName          = socialUser.firstName.get
+    userCredential.lastName           = socialUser.lastName.get
+    userCredential.fullName           = socialUser.fullName.get
+    //userCredential.authMethod         = socialUser.authMethod.toString // ???? Kontrollera  ????????
 
     // todo bättre kontroll att det finns ett värde
     if(socialUser.authMethod.toString.size > 0) {
@@ -182,9 +183,6 @@ class UserCredentialService {
 
   @Transactional(readOnly = false)
   def addUserProfile(user: UserCredential, profile: models.UserProfile): UserCredential = {
-
-
-    // Add
     if(user.profiles.isEmpty) {
       user.profiles.add(profile)
     }

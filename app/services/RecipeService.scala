@@ -1,5 +1,7 @@
 package services
 
+import javax.inject.{Named,Inject}
+
 import models.files.ContentFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable, PageRequest}
@@ -14,19 +16,21 @@ import scala.List
 import java.util.UUID
 import models.viewmodels.RecipeBox
 import controllers.routes
-import utils.Helpers
+import customUtils.Helpers
 
 import scala.collection.mutable.ListBuffer
 
+//@Named
 @Service
-class RecipeService {
+class RecipeService @Inject()(val template: Neo4jTemplate, val recipeRepository: RecipeRepository){
 
+  /*
   @Autowired
   private var template: Neo4jTemplate = _
 
   @Autowired
   private var recipeRepository: RecipeRepository = _
-
+*/
 //  def findPageByName(name: String): Recipe = {
 //    recipeRepository.findBySchemaPropertyValue("name", name)
 //  }
@@ -226,7 +230,7 @@ class RecipeService {
 
 
   @Transactional(readOnly = false)
-  private def deleteAll {
+  private def deleteAll() {
     recipeRepository.deleteAll()
   }
 

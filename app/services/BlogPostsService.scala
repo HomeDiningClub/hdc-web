@@ -1,5 +1,7 @@
 package services
 
+import javax.inject.{Named,Inject}
+
 import models.files.ContentFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Page, Pageable, PageRequest}
@@ -12,21 +14,24 @@ import models.{UserProfile, UserCredential, BlogPost}
 import scala.collection.JavaConverters._
 import scala.List
 import java.util.UUID
-import models.viewmodels.BlogPostsForm
 import controllers.routes
-import utils.Helpers
+import customUtils.Helpers
 import models.viewmodels.BlogPostItem
 
 import scala.collection.mutable.ListBuffer
+import models.formdata.BlogPostsForm
 
+//@Named
 @Service
-class BlogPostsService {
+class BlogPostsService @Inject() (val template: Neo4jTemplate, val blogPostsRepository: BlogPostsRepository) {
 
+  /*
   @Autowired
   private var template: Neo4jTemplate = _
 
   @Autowired
   private var blogPostsRepository: BlogPostsRepository = _
+*/
 
   @Transactional(readOnly = true)
   def findById(objectId: UUID): Option[BlogPost] = {

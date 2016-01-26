@@ -1,5 +1,7 @@
 package services
 
+import javax.inject.{Named,Inject}
+
 import models.like.{UserCredentialLikeEvent, UserCredentialLikeRecipe, UserCredentialLikeUserCredential}
 import models.modelconstants.RelationshipTypesScala
 import models.rating.{RatesRecipe, RatesUserCredential}
@@ -12,9 +14,11 @@ import repositories._
 
 import scala.collection.JavaConverters._
 
+//@Named
 @Service
-class LikeService {
+class LikeService @Inject()(val userCredentialRepository: UserCredentialRepository, val likeUserCredentialRepository: LikeUserCredentialRepository, val likeRecipeRepository: LikeRecipeRepository) {
 
+/*
   @Autowired
   private var template: Neo4jTemplate = _
 
@@ -26,7 +30,7 @@ class LikeService {
 
   @Autowired
   private var likeRecipeRepository: LikeRecipeRepository = _
-
+*/
 
   // LikeUserCredential
   @Transactional(readOnly = true)

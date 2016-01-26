@@ -1,27 +1,26 @@
 package services
 
 import _root_.java.util.UUID
+import javax.inject.{Named,Inject}
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.stereotype.Service
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.transaction.annotation.Transactional
-import scala.Some
 
 import models.event.MealType
 import repositories.MealTypeRepository
 import scala.collection.JavaConverters._
 
-
-
+//@Named
 @Service
-class MealTypeService {
+class MealTypeService @Inject() (val mealTypeRepository: MealTypeRepository) {
 
+  /*
   @Autowired
   var template: Neo4jTemplate = _
 
   @Autowired
   var mealTypeRepository: MealTypeRepository = _
+*/
 
   @Transactional(readOnly = false)
    def create(name: String, order: Int = 0): MealType = {
@@ -55,8 +54,8 @@ class MealTypeService {
   }
 
   @Transactional(readOnly = false)
-  def deleteAll: Boolean = {
-    mealTypeRepository.deleteAll
+  def deleteAll(): Boolean = {
+    mealTypeRepository.deleteAll()
     true
   }
 

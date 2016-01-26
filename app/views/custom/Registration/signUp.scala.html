@@ -1,10 +1,10 @@
-@(signUpForm:play.api.data.Form[securesocial.controllers.Registration.RegistrationInfo], token: String)(implicit request: play.api.mvc.RequestHeader)
+@(signUpForm:play.api.data.Form[securesocial.controllers.RegistrationInfo], token: String)(implicit request: RequestHeader, env: securesocial.core.RuntimeEnvironment, messages: Messages, appContext: AppContext)
 @import securesocial.core.providers.UsernamePasswordProvider
 @import securesocial.core.IdentityProvider
 @import helper._
 @implicitFieldConstructor = @{ FieldConstructor(securesocial.views.html.inputFieldConstructor.f) }
 
-@main(Messages("securesocial.signup.title")){
+@main(Messages("securesocial.signup.title")) {
     <div class="container maincontent-container">
         <div class="row">
             <div class="col-xs-12">
@@ -18,12 +18,13 @@
                     </div>
                 }
                 <div class="col-xs-12 col-md-10 col-md-offset-1 login-form">
-                    <form action="@securesocial.core.providers.utils.RoutesHelper.handleSignUp(token).absoluteURL(IdentityProvider.sslEnabled)(request)"
+                    <form action="@env.routes.handleSignUpUrl(token)"
                           class="form-horizontal"
                           autocomplete= "off"
                           method="POST"
                     >
                         <fieldset>
+                            @CSRF.formField
                             @if( UsernamePasswordProvider.withUserNameSupport ) {
                                 @helper.inputText(
                                     signUpForm("userName"),
@@ -64,7 +65,7 @@
 
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-primary">@Messages("securesocial.signup.createAccount")</button>
-                                <a class="btn" href="@securesocial.core.providers.utils.RoutesHelper.login()">@Messages("securesocial.signup.cancel")</a>
+                                <a class="btn" href="@env.routes.loginPageUrl">@Messages("securesocial.signup.cancel")</a>
                             </div>
                         </fieldset>
                     </form>

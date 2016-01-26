@@ -1,5 +1,4 @@
-@(nameOfConfig: String = null)
-@import controllers.admin.AdminFileListController
+@(listOfImages: play.twirl.api.Html = play.twirl.api.Html(""))(implicit messages: Messages)
 
 @mainedit(Messages("admin.file.title")) {
     <div class="row">
@@ -12,7 +11,7 @@
     <div class="row">
         <div class="col-xs-12">
             <h2>@Messages("admin.file.filelist.header")</h2>
-            @AdminFileListController.listAllImages
+            @listOfImages
         </div>
     </div>
 }

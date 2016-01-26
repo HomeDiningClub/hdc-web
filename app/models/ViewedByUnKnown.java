@@ -2,26 +2,13 @@ package models;
 
 import interfaces.IEditable;
 import models.base.AuditEntity;
-import models.files.ContentFile;
-import models.modelconstants.RelationshipTypesJava;
-import models.modelconstants.UserLevelJava;
-import models.profile.TagWord;
-import models.location.County;
-import models.profile.TaggedFavoritesToUserProfile;
-import models.profile.TaggedLocationUserProfile;
-import models.profile.TaggedUserProfile;
-import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.neo4j.annotation.*;
-import org.springframework.data.neo4j.support.index.IndexType;
-import scala.Int;
-import services.InstancedServices;
+import org.springframework.data.neo4j.annotation.NodeEntity;
 
-import java.text.ParseException;
-import java.util.*;
-import java.lang.Boolean;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.UUID;
 
 @NodeEntity
 public class ViewedByUnKnown extends AuditEntity implements IEditable {

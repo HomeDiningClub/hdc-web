@@ -1,27 +1,36 @@
 package controllers
 
 import java.util.UUID
+import javax.inject.{Named, Inject}
 
-import models.UserProfile
+import models.{UserCredential, UserProfile}
 import models.location.County
 import models.profile.TagWord
-import models.viewmodels.{BrowseBox, SearchFilterForm}
+import models.viewmodels.BrowseBox
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.data.Forms._
 import play.api.data._
-import play.api.i18n.Messages
-import play.api.libs.json.Json
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.Controller
 import securesocial.core.SecureSocial
+
 import services._
+import traits.ProvidesAppContext
 import scala.collection.JavaConverters._
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.SearchFilterForm
 
 
-@SpringController
-class BrowsePageController extends Controller with SecureSocial {
+//@Named
+class BrowsePageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                      val userProfileService: UserProfileService,
+                                      val tagWordService : TagWordService,
+                                      val countyService: CountyService,
+                                      val ratingService: RatingService) extends Controller with SecureSocial with ProvidesAppContext {
 
+  /*
   @Autowired
   var userProfileService: UserProfileService = _
 
@@ -36,6 +45,7 @@ class BrowsePageController extends Controller with SecureSocial {
 
   @Autowired
   var ratingService: RatingService = _
+*/
 
   // Search form
   val searchForm = Form(
@@ -47,37 +57,40 @@ class BrowsePageController extends Controller with SecureSocial {
     )(SearchFilterForm.apply)(SearchFilterForm.unapply)
   )
 
-  def index(fTag: String, fCounty: String, fHost: Boolean) = UserAwareAction { implicit request =>
+  def index(fTag: String, fCounty: String, fHost: Int) = UserAwareAction { implicit request =>
 
     //val browseBoxes = getBrowseBoxes(fTag, fCounty, fHost)
+    val isHost = if(fHost == 1) true else false
+
     val form = SearchFilterForm.apply(
       fCounty match { case null | "" => None case item => Some(item)},
       fTag match { case null | "" => None case item => Some(item)},
-      fHost match { case false => None case item => Some(item)}
+      isHost match { case false => None case item => Some(item)}
     )
 
     Ok(views.html.browse.index(
       searchForm = searchForm.fill(form),
       optionsFoodAreas = tagWordService.getFoodAreas,
       optionsLocationAreas = countyService.getCounties,
-      optionsIsHost = if(fHost) Some(true) else Some(false)
+      optionsIsHost = if(isHost) Some(true) else Some(false)
       //browseBoxes = browseBoxes
     ))
   }
 
-  def getBrowseBoxesPagedJSON(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, page: Int = 0) = UserAwareAction { implicit request =>
+  def getBrowseBoxesPagedJSON(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Int, page: Int = 0) = UserAwareAction { implicit request =>
 
     // Get items
-    val listOfBoxes: Option[Page[UserProfile]] = getBrowseBoxesPaged(boxFilterTag, boxFilterCounty, boxFilterIsHost, page)
+    val isHost = if(boxFilterIsHost == 1) true else false
+    val listOfBoxes: Option[Page[UserProfile]] = getBrowseBoxesPaged(boxFilterTag, boxFilterCounty, isHost, page)
 
     listOfBoxes match {
       case Some(list) =>
         if (list.hasContent) {
           // First fetch the list of items
-          var returnString = views.html.browse.browseBox.render(buildBoxes(list.asScala.toList))
+          var returnString: String = views.html.browse.browseBox.render(boxes = buildBoxes(list.asScala.toList), messages = request2Messages).toString
           // Attach pagination if more then one page
           if (list.getTotalPages > 1) {
-            returnString += views.html.shared.pagination.render(jsMethodName = "getBoxesAsJSON", hasNext = list.hasNext, hasPrev = list.hasPrevious, currentPage = page, totalCount = list.getTotalElements, totalPages = list.getTotalPages)
+            returnString += views.html.shared.pagination.render(jsMethodName = "getBoxesAsJSON", hasNext = list.hasNext, hasPrev = list.hasPrevious, currentPage = page, totalCount = list.getTotalElements, totalPages = list.getTotalPages, messages = request2Messages).toString
           }
           Ok(returnString)
         }else{

@@ -1,35 +1,34 @@
 package controllers
 
+import javax.inject.{Named, Inject}
+
 import constants.FlashMsgConstants
 import enums.RoleEnums
-import models.content.ContentPage
-import models.viewmodels.{EmailAndName, AboutUsForm}
+import models.viewmodels.EmailAndName
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages
-import play.api.mvc.{RequestHeader, Controller}
-import securesocial.core.SecureSocial
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.mvc.{AnyContent, Flash, RequestHeader, Controller}
+import play.twirl.api.Html
+import securesocial.core.SecureSocial.SecuredRequest
 import services.{ContentService, MailService}
-import utils.authorization.WithRole
+import customUtils.authorization.WithRole
 import scala.collection.JavaConverters._
+import models.UserCredential
+import customUtils.security.SecureSocialRuntimeEnvironment
+import models.formdata.AboutUsForm
 
-/**
- * Created by Tommy on 17/10/2014.
- */
-@SpringController
-class SuggestController extends Controller with SecureSocial { }
+//@Named
+class SuggestController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                   val messagesApi: MessagesApi,
+                                   val mailService: MailService) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
-@SpringController
-object SuggestController extends Controller with SecureSocial {
-
-  @Autowired
-  private var contentService: ContentService = _
-
+  /*
   @Autowired
   private var mailService: MailService = _
+*/
 
   val mailForm = Form(
     mapping(
@@ -41,28 +40,26 @@ object SuggestController extends Controller with SecureSocial {
     )(AboutUsForm.apply)(AboutUsForm.unapply)
   )
 
-  def aboutUs = { implicit request: RequestHeader =>
-    val currentUser = utils.Helpers.getUserFromRequest
-    currentUser match {
+  def suggestForm = UserAwareAction { implicit request =>
+    request.user match {
       case None =>
-        views.html.about.aboutNotLoggedIn() // No user, return nothing or something.
+        Ok(views.html.about.aboutNotLoggedIn.render(request2Messages)) // No user, return nothing or something.
       case Some(user) => {
         val mailViewForm = AboutUsForm.apply(
           Some(""),
           Messages("footer.link.mail.text"),
-          (user.firstName() + " " + user.lastName()),
+          user.firstName + " " + user.lastName,
           "",
           ""
         )
-
-        views.html.about.about.render(mailForm.fill(mailViewForm),request, flash)
+        Ok(views.html.about.about.render(mailForm.fill(mailViewForm), Flash.emptyCookie, request2Messages))
       }
     }
 
   }
 
-  def suggestFeatures = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request =>
-    val currentUser = utils.Helpers.getUserFromRequest.get
+  def suggestFeatures = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+    val currentUser = request.user
 
     var subject: String = ""
     var msg: String = ""
@@ -111,7 +108,11 @@ object SuggestController extends Controller with SecureSocial {
           email = Messages("footer.link.mail.text")
         )
 
-        mailService.createMailNoReply(subject, msg, recipient, from)
+        mailService.createAndSendMailNoReply(
+          subject = subject,
+          message = msg,
+          recipient = recipient,
+          from = from)
 
         Redirect(routes.UserProfileController.viewProfileByName(currentUser.profiles.asScala.head.profileLinkName))
       }
