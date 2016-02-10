@@ -1,4 +1,4 @@
-@(startForm:play.api.data.Form[String])(implicit request: RequestHeader, env: securesocial.core.RuntimeEnvironment, messages: Messages, appContext: AppContext)
+@(startForm:play.api.data.Form[String])(implicit request: RequestHeader, env: securesocial.core.RuntimeEnvironment, messages: Messages)
 @import helper._
 @import securesocial.core.IdentityProvider
 @implicitFieldConstructor = @{ FieldConstructor(securesocial.views.html.inputFieldConstructor.f) }

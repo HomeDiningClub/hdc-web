@@ -7,9 +7,10 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import org.springframework.stereotype.{Controller => SpringController}
 import customUtils.security.SecureSocialRuntimeEnvironment
+import securesocial.core.SecureSocial
 
-//@Named
-class PerformanceTestController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport{
+class PerformanceTestController @Inject() (implicit val env: SecureSocialRuntimeEnvironment,
+                                           val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport{
 
   def index = UserAwareAction { implicit request =>
 

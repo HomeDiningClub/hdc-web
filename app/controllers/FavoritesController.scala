@@ -11,6 +11,7 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{RequestHeader, Controller}
 import play.twirl.api.Html
+import securesocial.core.SecureSocial
 import services.UserProfileService
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
@@ -18,10 +19,9 @@ import models.formdata.FavoriteForm
 
 import scala.collection.mutable.ListBuffer
 
-//@Named
 class FavoritesController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val messagesApi: MessagesApi,
-                                     val userProfileService: UserProfileService) extends Controller with securesocial.core.SecureSocial with I18nSupport {
+                                     val userProfileService: UserProfileService) extends Controller with SecureSocial with I18nSupport {
 /*
   // Services
   @Autowired

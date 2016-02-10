@@ -1,4 +1,4 @@
-@(providerId: String, loginForm: Option[Form[(String, String)]] = None, providerHeader: Option[String] = None)(implicit request: RequestHeader, env: securesocial.core.RuntimeEnvironment, messages: Messages, appContext: AppContext)
+@(providerId: String, loginForm: Option[Form[(String, String)]] = None, providerHeader: Option[String] = None)(implicit request: RequestHeader, env: securesocial.core.RuntimeEnvironment, messages: Messages)
 
 @import securesocial.core.providers.UsernamePasswordProvider
 @import securesocial.core.AuthenticationMethod._

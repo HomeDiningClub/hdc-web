@@ -10,6 +10,7 @@ import play.api.data.Forms._
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
 import models.{UserCredential, UserRole}
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.{UserCredentialService, UserRoleService}
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
@@ -22,14 +23,18 @@ import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.{UserRoleForm, AddUserToRoleForm}
 import models.formdata.UserRoleForm
 
-//@Named
-class AdminUserRoleController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
+class AdminUserRoleController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                         val userRoleService: UserRoleService,
+                                         val userCredentialService: UserCredentialService,
+                                         val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
+  /*
   @Autowired
   private var userRoleService: UserRoleService = _
 
   @Autowired
   private var userCredentialService: UserCredentialService = _
+*/
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>

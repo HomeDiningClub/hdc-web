@@ -119,6 +119,9 @@ $(document).ready(function () {
     // jQuery validation defaults
     overridejQueryValidationDefaults();
 
+    // Random BG
+    randomizeBgImage();
+
     // Disable double click
     $("button,a,input").dblclick(function(e){
         e.preventDefault();
@@ -210,6 +213,14 @@ $(document).ready(function () {
 
 });
 
+
+function randomizeBgImage(){
+    $("body").css("background-image", "url('/assets/images/general/body-bg-faded/2048x1360-" + randomIntFromInterval(1,11).toString() + ".jpg')");
+}
+
+function randomIntFromInterval(min,max) {
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
 
 function flushFooterToBottom(){
 

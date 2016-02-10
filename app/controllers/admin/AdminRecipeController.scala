@@ -11,6 +11,7 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.{UserProfileService, ContentFileService, RecipeService}
 import play.api.libs.Files.TemporaryFile
@@ -23,9 +24,13 @@ import play.api.Logger
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.RecipeForm
 
-//@Named
-class AdminRecipeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
+class AdminRecipeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                       val recipeService: RecipeService,
+                                       val userProfileService: UserProfileService,
+                                       val fileService: ContentFileService,
+                                       val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
+  /*
   @Autowired
   private var recipeService: RecipeService = _
 
@@ -34,6 +39,7 @@ class AdminRecipeController @Inject() (override implicit val env: SecureSocialRu
 
   @Autowired
   private var fileService: ContentFileService = _
+*/
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>

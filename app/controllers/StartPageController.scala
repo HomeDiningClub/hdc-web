@@ -9,9 +9,10 @@ import play.api.data._
 import play.api.data.Forms._
 import models.viewmodels.StartPageBox
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial
 import services._
 import models.{UserCredential, UserProfile}
-import traits.ProvidesAppContext
+
 import views.html.helper.{select, options}
 import models.profile.TagWord
 import models.location.County
@@ -20,12 +21,13 @@ import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.SearchStartPageForm
 
-//@Named
 class StartPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val userProfileService: UserProfileService,
                                      val tagWordService: TagWordService,
                                      val countyService: CountyService,
-                                     val ratingService: RatingService) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
+                                     val ratingService: RatingService,
+                                     val contentService: ContentService,
+                                     val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   /*
   @Autowired

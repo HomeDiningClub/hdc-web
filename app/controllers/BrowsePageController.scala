@@ -7,9 +7,7 @@ import models.{UserCredential, UserProfile}
 import models.location.County
 import models.profile.TagWord
 import models.viewmodels.BrowseBox
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-import org.springframework.stereotype.{Controller => SpringController}
 import play.api.data.Forms._
 import play.api.data._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
@@ -17,18 +15,16 @@ import play.api.mvc.Controller
 import securesocial.core.SecureSocial
 
 import services._
-import traits.ProvidesAppContext
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.SearchFilterForm
 
-
-//@Named
 class BrowsePageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                       val userProfileService: UserProfileService,
                                       val tagWordService : TagWordService,
                                       val countyService: CountyService,
-                                      val ratingService: RatingService) extends Controller with SecureSocial with ProvidesAppContext {
+                                      val ratingService: RatingService,
+                                      val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   /*
   @Autowired

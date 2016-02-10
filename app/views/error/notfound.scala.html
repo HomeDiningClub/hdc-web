@@ -1,4 +1,4 @@
-@(refUrl: String, message: Option[String] = None)(implicit request: RequestHeader, messages: Messages, appContext: AppContext)
+@(refUrl: String, message: Option[String] = None)(implicit request: RequestHeader, messages: Messages)
 @theLink = { <a href="@routes.StartPageController.index()">@Messages("notfound.linkhome")</a> }
 
 @main(Messages("notfound.title")) {

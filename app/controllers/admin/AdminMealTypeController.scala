@@ -8,6 +8,7 @@ import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.{MealTypeService}
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
@@ -19,11 +20,13 @@ import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.MealTypeForm
 
-//@Named
-class AdminMealTypeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
-
+class AdminMealTypeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                         val mealTypeService: MealTypeService,
+                                         val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
+/*
   @Autowired
   private var mealTypeService: MealTypeService = _
+*/
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>

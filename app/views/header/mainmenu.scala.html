@@ -1,0 +1,17 @@
+@(menuItems: Option[List[models.viewmodels.MenuItem]])(implicit messages: Messages)
+
+@if(menuItems.nonEmpty) {
+    <div class="container">
+      <div class="row header-navigation">
+        <nav>
+          <div class="col-xs-12">
+            <ul class="nav nav-pills nav-main-menu collapse bs-navbar-collapse">
+            @for(nav:models.viewmodels.MenuItem <- menuItems.get) {
+              <li class="@nav.wrapperCssClass"><a class="@nav.cssClass" href="@nav.url" target="@nav.target" title="@nav.title">@if(nav.icon.nonEmpty){<span class="@nav.icon"></span>&nbsp;}<span class="@nav.textCssClass">@nav.name</span></a></li>
+            }
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+}

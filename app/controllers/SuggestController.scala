@@ -12,6 +12,7 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.{AnyContent, Flash, RequestHeader, Controller}
 import play.twirl.api.Html
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.{ContentService, MailService}
 import customUtils.authorization.WithRole
@@ -20,10 +21,9 @@ import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.AboutUsForm
 
-//@Named
 class SuggestController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                    val messagesApi: MessagesApi,
-                                   val mailService: MailService) extends Controller with securesocial.core.SecureSocial with I18nSupport {
+                                   val mailService: MailService) extends Controller with SecureSocial with I18nSupport {
 
   /*
   @Autowired

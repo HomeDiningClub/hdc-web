@@ -12,6 +12,7 @@ import javax.inject.Inject
 class SecureSocialRuntimeEnvironment extends RuntimeEnvironment.Default {
 
   type U = UserCredential
+
   override implicit val executionContext = play.api.libs.concurrent.Execution.defaultContext
   override lazy val viewTemplates: ViewTemplates = new SecureSocialViewTemplates()(this)
   override lazy val mailTemplates: MailTemplates = new SecureSocialMailTemplates()(this)

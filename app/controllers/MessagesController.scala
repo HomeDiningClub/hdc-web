@@ -15,6 +15,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.{RequestHeader, Controller}
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.{MailService, MessageService, UserCredentialService}
 import customUtils.authorization.WithRole
@@ -23,12 +24,11 @@ import customUtils.security.SecureSocialRuntimeEnvironment
 import play.api.mvc._
 import models.formdata.MessageForm
 
-//@Named
 class MessagesController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                     val messagesApi: MessagesApi,
                                     val userCredentialService: UserCredentialService,
                                     val messageService: MessageService,
-                                    val mailService: MailService) extends Controller with securesocial.core.SecureSocial with I18nSupport {
+                                    val mailService: MailService) extends Controller with SecureSocial with I18nSupport {
 
   /*
   @Autowired

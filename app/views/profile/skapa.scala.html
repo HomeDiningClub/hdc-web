@@ -4,7 +4,7 @@
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
         editingProfile: Option[UserProfile] = None,
         termsAndConditions: Option[models.content.ContentPage] = None,
-        extraValues: models.viewmodels.EditProfileExtraValues)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages, appContext: AppContext)
+        extraValues: models.viewmodels.EditProfileExtraValues)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
 
 
 @main(Messages("profile.create.title"), footerHtml = file.modalImages.render(messages)){

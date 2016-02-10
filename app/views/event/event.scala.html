@@ -3,7 +3,7 @@
         eventBoxes: Option[List[models.viewmodels.EventBox]] = None,
         shareUrl: String = "",
         isThisMyEvent: Boolean = false,
-        eventLikeForm: play.twirl.api.Html = play.twirl.api.Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages, appContext: AppContext)
+        eventLikeForm: play.twirl.api.Html = play.twirl.api.Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
 @import scala.collection.JavaConverters._
 @import customUtils.Helpers
 

@@ -1,4 +1,4 @@
-@(blogPostForm: Form[models.formdata.BlogPostsForm], editingBlogPosts: Option[models.BlogPost] = None, extraValues: models.viewmodels.EditBlogPostsExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages, appContext: AppContext)
+@(blogPostForm: Form[models.formdata.BlogPostsForm], editingBlogPosts: Option[models.BlogPost] = None, extraValues: models.viewmodels.EditBlogPostsExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages)
 
 
 @main(Messages("blog.create.title"), footerHtml = file.modalImages.render(messages)){

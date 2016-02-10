@@ -5,6 +5,7 @@ import javax.inject.{Named, Inject}
 import org.springframework.beans.factory.annotation.Autowired
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.{WorldService}
 import models.{UserCredential, World}
@@ -12,11 +13,10 @@ import org.springframework.stereotype.{Controller => SpringController}
 import customUtils.authorization.WithRole
 import enums.RoleEnums
 import customUtils.security.SecureSocialRuntimeEnvironment
-import traits.ProvidesAppContext
 
-//@Named
-class WorldController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
-                                 val worldService: WorldService) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
+class WorldController @Inject() (implicit val env: SecureSocialRuntimeEnvironment,
+                                 val worldService: WorldService,
+                                 val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 /*
   @Autowired
   var worldService: WorldService = _
@@ -37,6 +37,6 @@ class WorldController @Inject() (override implicit val env: SecureSocialRuntimeE
       val last: World = allWorlds.last
       pathFromFirstToLast = worldService.getWorldPath(first, last)
     }
-    Ok(views.html.worlds.index.render(allWorlds, pathFromFirstToLast, request, request2Messages, appContext))
+    Ok(views.html.worlds.index.render(allWorlds, pathFromFirstToLast, request, request2Messages))
   }
 }

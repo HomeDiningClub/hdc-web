@@ -1,114 +1,40 @@
-@(menuItems: Option[List[models.viewmodels.MenuItem]], quickLinkTitle: String = "", quicklinkItems: Seq[(String, String, String, String, String)])(implicit messages: Messages)
+@()(implicit messages: Messages)
+
+<script>
+$(document).ready(function(){
+    $('#mainmenuwrap').load('@{routes.HeaderController.mainMenu()}');
+    $('#quicklinkswrap').load('@{routes.HeaderController.quickLinks()}');
+});
+</script>
+
 <header>
     <div class="navbar-fixed-top header-navbar">
-        @* Beta ribbon, disabled
-        <div class="ribbon">
-            <a href="@routes.ContentPageController.viewContentByName(contentName = "beta").url">@Messages("header.ribbon.text")</a>
-        </div>
-        *@
         <div class="container">
             <div class="row no-gutter header-container">
                 <div class="col-xs-12">
                     <div class="row">
-                    <div class="col-xs-3 visible-xs">
-                        <button class="navbar-toggle navbar-toggle-mobile-menu pull-left" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse" title="@Messages("header.mobile-menu.title")">
-                            <span class="sr-only">@Messages("header.mobile-menu.title")</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                    </div>
-
-                    <div class="col-xs-6 col-sm-9">
-                        <a href="@routes.StartPageController.index()">@shared.img("images/general/logo-horizontal.png", alt = Messages("header.logo.alt"), cssClass = "logo-img img-responsive")</a>
-                    </div>
-
-                    <div class="col-xs-3">
-                        <div class="quicklinks">
-                            <ul class="nav nav-pills">
-                                @if(!quickLinkTitle.isEmpty){
-                                    <li class="dropdown">
-                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">@Html(quickLinkTitle) <span class="glyphicon glyphicon-user"></span> <span class="caret"></span></a>
-                                        <ul class="dropdown-menu pull-right">
-                                }
-                                @for(nav <- quicklinkItems) {
-                                    <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1 @Html(nav._5)</a></li>
-                                }
-                                @if(!quickLinkTitle.isEmpty){
-                                        </ul>
-                                    </li>
-                                }
-                                @{/* Disabled for now
-o
-                                <li class="dropdown">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                        @Messages("header.link.login")<span class="caret"></span>
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-right header-login-form">
-                                        <div class="col-xs-12">
-                                            <form class="form-inline" role="form">
-                                                <div class="form-group">
-                                                    <label class="sr-only" for="quickemail">@Messages("header.login-form.email")</label>
-                                                    <input type="email" class="form-control" id="quickemail" placeholder="@Messages("header.login-form.email")">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="sr-only" for="quickpassword">@Messages("header.login-form.password")</label>
-                                                    <input type="password" class="form-control" id="quickpassword" placeholder="@Messages("header.login-form.password")">
-                                                </div>
-                                                <a href="@securesocial.core.providers.utils.RoutesHelper.handleStartResetPassword()" title="@Messages("header.login-form.forgot-password")">@Messages("header.login-form.forgot-password")</a>
-                                                <button type="submit" class="btn btn-primary">@Messages("header.login-form.submit")</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </li>
-                                */}
-                            </ul>
+                        <div class="col-xs-3 visible-xs">
+                            <button class="navbar-toggle navbar-toggle-mobile-menu pull-left" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse" title="@Messages("header.mobile-menu.title")">
+                                <span class="sr-only">@Messages("header.mobile-menu.title")</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
                         </div>
-                    </div>
-                    </div>
 
-                </div>
-            </div>
-
-        </div>
-
-        @if(menuItems.nonEmpty) {
-        <div class="nav-main-menu-wrapper">
-            <div class="container">
-                <div class="row header-navigation">
-                    <nav>
-                        <div class="col-xs-12">
-                                <ul class="nav nav-pills nav-main-menu collapse bs-navbar-collapse">
-                                @for(nav:models.viewmodels.MenuItem <- menuItems.get) {
-                                    <li class="@nav.wrapperCssClass"><a class="@nav.cssClass" href="@nav.url" target="@nav.target" title="@nav.title">@if(nav.icon.nonEmpty){<span class="@nav.icon"></span>&nbsp;}<span class="@nav.textCssClass">@nav.name</span></a></li>
-                                }
-                                </ul>
+                        <div class="col-xs-6 col-sm-9">
+                            <a href="@routes.StartPageController.index()">@shared.img("images/general/logo-horizontal.png", alt = Messages("header.logo.alt"), cssClass = "logo-img img-responsive")</a>
                         </div>
-                    </nav>
-                </div>
-            </div>
-        </div>
-        }
 
-        @*
-        <div class="food-nav hidden-xs">
-            <div id="carousel-header" class="carousel slide carousel-fade" data-ride="carousel" data-interval="8000">
-                <div class="carousel-inner food-carousel-inner">
-                    <div class="item active"><div class="food-nav-image-base food-nav-image-01"></div></div>
-                    <div class="item"><div class="food-nav-image-base food-nav-image-02"></div></div>
-                    <div class="item"><div class="food-nav-image-base food-nav-image-03"></div></div>
-                    <div class="item"><div class="food-nav-image-base food-nav-image-04"></div></div>
-                    <div class="item"><div class="food-nav-image-base food-nav-image-05"></div></div>
-                    <div class="item"><div class="food-nav-image-base food-nav-image-06"></div></div>
-                    <div class="item"><div class="food-nav-image-base food-nav-image-07"></div></div>
-                    <div class="item"><div class="food-nav-image-base food-nav-image-08"></div></div>
-                    <div class="item"><div class="food-nav-image-base food-nav-image-09"></div></div>
-                    <div class="item"><div class="food-nav-image-base food-nav-image-10"></div></div>
+                        <div class="col-xs-3" id="quicklinkswrap"></div>
+                    </div>
+
                 </div>
             </div>
         </div>
-        *@
+
+        <div class="nav-main-menu-wrapper" id="mainmenuwrap"></div>
+
     </div>
     <div class="header-spacing"><!-- no content --></div>
 </header>

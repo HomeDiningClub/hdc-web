@@ -12,12 +12,13 @@ import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
 import play.twirl.api.Html
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{SecuredRequest, RequestWithUser}
 import services.{EventService, UserProfileService, ContentFileService}
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
 import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
-import traits.ProvidesAppContext
+
 import scala.Some
 import models.viewmodels.{MetaData, EditEventExtraValues, EventBox}
 import customUtils.Helpers
@@ -26,10 +27,14 @@ import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.EventForm
 
-//@Named
 class EventPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
-                                     val likeController: LikeController) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
+                                     val likeController: LikeController,
+                                     val eventService: EventService,
+                                     val userProfileService: UserProfileService,
+                                     val fileService: ContentFileService,
+                                     val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
+  /*
   @Autowired
   private var eventService: EventService = _
 
@@ -38,6 +43,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
   @Autowired
   private var fileService: ContentFileService = _
+*/
 
   def viewEventByNameAndProfile(profileName: String, eventName: String) = UserAwareAction() { implicit request =>
 

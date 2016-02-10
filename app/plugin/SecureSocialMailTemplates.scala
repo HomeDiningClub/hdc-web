@@ -9,7 +9,7 @@ import play.api.mvc.{Controller, RequestHeader}
 import play.twirl.api.{Html, Txt}
 import securesocial.controllers.{MailTemplates, ViewTemplates}
 import securesocial.core.{BasicProfile, SecureSocial}
-import traits.ProvidesAppContext
+
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 

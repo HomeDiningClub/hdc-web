@@ -7,6 +7,7 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.ContentService
 import models.content._
@@ -22,11 +23,13 @@ import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.AddContentForm
 
-//@Named
-class AdminContentController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi, val cache: CacheApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
-
+class AdminContentController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                        val contentService: ContentService,
+                                        val messagesApi: MessagesApi, val cache: CacheApi) extends Controller with SecureSocial with I18nSupport {
+/*
   @Autowired
   private var contentService: ContentService = _
+*/
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>

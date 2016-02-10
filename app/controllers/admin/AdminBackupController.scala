@@ -10,10 +10,12 @@ import enums.RoleEnums
 import models.UserCredential
 import org.springframework.beans.factory.annotation.Autowired
 import customUtils.security.SecureSocialRuntimeEnvironment
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 
 //@Named
-class AdminBackupController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
+class AdminBackupController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                       val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   def listAllBackupJobs = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.backup.index())

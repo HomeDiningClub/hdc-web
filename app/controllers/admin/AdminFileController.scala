@@ -9,6 +9,7 @@ import play.api.Play
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.twirl.api.Html
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.ContentFileService
 import org.springframework.stereotype.{Controller => SpringController}
@@ -23,14 +24,17 @@ import java.util.UUID
 import play.api.libs.json.{JsNull, Json}
 import customUtils.security.SecureSocialRuntimeEnvironment
 
-//@Named
-class AdminFileController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
-
+class AdminFileController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                     val contentFileService: ContentFileService,
+                                     val fileService: ContentFileService,
+                                     val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
+/*
   @Autowired
   private var contentFileService: ContentFileService = _
 
   @Autowired
   private var fileService: ContentFileService = _
+*/
 
   def editIndex = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.file.index(listOfImages = getAllImagesListAsHtml))
@@ -44,7 +48,7 @@ class AdminFileController @Inject() (override implicit val env: SecureSocialRunt
           val fileName = file.filename
           val newFile = contentFileService.createTemporaryFile(fileName)
           val contentType = file.contentType
-          file.ref.moveTo(newFile, true)
+          file.ref.moveTo(newFile, replace = true)
 
           contentFileService.uploadFile(newFile, fileName, contentType, request.user.objectId, FileTypeEnums.IMAGE, isAdminFile = true) match {
             case Some(value) => Redirect(controllers.admin.routes.AdminFileController.editIndex()).flashing(FlashMsgConstants.Success -> {"File uploaded successfully:" + value.name})

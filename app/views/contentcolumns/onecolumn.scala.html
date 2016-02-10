@@ -5,7 +5,7 @@
         column1PreAmble: String = "",
         column1Body: String = "",
         currentUser: Option[models.UserCredential]
-        )(implicit request: RequestHeader, messages: Messages, appContext: AppContext)
+        )(implicit request: RequestHeader, messages: Messages)
 
     @scripts = {
         $(document).ready(function() {

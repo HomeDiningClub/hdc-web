@@ -1,6 +1,6 @@
 @import models.formdata.EventForm
 
-@(eventForm: Form[EventForm], editingEvent: Option[models.Event] = None, extraValues: models.viewmodels.EditEventExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages, appContext: AppContext)
+@(eventForm: Form[EventForm], editingEvent: Option[models.Event] = None, extraValues: models.viewmodels.EditEventExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages)
 
 @script = {
     <script>

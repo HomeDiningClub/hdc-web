@@ -1,4 +1,4 @@
-@(recipeForm: Form[models.formdata.RecipeForm], editingRecipe: Option[models.Recipe] = None, extraValues: models.viewmodels.EditRecipeExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages, appContext: AppContext)
+@(recipeForm: Form[models.formdata.RecipeForm], editingRecipe: Option[models.Recipe] = None, extraValues: models.viewmodels.EditRecipeExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages)
 
 
 @main(Messages("recipe.create.title"), footerHtml = file.modalImages.render(messages)){

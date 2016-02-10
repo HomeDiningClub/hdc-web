@@ -1,131 +1,135 @@
 package controllers
-/*
+
 import javax.inject.{Named, Inject}
 
+import play.api.cache.CacheApi
 import play.api.mvc._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import models.UserCredential
 import customUtils.Helpers
-import scala.collection
-import org.springframework.beans.factory.annotation.Autowired
+import play.twirl.api.Html
+import securesocial.core.SecureSocial.RequestWithUser
 import services.ContentService
-import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc.Controller
 import models.viewmodels.MenuItem
 import models.content.ContentPage
 import customUtils.security.SecureSocialRuntimeEnvironment
-import securesocial.core.RuntimeEnvironment
-import scala.concurrent.ExecutionContext
+import securesocial.core.{SecureSocial}
 
-//@Named
-@deprecated("Use the ProvidesAppContext instead","Since play 2.4 upgrade")
-class HeaderController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi, val contentService: ContentService) extends Controller with securesocial.core.SecureSocial with I18nSupport {
 
-  /*
-  @Autowired
-  private var contentService: ContentService = _
-*/
+class HeaderController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                  val messagesApi: MessagesApi,
+                                  val contentService: ContentService,
+                                  val cache: CacheApi) extends Controller with SecureSocial with I18nSupport {
 
-  def bodyBg = {
-    val r = scala.util.Random
-    val number = r.nextInt(10) + 1
-    "background-image:url('/assets/images/general/body-bg-faded/2048x1360-" + number.toString + ".jpg')"
-  }
+  def mainMenu = UserAwareAction() { implicit request =>
 
-  def index(implicit request: RequestHeader) { //implicit request: SecuredRequest[AnyContent,UserCredential] =>
+    val retMenuItemsList: List[MenuItem] = cache.getOrElse[List[MenuItem]]("main.menu") {
 
-    //val currentUser = request.user
+      // Define default items
+      val defMenuItem01 = MenuItem(
+        name = Messages("header.main-menu.link.startpage.text"),
+        title = Messages("header.main-menu.link.startpage.title"),
+        url = controllers.routes.StartPageController.index().url,
+        icon = "glyphicon glyphicon-home")
 
-    val currentUser: Option[UserCredential] = customUtils.Helpers.getUserFromRequest(request)
-
-    // Quick links
-    var quickLinkTitle: String = ""
-    // Name, Title, Href, Class, Extra HTML
-    val quickLinkList: Seq[(String,String,String,String,String)] = currentUser match {
-      case Some(user) =>
-        quickLinkTitle = Messages("header.link.host-profile-header", "<span class=\"hidden-xs\">" + user.fullName + "</span>")
-        val menu = collection.mutable.Buffer[(String,String,String,String,String)](
-          (Messages("header.link.host-profile"), Messages("header.link.host-profile"), routes.UserProfileController.viewProfileByLoggedInUser().url, "", ""),
-          (Messages("header.link.host-profile-edit"), Messages("header.link.host-profile-edit"), routes.UserProfileController.edit().url, "", ""),
-          (Messages("header.link.inbox"), Messages("header.link.inbox"), routes.UserProfileController.viewProfileByLoggedInUser().url + "#inbox-tab", "", "") //Removed until we fetch nr of messages: "<span class=\"badge\">0</span>")
-        )
-
-        if(Helpers.isUserAdmin(user))
-          menu.append((Messages("header.link.admin"), Messages("header.link.admin"), admin.routes.AdminController.index().url, "", ""))
-
-        menu.append((Messages("header.link.logout"), Messages("header.link.logout"), securesocial.controllers.routes.LoginPage.logout().url, "", ""))
-        menu.toSeq
-      case None =>
-        Seq[(String,String,String,String,String)](
-          (Messages("header.link.become-member"), Messages("header.link.become-member"), securesocial.controllers.routes.LoginPage.login.url, "hidden-xs", ""),
-          (Messages("header.link.login"), Messages("header.link.login"), securesocial.controllers.routes.LoginPage.login.url, "", "")
-        )
-    }
-
-    // Main menu
-
-    // Define default items
-    val defMenuItem01 = MenuItem(
-      name = Messages("header.main-menu.link.startpage.text"),
-      title = Messages("header.main-menu.link.startpage.title"),
-      url = routes.StartPageController.index().url,
-      icon = "glyphicon glyphicon-home")
-
-    val defMenuItem03 = MenuItem(
-      name = Messages("header.main-menu.link.fb.text"),
-      title = Messages("header.main-menu.link.fb.title"),
-      url = Messages("header.main-menu.link.fb.href"),
-      icon = "genericon genericon-facebook",
-      target = "_blank",
-      wrapperCssClass = "pull-right",
-      textCssClass = "hidden-sm"
-    )
-
-    val defMenuItem04 = MenuItem(
-      name = Messages("header.main-menu.link.instagram.text"),
-      title = Messages("header.main-menu.link.instagram.title"),
-      url = Messages("header.main-menu.link.instagram.href"),
-      icon = "genericon genericon-instagram",
-      target = "_blank",
-      wrapperCssClass = "pull-right",
-      textCssClass = "hidden-sm"
-    )
-
-    val defMenuItem05 = MenuItem(
-      name = Messages("header.main-menu.link.members-browse.text"),
-      title = Messages("header.main-menu.link.members-browse.title"),
-      url = routes.BrowsePageController.index().url
+      val defMenuItem03 = MenuItem(
+        name = Messages("header.main-menu.link.fb.text"),
+        title = Messages("header.main-menu.link.fb.title"),
+        url = Messages("header.main-menu.link.fb.href"),
+        icon = "genericon genericon-facebook",
+        target = "_blank",
+        wrapperCssClass = "pull-right",
+        textCssClass = "hidden-sm"
       )
 
+      val defMenuItem04 = MenuItem(
+        name = Messages("header.main-menu.link.instagram.text"),
+        title = Messages("header.main-menu.link.instagram.title"),
+        url = Messages("header.main-menu.link.instagram.href"),
+        icon = "genericon genericon-instagram",
+        target = "_blank",
+        wrapperCssClass = "pull-right",
+        textCssClass = "hidden-sm"
+      )
 
+      val defMenuItem05 = MenuItem(
+        name = Messages("header.main-menu.link.members-browse.text"),
+        title = Messages("header.main-menu.link.members-browse.title"),
+        url = controllers.routes.BrowsePageController.index().url
+      )
 
-    // Define main items
-    val menuItemsList: Option[List[MenuItem]] = contentService.getMainMenuItems match {
-      case Some(items) => Some(items.map {
-        page: ContentPage =>
-          MenuItem(
-            name = page.name,
-            title = page.name,
-            url = routes.ContentPageController.viewContentByName(page.route).url
-          )
-      })
-      case None => None
+      // Define main items
+      val menuItemsList: Option[List[MenuItem]] = contentService.getMainMenuItems match {
+        case Some(items) => Some(items.map {
+          page: ContentPage =>
+            MenuItem(
+              name = page.name,
+              title = page.name,
+              url = controllers.routes.ContentPageController.viewContentByName(page.route).url
+            )
+        })
+        case None => None
+      }
+
+      val retMenuItemsListBuffer: collection.mutable.ListBuffer[MenuItem] = collection.mutable.ListBuffer[MenuItem]()
+
+      if(menuItemsList.nonEmpty)
+        retMenuItemsListBuffer.appendAll(menuItemsList.get)
+
+      retMenuItemsListBuffer.prepend(defMenuItem05)
+      retMenuItemsListBuffer.prepend(defMenuItem01)
+      retMenuItemsListBuffer.append(defMenuItem03)
+      retMenuItemsListBuffer.append(defMenuItem04)
+
+      retMenuItemsListBuffer.result()
     }
 
-    val retMenuItemsList: collection.mutable.ListBuffer[MenuItem] = collection.mutable.ListBuffer[MenuItem]()
-    if(menuItemsList.nonEmpty)
-      retMenuItemsList.appendAll(menuItemsList.get)
-
-    retMenuItemsList.prepend(defMenuItem05)
-    retMenuItemsList.prepend(defMenuItem01)
-    retMenuItemsList.append(defMenuItem03)
-    retMenuItemsList.append(defMenuItem04)
-
-
-
-    views.html.header.header.render(menuItems = Some(retMenuItemsList.result()), quickLinkTitle = quickLinkTitle, quicklinkItems = quickLinkList, messages = request2Messages)
+    Ok(views.html.header.mainmenu.render(Some(retMenuItemsList), request2Messages))
   }
 
+  def quickLinks = UserAwareAction() { implicit request =>
+    Ok(views.html.header.quicklinks.render(getQuickLinkTitle(request.user), getQuickLinkList(request.user),request2Messages))
+  }
+
+  private def getQuickLinkTitle(currentUser: Option[UserCredential]): String = {
+    currentUser match {
+      case Some(user) => Messages("header.link.host-profile-header", "<span class=\"hidden-xs\">" + user.fullName + "</span>")
+      case None => ""
+    }
+  }
+
+  private def getQuickLinkList(currentUser: Option[UserCredential])(implicit request: RequestHeader): Seq[(String, String, String, String, String)] = {
+
+    currentUser match {
+      case Some(user) => {
+        val menu = collection.mutable.Buffer[(String,String,String,String,String)](
+            (Messages("header.link.host-profile"), Messages("header.link.host-profile"), controllers.routes.UserProfileController.viewProfileByLoggedInUser().url, "", ""),
+            (Messages("header.link.host-profile-edit"), Messages("header.link.host-profile-edit"), controllers.routes.UserProfileController.edit().url, "", ""),
+            (Messages("header.link.inbox"), Messages("header.link.inbox"), controllers.routes.UserProfileController.viewProfileByLoggedInUser().url + "#inbox-tab", "", "") //Removed until we fetch nr of messages: "<span class=\"badge\">0</span>")
+          )
+
+        if (Helpers.isUserAdmin(currentUser))
+          menu.append((Messages("header.link.admin"), Messages("header.link.admin"), controllers.admin.routes.AdminController.index().url, "", ""))
+
+        menu.append((Messages("header.link.logout"), Messages("header.link.logout"), env.routes.loginPageUrl, "", ""))
+        menu.toSeq
+      }
+      case None => {
+        Seq[(String,String,String,String,String)](
+            (Messages("header.link.become-member"), Messages("header.link.become-member"), env.routes.startSignUpUrl, "hidden-xs", ""),
+            (Messages("header.link.login"), Messages("header.link.login"), env.routes.loginPageUrl, "", "")
+          )
+      }
+    }
+  }
+
+  private def getUserFromRequest(implicit request: RequestHeader): Option[UserCredential] = {
+    request.asInstanceOf[RequestWithUser[AnyContent, UserCredential]].user match {
+      case Some(user:UserCredential) => Some(user)
+      case None => None
+      case _ => None
+    }
+  }
 
 }
-*/

@@ -2,35 +2,31 @@ package controllers
 
 import java.util.{Date, UUID}
 import javax.inject.{Named, Inject}
-
 import constants.FlashMsgConstants
 import enums.RoleEnums
+import models.formdata.UserProfileOptions
 import models.modelconstants.UserLevelScala
 import models.viewmodels._
 import models.{UserCredential, UserProfile}
 import org.joda.time.DateTime
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.{Controller => SpringController}
 import play.api._
 import play.api.data.Forms._
 import play.api.data._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc._
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
 import services._
 import customUtils.Helpers
 import customUtils.authorization.WithRole
-import traits.ProvidesAppContext
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-
 import customUtils.ViewedByMemberUtil
 import customUtils.ViewedByUnKnownUtil
 import customUtils.security.SecureSocialRuntimeEnvironment
 
-//@Named
 class UserProfileController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                       val contentService: ContentService,
                                        val ratingController: RatingController,
                                        val likeController: LikeController,
                                        val messagesController: MessagesController,
@@ -43,7 +39,8 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
                                        val ratingService: RatingService,
                                        val fileService: ContentFileService,
                                        val userCredentialService: UserCredentialService,
-                                       val messageService: MessageService) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
+                                       val messageService: MessageService,
+                                       val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
 /*
   // Services

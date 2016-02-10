@@ -13,6 +13,7 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.{AnyContent, RequestHeader, Controller}
 import play.twirl.api.Html
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.{RecipeService, RatingService, UserCredentialService}
 import customUtils.authorization.WithRole
@@ -20,12 +21,11 @@ import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.RatingForm
 
-//@Named
 class RatingController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                   val messagesApi: MessagesApi,
                                   val userCredentialService: UserCredentialService,
                                   val recipeService: RecipeService,
-                                  val ratingService: RatingService) extends Controller with securesocial.core.SecureSocial with I18nSupport {
+                                  val ratingService: RatingService) extends Controller with SecureSocial with I18nSupport {
 
   /*
   @Autowired

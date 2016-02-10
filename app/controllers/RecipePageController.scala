@@ -13,12 +13,13 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
 import services.{UserProfileService, ContentFileService, RecipeService}
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
 import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
-import traits.ProvidesAppContext
+
 import scala.Some
 import models.viewmodels.{MetaData, EditRecipeExtraValues, RecipeBox}
 import customUtils.Helpers
@@ -29,13 +30,13 @@ import customUtils.security.SecureSocialRuntimeEnvironment
 import scala.collection.JavaConverters._
 import models.formdata.RecipeForm
 
-//@Named
 class RecipePageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                       val ratingController: RatingController,
                                       val likeController: LikeController,
                                       val recipeService: RecipeService,
                                       val userProfileService: UserProfileService,
-                                      val fileService: ContentFileService) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
+                                      val fileService: ContentFileService,
+                                      val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 /*
   @Autowired
   private var recipeService: RecipeService = _

@@ -1,0 +1,17 @@
+@(quickLinkTitle: String = "", quickLinkItems: Seq[(String, String, String, String, String)])(implicit messages: Messages)
+<div class="quicklinks">
+  <ul class="nav nav-pills">
+    @if(!quickLinkTitle.isEmpty){
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">@Html(quickLinkTitle) <span class="glyphicon glyphicon-user"></span> <span class="caret"></span></a>
+        <ul class="dropdown-menu pull-right">
+        }
+    @for(nav <- quickLinkItems) {
+      <li><a class="@nav._4" href="@nav._3" title="@nav._2">@nav._1 @Html(nav._5)</a></li>
+    }
+    @if(!quickLinkTitle.isEmpty){
+    </ul>
+    </li>
+    }
+  </ul>
+</div>

@@ -1,21 +1,16 @@
 package controllers
 
-import javax.inject.{Named, Inject}
-
-import org.springframework.stereotype.{Controller => SpringController}
+import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{RequestHeader, Controller}
-import org.springframework.beans.factory.annotation.Autowired
-import securesocial.core.SecureSocial.RequestWithUser
-import services.{MailService, ContentService}
+import securesocial.core.SecureSocial
+import services.{ContentService}
 import play.api.Logger
-
-import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
-import traits.ProvidesAppContext
 
-//@Named
-class ContentPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
+class ContentPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                       val contentService: ContentService,
+                                       val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   /*
   @Autowired

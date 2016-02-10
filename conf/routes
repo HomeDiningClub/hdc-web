@@ -6,6 +6,10 @@
 # Start page
 GET         /                                                    @controllers.StartPageController.index(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0)
 
+# Header
+GET         /header/mainmenu.ajax                                @controllers.HeaderController.mainMenu
+GET         /header/quicklinks.ajax                              @controllers.HeaderController.quickLinks
+
 # Browse page
 GET         /browse                                              @controllers.BrowsePageController.index(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0)
 GET         /browse.json                                         @controllers.BrowsePageController.getBrowseBoxesPagedJSON(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0, page: Int ?= 0)
@@ -14,8 +18,8 @@ GET         /browse.json                                         @controllers.Br
 GET         /content/:contentName                                @controllers.ContentPageController.viewContentByName(contentName: String)
 
 # Suggest feature
-GET        /suggest-form.ajax                                   @controllers.SuggestController.suggestForm
-POST       /suggest-feature                                     @controllers.SuggestController.suggestFeatures
+GET        /suggest-form.ajax                                    @controllers.SuggestController.suggestForm
+POST       /suggest-feature                                      @controllers.SuggestController.suggestFeatures
 
 # Campaign
 # Temporarily disabled due to sharing cache issues with FB

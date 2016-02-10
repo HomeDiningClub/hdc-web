@@ -2,38 +2,33 @@ package controllers
 
 import models.files.ContentFile
 import models.jsonmodels.{BlogPostBoxJSON}
-import org.springframework.stereotype.{Controller => SpringController}
 import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
 import models.{BlogPost, UserCredential}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi, Messages, Lang}
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
-import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
 import services.{UserProfileService, ContentFileService, BlogPostsService}
 import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
 import java.util.UUID
 import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
-import traits.ProvidesAppContext
-import scala.Some
 import models.viewmodels._
 import customUtils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
-import javax.inject.{Named, Inject}
-//import com.google.inject.name.Named
-//import com.google.inject.Inject
+import javax.inject.{Inject}
 import scala.collection.mutable.ListBuffer
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.BlogPostsForm
 
-//@Named
 class BlogPostsPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                          val blogPostsService: BlogPostsService,
                                          val userProfileService: UserProfileService,
-                                         val fileService: ContentFileService) extends Controller with securesocial.core.SecureSocial with ProvidesAppContext {
+                                         val fileService: ContentFileService,
+                                         val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   /*
   @Autowired

@@ -19,7 +19,6 @@ import customUtils.scalr.api.Resizer
 import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
 
-//@Named
 class ImageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                  val messagesApi: MessagesApi,
                                  val contentFileService: ContentFileService) extends Controller with SecureSocial with I18nSupport {

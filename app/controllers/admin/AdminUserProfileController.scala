@@ -5,6 +5,7 @@ import javax.inject.{Named, Inject}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import securesocial.core.SecureSocial
 import services.{CountyService, UserProfileService, TagWordService}
 import play.api.data._
 import play.api.data.Forms._
@@ -14,10 +15,11 @@ import models.viewmodels.EnvData
 import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
 
-//@Named
-class AdminUserProfileController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport{
+class AdminUserProfileController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                            val userProfileService: UserProfileService,
+                                            val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport{
 
-  // Services
+  /*
   @Autowired
   var userProfileService: UserProfileService = _
 
@@ -26,6 +28,7 @@ class AdminUserProfileController @Inject() (override implicit val env: SecureSoc
 
   @Autowired
   var countyService : CountyService = _
+*/
 
   // Form
   val userProfileForm : play.api.data.Form[models.formdata.UserProfileForm]  = play.api.data.Form(

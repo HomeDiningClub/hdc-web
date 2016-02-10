@@ -14,6 +14,7 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.{AnyContent, RequestHeader, Controller}
 import play.twirl.api.Html
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.{LikeService, RecipeService, UserCredentialService}
 import customUtils.authorization.WithRole
@@ -21,10 +22,13 @@ import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.LikeForm
 
-//@Named
 class LikeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
-                                val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
+                                val userCredentialService: UserCredentialService,
+                                val recipeService: RecipeService,
+                                val likeService: LikeService,
+                                val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
+  /*
   @Autowired
   private var userCredentialService : UserCredentialService = _
 
@@ -33,6 +37,7 @@ class LikeController @Inject() (override implicit val env: SecureSocialRuntimeEn
 
   @Autowired
   private var likeService : LikeService = _
+*/
 
   // Rating form mapping
   val likeForm = Form(

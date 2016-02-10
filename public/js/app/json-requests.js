@@ -72,7 +72,11 @@ function attachEventsToButtons(config){
 //config.queryValue = '@profileName';
 //config.htmlTemplate = htmlTemplate;
 function getAjax(config){
-    $.get(config.url + '?' + config.queryParam + '=' + config.queryValue, function(data){
+    var queryParams = "";
+    if(config.queryParam && config.queryValue) {
+        queryParams = '?' + config.queryParam + '=' + config.queryValue
+    }
+    $.get(config.url + queryParams, function(data){
         var myArr = [];
         if(config.htmlTemplate){
             $.each(data,function(key,value) {

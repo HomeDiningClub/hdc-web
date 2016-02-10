@@ -7,7 +7,7 @@
         currentUser: Option[UserCredential],
         isThisMyRecipe: Boolean = false,
         recipeRateForm: Html = Html(""),
-        recipeLikeForm: Html = Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages, appContext: AppContext)
+        recipeLikeForm: Html = Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
 
 @rotateCss(min: Int, max: Int) = @{
     val res = customUtils.Helpers.randomBetween(min,max)

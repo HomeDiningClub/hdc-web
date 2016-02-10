@@ -5,7 +5,7 @@
         startPageBoxes: Option[List[models.viewmodels.StartPageBox]],
         reviewBoxes: Option[List[models.viewmodels.ReviewBox]],
         asideNews: Option[List[models.content.ContentPage]],
-        currentUser: Option[UserCredential])(implicit request: RequestHeader, messages: Messages, appContext: AppContext)
+        currentUser: Option[UserCredential])(implicit request: RequestHeader, messages: Messages)
 
 @scripts = {
     <script src="@routes.Assets.at("js/libs/twitter-bootstrap-wizard-1.0.0/jquery.bootstrap.wizard.min.js")"></script>

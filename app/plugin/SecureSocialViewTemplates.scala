@@ -9,11 +9,11 @@ import play.twirl.api.{Txt, Html}
 import play.api.i18n.{Messages, I18nSupport, MessagesApi, Lang}
 import securesocial.controllers.{MailTemplates, ViewTemplates}
 import securesocial.core.{SecureSocial, BasicProfile}
-import traits.ProvidesAppContext
+
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 
-class SecureSocialViewTemplates @Inject() (implicit override val env: SecureSocialRuntimeEnvironment) extends ViewTemplates with ProvidesAppContext {
+class SecureSocialViewTemplates @Inject() (implicit val env: SecureSocialRuntimeEnvironment) extends ViewTemplates {
 
   /**
    * Returns the html for the login page
@@ -77,6 +77,6 @@ class SecureSocialViewTemplates @Inject() (implicit override val env: SecureSoci
   }
 
   override def getNotAuthorizedPage(implicit request: RequestHeader, lang: Lang): Html = {
-    views.html.custom.notAuthorized()(request,lang,env,request2Messages,appContext)
+    views.html.custom.notAuthorized()
   }
 }

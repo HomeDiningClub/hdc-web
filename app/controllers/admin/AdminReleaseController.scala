@@ -6,6 +6,7 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc._
 
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
@@ -15,9 +16,13 @@ import models.UserCredential
 import customUtils.authorization.WithRole
 import customUtils.security.SecureSocialRuntimeEnvironment
 
-//@Named
-class AdminReleaseController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
-
+class AdminReleaseController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                        val countyService: CountyService,
+                                        val tagWordService: TagWordService,
+                                        val userRoleService: UserRoleService,
+                                        val userCredentialService: UserCredentialService,
+                                        val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
+/*
   @Autowired
   private var countyService: CountyService = _
 
@@ -29,6 +34,7 @@ class AdminReleaseController @Inject() (override implicit val env: SecureSocialR
 
   @Autowired
   private var userCredentialService: UserCredentialService = _
+*/
 
   def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.release.index())

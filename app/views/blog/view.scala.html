@@ -1,6 +1,6 @@
 @(blogPost: models.BlogPost,
         metaData: Option[viewmodels.MetaData] = None,
-        isThisMyBlogPost: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages, appContext: AppContext)
+        isThisMyBlogPost: Boolean = false)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
 
 @avatarUrl = @{if(blogPost.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(blogPost.getOwnerProfile.getAvatarImage.getStoreId).url}else{""} }
 

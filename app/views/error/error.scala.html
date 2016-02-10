@@ -1,4 +1,4 @@
-@(errorString: String = "", ex: Throwable = null, isAdmin: Boolean = false)(implicit request: RequestHeader, messages: Messages, appContext: AppContext)
+@(errorString: String = "", ex: Throwable = null, isAdmin: Boolean = false)(implicit request: RequestHeader, messages: Messages)
 @theLink = { <a href="@routes.StartPageController.index()">@Messages("error.linkhome")</a> }
 
 @main(Messages("error.title")) {

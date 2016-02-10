@@ -2,7 +2,7 @@
         optionsFoodAreas: Option[Seq[(String,String)]],
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
         optionsIsHost: Option[Boolean] = None
-        )(implicit request: RequestHeader, messages: Messages, appContext: AppContext)
+        )(implicit request: RequestHeader, messages: Messages)
 
 @main(Messages("browse.title")) {
     <div class="container maincontent-container">

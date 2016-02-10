@@ -1,4 +1,4 @@
-package controllers
+package models.formdata
 
 case class UserProfileOptions(
                                payCache: Option[String],

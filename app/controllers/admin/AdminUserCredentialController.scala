@@ -9,6 +9,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial
 import services.UserCredentialService
 import customUtils.authorization.WithRole
 import enums.RoleEnums
@@ -18,11 +19,13 @@ import java.util.UUID
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.UserCredentialForm
 
-//@Named
-class AdminUserCredentialController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
-
+class AdminUserCredentialController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                               val userCredentialService: UserCredentialService,
+                                               val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
+/*
   @Autowired
   private var userCredentialService: UserCredentialService = _
+*/
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>

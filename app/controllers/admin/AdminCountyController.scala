@@ -8,6 +8,7 @@ import play.api.mvc.{AnyContent, RequestHeader, Controller}
 import play.api.data.Form
 import play.api.data.Forms._
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.CountyService
 import models.location.County
@@ -20,11 +21,13 @@ import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.CountyForm
 
-//@Named
-class AdminCountyController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
-
+class AdminCountyController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                       val countyService: CountyService,
+                                       val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
+/*
   @Autowired
   private var countyService: CountyService = _
+*/
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>

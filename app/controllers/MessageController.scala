@@ -10,10 +10,10 @@ import play.api._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import models.viewmodels.{MessageText, Repeat}
+import securesocial.core.SecureSocial
 
-//@Named
 class MessageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
-                                   val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport {
+                                   val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   val myForm = Form(
     mapping(

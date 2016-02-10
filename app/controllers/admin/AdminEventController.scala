@@ -9,6 +9,7 @@ import models.{Event, UserCredential}
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
+import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.{EventService, UserProfileService, ContentFileService}
 import enums.{ContentStateEnums, RoleEnums}
@@ -22,9 +23,13 @@ import org.joda.time.DateTime
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.EventForm
 
-//@Named
-class AdminEventController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment, val messagesApi: MessagesApi) extends Controller with securesocial.core.SecureSocial with I18nSupport{
+class AdminEventController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                      val eventService: EventService,
+                                      val userProfileService: UserProfileService,
+                                      val fileService: ContentFileService,
+                                      val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
+  /*
   @Autowired
   private var eventService: EventService = _
 
@@ -33,6 +38,7 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
 
   @Autowired
   private var fileService: ContentFileService = _
+*/
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
