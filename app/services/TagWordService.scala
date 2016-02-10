@@ -1,19 +1,13 @@
 package services
 
 import _root_.java.util.UUID
-import javax.inject.{Named, Inject}
+import javax.inject.Inject
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.stereotype.Service
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.transaction.annotation.Transactional
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.cache.Cache
 import play.api.Play.current
-
-import securesocial.core._
-import scala.Some
-
 import models.profile.{TaggedUserProfile, TagWord}
 import repositories.TagWordRepository
 import scala.collection.JavaConverters._
@@ -21,17 +15,8 @@ import models.UserProfile
 
 import scala.collection.mutable
 
-//@Named
 @Service
 class TagWordService @Inject() (val tagWordRepository: TagWordRepository, val messagesApi: MessagesApi) extends I18nSupport {
-
-  /*
-  @Autowired
-  var template: Neo4jTemplate = _
-
-  @Autowired
-  var tagWordRepository: TagWordRepository = _
-*/
 
   val tagWordCacheKey = "tagWord."
 

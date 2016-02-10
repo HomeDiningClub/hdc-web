@@ -16,17 +16,8 @@ import scala.List
 import org.springframework.transaction.annotation.Transactional
 import models.modelconstants.RelationshipTypesScala
 
-//@Named
 @Service
 class WorldService @Inject()(val template: Neo4jTemplate, val worldRepository: WorldRepository) {
-
-  /*
-  @Autowired
-  private var template: Neo4jTemplate = _
-
-  @Autowired
-  private var worldRepository: WorldRepository = _
-*/
 
   def getNumberOfWorlds: Long = worldRepository.count()
 
@@ -39,7 +30,6 @@ class WorldService @Inject()(val template: Neo4jTemplate, val worldRepository: W
     val listOfWorlds: List[World] = IteratorUtil.asCollection(worldRepository.findAll()).asScala.toList
     listOfWorlds
   }
-
 
   @Transactional(readOnly = false)
   def makeSomeWorldsAndRelations(): List[World] = {

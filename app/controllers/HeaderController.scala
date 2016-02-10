@@ -1,15 +1,13 @@
 package controllers
 
-import javax.inject.{Named, Inject}
-
+import javax.inject.Inject
 import play.api.cache.CacheApi
 import play.api.mvc._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import models.UserCredential
 import customUtils.Helpers
-import play.twirl.api.Html
 import securesocial.core.SecureSocial.RequestWithUser
-import services.ContentService
+import services.{ ContentService}
 import play.api.mvc.Controller
 import models.viewmodels.MenuItem
 import models.content.ContentPage

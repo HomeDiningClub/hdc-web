@@ -1,13 +1,11 @@
 package customUtils.security
 
-import play.api.i18n.MessagesApi
 import securesocial.core.RuntimeEnvironment
 import models.UserCredential
 import services.{LoginEventListener, UserCredentialServicePlugin}
 import scala.collection.immutable.ListMap
 import securesocial.controllers.{MailTemplates, ViewTemplates}
 import plugin.{SecureSocialMailTemplates, SecureSocialViewTemplates}
-import javax.inject.Inject
 
 class SecureSocialRuntimeEnvironment extends RuntimeEnvironment.Default {
 

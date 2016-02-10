@@ -1,14 +1,12 @@
 package services
 
-import java.util.UUID
-import javax.inject.{Named,Inject}
+import javax.inject.Inject
 
 import models.files.ContentFile
 import models.modelconstants.UserLevelScala
 import models._
 import org.neo4j.graphdb._
 import org.neo4j.helpers.collection.IteratorUtil
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.{Sort, Page, PageRequest, Pageable}
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
@@ -22,23 +20,11 @@ import models.profile.{TaggedFavoritesToUserProfile, TagWord}
 import scala.collection.JavaConverters._
 import customUtils.ViewedByMemberUtil
 
-//@Named
 @Service
-class UserProfileService @Inject()(val template: Neo4jTemplate, val userProfileRepository: UserProfileRepository, val viewedByMemberRepository: ViewedByMemberRepository, val viewedByUnKnownRepository: ViewedByUnKnownRepository) {
-
-  /*
-  @Autowired
-  private var template: Neo4jTemplate = _
-
-  @Autowired
-  private var userProfileRepository: UserProfileRepository = _
-
-  @Autowired
-  private var viewedByMemberRepository: ViewedByMemberRepository = _
-
-  @Autowired
-  private var viewedByUnKnownRepository: ViewedByUnKnownRepository = _
-*/
+class UserProfileService @Inject()(val template: Neo4jTemplate,
+                                   val userProfileRepository: UserProfileRepository,
+                                   val viewedByMemberRepository: ViewedByMemberRepository,
+                                   val viewedByUnKnownRepository: ViewedByUnKnownRepository) {
 
   // save UnKnow user access to page
   @Transactional(readOnly = false)

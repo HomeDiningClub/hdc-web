@@ -1,34 +1,22 @@
 package services
 
 import _root_.java.util.UUID
-import javax.inject.{Named,Inject}
-import org.springframework.stereotype.Service
-import org.springframework.beans.factory.annotation.Autowired
+import javax.inject.Inject
 import org.springframework.data.neo4j.support.Neo4jTemplate
+import org.springframework.stereotype.Service
 import repositories.{UserRoleRepository, UserCredentialRepository}
 import models.{UserRole, UserCredential}
 import securesocial.core._
 import scala.collection.JavaConverters._
 import securesocial.core.OAuth2Info
 import securesocial.core.OAuth1Info
-import scala.Some
 import org.springframework.transaction.annotation.Transactional
 import enums.RoleEnums.RoleEnums
 
-//@Named
 @Service
-class UserCredentialService @Inject()(val template: Neo4jTemplate, val userCredentialRepository: UserCredentialRepository, val userRoleRepository: UserRoleRepository) {
-
-  /*
-  @Autowired
-  var template: Neo4jTemplate = _
-
-  @Autowired
-  var userCredentialRepository: UserCredentialRepository = _
-
-  @Autowired
-  var userRoleRepository: UserRoleRepository = _
-*/
+class UserCredentialService @Inject()(val template: Neo4jTemplate,
+                                      val userCredentialRepository: UserCredentialRepository,
+                                      val userRoleRepository: UserRoleRepository) {
 
   @Transactional(readOnly = true)
   def fetchUserCredential(user: UserCredential): UserCredential = {

@@ -1,23 +1,30 @@
 package services
 
 import _root_.java.util.UUID
-import javax.inject.{Named,Inject}
+import javax.inject.{Named, Inject}
+import com.google.inject.Guice
 import enums.RoleEnums.RoleEnums
 import models.{ViewedByUnKnown, UserCredential, UserProfile}
+import modules.{SpringNeo4jModule}
 import org.neo4j.helpers.collection.IteratorUtil
-import org.springframework.stereotype.Service
+import securesocial.core.services.UserService
 import scala.collection.JavaConverters._
 import org.springframework.transaction.annotation.Transactional
 import enums.RoleEnums
 import scala.concurrent.Future
-import securesocial.core.PasswordInfo
 import securesocial.core.providers.MailToken
 
-//@Named
-class UserCredentialServicePlugin extends securesocial.core.services.UserService[UserCredential] {
+class UserCredentialServicePlugin extends UserService[UserCredential] {
 
-  @Inject var userProfileService: UserProfileService = null
-  @Inject var userCredentialService: UserCredentialService = null
+  val injector = Guice.createInjector(new SpringNeo4jModule)
+
+  def userProfileService: UserProfileService = {
+    injector.getInstance(classOf[UserProfileService])
+  }
+
+  def userCredentialService: UserCredentialService = {
+    injector.getInstance(classOf[UserCredentialService])
+  }
 
   private var tokens = Map[String, MailToken]()
   var users = Map[String, UserCredential]()
@@ -92,11 +99,10 @@ class UserCredentialServicePlugin extends securesocial.core.services.UserService
 
     val u = findByUserIdAndProviderId(userId, providerId) match {
       case null => None
-      case uc => Some(uc.asInstanceOf[securesocial.core.BasicProfile])
+      case uc => Some(uc.asInstanceOf[securesocial.core.BasicProfile]) // TODO: This cast fails since we don't extend BasicProfile-Trait
     }
     Future.successful(u)
   }
-
 
   override def updatePasswordInfo(user: UserCredential, info: securesocial.core.PasswordInfo): Future[Option[securesocial.core.BasicProfile]] = {
     // We don't support linked logins at this time, please extend this method to look thru all current UserCredentials link to other BasicProfiles-passwordInfo
@@ -114,7 +120,6 @@ class UserCredentialServicePlugin extends securesocial.core.services.UserService
       }
     }
     */
-
     val userCopy: securesocial.core.BasicProfile = userCredentialService.userCredential2socialUser(user)
     userCopy.copy(passwordInfo = Some(info))
     Future.successful{Some(userCopy)}
