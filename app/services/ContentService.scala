@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import models.content._
+import traits.TransactionSupport
 import scala.collection.JavaConverters._
 import scala.List
 import org.springframework.transaction.annotation.Transactional
@@ -21,8 +22,10 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 //@Named
-@Service
-class ContentService @Inject()(val template: Neo4jTemplate, val contentPageRepository: ContentPageRepository, val relatedPageRepository: RelatedPageRepository) {
+//@Service
+class ContentService @Inject()(val template: Neo4jTemplate,
+                               val contentPageRepository: ContentPageRepository,
+                               val relatedPageRepository: RelatedPageRepository) extends TransactionSupport {
 
   /*
   @Autowired
@@ -35,13 +38,13 @@ class ContentService @Inject()(val template: Neo4jTemplate, val contentPageRepos
   private var relatedPageRepository: RelatedPageRepository = _
   */
 
-  @Transactional(readOnly = true)
-  def findContentPageByName(pageName: String): ContentPage = {
+  //@Transactional(readOnly = true)
+  def findContentPageByName(pageName: String): ContentPage = withTransaction(template){
     contentPageRepository.findBySchemaPropertyValue("name", pageName)
   }
 
-  @Transactional(readOnly = true)
-  def findContentPageByRoute(routeName: String, contentState: ContentStateEnums = ContentStateEnums.PUBLISHED): Option[ContentPage] = {
+  //@Transactional(readOnly = true)
+  def findContentPageByRoute(routeName: String, contentState: ContentStateEnums = ContentStateEnums.PUBLISHED): Option[ContentPage] = withTransaction(template){
     contentPageRepository.findByRouteAndContentState(routeName,contentState.toString) match {
       case null => None
       case item => Some(item)
@@ -50,32 +53,32 @@ class ContentService @Inject()(val template: Neo4jTemplate, val contentPageRepos
 
 
 
-  @Transactional(readOnly = true)
-  def getAsideNewsItems: Option[List[ContentPage]] = {
+  //@Transactional(readOnly = true)
+  def getAsideNewsItems: Option[List[ContentPage]] = withTransaction(template){
     contentPageRepository.findByContentCategoriesAndContentState(ContentCategoryEnums.ASIDE_STARTPAGE.toString,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
       case items => Some(items.sortBy(i => i.name))
     }
   }
 
-  @Transactional(readOnly = true)
-  def getMainMenuItems: Option[List[ContentPage]] = {
+  //@Transactional(readOnly = true)
+  def getMainMenuItems: Option[List[ContentPage]] = withTransaction(template){
     contentPageRepository.findByContentCategoriesAndVisibleInMenusAndContentState(ContentCategoryEnums.MAINMENU.toString,true,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
       case items => Some(items.sortBy(i => i.name))
     }
   }
 
-  @Transactional(readOnly = true)
-  def getQuickLinksItems: Option[List[ContentPage]] = {
+  //@Transactional(readOnly = true)
+  def getQuickLinksItems: Option[List[ContentPage]] = withTransaction(template){
     contentPageRepository.findByContentCategoriesAndVisibleInMenusAndContentState(ContentCategoryEnums.QUICKLINKS.toString,true,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
       case items => Some(items)
     }
   }
 
-  @Transactional(readOnly = true)
-  def getTermsAndConditions: Option[ContentPage] = {
+  //@Transactional(readOnly = true)
+  def getTermsAndConditions: Option[ContentPage] = withTransaction(template){
     contentPageRepository.findByContentCategoriesAndContentState(ContentCategoryEnums.TERMS.toString,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
       case items => Some(items.head)
@@ -83,8 +86,8 @@ class ContentService @Inject()(val template: Neo4jTemplate, val contentPageRepos
   }
 
 
-  @Transactional(readOnly = true)
-  def getRelatedPages(objectId: UUID): Option[List[ContentPage]] = {
+  //@Transactional(readOnly = true)
+  def getRelatedPages(objectId: UUID): Option[List[ContentPage]] = withTransaction(template){
     this.findContentById(objectId) match {
       case None => None
       case Some(cp) => cp.getRelatedPages.asScala.toList match {
@@ -138,8 +141,8 @@ class ContentService @Inject()(val template: Neo4jTemplate, val contentPageRepos
   }
 
 
-  @Transactional(readOnly = true)
-  def getPagesAsDropDown(filterPage: Option[ContentPage] = None): Option[Seq[(String,String)]] = {
+  //@Transactional(readOnly = true)
+  def getPagesAsDropDown(filterPage: Option[ContentPage] = None): Option[Seq[(String,String)]] = withTransaction(template){
     val returnItems: Option[Seq[(String,String)]] = this.getListOfAll match {
       case Some(items) =>
         val filteredItems = filterPage match {
@@ -184,8 +187,8 @@ class ContentService @Inject()(val template: Neo4jTemplate, val contentPageRepos
 
 
 
-  @Transactional(readOnly = true)
-  def findContentById(objectId: java.util.UUID): Option[ContentPage] = {
+  //@Transactional(readOnly = true)
+  def findContentById(objectId: java.util.UUID): Option[ContentPage] = withTransaction(template){
     val item = contentPageRepository.findByobjectId(objectId)
 
     item match {
@@ -199,8 +202,8 @@ class ContentService @Inject()(val template: Neo4jTemplate, val contentPageRepos
     }
   }
 
-  @Transactional(readOnly = true)
-  def getListOfAll: Option[List[ContentPage]] = {
+  //@Transactional(readOnly = true)
+  def getListOfAll: Option[List[ContentPage]] = withTransaction(template){
     val listOfAll: List[ContentPage] = contentPageRepository.findAll().iterator.asScala.toList
 
     if (listOfAll.isEmpty){
@@ -219,14 +222,14 @@ class ContentService @Inject()(val template: Neo4jTemplate, val contentPageRepos
     }
   }
 
-  @Transactional(readOnly = false)
-  def removeAllRelatedPages(contentPage: ContentPage): Boolean = {
+  //@Transactional(readOnly = false)
+  def removeAllRelatedPages(contentPage: ContentPage): Boolean = withTransaction(template){
     contentPage.removeAllRelatedPages
     true
   }
 
-  @Transactional(readOnly = false)
-  def deleteContentPageById(objectId: java.util.UUID): Boolean = {
+  //@Transactional(readOnly = false)
+  def deleteContentPageById(objectId: java.util.UUID): Boolean = withTransaction(template){
     this.findContentById(objectId) match {
       case None => false
       case Some(item) =>
@@ -235,13 +238,13 @@ class ContentService @Inject()(val template: Neo4jTemplate, val contentPageRepos
     }
   }
 
-  @Transactional(readOnly = false)
-  def deleteAllContentPages() {
+  //@Transactional(readOnly = false)
+  def deleteAllContentPages() = withTransaction(template){
     contentPageRepository.deleteAll()
   }
 
-  @Transactional(readOnly = false)
-  def addContentPage(newContent: ContentPage): ContentPage = {
+  //@Transactional(readOnly = false)
+  def addContentPage(newContent: ContentPage): ContentPage = withTransaction(template){
     val newContentResult = contentPageRepository.save(newContent)
     newContentResult
   }

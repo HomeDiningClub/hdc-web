@@ -4,6 +4,7 @@ import javax.inject.{Named,Inject}
 
 import org.apache.commons.codec.digest.DigestUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.neo4j.support.Neo4jTemplate
 import repositories._
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,6 +14,7 @@ import play.api.Play
 import play.api.Play.current
 import java.util.{Locale, UUID}
 import org.neo4j.helpers.collection.IteratorUtil
+import traits.TransactionSupport
 import scala.collection.JavaConverters._
 import play.api.libs.MimeTypes
 import java.io.{IOException, FileInputStream, File}
@@ -21,8 +23,10 @@ import enums.FileTypeEnums
 import FileTypeEnums.FileTypeEnums
 
 //@Named
-@Service
-class ContentFileService @Inject() (val contentFileRepository: ContentFileRepository, val userCredentialRepository: UserCredentialRepository) {
+//@Service
+class ContentFileService @Inject() (val template: Neo4jTemplate,
+                                    val contentFileRepository: ContentFileRepository,
+                                    val userCredentialRepository: UserCredentialRepository) extends TransactionSupport {
 
   /*
   @Autowired
@@ -84,13 +88,13 @@ class ContentFileService @Inject() (val contentFileRepository: ContentFileReposi
     results
   }
 
-  @Transactional(readOnly = true)
-  def getCountOfAll: Int = {
+  //@Transactional(readOnly = true)
+  def getCountOfAll: Int = withTransaction(template){
     contentFileRepository.getCountOfAll()
   }
 
-  @Transactional(readOnly = true)
-  def getCountOfAllType(fileType: String): Int = {
+  //@Transactional(readOnly = true)
+  def getCountOfAllType(fileType: String): Int = withTransaction(template){
     contentFileRepository.getCountOfAllType(fileType)
   }
 
@@ -420,8 +424,8 @@ class ContentFileService @Inject() (val contentFileRepository: ContentFileReposi
   }
 
 
-  @Transactional(readOnly = false)
-  private def saveFile(file: ContentFile): ContentFile = {
+  //@Transactional(readOnly = false)
+  private def saveFile(file: ContentFile): ContentFile = withTransaction(template){
     file.getStoreId match {
       case null | "" =>
         throw new IllegalArgumentException("StoreID cannot be null or empty")
@@ -431,8 +435,8 @@ class ContentFileService @Inject() (val contentFileRepository: ContentFileReposi
     }
   }
 
-  @Transactional(readOnly = false)
-  private def deleteFileFromDB(file: ContentFile): Boolean = {
+  //@Transactional(readOnly = false)
+  private def deleteFileFromDB(file: ContentFile): Boolean = withTransaction(template){
     try {
       contentFileRepository.delete(file)
       // This code works as well, however, it also has problems with the cached objects of Spring

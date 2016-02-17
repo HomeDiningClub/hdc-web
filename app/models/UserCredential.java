@@ -1,6 +1,6 @@
 package models;
 
-import interfaces.IEditable;
+import traits.IEditable;
 import models.base.AuditEntity;
 import models.like.UserCredentialLikeEvent;
 import models.like.UserCredentialLikeRecipe;

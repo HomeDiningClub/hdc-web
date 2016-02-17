@@ -10,14 +10,16 @@ import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import models.World
 import repositories.WorldRepository
+import traits.TransactionSupport
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConverters._
 import scala.List
 import org.springframework.transaction.annotation.Transactional
 import models.modelconstants.RelationshipTypesScala
 
-@Service
-class WorldService @Inject()(val template: Neo4jTemplate, val worldRepository: WorldRepository) {
+//@Service
+class WorldService @Inject()(val template: Neo4jTemplate,
+                             val worldRepository: WorldRepository) extends TransactionSupport {
 
   def getNumberOfWorlds: Long = worldRepository.count()
 
@@ -25,14 +27,14 @@ class WorldService @Inject()(val template: Neo4jTemplate, val worldRepository: W
     worldRepository.findBySchemaPropertyValue("name", worldName)
   }
 
-  @Transactional(readOnly = true)
-  def getAllWorlds: List[World] = {
+  //@Transactional(readOnly = true)
+  def getAllWorlds: List[World] = withTransaction(template){
     val listOfWorlds: List[World] = IteratorUtil.asCollection(worldRepository.findAll()).asScala.toList
     listOfWorlds
   }
 
-  @Transactional(readOnly = false)
-  def makeSomeWorldsAndRelations(): List[World] = {
+  //@Transactional(readOnly = false)
+  def makeSomeWorldsAndRelations(): List[World] = withTransaction(template){
     var worlds : ListBuffer[World] = ListBuffer()
     worlds += createWorld("Mercury", 0)
     worlds += createWorld("Venus", 0)
@@ -59,24 +61,24 @@ class WorldService @Inject()(val template: Neo4jTemplate, val worldRepository: W
     myWorlds
   }
 
-  @Transactional(readOnly = false)
-  def deleteWorld(worldToDelete: World) {
+  //@Transactional(readOnly = false)
+  def deleteWorld(worldToDelete: World) = withTransaction(template){
     worldRepository.delete(worldToDelete)
   }
 
-  @Transactional(readOnly = false)
-  def deleteAllWorlds() {
+  //@Transactional(readOnly = false)
+  def deleteAllWorlds() = withTransaction(template) {
     worldRepository.deleteAll()
   }
 
-  @Transactional(readOnly = false)
-  def addRocketRouteTo(thisWorld: World, otherWorld: World) {
+  //@Transactional(readOnly = false)
+  def addRocketRouteTo(thisWorld: World, otherWorld: World) = withTransaction(template){
     if(otherWorld != null && thisWorld != null)
       thisWorld.reachableByRocket.add(otherWorld)
   }
 
-  @Transactional(readOnly = true)
-  def getWorldPath(worldA: World, worldB: World): List[World] = {
+  //@Transactional(readOnly = true)
+  def getWorldPath(worldA: World, worldB: World): List[World] = withTransaction(template){
     val pathExp: PathExpander[_] = PathExpanders.forTypeAndDirection(RelationshipTypesScala.REACHABLE_BY_ROCKET, Direction.OUTGOING)
     val path = GraphAlgoFactory.shortestPath(pathExp, 100)
       .findSinglePath(template.getNode(worldA.graphId), template.getNode(worldB.graphId))
@@ -97,8 +99,8 @@ class WorldService @Inject()(val template: Neo4jTemplate, val worldRepository: W
     convertList.result()
   }
 
-  @Transactional(readOnly = false)
-  private def createWorld(name: String, moons: Int, spokenLanguages: String = ""): World = {
+  //@Transactional(readOnly = false)
+  private def createWorld(name: String, moons: Int, spokenLanguages: String = ""): World = withTransaction(template){
     var newWorld: World = new World(name,moons)
 
     if(!spokenLanguages.isEmpty)

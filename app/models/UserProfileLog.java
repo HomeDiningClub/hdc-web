@@ -1,6 +1,6 @@
 package models;
 
-import interfaces.IEditable;
+import traits.IEditable;
 import models.base.AuditEntity;
 import org.springframework.data.annotation.Transient;
 

@@ -16,8 +16,7 @@ class LoginEventListener extends EventListener {
     }
 
     event.user match {
-      case Event(u: models.UserCredential) =>
-        Logger.info("Traced %s event for user %s".format(eventName, u.fullName))
+      case Event(u: models.UserCredential) => Logger.info("Traced %s event for user %s".format(eventName, u.fullName))
     }
 
     // retrieving the current language

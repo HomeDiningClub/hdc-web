@@ -1,6 +1,6 @@
 package models;
 
-import interfaces.IEditable;
+import traits.IEditable;
 import models.content.ContentBase;
 import models.files.ContentFile;
 import models.modelconstants.RelationshipTypesJava;

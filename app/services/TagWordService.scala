@@ -3,6 +3,7 @@ package services
 import _root_.java.util.UUID
 import javax.inject.Inject
 import org.neo4j.helpers.collection.IteratorUtil
+import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
@@ -10,18 +11,21 @@ import play.api.cache.Cache
 import play.api.Play.current
 import models.profile.{TaggedUserProfile, TagWord}
 import repositories.TagWordRepository
+import traits.TransactionSupport
 import scala.collection.JavaConverters._
 import models.UserProfile
 
 import scala.collection.mutable
 
-@Service
-class TagWordService @Inject() (val tagWordRepository: TagWordRepository, val messagesApi: MessagesApi) extends I18nSupport {
+//@Service
+class TagWordService @Inject() (val template: Neo4jTemplate,
+                                val tagWordRepository: TagWordRepository,
+                                val messagesApi: MessagesApi) extends I18nSupport with TransactionSupport {
 
   val tagWordCacheKey = "tagWord."
 
-  @Transactional(readOnly = false)
-   def createTag(name: String, idName: String, order: String = "", tagGroupName : String = "" ): TagWord = {
+  //@Transactional(readOnly = false)
+  def createTag(name: String, idName: String, order: String = "", tagGroupName : String = "" ): TagWord = withTransaction(template){
     var newTag: TagWord = new TagWord
     var resultTag : TagWord = new TagWord
     newTag.tagName = name
@@ -33,8 +37,8 @@ class TagWordService @Inject() (val tagWordRepository: TagWordRepository, val me
     resultTag
   }
 
-  @Transactional(readOnly = true)
-  def listAll(): Option[List[TagWord]] = {
+  //@Transactional(readOnly = true)
+  def listAll(): Option[List[TagWord]] = withTransaction(template){
     val listOfTags: Option[List[TagWord]] = IteratorUtil.asCollection(tagWordRepository.findAll()).asScala.toList match {
       case null => None
       case tags => Some(tags)
@@ -42,8 +46,8 @@ class TagWordService @Inject() (val tagWordRepository: TagWordRepository, val me
     listOfTags
   }
 
-  @Transactional(readOnly = true)
-  def findById(objectId: UUID): Option[TagWord] = {
+  //@Transactional(readOnly = true)
+  def findById(objectId: UUID): Option[TagWord] = withTransaction(template){
     tagWordRepository.findByobjectId(objectId) match {
       case null => None
       case item => Some(item)
@@ -51,8 +55,8 @@ class TagWordService @Inject() (val tagWordRepository: TagWordRepository, val me
   }
 
 
-  @Transactional(readOnly = true)
-  def listByGroupOption(groupName: String): Option[List[TagWord]] = {
+  //@Transactional(readOnly = true)
+  def listByGroupOption(groupName: String): Option[List[TagWord]] = withTransaction(template){
     tagWordRepository.findByTagGroupName(groupName).asScala.toList match {
       case null | Nil  => None
       case tags => {
@@ -66,8 +70,8 @@ class TagWordService @Inject() (val tagWordRepository: TagWordRepository, val me
     }
   }
 
-  @Transactional(readOnly = true)
-  def findByProfileAndGroup(profile: UserProfile, groupName: String): Option[List[TagWord]] = {
+  //@Transactional(readOnly = true)
+  def findByProfileAndGroup(profile: UserProfile, groupName: String): Option[List[TagWord]] = withTransaction(template){
     profile.getTags.asScala.filter(tag => tag.tagWord.tagGroupName.equalsIgnoreCase(groupName)).toList match {
       case null | Nil => None
       case tags => Some(tags.map {
@@ -77,8 +81,8 @@ class TagWordService @Inject() (val tagWordRepository: TagWordRepository, val me
     }
   }
 
-  @Transactional(readOnly = true)
-  def getFoodAreas: Option[Seq[(String,String)]] = {
+  //@Transactional(readOnly = true)
+  def getFoodAreas: Option[Seq[(String,String)]] = withTransaction(template){
     val foodTags: Option[Seq[(String,String)]] = this.listByGroupOption("profile") match {
       case Some(listOfTags) =>
         var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
@@ -109,16 +113,16 @@ class TagWordService @Inject() (val tagWordRepository: TagWordRepository, val me
 //    }
 //  }
 
-  @Transactional(readOnly = true)
-  def listByGroup2(groupName: String): List[TagWord] = {
+  //@Transactional(readOnly = true)
+  def listByGroup2(groupName: String): List[TagWord] = withTransaction(template){
 
     tagWordRepository.findAllBySchemaPropertyValue("searchGroup", groupName).asScala.toList
     // template.lookup("search","tagGroupName:profile").asScala.toList
     //tagWordRepository.findByGruoupName("profile").toList
   }
 
-  @Transactional(readOnly = false)
-  def deleteById(objectId: UUID): Boolean = {
+  //@Transactional(readOnly = false)
+  def deleteById(objectId: UUID): Boolean = withTransaction(template) {
     this.findById(objectId) match {
       case None => false
       case Some(item) =>
@@ -128,8 +132,8 @@ class TagWordService @Inject() (val tagWordRepository: TagWordRepository, val me
     }
   }
 
-  @Transactional(readOnly = false)
-  def deleteAll(): Boolean = {
+  //@Transactional(readOnly = false)
+  def deleteAll(): Boolean = withTransaction(template){
     tagWordRepository.findAll.asScala.toList.foreach{ item =>
       removeFromCache(item)
     }
@@ -137,9 +141,8 @@ class TagWordService @Inject() (val tagWordRepository: TagWordRepository, val me
     true
   }
 
-
-  @Transactional(readOnly = false)
-  def save(item: TagWord): TagWord = {
+  //@Transactional(readOnly = false)
+  def save(item: TagWord): TagWord = withTransaction(template){
     val result = tagWordRepository.save(item)
     removeFromCache(item)
     result

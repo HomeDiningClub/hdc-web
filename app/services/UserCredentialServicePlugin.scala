@@ -7,6 +7,8 @@ import enums.RoleEnums.RoleEnums
 import models.{ViewedByUnKnown, UserCredential, UserProfile}
 import modules.{SpringNeo4jModule}
 import org.neo4j.helpers.collection.IteratorUtil
+import play.api.Logger
+import securesocial.core.BasicProfile
 import securesocial.core.services.UserService
 import scala.collection.JavaConverters._
 import org.springframework.transaction.annotation.Transactional
@@ -16,14 +18,16 @@ import securesocial.core.providers.MailToken
 
 class UserCredentialServicePlugin extends UserService[UserCredential] {
 
-  val injector = Guice.createInjector(new SpringNeo4jModule)
+  //val injector = Guice.createInjector(new SpringNeo4jModule)
 
   def userProfileService: UserProfileService = {
-    injector.getInstance(classOf[UserProfileService])
+    play.api.Play.current.injector.instanceOf(classOf[UserProfileService])
+    //injector.getInstance(classOf[UserProfileService])
   }
 
   def userCredentialService: UserCredentialService = {
-    injector.getInstance(classOf[UserCredentialService])
+    play.api.Play.current.injector.instanceOf(classOf[UserCredentialService])
+    //injector.getInstance(classOf[UserCredentialService])
   }
 
   private var tokens = Map[String, MailToken]()
@@ -68,7 +72,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
     Future.successful(current)
   }
 
-  override def passwordInfoFor(user: UserCredential): Future[Option[securesocial.core.PasswordInfo]] = {
+  def passwordInfoFor(user: UserCredential): Future[Option[securesocial.core.PasswordInfo]] = {
     // We don't support linked logins at this time, please extend this method to look thru all current UserCredentials link to other BasicProfiles-passwordInfo
     /*
     Future.successful {
@@ -83,7 +87,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
     Future.successful{user.passwordInfo()}
   }
 
-  def find(providerId: String, userId: String): Future[Option[securesocial.core.BasicProfile]] = {
+  def find(providerId: String, userId: String): Future[Option[BasicProfile]] = {
     /* We don't support linked logins at this time, to enable parse thru all linked logins for all the found users
     if (play.api.Logger.isDebugEnabled) {
       play.api.Logger.debug("users = %s".format(users))
@@ -99,12 +103,12 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
 
     val u = findByUserIdAndProviderId(userId, providerId) match {
       case null => None
-      case uc => Some(uc.asInstanceOf[securesocial.core.BasicProfile]) // TODO: This cast fails since we don't extend BasicProfile-Trait
+      case uc => Some(userCredentialService.userCredential2basicProfile(uc))
     }
     Future.successful(u)
   }
 
-  override def updatePasswordInfo(user: UserCredential, info: securesocial.core.PasswordInfo): Future[Option[securesocial.core.BasicProfile]] = {
+  def updatePasswordInfo(user: UserCredential, info: securesocial.core.PasswordInfo): Future[Option[BasicProfile]] = {
     // We don't support linked logins at this time, please extend this method to look thru all current UserCredentials link to other BasicProfiles-passwordInfo
     /*
     Future.successful {
@@ -120,7 +124,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
       }
     }
     */
-    val userCopy: securesocial.core.BasicProfile = userCredentialService.userCredential2socialUser(user)
+    val userCopy: BasicProfile = userCredentialService.userCredential2basicProfile(user)
     userCopy.copy(passwordInfo = Some(info))
     Future.successful{Some(userCopy)}
 
@@ -142,9 +146,9 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
 
     //val log : Long = customUtils.Helpers.startPerfLog()
 
-    val retUser: Option[securesocial.core.BasicProfile] = getUserByEmailAndProvider(email.toLowerCase, providerId) match {
+    val retUser: Option[BasicProfile] = getUserByEmailAndProvider(email.toLowerCase, providerId) match {
       case None => None
-      case Some(user) => Some(user.asInstanceOf[securesocial.core.BasicProfile])
+      case Some(user) => Some(user.asInstanceOf[BasicProfile])
     }
 
     Future.successful(retUser)
@@ -160,7 +164,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
     * @param user
     * @return
     */
-  def save(user: securesocial.core.BasicProfile, mode: securesocial.core.services.SaveMode ): Future[UserCredential] = {
+  def save(user: BasicProfile, mode: securesocial.core.services.SaveMode ): Future[UserCredential] = {
     // We don't support linked logins at this time, please extend this method to look thru all current UserCredentials link to other BasicProfiles-passwordInfo
     /*
     mode match {
@@ -191,7 +195,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
      */
 
     //var log : Long = customUtils.Helpers.startPerfLog()
-    val userCredential : UserCredential = userCredentialService.socialUser2UserCredential(user)
+    val userCredential : UserCredential = userCredentialService.basicProfile2UserCredential(user)
     val userCredential2 = createOrUpdateUser(userCredential)
     //customUtils.Helpers.endPerfLog("save - find with id: " + user.email, log)
 
@@ -273,7 +277,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
       return u.get
     }
 
-    var user = userCredentialService.userCredentialRepository.findByuserIdAndProviderId(mUserId,providerId)
+    val user = userCredentialService.userCredentialRepository.findByuserIdAndProviderId(mUserId,providerId)
 
     if(user != null && user != None && isUserCacheON) {
       addUserCache(user)
@@ -349,50 +353,32 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
           var rol = itRoles.next()
         }
 
-        var profileItter = modUserCredential.profiles.iterator()
-        if(profileItter.hasNext)
-        {
-          var theProfile = profileItter.next()
-          var saveProfile : Boolean = false
+        val theProfile = modUserCredential.getUserProfile
+        var saveProfile : Boolean = false
 
+        Logger.info("# Viewed By Member ...")
 
-          print("#######################################################")
-          print("# Viewed By Member ...")
-          print("#######################################################")
+        if(theProfile.getmemberVisited() == null || theProfile.getmemberVisited() == None) {
+          Logger.info("Create ViewedByMember")
+          val view: models.ViewedByMember = new models.ViewedByMember()
+          Logger.info("ViewedByMember size: " + view.getSize)
 
-
-
-          if(theProfile.getmemberVisited() == null || theProfile.getmemberVisited() == None) {
-            print("Create ViewedByMember")
-            var view : models.ViewedByMember = new models.ViewedByMember()
-            println("size : " + view.getSize)
-            userProfileService.setAndRemoveViewByMember(theProfile, view)
-            //InstancedServices.userProfileService.saveUserProfile(theProfile)
-            saveProfile = true
-          }
-
-          // At ViewedByUnKnown
-          if(theProfile.getUnKnownVisited() == null || theProfile.getUnKnownVisited == None) {
-            print("Create ViewedByUnKnown")
-            var view : models.ViewedByUnKnown = new ViewedByUnKnown()
-            userProfileService.setAndRemoveViewByUnKnown(theProfile, view)
-            saveProfile = true
-
-          }
-
-          if(saveProfile) {
-            println("Save profile ....  ")
-            userProfileService.saveUserProfile(theProfile)
-          }
-
-
-
+          userProfileService.setAndRemoveViewByMember(theProfile, view)
+          saveProfile = true
         }
 
+        // At ViewedByUnKnown
+        if(theProfile.getUnKnownVisited() == null || theProfile.getUnKnownVisited == None) {
+          Logger.info("Create ViewedByUnKnown")
+          val view: models.ViewedByUnKnown = new ViewedByUnKnown()
+          userProfileService.setAndRemoveViewByUnKnown(theProfile, view)
+          saveProfile = true
+        }
 
-
-
-
+        if(saveProfile) {
+          Logger.info("Save profile")
+          userProfileService.saveUserProfile(theProfile)
+        }
 
         modUserCredential.oAuth1InfoToken         = userCredential.oAuth1InfoToken
         modUserCredential.oAuth1InfoSecret        = userCredential.oAuth1InfoSecret
@@ -403,7 +389,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
         modUserCredential.password                = userCredential.password
         modUserCredential.authMethod              = userCredential.authMethod
         modUserCredential.firstName               = userCredential.firstName
-        modUserCredential.lastName                =  userCredential.lastName
+        modUserCredential.lastName                = userCredential.lastName
         modUserCredential.fullName                = userCredential.fullName
         modUserCredential.salt                    = userCredential.salt
         modUserCredential.hasher                  = userCredential.hasher

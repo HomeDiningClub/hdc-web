@@ -1,4 +1,4 @@
-package interfaces
+package traits
 
 import java.util.UUID
 

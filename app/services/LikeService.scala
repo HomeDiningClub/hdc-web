@@ -11,12 +11,16 @@ import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import repositories._
+import traits.TransactionSupport
 
 import scala.collection.JavaConverters._
 
 //@Named
-@Service
-class LikeService @Inject()(val userCredentialRepository: UserCredentialRepository, val likeUserCredentialRepository: LikeUserCredentialRepository, val likeRecipeRepository: LikeRecipeRepository) {
+//@Service
+class LikeService @Inject()(val template: Neo4jTemplate,
+                            val userCredentialRepository: UserCredentialRepository,
+                            val likeUserCredentialRepository: LikeUserCredentialRepository,
+                            val likeRecipeRepository: LikeRecipeRepository) extends TransactionSupport {
 
 /*
   @Autowired
@@ -33,33 +37,33 @@ class LikeService @Inject()(val userCredentialRepository: UserCredentialReposito
 */
 
   // LikeUserCredential
-  @Transactional(readOnly = true)
-  def findUserCredentialLikeUserCredentialById(objectId: java.util.UUID): UserCredentialLikeUserCredential = {
+  //@Transactional(readOnly = true)
+  def findUserCredentialLikeUserCredentialById(objectId: java.util.UUID): UserCredentialLikeUserCredential = withTransaction(template){
     likeUserCredentialRepository.findByobjectId(objectId)
   }
-  @Transactional(readOnly = true)
-  def findUserCredentialLikeUserCredentialByUserWhoIsLiking(user: UserCredential): Option[List[UserCredentialLikeUserCredential]] = {
+  //@Transactional(readOnly = true)
+  def findUserCredentialLikeUserCredentialByUserWhoIsLiking(user: UserCredential): Option[List[UserCredentialLikeUserCredential]] = withTransaction(template){
     likeUserCredentialRepository.findByuserWhoLikes(user.objectId).iterator.asScala.toList match {
       case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
-  @Transactional(readOnly = true)
-  def findUserCredentialLikeUserCredentialByValue(likeValue: Boolean): Option[List[UserCredentialLikeUserCredential]] = {
+  //@Transactional(readOnly = true)
+  def findUserCredentialLikeUserCredentialByValue(likeValue: Boolean): Option[List[UserCredentialLikeUserCredential]] = withTransaction(template){
     likeUserCredentialRepository.findBylikes(likeValue, "=").iterator.asScala.toList match {
       case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
-  @Transactional(readOnly = true)
-  def findUserCredentialLikeUserCredentialByWhoGotLiked(user: UserCredential): Option[List[UserCredentialLikeUserCredential]] = {
+  //@Transactional(readOnly = true)
+  def findUserCredentialLikeUserCredentialByWhoGotLiked(user: UserCredential): Option[List[UserCredentialLikeUserCredential]] = withTransaction(template){
     likeUserCredentialRepository.findByuserLikes(user.objectId).iterator.asScala.toList match {
       case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
-  @Transactional(readOnly = true)
-  def findUserCredentialLikeUserCredentialByUserWhoIsLikesAndUserLikes(user: UserCredential, userLikes: UserCredential): Option[List[UserCredentialLikeUserCredential]] = {
+  //@Transactional(readOnly = true)
+  def findUserCredentialLikeUserCredentialByUserWhoIsLikesAndUserLikes(user: UserCredential, userLikes: UserCredential): Option[List[UserCredentialLikeUserCredential]] = withTransaction(template){
     likeUserCredentialRepository.findByuserWhoLikesAndUserLikes(user.objectId.toString, userLikes.objectId.toString).iterator.asScala.toList match {
       case Nil => None
       case listOfItems => Some(listOfItems)
@@ -68,33 +72,33 @@ class LikeService @Inject()(val userCredentialRepository: UserCredentialReposito
 
 
   // LikeRecipe
-  @Transactional(readOnly = true)
-  def findUserCredentialLikeRecipeById(objectId: java.util.UUID): UserCredentialLikeRecipe = {
+  //@Transactional(readOnly = true)
+  def findUserCredentialLikeRecipeById(objectId: java.util.UUID): UserCredentialLikeRecipe = withTransaction(template){
     likeRecipeRepository.findByobjectId(objectId)
   }
-  @Transactional(readOnly = true)
-  def findUserCredentialLikeRecipeByUserWhoIsLiking(user: UserCredential): Option[List[UserCredentialLikeRecipe]] = {
+  //@Transactional(readOnly = true)
+  def findUserCredentialLikeRecipeByUserWhoIsLiking(user: UserCredential): Option[List[UserCredentialLikeRecipe]] = withTransaction(template){
     likeRecipeRepository.findByuserWhoLikes(user.objectId).iterator.asScala.toList match {
       case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
-  @Transactional(readOnly = true)
-  def findUserCredentialLikeRecipeByValue(likeValue: Boolean): Option[List[UserCredentialLikeRecipe]] = {
+  //@Transactional(readOnly = true)
+  def findUserCredentialLikeRecipeByValue(likeValue: Boolean): Option[List[UserCredentialLikeRecipe]] = withTransaction(template){
     likeRecipeRepository.findBylikes(likeValue,"=").iterator.asScala.toList match {
       case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
-  @Transactional(readOnly = true)
-  def findUserCredentialLikeRecipeByWhoGotLiked(recipe: Recipe): Option[List[UserCredentialLikeRecipe]] = {
+  //@Transactional(readOnly = true)
+  def findUserCredentialLikeRecipeByWhoGotLiked(recipe: Recipe): Option[List[UserCredentialLikeRecipe]] = withTransaction(template){
     likeRecipeRepository.findByuserLikes(recipe.objectId).iterator.asScala.toList match {
       case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
-  @Transactional(readOnly = true)
-  def findUserCredentialLikeRecipeByUserWhoIsLikesAndUserLikes(user: UserCredential, recipe: Recipe): Option[List[UserCredentialLikeRecipe]] = {
+  //@Transactional(readOnly = true)
+  def findUserCredentialLikeRecipeByUserWhoIsLikesAndUserLikes(user: UserCredential, recipe: Recipe): Option[List[UserCredentialLikeRecipe]] = withTransaction(template){
     likeRecipeRepository.findByuserWhoLikesAndUserLikes(user.objectId.toString, recipe.objectId.toString).iterator.asScala.toList match {
       case Nil => None
       case listOfItems => Some(listOfItems)
@@ -105,26 +109,26 @@ class LikeService @Inject()(val userCredentialRepository: UserCredentialReposito
 
   // Recipe
   // By using graphId we don't need to load all the relationships
-  @Transactional(readOnly = true)
-  def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Recipe): Option[UserCredentialLikeRecipe] = {
+  //@Transactional(readOnly = true)
+  def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Recipe): Option[UserCredentialLikeRecipe] = withTransaction(template){
     currentUser.getHasLikedRecipes.asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
   }
 
   // Event
-  @Transactional(readOnly = true)
-  def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Event): Option[UserCredentialLikeEvent] = {
+  //@Transactional(readOnly = true)
+  def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Event): Option[UserCredentialLikeEvent] = withTransaction(template){
     currentUser.getHasLikedEvents.asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
   }
 
   // UserCredential
-  @Transactional(readOnly = true)
-  def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: UserCredential): Option[UserCredentialLikeUserCredential] = {
+  //@Transactional(readOnly = true)
+  def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: UserCredential): Option[UserCredentialLikeUserCredential] = withTransaction(template){
     currentUser.getHasLikedUsers.asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
   }
 
 
-  @Transactional(readOnly = false)
-  def likeUser(userLiking: UserCredential, userLikes: UserCredential, likeValue: Boolean, userLikeIP: String): UserCredentialLikeUserCredential = {
+  //@Transactional(readOnly = false)
+  def likeUser(userLiking: UserCredential, userLikes: UserCredential, likeValue: Boolean, userLikeIP: String): UserCredentialLikeUserCredential = withTransaction(template){
     //val item: UserCredentialLikeUserCredential = template.createRelationshipBetween(userLiking, userLikes, classOf[UserCredentialLikeUserCredential], RelationshipTypesScala.LIKES_USER.Constant, false)
 
     // Is there already a rating? Don't allow duplicates
@@ -138,8 +142,8 @@ class LikeService @Inject()(val userCredentialRepository: UserCredentialReposito
     this.saveUserLike(item)
   }
 
-  @Transactional(readOnly = false)
-  def likeRecipe(userLiking: UserCredential, userLikes: Recipe, likeValue: Boolean, userLikeIP: String): UserCredentialLikeRecipe = {
+  //@Transactional(readOnly = false)
+  def likeRecipe(userLiking: UserCredential, userLikes: Recipe, likeValue: Boolean, userLikeIP: String): UserCredentialLikeRecipe = withTransaction(template){
     //val item: UserCredentialLikeRecipe = template.createRelationshipBetween(userLiking, userLikes, classOf[UserCredentialLikeRecipe], RelationshipTypesScala.LIKES_RECIPE.Constant, false)
 
     // Is there already a rating? Don't allow duplicates
@@ -156,8 +160,8 @@ class LikeService @Inject()(val userCredentialRepository: UserCredentialReposito
 
 
 
-  @Transactional(readOnly = false)
-  def deleteUserCredentialLikeUserCredentialById(objectId: java.util.UUID): Boolean = {
+  //@Transactional(readOnly = false)
+  def deleteUserCredentialLikeUserCredentialById(objectId: java.util.UUID): Boolean = withTransaction(template){
     this.findUserCredentialLikeUserCredentialById(objectId) match {
       case null =>
         false
@@ -167,8 +171,8 @@ class LikeService @Inject()(val userCredentialRepository: UserCredentialReposito
     }
   }
 
-  @Transactional(readOnly = false)
-  def deleteUserCredentialLikeRecipeById(objectId: java.util.UUID): Boolean = {
+  //@Transactional(readOnly = false)
+  def deleteUserCredentialLikeRecipeById(objectId: java.util.UUID): Boolean = withTransaction(template){
     this.findUserCredentialLikeRecipeById(objectId) match {
       case null =>
         false
@@ -178,14 +182,14 @@ class LikeService @Inject()(val userCredentialRepository: UserCredentialReposito
     }
   }
 
-  @Transactional(readOnly = false)
-  def saveUserLike(newItem: UserCredentialLikeUserCredential): UserCredentialLikeUserCredential = {
+  //@Transactional(readOnly = false)
+  def saveUserLike(newItem: UserCredentialLikeUserCredential): UserCredentialLikeUserCredential = withTransaction(template){
     val newResult = likeUserCredentialRepository.save(newItem)
     newResult
   }
 
-  @Transactional(readOnly = false)
-  def saveRecipeLike(newItem: UserCredentialLikeRecipe): UserCredentialLikeRecipe = {
+  //@Transactional(readOnly = false)
+  def saveRecipeLike(newItem: UserCredentialLikeRecipe): UserCredentialLikeRecipe = withTransaction(template){
     val newResult = likeRecipeRepository.save(newItem)
     newResult
   }

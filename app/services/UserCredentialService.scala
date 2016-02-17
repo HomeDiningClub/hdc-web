@@ -7,26 +7,27 @@ import org.springframework.stereotype.Service
 import repositories.{UserRoleRepository, UserCredentialRepository}
 import models.{UserRole, UserCredential}
 import securesocial.core._
+import traits.TransactionSupport
 import scala.collection.JavaConverters._
 import securesocial.core.OAuth2Info
 import securesocial.core.OAuth1Info
 import org.springframework.transaction.annotation.Transactional
 import enums.RoleEnums.RoleEnums
 
-@Service
+//@Service
 class UserCredentialService @Inject()(val template: Neo4jTemplate,
                                       val userCredentialRepository: UserCredentialRepository,
-                                      val userRoleRepository: UserRoleRepository) {
+                                      val userRoleRepository: UserRoleRepository) extends TransactionSupport {
 
-  @Transactional(readOnly = true)
-  def fetchUserCredential(user: UserCredential): UserCredential = {
+  //@Transactional(readOnly = true)
+  def fetchUserCredential(user: UserCredential): UserCredential = withTransaction(template){
     template.fetch(user)
   }
 
   // Från databasen till SecureSocial
   // IdentityId = userId + providerId
   //
-  def userCredential2socialUser(userCredential: UserCredential): securesocial.core.BasicProfile = {
+  def userCredential2basicProfile(userCredential: UserCredential): BasicProfile = {
 
     var oAuth2InfoExpiresIn : Int = 0
     var salt : String  = ""
@@ -85,7 +86,7 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
     returv
   }
 
-  def socialUser2UserCredential(socialUser:securesocial.core.BasicProfile): UserCredential = {
+  def basicProfile2UserCredential(socialUser:securesocial.core.BasicProfile): UserCredential = {
 
     var userCredential : UserCredential = new UserCredential()
 
@@ -132,8 +133,8 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  @Transactional(readOnly = true)
-  def findById(objectId: UUID): Option[UserCredential] = {
+  //@Transactional(readOnly = true)
+  def findById(objectId: UUID): Option[UserCredential] = withTransaction(template){
     userCredentialRepository.findByobjectId(objectId) match {
       case null => None
       case item => Some(item)
@@ -143,23 +144,21 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
 
   // providerId = userpass
   // authMethod = userPassword
-  @Transactional(readOnly = true)
-  def findUserPasswordUserByEmail(emailAdress: String): Option[UserCredential] = {
+  //@Transactional(readOnly = true)
+  def findUserPasswordUserByEmail(emailAdress: String): Option[UserCredential] = withTransaction(template){
     userCredentialRepository.findByemailAddressAndProviderId(emailAdress, "userpass") match {
       case null => None
       case item => Some(item)
     }
   }
 
-  @Transactional(readOnly = true)
-  def getCountOfAll: Int = {
+  //@Transactional(readOnly = true)
+  def getCountOfAll: Int = withTransaction(template){
     userCredentialRepository.getCountOfAll()
   }
 
-
-
-  @Transactional(readOnly = true)
-  def getListOfAll: Option[List[UserCredential]] = {
+  //@Transactional(readOnly = true)
+  def getListOfAll: Option[List[UserCredential]] = withTransaction(template){
     val listOfAll: List[UserCredential] = userCredentialRepository.findAll().iterator.asScala.toList
 
     if(listOfAll.isEmpty)
@@ -168,21 +167,16 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
       Some(listOfAll)
   }
 
-
-  @Transactional(readOnly = false)
-  def addUserProfile(user: UserCredential, profile: models.UserProfile): UserCredential = {
+  //@Transactional(readOnly = false)
+  def addUserProfile(user: UserCredential, profile: models.UserProfile): UserCredential = withTransaction(template){
     if(user.profiles.isEmpty) {
       user.profiles.add(profile)
     }
     user
   }
 
-
-
-
-
-  @Transactional(readOnly = false)
-  def addRole(user: UserCredential, role: RoleEnums): UserCredential = {
+  //@Transactional(readOnly = false)
+  def addRole(user: UserCredential, role: RoleEnums): UserCredential = withTransaction(template){
 
     // Get the correct instance
     val retItem = userRoleRepository.findByname(role.toString)
@@ -211,8 +205,8 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
     savedUser
   }
 
-  @Transactional(readOnly = false)
-  def removeRole(user: UserCredential, role: RoleEnums): UserCredential = {
+  //@Transactional(readOnly = false)
+  def removeRole(user: UserCredential, role: RoleEnums): UserCredential = withTransaction(template){
 
     // Get the correct instance
     val removeThisRole = user.roles.iterator.asScala.find((r: UserRole) => r.name.equalsIgnoreCase(role.toString)) match {
@@ -233,22 +227,22 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
 
   // Save UserCredential used to save personnummer modified in the
   // UserCredentials.
-  @Transactional(readOnly = false)
-  def save(user: UserCredential): UserCredential = {
+  //@Transactional(readOnly = false)
+  def save(user: UserCredential): UserCredential = withTransaction(template){
     // Save
     val savedUser = userCredentialRepository.save(user)
     savedUser
   }
 
 
-  @Transactional(readOnly = false)
-  def add(newItem: UserCredential): UserCredential = {
+  //@Transactional(readOnly = false)
+  def add(newItem: UserCredential): UserCredential = withTransaction(template){
     val newResult = userCredentialRepository.save(newItem)
     newResult
   }
 
-  @Transactional(readOnly = false)
-  def deleteById(objectId: UUID): Boolean = {
+  //@Transactional(readOnly = false)
+  def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false
       case Some(item) => {
@@ -257,7 +251,5 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
       }
     }
   }
-
-
 
 }

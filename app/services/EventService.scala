@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import traits.TransactionSupport
 import scala.language.existentials
 import repositories._
 import models.{Event, UserProfile, UserCredential}
@@ -28,8 +29,10 @@ import play.api.Logger
 import models.formdata.{EventDateForm, EventForm}
 
 //@Named
-@Service
-class EventService @Inject()(val template: Neo4jTemplate, val eventRepository: EventRepository, val mealTypeService: MealTypeService) {
+//@Service
+class EventService @Inject()(val template: Neo4jTemplate,
+                             val eventRepository: EventRepository,
+                             val mealTypeService: MealTypeService) extends TransactionSupport {
 
   /*
   @Autowired
@@ -39,8 +42,8 @@ class EventService @Inject()(val template: Neo4jTemplate, val eventRepository: E
   private var eventRepository: EventRepository = _
 */
 
-  @Transactional(readOnly = true)
-  def findByownerProfileProfileLinkNameAndEventLinkName(profileLinkName: String, eventLinkName: String): Option[Event] = {
+  //@Transactional(readOnly = true)
+  def findByownerProfileProfileLinkNameAndEventLinkName(profileLinkName: String, eventLinkName: String): Option[Event] = withTransaction(template) {
     eventRepository.findByownerProfileProfileLinkNameAndEventLinkName(profileLinkName, eventLinkName) match {
       case null => None
       case profile =>
@@ -48,8 +51,8 @@ class EventService @Inject()(val template: Neo4jTemplate, val eventRepository: E
     }
   }
 
-  @Transactional(readOnly = true)
-  def findByeventLinkName(eventLinkName: String): Option[Event] = {
+  //@Transactional(readOnly = true)
+  def findByeventLinkName(eventLinkName: String): Option[Event] = withTransaction(template){
 
     var returnObject: Option[Event] = None
     if(eventLinkName.nonEmpty)
@@ -63,22 +66,22 @@ class EventService @Inject()(val template: Neo4jTemplate, val eventRepository: E
     returnObject
   }
 
-  @Transactional(readOnly = true)
-  def findById(objectId: UUID): Option[Event] = {
+  //@Transactional(readOnly = true)
+  def findById(objectId: UUID): Option[Event] = withTransaction(template){
     eventRepository.findByobjectId(objectId) match {
       case null => None
       case item => Some(item)
     }
   }
 
-  @Transactional(readOnly = true)
-  def getCountOfAll: Int = {
+  //@Transactional(readOnly = true)
+  def getCountOfAll: Int = withTransaction(template) {
     eventRepository.getCountOfAll()
   }
 
 
-  @Transactional(readOnly = true)
-  def getListOfAll: List[Event] = {
+  //@Transactional(readOnly = true)
+  def getListOfAll: List[Event] = withTransaction(template){
     eventRepository.findAll.iterator.asScala.toList match {
       case null => null
       case items => items
@@ -184,19 +187,19 @@ class EventService @Inject()(val template: Neo4jTemplate, val eventRepository: E
   }
 
 
-  @Transactional(readOnly = true)
-  def getMealTypes(): Option[List[MealType]] = {
+  //@Transactional(readOnly = true)
+  def getMealTypes(): Option[List[MealType]] = withTransaction(template){
     mealTypeService.listAll()
   }
 
-  @Transactional(readOnly = true)
-  def getEventBoxes(user: UserCredential): Option[List[EventBox]] = {
+  //@Transactional(readOnly = true)
+  def getEventBoxes(user: UserCredential): Option[List[EventBox]] = withTransaction(template){
     // Without paging
     this.getEventBoxesPage(user, 0)
   }
 
-  @Transactional(readOnly = true)
-  def getEventBoxesPage(user: UserCredential, pageNo: Integer): Option[List[EventBox]] = {
+  //@Transactional(readOnly = true)
+  def getEventBoxesPage(user: UserCredential, pageNo: Integer): Option[List[EventBox]] = withTransaction(template){
 
     // With paging
     // 0 current page, 6 number of items for each page
@@ -266,24 +269,24 @@ class EventService @Inject()(val template: Neo4jTemplate, val eventRepository: E
 
 
 
-  @Transactional(readOnly = true)
-  def getListOwnedBy(user: UserCredential): Option[List[Event]] = {
+  //@Transactional(readOnly = true)
+  def getListOwnedBy(user: UserCredential): Option[List[Event]] = withTransaction(template){
     eventRepository.findByownerProfileOwner(user).iterator.asScala.toList match {
       case null => None
       case listOfItems => Some(listOfItems)
     }
   }
 
-  @Transactional(readOnly = true)
-  def getListOwnedBy(userProfile: UserProfile): Option[List[Event]] = {
+  //@Transactional(readOnly = true)
+  def getListOwnedBy(userProfile: UserProfile): Option[List[Event]] = withTransaction(template){
     eventRepository.findByownerProfile(userProfile).iterator.asScala.toList match {
       case null => None
       case listOfItems => Some(listOfItems)
     }
   }
 
-  @Transactional(readOnly = false)
-  def deleteById(objectId: UUID): Boolean = {
+  //@Transactional(readOnly = false)
+  def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false
       case Some(item) =>
@@ -297,19 +300,19 @@ class EventService @Inject()(val template: Neo4jTemplate, val eventRepository: E
   }
 
   // Fetching
-  @Transactional(readOnly = true)
-  def fetchEvent(event: Event): Event = {
+  //@Transactional(readOnly = true)
+  def fetchEvent(event: Event): Event = withTransaction(template){
     template.fetch(event)
   }
 
 
-  @Transactional(readOnly = false)
-  private def deleteAll() {
+  //@Transactional(readOnly = false)
+  private def deleteAll() = withTransaction(template){
     eventRepository.deleteAll()
   }
 
-  @Transactional(readOnly = false)
-  def add(newContent: Event): Event = {
+  //@Transactional(readOnly = false)
+  def add(newContent: Event): Event = withTransaction(template){
     eventRepository.save(newContent)
   }
 

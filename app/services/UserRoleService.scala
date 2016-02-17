@@ -3,17 +3,21 @@ package services
 import javax.inject.{Named,Inject}
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import repositories._
 import models.{UserCredential, UserRole}
+import traits.TransactionSupport
 import scala.collection.JavaConverters._
 import java.util.UUID
 import enums.RoleEnums.RoleEnums
 
 //@Named
-@Service
-class UserRoleService @Inject() (val userRoleRepository: UserRoleRepository, val userCredentialService: UserCredentialService) {
+//@Service
+class UserRoleService @Inject() (val template: Neo4jTemplate,
+                                 val userRoleRepository: UserRoleRepository,
+                                 val userCredentialService: UserCredentialService) extends TransactionSupport {
 
   /*
   @Autowired

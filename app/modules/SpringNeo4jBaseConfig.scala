@@ -1,18 +1,22 @@
 package modules
 
 import javax.inject._
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.annotation.EnableTransactionManagement
 import play.api.inject.ApplicationLifecycle
 import com.typesafe.config.ConfigException
 import com.typesafe.config.ConfigFactory
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.BeanCreationException
 import org.springframework.beans.factory.ObjectFactory
-import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.{ComponentScan, Configuration, Bean}
 import org.springframework.data.auditing.IsNewAwareAuditingHandler
-import org.springframework.data.neo4j.config.Neo4jConfiguration
+import org.springframework.data.neo4j.config.{EnableNeo4jRepositories, Neo4jConfiguration}
 import org.springframework.data.neo4j.lifecycle.AuditingEventListener
 
 class SpringNeo4jBaseConfig extends Neo4jConfiguration {
+
+  setBasePackage("models")
 
   //@Inject var lifecycle: ApplicationLifecycle = null
 
@@ -61,4 +65,21 @@ class SpringNeo4jBaseConfig extends Neo4jConfiguration {
   //    }
   //  }
 
+
+/* Example from plugin to use AuditingEvent, but written in java
+  @Bean
+  public AuditingEventListener auditingEventListener() throws Exception {
+
+    return new AuditingEventListener(new ObjectFactory<IsNewAwareAuditingHandler>() {
+      @Override
+      public IsNewAwareAuditingHandler getObject() throws BeansException
+      {
+        try {
+          return new IsNewAwareAuditingHandler(neo4jMappingContext());
+        } catch (Exception e) {
+          throw new BeanCreationException("Error while creating "+IsNewAwareAuditingHandler.class.getName(),e);
+        }
+      }
+    });
+  }*/
 }

@@ -8,6 +8,7 @@ import org.springframework.data.domain.{Page, Pageable, PageRequest}
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import traits.TransactionSupport
 import scala.language.existentials
 import repositories._
 import models.{UserProfile, UserCredential, Recipe}
@@ -21,8 +22,9 @@ import customUtils.Helpers
 import scala.collection.mutable.ListBuffer
 
 //@Named
-@Service
-class RecipeService @Inject()(val template: Neo4jTemplate, val recipeRepository: RecipeRepository){
+//@Service
+class RecipeService @Inject()(val template: Neo4jTemplate,
+                              val recipeRepository: RecipeRepository) extends TransactionSupport {
 
   /*
   @Autowired
@@ -36,8 +38,8 @@ class RecipeService @Inject()(val template: Neo4jTemplate, val recipeRepository:
 //  }
 
 
-  @Transactional(readOnly = true)
-  def findByownerProfileProfileLinkNameAndRecipeLinkName(profileLinkNane: String, recipeLinkName: String): Option[Recipe] = {
+  //@Transactional(readOnly = true)
+  def findByownerProfileProfileLinkNameAndRecipeLinkName(profileLinkNane: String, recipeLinkName: String): Option[Recipe] = withTransaction(template){
     recipeRepository.findByownerProfileProfileLinkNameAndRecipeLinkName(profileLinkNane, recipeLinkName) match {
       case null => None
       case profile =>
@@ -45,8 +47,8 @@ class RecipeService @Inject()(val template: Neo4jTemplate, val recipeRepository:
     }
   }
 
-  @Transactional(readOnly = true)
-  def findByrecipeLinkName(recipeLinkName: String): Option[Recipe] = {
+  //@Transactional(readOnly = true)
+  def findByrecipeLinkName(recipeLinkName: String): Option[Recipe] = withTransaction(template){
 
     var returnObject: Option[Recipe] = None
     if(recipeLinkName.nonEmpty)
@@ -64,22 +66,22 @@ class RecipeService @Inject()(val template: Neo4jTemplate, val recipeRepository:
     returnObject
   }
 
-  @Transactional(readOnly = true)
-  def findById(objectId: UUID): Option[Recipe] = {
+  //@Transactional(readOnly = true)
+  def findById(objectId: UUID): Option[Recipe] = withTransaction(template){
     recipeRepository.findByobjectId(objectId) match {
       case null => None
       case item => Some(item)
     }
   }
 
-  @Transactional(readOnly = true)
-  def getCountOfAll: Int = {
+  //@Transactional(readOnly = true)
+  def getCountOfAll: Int = withTransaction(template){
     recipeRepository.getCountOfAll()
   }
 
 
-  @Transactional(readOnly = true)
-  def getListOfAll: List[Recipe] = {
+  //@Transactional(readOnly = true)
+  def getListOfAll: List[Recipe] = withTransaction(template){
     recipeRepository.findAll.iterator.asScala.toList match {
       case null => null
       case recipes =>
@@ -97,7 +99,7 @@ class RecipeService @Inject()(val template: Neo4jTemplate, val recipeRepository:
   }
 
   // Get sorted images
-  def getSortedRecipeImages(recipe: Recipe): Option[List[ContentFile]] = {
+  def getSortedRecipeImages(recipe: Recipe): Option[List[ContentFile]] = withTransaction(template){
     recipe.getRecipeImages.asScala match {
       case Nil => None
       case images =>
@@ -115,14 +117,14 @@ class RecipeService @Inject()(val template: Neo4jTemplate, val recipeRepository:
 
   def parseDouble(s: String) = try { Some(s.toDouble) } catch { case _ : Throwable => None }
 
-  @Transactional(readOnly = true)
-  def getRecipeBoxes(user: UserCredential): Option[List[RecipeBox]] = {
+  //@Transactional(readOnly = true)
+  def getRecipeBoxes(user: UserCredential): Option[List[RecipeBox]] = withTransaction(template){
     // Without paging
     this.getRecipeBoxesPage(user, 0)
   }
 
-  @Transactional(readOnly = true)
-  def getRecipeBoxesPage(user: UserCredential, pageNo: Integer): Option[List[RecipeBox]] = {
+  //@Transactional(readOnly = true)
+  def getRecipeBoxesPage(user: UserCredential, pageNo: Integer): Option[List[RecipeBox]] = withTransaction(template){
 
     // With paging
     // 0 current page, 6 number of recipes for each page
@@ -192,24 +194,24 @@ class RecipeService @Inject()(val template: Neo4jTemplate, val recipeRepository:
 
 
 
-  @Transactional(readOnly = true)
-  def getListOwnedBy(user: UserCredential): Option[List[Recipe]] = {
+  //@Transactional(readOnly = true)
+  def getListOwnedBy(user: UserCredential): Option[List[Recipe]] = withTransaction(template){
     recipeRepository.findByownerProfileOwner(user).iterator.asScala.toList match {
       case null => None
       case listOfItems => Some(listOfItems)
     }
   }
 
-  @Transactional(readOnly = true)
-  def getListOwnedBy(userProfile: UserProfile): Option[List[Recipe]] = {
+  //@Transactional(readOnly = true)
+  def getListOwnedBy(userProfile: UserProfile): Option[List[Recipe]] = withTransaction(template){
     recipeRepository.findByownerProfile(userProfile).iterator.asScala.toList match {
       case null => None
       case listOfItems => Some(listOfItems)
     }
   }
 
-  @Transactional(readOnly = false)
-  def deleteById(objectId: UUID): Boolean = {
+  //@Transactional(readOnly = false)
+  def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false
       case Some(item) =>
@@ -223,19 +225,19 @@ class RecipeService @Inject()(val template: Neo4jTemplate, val recipeRepository:
   }
 
   // Fetching
-  @Transactional(readOnly = true)
-  def fetchRecipe(recipe: Recipe): Recipe = {
+  //@Transactional(readOnly = true)
+  def fetchRecipe(recipe: Recipe): Recipe = withTransaction(template){
     template.fetch(recipe)
   }
 
 
-  @Transactional(readOnly = false)
-  private def deleteAll() {
+  //@Transactional(readOnly = false)
+  private def deleteAll() = withTransaction(template){
     recipeRepository.deleteAll()
   }
 
-  @Transactional(readOnly = false)
-  def add(newContent: Recipe): Recipe = {
+  //@Transactional(readOnly = false)
+  def add(newContent: Recipe): Recipe = withTransaction(template){
     val newContentResult = recipeRepository.save(newContent)
     newContentResult
   }

@@ -8,6 +8,7 @@ import org.springframework.data.domain.{Page, Pageable, PageRequest}
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import traits.TransactionSupport
 import scala.language.existentials
 import repositories._
 import models.{UserProfile, UserCredential, BlogPost}
@@ -22,8 +23,9 @@ import scala.collection.mutable.ListBuffer
 import models.formdata.BlogPostsForm
 
 //@Named
-@Service
-class BlogPostsService @Inject() (val template: Neo4jTemplate, val blogPostsRepository: BlogPostsRepository) {
+//@Service
+class BlogPostsService @Inject() (val template: Neo4jTemplate,
+                                  val blogPostsRepository: BlogPostsRepository) extends TransactionSupport {
 
   /*
   @Autowired
@@ -33,22 +35,22 @@ class BlogPostsService @Inject() (val template: Neo4jTemplate, val blogPostsRepo
   private var blogPostsRepository: BlogPostsRepository = _
 */
 
-  @Transactional(readOnly = true)
-  def findById(objectId: UUID): Option[BlogPost] = {
+  //@Transactional(readOnly = true)
+  def findById(objectId: UUID): Option[BlogPost] = withTransaction(template) {
     blogPostsRepository.findByobjectId(objectId) match {
       case null => None
       case item => Some(item)
     }
   }
 
-  @Transactional(readOnly = true)
-  def getCountOfAll: Int = {
+  //@Transactional(readOnly = true)
+  def getCountOfAll: Int = withTransaction(template) {
     blogPostsRepository.getCountOfAll()
   }
 
 
-  @Transactional(readOnly = true)
-  def getListOfAll: List[BlogPost] = {
+  //@Transactional(readOnly = true)
+  def getListOfAll: List[BlogPost] = withTransaction(template) {
     blogPostsRepository.findAll.iterator.asScala.toList match {
       case null => null
       case blogPosts =>
@@ -57,8 +59,8 @@ class BlogPostsService @Inject() (val template: Neo4jTemplate, val blogPostsRepo
     }
   }
 
-  @Transactional(readOnly = false)
-  def add(newContent: BlogPost): BlogPost = {
+  //@Transactional(readOnly = false)
+  def add(newContent: BlogPost): BlogPost = withTransaction(template){
     val newContentResult = blogPostsRepository.save(newContent)
     newContentResult
   }
@@ -71,8 +73,8 @@ class BlogPostsService @Inject() (val template: Neo4jTemplate, val blogPostsRepo
 
 
 
-  @Transactional(readOnly = true)
-  def getBlogPostsBoxesPage(user: UserCredential, pageNo: Integer): Option[List[BlogPostItem]] = {
+  //@Transactional(readOnly = true)
+  def getBlogPostsBoxesPage(user: UserCredential, pageNo: Integer): Option[List[BlogPostItem]] = withTransaction(template){
 
     val userObjectId = user.profiles.iterator().next().objectId.toString
     println("ObjectId : " + userObjectId)
@@ -145,8 +147,8 @@ class BlogPostsService @Inject() (val template: Neo4jTemplate, val blogPostsRepo
 
   }
 
-  @Transactional(readOnly = false)
-  def deleteById(objectId: UUID): Boolean = {
+  //@Transactional(readOnly = false)
+  def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false
       case Some(item) =>

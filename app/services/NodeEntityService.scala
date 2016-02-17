@@ -2,7 +2,7 @@ package services
 
 import java.util.UUID
 import javax.inject.{Named,Inject}
-import interfaces.IEditable
+import traits.{TransactionSupport, IEditable}
 import models.UserCredential
 import org.neo4j.graphdb.Node
 import org.neo4j.helpers.collection.MapUtil
@@ -13,8 +13,9 @@ import org.springframework.transaction.annotation.Transactional
 import repositories.NodeEntityRepository
 
 //@Named
-@Service
-class NodeEntityService @Inject()(val template: Neo4jTemplate, val nodeEntityRepository: NodeEntityRepository) {
+//@Service
+class NodeEntityService @Inject()(val template: Neo4jTemplate,
+                                  val nodeEntityRepository: NodeEntityRepository) extends TransactionSupport {
 
   /*
   @Autowired
@@ -24,7 +25,7 @@ class NodeEntityService @Inject()(val template: Neo4jTemplate, val nodeEntityRep
   private var nodeEntityRepository: NodeEntityRepository = _
 */
 
-  def getAnyNodeUsingId(objectId: UUID): Option[Node] = {
+  def getAnyNodeUsingId(objectId: UUID): Option[Node] = withTransaction(template) {
 
     val params = MapUtil.map("objectId",objectId.toString)
     val query = "START n=node(*) WHERE HAS (n.objectId) AND n.objectId={objectId} RETURN n"
@@ -49,8 +50,8 @@ class NodeEntityService @Inject()(val template: Neo4jTemplate, val nodeEntityRep
 //    }
   }
 
-  @Transactional(readOnly = true)
-  def isNodeEditableBy(anyItem: Node, userCred: UserCredential): Boolean = {
+  //@Transactional(readOnly = true)
+  def isNodeEditableBy(anyItem: Node, userCred: UserCredential): Boolean = withTransaction(template){
     template.findOne(anyItem.getId,template.getStoredEntityType(anyItem).getType).asInstanceOf[IEditable].isEditableBy(userCred.objectId).asInstanceOf[Boolean]
   }
 }

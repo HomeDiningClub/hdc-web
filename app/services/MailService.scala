@@ -8,8 +8,9 @@ import play.api.libs.mailer.MailerClient
 import play.api.libs.mailer._
 
 //@Named
-@Service
-class MailService @Inject() (mailer: MailerClient, val messagesApi: MessagesApi) extends I18nSupport {
+//@Service
+class MailService @Inject() (mailer: MailerClient,
+                             val messagesApi: MessagesApi) extends I18nSupport {
 
   def createMail(subject: String, message: String, recipients: List[EmailAndName], bcc: Option[List[EmailAndName]], from: EmailAndName, replyTo: EmailAndName): Email = {
 
