@@ -1,5 +1,0 @@
-package traits
-
-trait LifeCycleComponent {
-
-}

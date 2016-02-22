@@ -24,15 +24,6 @@ class SpringNeo4jBaseConfig extends Neo4jConfiguration {
 
   setBasePackage("models")
 
-  /*
-  lifecycle.addStopHook { () =>
-    Future.successful {
-      doLog("Lifecycle stop hook - SpringNeo4jBaseConfig")
-      shutDownDb()
-    }
-  }
-  */
-
   def shutDownDb(): Unit ={
     doLog("Shutting down database..")
 
@@ -49,8 +40,6 @@ class SpringNeo4jBaseConfig extends Neo4jConfiguration {
       Logger.debug(message)
     }
   }
-
-  //@Inject var lifecycle: ApplicationLifecycle = null
 
   // TODO: Enable Database event-triggers
   //  @Bean

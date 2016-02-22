@@ -33,6 +33,7 @@ class SpringNeo4jRestConfig extends SpringNeo4jBaseConfig with DisposableBean {
     database
   }
 
+  // There is also a LifeCycleService to kill the database connection between resets, this is just a fallback
   @throws(classOf[Exception])
   override def destroy() = {
     shutDownDb()

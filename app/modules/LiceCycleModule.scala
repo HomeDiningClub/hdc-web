@@ -1,20 +1,14 @@
 package modules
 
-import com.google.inject.AbstractModule
-import play.api.{Configuration, Environment}
+import play.api.{Logger, Configuration, Environment}
 import play.api.inject._
-import services.LifeCycleComponentImpl
-import traits.LifeCycleComponent
+import services.LifeCycleServiceImpl
+import traits.LifeCycleService
 
-class LiceCycleModule extends Module  {
-/*
-  def configure() = {
-  }
-*/
+class LiceCycleModule extends Module {
 
   def bindings(environment: Environment, configuration: Configuration) = {
-      Seq(
-        bind[LifeCycleComponent].to[LifeCycleComponentImpl]
-      )
+    Logger.debug("Binding LifeCycleModule")
+    Seq(bind[LifeCycleService].to[LifeCycleServiceImpl].eagerly())
   }
 }
