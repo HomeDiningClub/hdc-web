@@ -16,6 +16,7 @@ resolvers ++= Seq(
   "Neo4j" at "http://m2.neo4j.org/content/repositories/releases/",
   "Rhinofly Internal Repository" at "http://maven-repository.rhinofly.net:8081/artifactory/libs-release-local",
   "tuxburner.github.io" at "http://tuxburner.github.io/repo",
+  "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases", // play mailer
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots"),
   Resolver.mavenLocal
