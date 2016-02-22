@@ -18,7 +18,7 @@ import services._
 @RunWith(classOf[JUnitRunner])
 class DatabaseSpec @Inject()(val userProfileService: UserProfileService) extends Specification {
 
-
+/*
   "Database indexes" should {
 
     "userprofileIndex" in new WithApplication {
@@ -35,4 +35,5 @@ class DatabaseSpec @Inject()(val userProfileService: UserProfileService) extends
 
     }
   }
+  */
 }
