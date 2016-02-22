@@ -2,10 +2,8 @@ package services
 
 import _root_.java.util.UUID
 import javax.inject.{Named, Inject}
-import com.google.inject.Guice
 import enums.RoleEnums.RoleEnums
 import models.{ViewedByUnKnown, UserCredential, UserProfile}
-import modules.{SpringNeo4jModule}
 import org.neo4j.helpers.collection.IteratorUtil
 import play.api.Logger
 import securesocial.core.BasicProfile
@@ -268,13 +266,15 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
   @Transactional(readOnly = true)
   def findByUserIdAndProviderId(userId: String, providerId: String) : UserCredential =  {
 
-    var mUserId : String = userId.toLowerCase
+    val mUserId : String = userId.toLowerCase
 
   // search in user cache
-    var u = findUserCache(userId, providerId)
+    if(isUserCacheON){
+      val u = findUserCache(userId, providerId)
 
-    if(u != null && u != None && u.get != null && u.get != None && isUserCacheON) {
-      return u.get
+      if(u != null && u != None && u.get != null && u.get != None) {
+        return u.get
+      }
     }
 
     val user = userCredentialService.userCredentialRepository.findByuserIdAndProviderId(mUserId,providerId)
@@ -282,7 +282,6 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
     if(user != null && user != None && isUserCacheON) {
       addUserCache(user)
     }
-
 
     return user
   }

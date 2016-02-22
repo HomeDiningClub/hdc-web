@@ -16,7 +16,9 @@ class LoginEventListener extends EventListener {
     }
 
     event.user match {
-      case Event(u: models.UserCredential) => Logger.info("Traced %s event for user %s".format(eventName, u.fullName))
+      case u: models.UserCredential => Logger.info("Traced %s event for usercredential %s".format(eventName, u.emailAddress))
+      case u: BasicProfile => Logger.info("Traced %s event for basicprofile %s".format(eventName, u.email.getOrElse("No email found")))
+      case any => Logger.info("Traced %s event, but unknown user %s".format(eventName, any.getClass))
     }
 
     // retrieving the current language

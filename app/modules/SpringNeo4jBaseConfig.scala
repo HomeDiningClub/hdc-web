@@ -1,8 +1,10 @@
 package modules
 
 import javax.inject._
+import org.neo4j.graphdb.GraphDatabaseService
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
+import play.api.Logger
 import play.api.inject.ApplicationLifecycle
 import com.typesafe.config.ConfigException
 import com.typesafe.config.ConfigFactory
@@ -14,9 +16,39 @@ import org.springframework.data.auditing.IsNewAwareAuditingHandler
 import org.springframework.data.neo4j.config.{EnableNeo4jRepositories, Neo4jConfiguration}
 import org.springframework.data.neo4j.lifecycle.AuditingEventListener
 
+import scala.concurrent.Future
+
 class SpringNeo4jBaseConfig extends Neo4jConfiguration {
 
+  var database: GraphDatabaseService = null
+
   setBasePackage("models")
+
+  /*
+  lifecycle.addStopHook { () =>
+    Future.successful {
+      doLog("Lifecycle stop hook - SpringNeo4jBaseConfig")
+      shutDownDb()
+    }
+  }
+  */
+
+  def shutDownDb(): Unit ={
+    doLog("Shutting down database..")
+
+    if(database != null){
+      database.shutdown()
+      doLog("Database shutdown - Done")
+    }else{
+      doLog("Database is null, cannot shut down")
+    }
+  }
+
+  def doLog(message: String): Unit = {
+    if (Logger.isDebugEnabled) {
+      Logger.debug(message)
+    }
+  }
 
   //@Inject var lifecycle: ApplicationLifecycle = null
 
