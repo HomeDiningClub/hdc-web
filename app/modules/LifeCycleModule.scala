@@ -5,7 +5,7 @@ import play.api.inject._
 import services.LifeCycleServiceImpl
 import traits.LifeCycleService
 
-class LiceCycleModule extends Module {
+class LifeCycleModule extends Module {
 
   def bindings(environment: Environment, configuration: Configuration) = {
     Logger.debug("Binding LifeCycleModule")
