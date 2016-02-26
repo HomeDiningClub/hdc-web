@@ -5,13 +5,13 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import org.neo4j.backup.OnlineBackup
 import play.api
-import play.api.Logger
+import play.api.{Configuration, Logger}
 
 object BackupData {
 
   var isRunning : Boolean = false
 
-  def makeFullBackup()
+  def makeFullBackup(configuration: Configuration)
   {
 
     if(!isRunning) {
@@ -21,10 +21,10 @@ object BackupData {
       // backup bath
       // server ip or name
 
-      val BACKUP_PATH: Option[String] = api.Play.current.configuration.getString("backup.dir")
+      val BACKUP_PATH: Option[String] = configuration.getString("backup.dir")
       // var backupPath              : File    = new File(BACKUP_PATH.getOrElse(""))
       val backupPath: File = getFolder(BACKUP_PATH.getOrElse(""))
-      val DATABASE_SERVER_NAME_IP: Option[String] = api.Play.current.configuration.getString("backup.servernameorip")
+      val DATABASE_SERVER_NAME_IP: Option[String] = configuration.getString("backup.servernameorip")
       var doNothing: Boolean = false
 
 

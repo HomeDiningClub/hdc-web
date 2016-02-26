@@ -34,9 +34,9 @@ class SpringNeo4jEmbeddedConfig extends SpringNeo4jBaseConfig with DisposableBea
       val embeddedStore: File = new File(embeddedDB)
 
       database = graphDatabaseFactory.newEmbeddedDatabase(embeddedStore)
+    }else{
+      doLog("Connecting to existing: " + embeddedDB)
     }
-
-    doLog("Connecting to existing: " + embeddedDB)
     database
   }
 

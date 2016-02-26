@@ -1,20 +1,21 @@
 package services
 
-import javax.inject.Inject
+import javax.inject._
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import play.api.Logger
 import play.api.inject.ApplicationLifecycle
-import traits.LifeCycleService
-
+import play.api.libs.concurrent.Akka
+import traits.ApplicationStopService
 import scala.concurrent.Future
 
-class LifeCycleServiceImpl @Inject()(lifecycle: ApplicationLifecycle, template: Neo4jTemplate) extends LifeCycleService {
+@Singleton
+class ApplicationStopServiceImpl @Inject()(lifecycle: ApplicationLifecycle, template: Neo4jTemplate) extends ApplicationStopService {
 
   initialize()
 
   def initialize() {
     lifecycle.addStopHook { () =>
-      Logger.debug("Lifecycle: Stopping application")
+      Logger.debug("Application stop")
       stopDatabase()
       Future.successful(())
     }
