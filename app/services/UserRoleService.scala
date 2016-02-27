@@ -50,7 +50,7 @@ class UserRoleService @Inject() (val template: Neo4jTemplate,
   }
 
   @Transactional(readOnly = true)
-  def getListOfAll: Option[List[UserRole]] = {
+  def getListOfAll: Option[List[UserRole]] = withTransaction(template) {
     val listOfAll: List[UserRole] = userRoleRepository.findAll().iterator.asScala.toList
 
     if(listOfAll.isEmpty)

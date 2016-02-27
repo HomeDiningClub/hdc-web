@@ -58,9 +58,11 @@ class CountyService @Inject() (val template: Neo4jTemplate,
       newCounty
   }
 
-  //@Transactional(readOnly = true)
+  // ??????
+  @Transactional(readOnly = true)
   def getListOfAll: Option[List[County]] = withTransaction(template){
 
+    /*
     countyRepository.findAll().asScala.toList match {
       case null | Nil  => None
       case items => {
@@ -72,6 +74,15 @@ class CountyService @Inject() (val template: Neo4jTemplate,
         Some(cachedItems)
       }
     }
+    */
+    val listOfAll: List[County] = countyRepository.findAll().asScala.toList
+
+    if(listOfAll.isEmpty)
+      None
+    else
+      Some(listOfAll)
+
+
   }
 
   //@Transactional(readOnly = true)
