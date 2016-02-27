@@ -1,5 +1,5 @@
-@()(implicit messages: Messages)
+@()(implicit request: RequestHeader, env:securesocial.core.RuntimeEnvironment, messages: Messages)
 <div>
     <p>@play.twirl.api.Html(Messages("aboutus.not.logged.in"))</p>
-    <a class="btn btn-primary" role="button" href="@securesocial.controllers.routes.LoginPage">@Messages("rating.not-logged-in.link.text")</a>
+    <a class="btn btn-primary" role="button" href="@env.routes.loginPageUrl">@Messages("rating.not-logged-in.link.text")</a>
 </div>

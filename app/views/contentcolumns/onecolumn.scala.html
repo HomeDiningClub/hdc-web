@@ -8,11 +8,11 @@
         )(implicit request: RequestHeader, messages: Messages)
 
     @scripts = {
+        <script>
         $(document).ready(function() {
-            var config = Object.create(null);
-            config.url = '@{routes.SuggestController.suggestForm()}';
-            $(".suggest-form").html(getAjax(configRecipe));
+            $('.suggest-form').load('@{routes.SuggestController.suggestForm()}');
         });
+        </script>
     }
 
 @main(urlTitle, footerScripts = scripts) {

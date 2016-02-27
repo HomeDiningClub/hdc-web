@@ -43,7 +43,7 @@ class SuggestController @Inject() (override implicit val env: SecureSocialRuntim
   def suggestForm = UserAwareAction { implicit request =>
     request.user match {
       case None =>
-        Ok(views.html.about.aboutNotLoggedIn.render(request2Messages)) // No user, return nothing or something.
+        Ok(views.html.about.aboutNotLoggedIn())
       case Some(user) => {
         val mailViewForm = AboutUsForm.apply(
           Some(""),

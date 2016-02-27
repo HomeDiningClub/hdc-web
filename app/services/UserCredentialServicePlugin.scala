@@ -146,7 +146,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
 
     val retUser: Option[BasicProfile] = getUserByEmailAndProvider(email.toLowerCase, providerId) match {
       case None => None
-      case Some(user) => Some(user.asInstanceOf[BasicProfile])
+      case Some(user) => Some( userCredentialService.userCredential2basicProfile(user))
     }
 
     Future.successful(retUser)

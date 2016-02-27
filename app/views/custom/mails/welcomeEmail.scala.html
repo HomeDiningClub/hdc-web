@@ -1,7 +1,7 @@
 @(user: securesocial.core.BasicProfile)(implicit request: RequestHeader, messages: Messages, env: securesocial.core.RuntimeEnvironment)
 <html>
     <body>
-        <p>@Messages("mails.welcomeEmail.body.part1", user.firstName)</p>
+        <p>@Messages("mails.welcomeEmail.body.part1", user.firstName.getOrElse(user.email.get))</p>
         <p>@Messages("mails.welcomeEmail.body.part2") <a href="@env.routes.loginPageUrl">@Messages("mails.welcomeEmail.body.linkToLogin")</a></p>
     </body>
 </html>

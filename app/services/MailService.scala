@@ -53,13 +53,14 @@ class MailService @Inject() (mailer: MailerClient,
   }
 
   private def buildRecipientsList(recipients: List[EmailAndName]): Seq[String] = {
-    val ret: Seq[String] = Seq.empty
-    if (recipients.nonEmpty) {
-      recipients.foreach { r =>
-        ret + buildNameAndEmailString(r).toString
+    if (recipients.nonEmpty){
+      recipients.map {
+        r: EmailAndName =>
+          buildNameAndEmailString(r)
       }
+    }else{
+      Seq.empty
     }
-    ret
   }
 
   private def buildNameAndEmailString(emailObject: EmailAndName): String = {
