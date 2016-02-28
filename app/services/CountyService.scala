@@ -58,30 +58,23 @@ class CountyService @Inject() (val template: Neo4jTemplate,
       newCounty
   }
 
-  // ??????
-  @Transactional(readOnly = true)
+  //@Transactional(readOnly = true)
   def getListOfAll: Option[List[County]] = withTransaction(template){
 
-    /*
-    countyRepository.findAll().asScala.toList match {
-      case null | Nil  => None
-      case items => {
-
-        val cachedItems = Cache.getOrElse[List[County]](cacheListKey) {
+    val returnList: List[County] = Cache.getOrElse[List[County]](cacheListKey){
+     countyRepository.findAll().asScala.toList match {
+        case null | Nil  => Nil
+        case items => {
           addToCache(cacheListKey, items)
           items
         }
-        Some(cachedItems)
       }
     }
-    */
-    val listOfAll: List[County] = countyRepository.findAll().asScala.toList
 
-    if(listOfAll.isEmpty)
+    if(returnList.isEmpty)
       None
     else
-      Some(listOfAll)
-
+      Some(returnList)
 
   }
 

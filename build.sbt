@@ -41,7 +41,7 @@ libraryDependencies ++= Seq(
   "org.springframework.data" % "spring-data-neo4j" % "3.4.2.RELEASE" excludeAll(ExclusionRule(organization = "org.neo4j", name="neo4j"), ExclusionRule(organization = "org.springframework", name = "spring-context")) withSources(),
   "org.springframework.data" % "spring-data-neo4j-rest" % "3.4.2.RELEASE" excludeAll(ExclusionRule(organization = "org.neo4j", name="neo4j"), ExclusionRule(organization = "org.springframework", name = "spring-context")) withSources(),
   // Spring guice
-  "org.springframework.guice" % "spring-guice" % "1.0.0.BUILD-SNAPSHOT",
+  "org.springframework.guice" % "spring-guice" % "1.0.0.BUILD-SNAPSHOT" withSources(),
   // Neo4j
   "org.neo4j" % "neo4j" % "2.3.1" withSources(),
   "org.neo4j" % "neo4j-backup" % "2.3.1" withSources(),
@@ -62,6 +62,7 @@ libraryDependencies ++= Seq(
   "commons-codec" % "commons-codec" % "1.9" withSources()
   //"javax.enterprise" % "cdi-api" % "1.0-SP4",
   //"com.adrianhurt" %% "play-bootstrap3" % "0.4.4"
+  //"com.adrianhurt" %% "play-bootstrap" % "1.0-P24-B3-SNAPSHOT" excludeAll(ExclusionRule(organization = "org.webjars", name="jquery"), ExclusionRule(organization = "org.webjars", name="bootstrap")) withSources()
   //"com.typesafe.play" %% "play-plugins-util" % "2.4.0",
   //"nl.rhinofly" %% "play-s3" % "3.3.4",
   //"se.digiplant" %% "play-scalr" % "1.1.2",

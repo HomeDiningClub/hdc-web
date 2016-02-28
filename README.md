@@ -21,3 +21,7 @@ SecureSocial
 Scrimage
 ---
 * [Image Resize](https://github.com/sksamuel/scrimage)
+
+Bootstrap 3
+---
+* [Input Helpers](http://adrianhurt.github.io/play-bootstrap/)

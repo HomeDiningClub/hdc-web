@@ -57,17 +57,21 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
 
   //@Transactional(readOnly = true)
   def listByGroupOption(groupName: String): Option[List[TagWord]] = withTransaction(template){
-    tagWordRepository.findByTagGroupName(groupName).asScala.toList match {
-      case null | Nil  => None
-      case tags => {
 
-        val cachedTagWords = Cache.getOrElse[List[TagWord]](tagWordCacheKey + groupName) {
+    val returnList: List[TagWord] = Cache.getOrElse[List[TagWord]](tagWordCacheKey + groupName){
+      tagWordRepository.findByTagGroupName(groupName).asScala.toList match {
+        case null | Nil  => Nil
+        case tags => {
           addToCache(tagWordCacheKey + groupName, tags)
           tags
         }
-        Some(cachedTagWords)
       }
     }
+
+    if(returnList.isEmpty)
+      None
+    else
+      Some(returnList)
   }
 
   //@Transactional(readOnly = true)

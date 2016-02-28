@@ -6,7 +6,6 @@
         termsAndConditions: Option[models.content.ContentPage] = None,
         extraValues: models.viewmodels.EditProfileExtraValues)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
 
-
 @main(Messages("profile.create.title"), footerHtml = file.modalImages.render(messages)){
 
     <div class="container maincontent-container">
@@ -264,8 +263,6 @@
                         <br>
                         <input type="radio" name="smoke" value="Ja"  @profileOpts.smokingPermittedJa()>@Messages("profile.create.form.host.yes")
                         <input type="radio" name="smoke" value="Nej" @profileOpts.smokingPermittedNej()>@Messages("profile.create.form.host.no")
-
-
 
 
                         @helper.inputRadioGroup(
