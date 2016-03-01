@@ -46,47 +46,47 @@ class RatingService @Inject()(val template: Neo4jTemplate,
   }
   //@Transactional(readOnly = true)
   def findUserRatingByUserWhoIsRating(user: UserCredential): Option[List[RatesUserCredential]] = withTransaction(template){
-    ratingUserCredentialRepository.findByuserWhoIsRating(user.objectId).iterator.asScala.toList.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse) match {
+    ratingUserCredentialRepository.findByuserWhoIsRating(user.objectId).asScala.toList match {
       case Nil =>
         None
       case listOfItems =>
-        Some(listOfItems)
+        Some(listOfItems.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse))
     }
   }
   //@Transactional(readOnly = true)
   def findUserRatingByRatingValue(ratingValue: Int, filterModifier: String): Option[List[RatesUserCredential]] = withTransaction(template){
-    ratingUserCredentialRepository.findByratingValue(ratingValue, filterModifier).iterator.asScala.toList.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse) match {
+    ratingUserCredentialRepository.findByratingValue(ratingValue, filterModifier).asScala.toList match {
       case Nil =>
         None
       case listOfItems =>
-        Some(listOfItems)
+        Some(listOfItems.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse))
     }
   }
   //@Transactional(readOnly = true)
   def findUserRatingByWhoGotRated(user: UserCredential): Option[List[RatesUserCredential]] = withTransaction(template){
-    ratingUserCredentialRepository.findByuserRates(user.objectId).iterator.asScala.toList.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse) match {
+    ratingUserCredentialRepository.findByuserRates(user.objectId).asScala.toList match {
       case Nil =>
         None
       case listOfItems =>
-        Some(listOfItems)
+        Some(listOfItems.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse))
     }
   }
   //@Transactional(readOnly = true)
   def findUserRatingByUserWhoIsRatingAndUserRates(user: UserCredential, userRated: UserCredential): Option[List[RatesUserCredential]] = withTransaction(template){
-    ratingUserCredentialRepository.findByuserWhoIsRatingAndUserRates(user.objectId.toString, userRated.objectId.toString).iterator.asScala.toList.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse) match {
+    ratingUserCredentialRepository.findByuserWhoIsRatingAndUserRates(user.objectId.toString, userRated.objectId.toString).asScala.toList match {
       case Nil =>
         None
       case listOfItems =>
-        Some(listOfItems)
+        Some(listOfItems.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse))
     }
   }
   //@Transactional(readOnly = true)
   def findUserRatingAll(): Option[List[RatesUserCredential]] = withTransaction(template){
-    ratingUserCredentialRepository.findAllRatings.asScala.toList.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse) match {
+    ratingUserCredentialRepository.findAllRatings.asScala.toList match {
       case Nil =>
         None
       case listOfItems =>
-        Some(listOfItems)
+        Some(listOfItems.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse))
     }
   }
 
@@ -113,39 +113,39 @@ class RatingService @Inject()(val template: Neo4jTemplate,
   }
   //@Transactional(readOnly = true)
   def findRecipeRatingByUserWhoIsRating(user: UserCredential): Option[List[RatesRecipe]] = withTransaction(template){
-    ratingRecipeRepository.findByuserWhoIsRating(user.objectId).iterator.asScala.toList match {
+    ratingRecipeRepository.findByuserWhoIsRating(user.objectId).asScala.toList match {
       case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
   //@Transactional(readOnly = true)
   def findRecipeRatingByRatingValue(ratingValue: Int, filterModifier: String): Option[List[RatesRecipe]] = withTransaction(template){
-    ratingRecipeRepository.findByratingValue(ratingValue,filterModifier).iterator.asScala.toList match {
+    ratingRecipeRepository.findByratingValue(ratingValue,filterModifier).asScala.toList match {
       case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
   //@Transactional(readOnly = true)
   def findRecipeRatingByWhatGotRated(recipe: Recipe): Option[List[RatesRecipe]] = withTransaction(template){
-    ratingRecipeRepository.findByuserRates(recipe.objectId).iterator.asScala.toList match {
+    ratingRecipeRepository.findByuserRates(recipe.objectId).asScala.toList match {
       case Nil => None
       case listOfItems => Some(listOfItems)
     }
   }
   //@Transactional(readOnly = true)
   def findRecipeRatingsByRecipeOwner(user: UserCredential): Option[List[RatesRecipe]] = withTransaction(template){
-    ratingRecipeRepository.findRecipeRatingsByRecipeOwnerProfile(user.profiles.iterator().next().objectId).iterator.asScala.toList.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse) match {
+    ratingRecipeRepository.findRecipeRatingsByRecipeOwnerProfile(user.profiles.iterator().next().objectId).asScala.toList match {
       case Nil => None
-      case listOfItems => Some(listOfItems)
+      case listOfItems => Some(listOfItems.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse))
     }
   }
   //@Transactional(readOnly = true)
   def findRecipeRatingByUserWhoIsRatingAndUserRates(user: UserCredential, userRated: Recipe): Option[List[RatesRecipe]] = withTransaction(template){
-    ratingRecipeRepository.findByuserWhoIsRatingAndUserRates(user.objectId.toString, userRated.objectId.toString).iterator.asScala.toList.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse) match {
+    ratingRecipeRepository.findByuserWhoIsRatingAndUserRates(user.objectId.toString, userRated.objectId.toString).asScala.toList match {
       case Nil =>
         None
       case listOfItems =>
-        Some(listOfItems)
+        Some(listOfItems.sortBy(rating => rating.getLastModifiedDate)(Ordering[java.util.Date].reverse))
     }
   }
 
@@ -368,21 +368,21 @@ class RatingService @Inject()(val template: Neo4jTemplate,
   // UserRating
   //@Transactional(readOnly = true)
   def findUserByRatingUser(user: UserCredential): Option[List[UserCredential]] = withTransaction(template){
-    userCredentialRepository.findByratingsUserRates(user).iterator.asScala.toList match {
+    userCredentialRepository.findByratingsUserRates(user).asScala.toList match {
       case null => None
       case listOfItems => Some(listOfItems)
     }
   }
   //@Transactional(readOnly = true)
   def findUserByRatingValue(ratingValue: Int): Option[List[UserCredential]] = withTransaction(template){
-    userCredentialRepository.findByratingsRatingValue(ratingValue).iterator.asScala.toList match {
+    userCredentialRepository.findByratingsRatingValue(ratingValue).asScala.toList match {
       case null => None
       case listOfItems => Some(listOfItems)
     }
   }
   //@Transactional(readOnly = true)
   def findUserByUserWhoIsRating(user: UserCredential): Option[List[UserCredential]] = withTransaction(template){
-    userCredentialRepository.findByratingsUserWhoIsRating(user).iterator.asScala.toList match {
+    userCredentialRepository.findByratingsUserWhoIsRating(user).asScala.toList match {
       case null => None
       case listOfItems => Some(listOfItems)
     }

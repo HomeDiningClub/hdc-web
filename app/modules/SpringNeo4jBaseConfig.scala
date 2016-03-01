@@ -1,7 +1,11 @@
 package modules
 
+import java.util.Calendar
 import javax.inject._
-import org.neo4j.graphdb.GraphDatabaseService
+import models.base.AuditEntity
+import org.neo4j.graphdb.{Node, GraphDatabaseService}
+import org.springframework.context.ApplicationListener
+import org.springframework.data.auditing.config.AuditingConfiguration
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import play.api.Logger
@@ -12,9 +16,9 @@ import org.springframework.beans.BeansException
 import org.springframework.beans.factory.BeanCreationException
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.context.annotation.{ComponentScan, Configuration, Bean}
-import org.springframework.data.auditing.IsNewAwareAuditingHandler
+import org.springframework.data.auditing.{CurrentDateTimeProvider, IsNewAwareAuditingHandler}
 import org.springframework.data.neo4j.config.{EnableNeo4jRepositories, Neo4jConfiguration}
-import org.springframework.data.neo4j.lifecycle.AuditingEventListener
+import org.springframework.data.neo4j.lifecycle.{BeforeSaveEvent, AuditingEventListener}
 
 import scala.concurrent.Future
 
@@ -41,7 +45,17 @@ class SpringNeo4jBaseConfig extends Neo4jConfiguration {
     }
   }
 
-  // TODO: Enable Database event-triggers
+  @Bean
+  def auditingEventListener(): AuditingEventListener = {
+    new AuditingEventListener(new ObjectFactory[IsNewAwareAuditingHandler]() {
+
+      override def getObject(): IsNewAwareAuditingHandler = {
+        new IsNewAwareAuditingHandler(neo4jMappingContext())
+      }
+    })
+  }
+
+  // Database event-triggers examples
   //  @Bean
   //  def beforeSaveEventApplicationListener(): ApplicationListener[BeforeSaveEvent[Node]] = {
   //    return new ApplicationListener[BeforeSaveEvent[Node]]() {
@@ -86,21 +100,4 @@ class SpringNeo4jBaseConfig extends Neo4jConfiguration {
   //    }
   //  }
 
-
-/* Example from plugin to use AuditingEvent, but written in java
-  @Bean
-  public AuditingEventListener auditingEventListener() throws Exception {
-
-    return new AuditingEventListener(new ObjectFactory<IsNewAwareAuditingHandler>() {
-      @Override
-      public IsNewAwareAuditingHandler getObject() throws BeansException
-      {
-        try {
-          return new IsNewAwareAuditingHandler(neo4jMappingContext());
-        } catch (Exception e) {
-          throw new BeanCreationException("Error while creating "+IsNewAwareAuditingHandler.class.getName(),e);
-        }
-      }
-    });
-  }*/
 }

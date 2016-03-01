@@ -4,7 +4,8 @@ import com.typesafe.config.ConfigFactory
 import org.neo4j.graphdb.GraphDatabaseService
 import org.springframework.beans.factory.DisposableBean
 import org.springframework.context.annotation._
-import org.springframework.data.neo4j.config.EnableNeo4jRepositories
+import org.springframework.data.auditing.config.AuditingConfiguration
+import org.springframework.data.neo4j.config.{Neo4jAuditingBeanDefinitionParser, EnableNeo4jRepositories}
 import org.springframework.data.neo4j.rest.SpringCypherRestGraphDatabase
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import javax.inject.Singleton
