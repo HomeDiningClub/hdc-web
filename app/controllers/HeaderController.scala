@@ -110,7 +110,7 @@ class HeaderController @Inject() (override implicit val env: SecureSocialRuntime
         if (Helpers.isUserAdmin(currentUser))
           menu.append((Messages("header.link.admin"), Messages("header.link.admin"), controllers.admin.routes.AdminController.index().url, "", ""))
 
-        menu.append((Messages("header.link.logout"), Messages("header.link.logout"), env.routes.loginPageUrl, "", ""))
+        menu.append((Messages("header.link.logout"), Messages("header.link.logout"), "/auth/logout", "", ""))
         menu.toSeq
       }
       case None => {
