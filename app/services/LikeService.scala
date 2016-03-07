@@ -111,19 +111,19 @@ class LikeService @Inject()(val template: Neo4jTemplate,
   // By using graphId we don't need to load all the relationships
   //@Transactional(readOnly = true)
   def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Recipe): Option[UserCredentialLikeRecipe] = withTransaction(template){
-    currentUser.getHasLikedRecipes.asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
+    template.fetch(currentUser.getHasLikedRecipes).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
   }
 
   // Event
   //@Transactional(readOnly = true)
   def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Event): Option[UserCredentialLikeEvent] = withTransaction(template){
-    currentUser.getHasLikedEvents.asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
+    template.fetch(currentUser.getHasLikedEvents).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
   }
 
   // UserCredential
   //@Transactional(readOnly = true)
   def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: UserCredential): Option[UserCredentialLikeUserCredential] = withTransaction(template){
-    currentUser.getHasLikedUsers.asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
+    template.fetch(currentUser.getHasLikedUsers).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
   }
 
 

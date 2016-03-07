@@ -67,7 +67,7 @@ class BlogPostsService @Inject() (val template: Neo4jTemplate,
 
 
   def stringToDate(dateString : String) : org.joda.time.DateTime = {
-    var createdDateLong : Long = dateString.toLong
+    val createdDateLong : Long = dateString.toLong
     new org.joda.time.DateTime(createdDateLong)
   }
 

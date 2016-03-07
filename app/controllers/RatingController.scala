@@ -132,7 +132,10 @@ class RatingController @Inject() (override implicit val env: SecureSocialRuntime
                       currentUser,
                       userToBeRated,
                       formContent.ratingValue,
-                      formContent.ratingComment.getOrElse(""),
+                      formContent.ratingComment match {
+                        case Some(comment) => comment
+                        case None => ""
+                      },
                       request.remoteAddress)
                 }
 

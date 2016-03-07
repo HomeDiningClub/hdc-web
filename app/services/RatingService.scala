@@ -25,20 +25,6 @@ class RatingService @Inject()(val template: Neo4jTemplate,
                               val ratingUserCredentialRepository: RatingUserCredentialRepository,
                               val ratingRecipeRepository: RatingRecipeRepository) extends TransactionSupport {
 
-  /*
-  @Autowired
-  private var template: Neo4jTemplate = _
-
-  @Autowired
-  private var userCredentialRepository: UserCredentialRepository = _
-
-  @Autowired
-  private var ratingUserCredentialRepository: RatingUserCredentialRepository = _
-
-  @Autowired
-  private var ratingRecipeRepository: RatingRecipeRepository = _
-*/
-
   // RatingUserCredential
   //@Transactional(readOnly = true)
   def findUserRatingById(objectId: java.util.UUID): RatesUserCredential = withTransaction(template){
@@ -155,7 +141,7 @@ class RatingService @Inject()(val template: Neo4jTemplate,
   //@Transactional(readOnly = true)
   def hasUserRatedThisBefore(currentUser: UserCredential, hasRatedThisRecipe: Recipe): Option[RatesRecipe] = withTransaction(template){
     // By using graphId we don't need to load all the relationships
-    currentUser.getHasRatedRecipes.asScala.find(rel => rel.userRates.graphId == hasRatedThisRecipe.graphId)
+    template.fetch(currentUser.getHasRatedRecipes).asScala.find(rel => rel.userRates.graphId == hasRatedThisRecipe.graphId)
   }
   //@Transactional(readOnly = true)
   def doesUserTryToRateHimself(currentUser: UserCredential, recipeToBeRated: Recipe): Boolean = withTransaction(template){
@@ -167,7 +153,7 @@ class RatingService @Inject()(val template: Neo4jTemplate,
   //@Transactional(readOnly = true)
   def hasUserRatedThisBefore(currentUser: UserCredential, hasRatedThisUser: UserCredential): Option[RatesUserCredential] = withTransaction(template){
     // By using graphId we don't need to load all the relationships
-    currentUser.getHasRatedUsers.asScala.find(rel => rel.userRates.graphId == hasRatedThisUser.graphId)
+    template.fetch(currentUser.getHasRatedUsers).asScala.find(rel => rel.userRates.graphId == hasRatedThisUser.graphId)
   }
   //@Transactional(readOnly = true)
   def doesUserTryToRateHimself(currentUser: UserCredential, userToBeRated: UserCredential): Boolean = withTransaction(template){
