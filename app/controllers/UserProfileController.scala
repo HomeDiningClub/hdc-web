@@ -7,7 +7,7 @@ import enums.RoleEnums
 import models.formdata.UserProfileOptions
 import models.modelconstants.UserLevelScala
 import models.viewmodels._
-import models.{UserCredential, UserProfile}
+import models.{ViewedByUnKnown, ViewedByMember, UserCredential, UserProfile}
 import org.joda.time.DateTime
 import play.api._
 import play.api.data.Forms._
@@ -303,10 +303,19 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
    * @param profile the user of the profile page
    */
   def doLogViewOfUserProfile(request: RequestWithUser[AnyContent,UserCredential], profile: UserProfile) {
+
+    // Kontrollera att det är en inloggad användare
     if (request.user.isEmpty) {
 
+      // Det är inte en inloggad användare
+
+      val ipAddress = request.remoteAddress
+
+      // Eftersom vi inte har något användarnamn får vi hämta ip-adress
+      // Kontrollera om profilen dvs. den visade sisan har något objekt för att spara
+      // undan icke inloggade användare
       if (profile.getUnKnownVisited != null && profile.getUnKnownVisited != None) {
-        val ipAddress = request.remoteAddress
+
 
         var log = profile.getUnKnownVisited
         var util: ViewedByUnKnownUtil = new ViewedByUnKnownUtil()
@@ -322,9 +331,18 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
         // save access of profile to the profile users node for ...
         userProfileService.logUnKnownProfileViewByObjectId(log, ipAddress)
+      } else {
+
+        // Det finns inget objekt med icke inloggade användare
+        // skapa objektet
+        var log = new ViewedByUnKnown()
+        userProfileService.logUnKnownProfileViewByObjectId(log, ipAddress)
+
       }
 
     } else {
+
+      // inloggad användare försöker se på en profilsida.....
 
       // fetch logged in user
       val theUser: Option[UserProfile] = request.user match {
@@ -353,7 +371,13 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
         // save access of profile to the profile users node for ...
         userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
+      } else {
+
+        // Om objektet inte finns lägger den till detta...
+        var log = new ViewedByMember()
+        userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
       }
+
     }
   }
 
