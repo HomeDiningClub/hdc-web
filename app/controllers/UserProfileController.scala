@@ -579,7 +579,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
 
     val nyForm = AnvandareForm.fill(eData)
-    Ok(views.html.profile.editProfile2(nyForm, uOptValues,
+    Ok(views.html.profile.editProfile(nyForm, uOptValues,
       retTagList, typ,
       optionsLocationAreas = countyService.getCounties,
       extraValues = extraValues,
@@ -977,7 +977,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     // Handle tags end ...
     AnvandareForm.bindFromRequest.fold(
       errors => {
-        BadRequest(views.html.profile.editProfile2(errors,
+        BadRequest(views.html.profile.editProfile(errors,
           uOptValues,
           retTagList, typ,
           extraValues = extraValues,
