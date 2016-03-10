@@ -39,7 +39,7 @@
                             </article>
 @*                            <article>
                                 @shared.grade(inputId = "event-grade", initialValue = recipe.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = recipe.getNrOfRatings)
-                                @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName(), recipe.getLink).url)(request)
+                                @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url)(request)
                             </article>*@
                         </section>
                     </div>

@@ -40,8 +40,8 @@ public class UserProfile extends AuditEntity implements IEditable {
     public String paySwish          = "";
     public String payBankCard       = "";
     public String payIZettle        = "";
-    public String firstName          = "";
-    public String lastName          = "";
+    //public String firstName          = "";
+    //public String lastName          = "";
     public String userIdentity      = "";
     public String providerIdentity  = "";
     public String email             = "";

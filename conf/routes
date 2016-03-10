@@ -2,6 +2,8 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+# Route rule to accept trailing slash
+GET         /*path/                                              @controllers.RouteController.removeTrailingSlash(path: String)
 
 # Start page
 GET         /                                                    @controllers.StartPageController.index(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0)
@@ -31,10 +33,6 @@ GET         /profile/view/:profileName                           @controllers.Us
 GET         /profile/view-my-profile                             @controllers.UserProfileController.viewProfileByLoggedInUser
 GET         /profile/edit                                        @controllers.UserProfileController.edit
 POST        /profile/skicka                                      @controllers.UserProfileController.editSubmit
-#POST        /profile/skapa                                       @controllers.UserProfileController.save
-#POST        /profile/spara                                       @controllers.UserProfileController.saveUserProfile
-#GET         /profile/ny                                          @controllers.UserProfileController.skapaNyProfil
-#GET         /profile/find/:userName                              @controllers.UserProfileController.hamtaProfil(userName)
 GET         /profile/showtag                                     @controllers.UserProfileController.showTags
 POST        /profile/savetags                                    @controllers.UserProfileController.saveTags
 GET         /profile/verify                                      @controllers.UserProfileController.verifyUserProfile
@@ -54,10 +52,6 @@ GET         /inbox/show                                          @controllers.Me
 POST        /inbox/save                                          @controllers.MessageController.save
 GET         /inbox/display                                       @controllers.MessageController.repatit
 POST        /inbox/saveit                                        @controllers.MessageController.saveit
-
-# New profile
-#GET         /prodata/skapa                                       @controllers.UserProfileController.createTags
-#GET         /prodata/test                                        @controllers.UserProfileController.test
 
 # Recipe
 GET         /profile/view/:profileName/recipe/:recipeName        @controllers.RecipePageController.viewRecipeByNameAndProfile(profileName: String, recipeName: String)

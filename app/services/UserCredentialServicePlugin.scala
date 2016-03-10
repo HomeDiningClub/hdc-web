@@ -408,8 +408,8 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
 
       userProfile.userIdentity = userCredential.userId
       userProfile.providerIdentity = userCredential.providerId
-      userProfile.firstName = userCredential.firstName
-      userProfile.lastName = userCredential.lastName
+      //userProfile.firstName = userCredential.firstName
+      //userProfile.lastName = userCredential.lastName
       userProfile.keyIdentity = userProfile.userIdentity + "_" + userProfile.providerIdentity
 
       userCredential.userId = userId // lowercase

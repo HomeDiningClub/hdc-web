@@ -59,10 +59,10 @@ libraryDependencies ++= Seq(
   "net.codingwell" %% "scala-guice" % "4.0.0" withSources(),
   // For imagesRezise components
   "commons-io" % "commons-io" % "2.4" withSources(),
-  "commons-codec" % "commons-codec" % "1.9" withSources()
+  "commons-codec" % "commons-codec" % "1.9" withSources(),
   //"javax.enterprise" % "cdi-api" % "1.0-SP4",
   //"com.adrianhurt" %% "play-bootstrap3" % "0.4.4"
-  //"com.adrianhurt" %% "play-bootstrap" % "1.0-P24-B3-SNAPSHOT" excludeAll(ExclusionRule(organization = "org.webjars", name="jquery"), ExclusionRule(organization = "org.webjars", name="bootstrap")) withSources()
+  "com.adrianhurt" %% "play-bootstrap" % "1.0-P24-B3-SNAPSHOT" excludeAll(ExclusionRule(organization = "org.webjars", name="jquery"), ExclusionRule(organization = "org.webjars", name="bootstrap")) withSources()
   //"com.typesafe.play" %% "play-plugins-util" % "2.4.0",
   //"nl.rhinofly" %% "play-s3" % "3.3.4",
   //"se.digiplant" %% "play-scalr" % "1.1.2",

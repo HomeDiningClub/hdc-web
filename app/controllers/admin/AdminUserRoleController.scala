@@ -107,7 +107,7 @@ class AdminUserRoleController @Inject() (override implicit val env: SecureSocial
           case true => userRoleService.addRoleToUser(UUID.fromString(contentData.roleObjectId), UUID.fromString(contentData.userObjectId))
           case false => userRoleService.removeRoleFromUser(UUID.fromString(contentData.roleObjectId), UUID.fromString(contentData.userObjectId))
         }
-        val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.fullName(), saved.objectId.toString)
+        val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.fullName, saved.objectId.toString)
         Redirect(controllers.admin.routes.AdminUserRoleController.editIndex()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
@@ -138,9 +138,9 @@ class AdminUserRoleController @Inject() (override implicit val env: SecureSocial
         var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
 
         // Map and add the rest
-        items.sortBy(tw => tw.fullName()).toBuffer.map {
+        items.sortBy(tw => tw.fullName).toBuffer.map {
           item: UserCredential =>
-            bufferList += ((item.objectId.toString, item.fullName() + " - (" + item.email.getOrElse("") + " , " + item.providerId + ")"))
+            bufferList += ((item.objectId.toString, item.fullName + " - (" + item.email.getOrElse("") + " , " + item.providerId + ")"))
         }
         Some(bufferList.toSeq)
       case None =>

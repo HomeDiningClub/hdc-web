@@ -146,7 +146,7 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
                     messageService.createResponse(currentUser, receiver, msg, content.response.getOrElse(""), msg.phone)
 
                     val guest = EmailAndName(
-                      name = receiver.firstName() + " " + receiver.lastName(),
+                      name = receiver.firstName + " " + receiver.lastName,
                       email = receiver.emailAddress
                     )
 

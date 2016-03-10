@@ -20,89 +20,60 @@
 
 @pageScripts = {
     <script>
-        /* Code to open a mail directly, not working atm */
-        $(document).ready(function(){
-            var url = document.location.toString();
-            if (url.match('#')){
-                $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show') ;
-                var msgId = url.split('#')[2].split("Some(")[1].substring(0, url.split('#')[2 ].split("Some(")[1 ].length -1);
+    /* Opens the selected tab */
+    $(document).ready(function(){
+        var url = document.location.toString();
+        if (url.match('#')){
+            $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show');
 
-                $('#mail_' + msgId).click();
+            /* Code to open a mail directly, not working properly */
+            //var msgId = url.split('#')[2].split("Some(")[1].substring(0, url.split('#')[2 ].split("Some(")[1 ].length -1);
+            //$('#mail_' + msgId).click();
+        }
+
+        /* Mark mail as read, also read more functionality */
+        $(".mail-inbox-row").click(function(){
+            var btnArray = this.id.split("mail_");
+            var mailRowId = "#mail_" + btnArray[1];
+            if($(mailRowId + " .unread").is(":visible")){
+                $.get( "/profile/mark?msgId=" + btnArray[1] + "&tid=" + new Date().toString(), function (data, status){
+                    $(mailRowId + " .read").show();
+                    $(mailRowId + " .unread").hide();
+                });
             }
+        });
 
-            /* Mark mail as read, also read more functionality */
-            $(".mail-inbox-row").click(function(){
-                var btnArray = this.id.split("mail_");
-                var mailRowId = "#mail_" + btnArray[1];
-                if($(mailRowId + " .unread").is(":visible")){
-                    $.get( "/profile/mark?msgId=" + btnArray[1] + "&tid=" + new Date().toString(), function (data, status){
-                        $(mailRowId + " .read").show();
-                        $(mailRowId + " .unread").hide();
-                    });
-                }
+        $("#rf").click(function(){
+            $.get("/profile/favorite/remove?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
+                $( "#af" ).show();
+                $( "#rf" ).hide();
+                alert('Favorit borttagen!');
             });
+        });
 
-            /* Couldn't find a ref to this code
-            $('.more').each(function() {
-                var content = $(this).html();
 
-                if(content.length > showChar) {
-
-                    var c = content.substr(0, showChar);
-                    var h = content.substr(showChar-1, content.length - showChar);
-
-                    var html = c + '<span class="moreellipses">' + ellipsestext+ '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
-
-                    $(this).html(html);
-                }
+        $("#af").click(function(){
+            $.get("/profile/favorite/add?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
+                $( "#af" ).hide();
+                $( "#rf" ).show();
+                alert('Favorit tillagd!')
             });
-
-            $(".morelink").click(function(){
-                if($(this).hasClass("less")) {
-                    $(this).removeClass("less");
-                    $(this).html(moretext);
-                } else {
-                    $(this).addClass("less");
-                    $(this).html(lesstext);
-                }
-                    $(this).parent().prev().toggle();
-                    $(this).prev().toggle();
-                    return false;
-            });
-            */
-
-    $("#rf").click(function(){
-    $.get("/profile/favorite/remove?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
-        $( "#af" ).show();
-        $( "#rf" ).hide();
-     alert('Favorit borttagen!');
-    });
-    });
-
-
-    $("#af").click(function(){
-    $.get("/profile/favorite/add?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
-    $( "#af" ).hide();
-    $( "#rf" ).show();
-     alert('Favorit tillagd!')
-    });
-    });
+        });
 
 
 
-    $.get("/profile/favorite/isFav?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
-    if(data =="YES") {
-        $( "#af" ).hide();
-        $( "#rf" ).show();
-    } else if(data == "NO") {
-        $( "#af" ).show();
-        $( "#rf" ).hide();
+        $.get("/profile/favorite/isFav?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
+            if(data =="YES") {
+                $("#af").hide();
+                $( "#rf" ).show();
+            } else if(data == "NO") {
+                $("#af").show();
+                $("#rf").hide();
 
-    } else {
-        $( "#af,#rf,#afrf-wrapper" ).hide();
-    }
-
-    });
+            } else {
+                $("#af,#rf,#afrf-wrapper").hide();
+            }
+        });
 
     });
     </script>

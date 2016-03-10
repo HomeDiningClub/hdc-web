@@ -445,11 +445,8 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
 
     // Fetch UserProfile from UserCredentials
-    // c
-    var theUser = request.user.profiles.iterator().next()
-
-    var personnummer = theUser.getOwner.personNummer
-
+    var userProfile = request.user.getUserProfile
+    var personnummer = userProfile.getOwner.personNummer
     var countiesList = countyService.getCounties
 
     var countyItter = countiesList.iterator
@@ -461,10 +458,10 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     var host: String = ""
     var guest: String = ""
 
-    if (theUser.getRole.contains(UserLevelScala.HOST.Constant)) {
+    if (userProfile.getRole.contains(UserLevelScala.HOST.Constant)) {
       host = UserLevelScala.HOST.Constant
     }
-    if (theUser.getRole.contains(UserLevelScala.GUEST.Constant)) {
+    if (userProfile.getRole.contains(UserLevelScala.GUEST.Constant)) {
       guest = UserLevelScala.GUEST.Constant
     }
 
@@ -484,7 +481,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     // Pre selected
     val typ = new models.Types
 
-    var userTags = theUser.getTags
+    var userTags = userProfile.getTags
 
     if (userTags != null) {
       var itterTags = userTags.iterator
@@ -517,18 +514,18 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
 
     try {
-      locationId = theUser.getLocations.iterator.next().county.objectId.toString
+      locationId = userProfile.getLocations.iterator.next().county.objectId.toString
       //locationId = "0ec35cae-495c-43b8-b99c-bc14755288f2"
     } catch {
       case e: Exception => println("COUNTY EXCEPTION : " + e.getMessage)
     }
 
     // Other values not fit to be in form-classes
-    val mainImage = theUser.getMainImage match {
+    val mainImage = userProfile.getMainImage match {
       case null => None
       case image => Some(image.objectId.toString)
     }
-    val avatarImage = theUser.getAvatarImage match {
+    val avatarImage = userProfile.getAvatarImage match {
       case null => None
       case image => Some(image.objectId.toString)
     }
@@ -536,57 +533,57 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
     // File with stored values
     val eData: EnvData = new EnvData(
-      theUser.profileLinkName,
-      theUser.profileLinkName,
-      theUser.aboutMeHeadline,
-      theUser.aboutMe,
+      userProfile.profileLinkName,
+      userProfile.profileLinkName,
+      userProfile.aboutMeHeadline,
+      userProfile.aboutMe,
       locationId, // county
-      theUser.streetAddress, // street Address,
-      theUser.zipCode, // zip code
-      theUser.city, // city
-      theUser.phoneNumber, // phone number
+      userProfile.streetAddress, // street Address,
+      userProfile.zipCode, // zip code
+      userProfile.city, // city
+      userProfile.phoneNumber, // phone number
       personnummer, // TODO
-      theUser.isTermsOfUseApprovedAccepted, // isTermsOfUseApprovedAccepted
+      userProfile.isTermsOfUseApprovedAccepted, // isTermsOfUseApprovedAccepted
       // Option(theUser.childFfriendly),
       // Option(theUser.handicapFriendly),
       // Option(theUser.havePets),
       //Option(theUser.smoke),
-      Option(theUser.allkoholServing),
+      Option(userProfile.allkoholServing),
       mainImage,
       avatarImage,
-      theUser.firstName,
-      theUser.lastName,
-      theUser.getOwner.emailAddress,
-      theUser.getOwner.emailAddress
+      userProfile.getOwner.firstName,
+      userProfile.getOwner.lastName,
+      userProfile.getOwner.emailAddress,
+      userProfile.getOwner.emailAddress
     )
 
 
 
     val uOptValues = new UserProfileOptValues(
-      safeJava(theUser.payCache),
-      safeJava(theUser.paySwish),
-      safeJava(theUser.payBankCard),
-      safeJava(theUser.payIZettle),
+      safeJava(userProfile.payCache),
+      safeJava(userProfile.paySwish),
+      safeJava(userProfile.payBankCard),
+      safeJava(userProfile.payIZettle),
       safeJava(guest),
       safeJava(host),
-      safeJava(theUser.maxNoOfGuest),
-      safeJava(theUser.minNoOfGuest),
-      safeJava(theUser.handicapFriendly), // moved from EnvData.
-      safeJava(theUser.childFfriendly),
-      safeJava(theUser.havePets),
-      safeJava(theUser.smoke)
+      safeJava(userProfile.maxNoOfGuest),
+      safeJava(userProfile.minNoOfGuest),
+      safeJava(userProfile.handicapFriendly), // moved from EnvData.
+      safeJava(userProfile.childFfriendly),
+      safeJava(userProfile.havePets),
+      safeJava(userProfile.smoke)
     )
 
     // Other values not fit to be in form-classes
-    val extraValues = setExtraValues(theUser)
+    val extraValues = setExtraValues(userProfile)
 
 
     val nyForm = AnvandareForm.fill(eData)
-    Ok(views.html.profile.skapa(nyForm, uOptValues,
+    Ok(views.html.profile.editProfile2(nyForm, uOptValues,
       retTagList, typ,
       optionsLocationAreas = countyService.getCounties,
       extraValues = extraValues,
-      editingProfile = Some(theUser),
+      editingProfile = Some(userProfile),
       termsAndConditions = contentService.getTermsAndConditions)
     )
 
@@ -894,7 +891,6 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     var userCredential = request.user
     var theUserProfile = userCredential.getUserProfile
 
-
     val typ = new models.Types // all tags selected
     var map: Map[String, String] = Map() // to update tags in user profile
 
@@ -981,7 +977,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     // Handle tags end ...
     AnvandareForm.bindFromRequest.fold(
       errors => {
-        BadRequest(views.html.profile.skapa(errors,
+        BadRequest(views.html.profile.editProfile2(errors,
           uOptValues,
           retTagList, typ,
           extraValues = extraValues,
@@ -1032,8 +1028,8 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
         var t = userCredentialService.save(userCredential)
 
-        theUserProfile.firstName = firstName
-        theUserProfile.lastName = lastName
+        //theUserProfile.firstName = firstName
+        //theUserProfile.lastName = lastName
 
         theUserProfile.aboutMeHeadline = aboutMeHeadlineText
         theUserProfile.aboutMe = aboutMeText

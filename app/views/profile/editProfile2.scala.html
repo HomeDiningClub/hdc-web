@@ -6,6 +6,8 @@
         termsAndConditions: Option[models.content.ContentPage] = None,
         extraValues: models.viewmodels.EditProfileExtraValues)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
 
+@import b3.vertical.fieldConstructor
+
 @main(Messages("profile.create.title"), footerHtml = file.modalImages.render(messages)){
 
     <div class="container maincontent-container">
@@ -31,7 +33,7 @@
             </div>
         </div>
         <div class="row">
-            @helper.form(action = routes.UserProfileController.editSubmit(), 'enctype -> "multipart/form-data"){
+            @b3.form(action = routes.UserProfileController.editSubmit(), 'enctype -> "multipart/form-data"){
             <div class="col-xs-12">
                 <nav>
                     <ul class="nav nav-tabs nav-tabs-profile">
@@ -50,7 +52,7 @@
                 <div class="tab-pane tab-hdc fade in active" id="profile-tab-name">
                     <div class="col-xs-12">
                         <h3 class="lead">@Messages("profile.create.header.profile-name")</h3>
-                        @helper.inputText(EnvDataForm("name"),
+                        @b3.text(EnvDataForm("name"),
                             'id -> "name",
                             '_showErrors -> true,
                             '_label -> Messages("profile.create.form.profilename"),

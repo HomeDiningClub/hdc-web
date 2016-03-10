@@ -319,21 +319,41 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
         return this.userId;
     }
 
+    @Deprecated
+    /**
+     * @deprecated
+     * Don't use .firstName(), use .firstName instead
+     */
     @Override
     public Option<String> firstName() {
         return Scala.Option(this.firstName);
     }
 
+    @Deprecated
+    /**
+     * @deprecated
+     * Don't use .lastName(), use .lastName instead
+     */
     @Override
     public Option<String> lastName() {
         return Scala.Option(this.lastName);
     }
 
+    @Deprecated
+    /**
+     * @deprecated
+     * Don't use .fullName(), use .fullName instead
+     */
     @Override
     public Option<String> fullName() {
         return Scala.Option(fullName);
     }
 
+    @Deprecated
+    /**
+     * @deprecated
+     * Don't use .email(), use .emailAddress instead
+     */
     @Override
     public Option<String> email() {
         return (Scala.Option(emailAddress));
