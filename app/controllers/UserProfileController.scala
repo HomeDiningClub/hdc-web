@@ -1,5 +1,6 @@
 package controllers
 
+import java.util
 import java.util.{Date, UUID}
 import javax.inject.{Named, Inject}
 import constants.FlashMsgConstants
@@ -7,7 +8,7 @@ import enums.RoleEnums
 import models.formdata.UserProfileOptions
 import models.modelconstants.UserLevelScala
 import models.viewmodels._
-import models.{ViewedByUnKnown, ViewedByMember, UserCredential, UserProfile}
+import models._
 import org.joda.time.DateTime
 import play.api._
 import play.api.data.Forms._
@@ -264,7 +265,22 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         val doCountEvent: Boolean = true
 
         if (doCountEvent) {
+
+          val viewer: Option[UserProfile] = request.user match {
+            case Some(user) => Some(user.profiles.asScala.head)
+            case None => None
+          }
+
+          if (viewer == None) {
+            println("Log access to userprofile : " + profile.getOwner().getFullName + "viwer: " + "Annonymouse viewer")
+          }
+          else {
+          println("Log access to userprofile : " + profile.getOwner().getFullName + "viwer : " +  viewer.get.profileLinkName)
+        }
+
           doLogViewOfUserProfile(request, profile)
+
+
         } // false
 
 
@@ -314,11 +330,25 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
       // Eftersom vi inte har något användarnamn får vi hämta ip-adress
       // Kontrollera om profilen dvs. den visade sisan har något objekt för att spara
       // undan icke inloggade användare
-      if (profile.getUnKnownVisited != null && profile.getUnKnownVisited != None) {
+      if (profile.getUnKnownVisited != null && profile.getUnKnownVisited != None && profile.getUnKnownVisited.getSize() > 0) {
 
+       // println("1 ... ")
+       // println("Acess to a ready userProfile for saving UnKnownVisits ... ")
 
         var log = profile.getUnKnownVisited
         var util: ViewedByUnKnownUtil = new ViewedByUnKnownUtil()
+
+
+        var itr   =  profile.getUnKnownVisited.getIterator()
+
+        while(itr.hasNext) {
+
+          var s : String = itr.next()
+        //  println("v: " + s)
+        }
+
+
+
 
         // Number of days to store data as invidual logposts
         var oldestDate: Date = util.xDayEarlier(1)
@@ -333,10 +363,17 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         userProfileService.logUnKnownProfileViewByObjectId(log, ipAddress)
       } else {
 
+       // println("2 ... ")
+
         // Det finns inget objekt med icke inloggade användare
         // skapa objektet
-        var log = new ViewedByUnKnown()
-        userProfileService.logUnKnownProfileViewByObjectId(log, ipAddress)
+        var viewedByUnKnown = new ViewedByUnKnown()
+        var util: ViewedByUnKnownUtil = new ViewedByUnKnownUtil()
+
+        // Skapa ett besök av en okänd användare
+        viewedByUnKnown.viewedBy(ipAddress, util.getNowString)
+        profile.setViewedByUnKnown(viewedByUnKnown)
+        userProfileService.saveUserProfile(profile)
 
       }
 
@@ -356,9 +393,23 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
       }
 
       // Member access
-      if (profile.getmemberVisited() != null && profile.getmemberVisited != None) {
+      if (profile.getmemberVisited() != null && profile.getmemberVisited != None && profile.getmemberVisited.getSize > 0) {
         var log = profile.getmemberVisited()
+
+       // println("3 ...")
+
+        var itr   =  profile.getmemberVisited.getIterator()
+
+        while(itr.hasNext) {
+
+          var s : String = itr.next()
+       //   println("vx: " + s)
+        }
+
+
+
         var util: ViewedByMemberUtil = new ViewedByMemberUtil()
+        profile.setViewedByMeber(log)
 
         // Number of days to store data as invidual logposts
         var oldestDate: Date = util.xDayEarlier(7)
@@ -373,9 +424,16 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
       } else {
 
+       // println("4 ...")
+
         // Om objektet inte finns lägger den till detta...
         var log = new ViewedByMember()
+        var util: ViewedByMemberUtil = new ViewedByMemberUtil()
+
+
         userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
+        profile.setViewedByMeber(log)
+        userProfileService.saveUserProfile(profile)
       }
 
     }
