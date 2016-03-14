@@ -100,8 +100,7 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
     userCredential.fullName           = socialUser.fullName.get
     //userCredential.authMethod         = socialUser.authMethod.toString // ???? Kontrollera  ????????
 
-    // todo bättre kontroll att det finns ett värde
-    if(socialUser.authMethod.toString.size > 0) {
+    if(socialUser.authMethod.toString.nonEmpty) {
       userCredential.authMethod = socialUser.authMethod.method
     } else {
       userCredential.authMethod = ""
