@@ -91,17 +91,30 @@ object BackupData {
     val toMegaByte : Long =  1024 * 1024
 
     // Todo: Use paramter value
-    val dir : File  = new File(backupPath)
+    //val dir : File  = new File(backupPath)
 
     //val freeSpace   : Long = dir.getFreeSpace / toMegaByte
-    val usableSpace : Long = dir.getUsableSpace / toMegaByte
+    //val usableSpace : Long = dir.getUsableSpace / toMegaByte
 
     val today = Calendar.getInstance().getTime()
     val dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSS")
     val nowString = dateFormat.format(today)
+    var backupServerPath : String = ""
+
+    backupServerPath = backupPath
+
+    if(backupServerPath != null && backupServerPath.endsWith("\\") && backupServerPath.length() > 0) {
+      Logger.debug("backup path ends with folder separator character of type Windowspath")
+      backupServerPath = backupServerPath.substring(0, backupServerPath.length() - 1)
+    }
+
+    if(backupServerPath != null && backupServerPath.endsWith("/") && backupServerPath.length() > 0) {
+      Logger.debug("backup path ends with folder separator character of type Unixpath")
+      backupServerPath = backupServerPath.substring(0, backupServerPath.length() - 1)
+    }
 
 
-    val dirDir : File  = new File(backupPath + "\\" + nowString)
+    val dirDir : File  = new File(backupServerPath + File.separatorChar  + nowString)
     val successful : Boolean = dirDir.mkdir()
 
    dirDir
