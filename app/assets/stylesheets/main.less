@@ -29,6 +29,8 @@
 @hdc-gold: #a48b74;
 @hdc-black: #000;
 @hdc-red: #8E0000;
+@hdc-medium-light-red: #ffc1c1;
+@hdc-light-red: #fff4f4;
 @hdc-dark-light-green: lighten(@hdc-green, 5%);
 @hdc-medium-light-green: lighten(@hdc-green, 20%);
 @hdc-light-green: lighten(@hdc-green, 39%);
@@ -258,9 +260,25 @@ input[type="time"],
 input[type="password"]
 {
   padding:5px 10px 5px 10px;
-  margin-bottom:1em;
+  /*margin-bottom:1em;*/
   border:1px solid @input-border-color;
 }
+
+.tab-has-error, .tab-has-error a {
+  color: @hdc-red !important;
+  border-top-color: @hdc-medium-light-red !important;
+  border-left-color: @hdc-medium-light-red !important;
+  border-right-color: @hdc-medium-light-red !important;
+}
+input:invalid {
+  border: 1px solid @hdc-red;
+}
+
+/*
+input:valid {
+  border: 1px solid @hdc-dark-green;
+}
+*/
 
 select {
   padding:5px 10px 5px 10px;
@@ -272,6 +290,7 @@ label{
 }
 .help-block{
   display: inline-block;
+  color: @hdc-gray;
 }
 .help-inline {
   color:@hdc-red;

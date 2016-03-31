@@ -11,7 +11,7 @@ import org.springframework.data.domain.{Sort, Page, PageRequest, Pageable}
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import play.api.Logger
-import repositories.{ViewedByUnKnownRepository, UserProfileRepository, ViewedByMemberRepository}
+import repositories.{TagWordRepository, ViewedByUnKnownRepository, UserProfileRepository, ViewedByMemberRepository}
 import traits.TransactionSupport
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
@@ -26,6 +26,7 @@ import customUtils.ViewedByMemberUtil
 class UserProfileService @Inject()(val template: Neo4jTemplate,
                                    val userProfileRepository: UserProfileRepository,
                                    val viewedByMemberRepository: ViewedByMemberRepository,
+                                   val tagWordRepository: TagWordRepository,
                                    val viewedByUnKnownRepository: ViewedByUnKnownRepository) extends TransactionSupport {
 
   // save UnKnow user access to page
@@ -175,26 +176,23 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
     isFavoriteTo
   }
 
-  @Transactional(readOnly = false)
-  def updateUserProfileTags(theUser: models.UserProfile, d: Option[List[TagWord]], map: Map[String, String]): models.UserProfile = withTransaction(template) {
+  def updateUserProfileTags(theUser: UserProfile, tagsToAdd: List[TagWord]): UserProfile = withTransaction(template) {
 
-    theUser.removeAllTags()
+    // Fetch all tags available to choose from
+    val allTagWords: List[TagWord] = tagWordRepository.findByTagGroupName("profile").asScala.toList
 
-    // Fetch all tags available to choose
-    if (d.isDefined) {
-      // Loop all available tags
-      for (theTag <- d.get) {
-        var value = map.getOrElse(theTag.tagName, "empty")
+    if (allTagWords != Nil) {
+      theUser.removeAllTags()
 
-        if (!value.equals("empty")) {
-
-          // If the the user have tagged the particial chooice tag it
-          theUser.tag(theTag)
+      for (tag <- allTagWords) {
+        // If the the user have tagged the choice, tag it!
+        if(tagsToAdd.exists(t => t.objectId == tag.objectId)){
+          theUser.tag(tag)
         }
-
-      } // end loop
+      }
 
     }
+
     saveUserProfile(theUser)
   }
 

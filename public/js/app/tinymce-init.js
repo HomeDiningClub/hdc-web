@@ -36,7 +36,7 @@ $(document).ready(function () {
         editor_selector : "richtext-extra",
         theme : "modern",
         skin: "light",
-        height: 300,
+        height: 200,
         content_css : "/assets/stylesheets/richtext.min.css",
         menubar: false,
         plugins: [ "paste" ],

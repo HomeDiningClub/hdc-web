@@ -88,6 +88,9 @@ $(document).ready(function () {
     // Random BG
     randomizeBgImage();
 
+    // Make tabs marked if any input error has occured
+    makeTabsMarkedIfInputErrorOccured();
+
     // Disable double click
     $("button,a,input").dblclick(function(e){
         e.preventDefault();
@@ -157,6 +160,17 @@ function isGuid(expression){
         return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(expression);
     }
     return false;
+}
+
+function makeTabsMarkedIfInputErrorOccured(){
+    $(".has-error").each(function(index){
+        var id = $(this).parents(".tab-pane").attr("id");
+        var item = $(".nav.nav-tabs li a[href=#" + id + "]");
+        if(index == 0){
+            item.trigger('click');
+        }
+        item.closest('li').addClass('tab-has-error');
+    });
 }
 
 function isInList(value, list) {

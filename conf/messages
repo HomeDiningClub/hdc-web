@@ -219,7 +219,7 @@ profile.reviews.myreviews.food.header=Mina omdömen om recept:
 profile.create.title=Din profil
 profile.create.text=Här skapar du din profil, den kommer andra medlemmar att se. Om du råkar missa att fylla i viss information så går det bra att redigera din profil senare, om du vill komplettera med mer information.
 
-profile.create.header.profile-name=Profilnamn
+profile.create.header.profile-name=Döp ditt hem
 profile.create.tabs.profile-name.food.name=Profilnamn
 profile.create.tabs.profile-name.food.title=Profilnamn
 
@@ -228,6 +228,7 @@ profile.create.tabs.about-me.name=Om mig
 profile.create.tabs.about-me.title=Om mig
 
 profile.create.header.food=Vilka val matchar din matlagning bäst?
+profile.create.header.food-label=Taggar
 profile.create.tabs.food.name=Min mat
 profile.create.tabs.food.title=Min mat
 
@@ -239,17 +240,14 @@ profile.create.header.host=Hur ser ditt värdskap ut?
 profile.create.tabs.host.name=Värd
 profile.create.tabs.host.title=Värd
 
-profile.create.header.media=Hantera mina bilder och media
+profile.create.header.media=Bilder och media
+profile.create.label.media=Mediabibliotek
 profile.create.tabs.media.name=Media
 profile.create.tabs.media.title=Media
 
-profile.create.header.other=Övriga inställningar
-profile.create.tabs.other.name=Övrigt
-profile.create.tabs.other.title=Övrigt
-
 profile.create.form.profilename=Profilnamn
-profile.create.form.profilename.required=*
-profile.create.form.profilename.help=<strong>Viktig information</strong><br>Detta namn kommer att användas för att identifiera din profilsida. <br>Denna måste vara unik. Vi kommer ta bort ÅÄÖ, punkter, / eller andra tecken förutom bindestreck.<br><br><strong>Exempel:</strong><br>linda-larsson<br>henriksrestaurang<br>den-goda-maten
+profile.create.form.profilename.required=obligatoriskt
+profile.create.form.profilename.help=Detta namn kommer att användas för att identifiera din profilsida. Denna måste vara unik. Vi kommer ta bort ÅÄÖ, punkter, / eller andra tecken förutom bindestreck.<br><br><strong>Exempel:</strong><br>linda-larsson<br>henriksrestaurang<br>den-goda-maten
 profile.create.form.aboutmeheadline=Rubrik om dig och din mat
 profile.create.form.aboutmeheadline.help=
 profile.create.form.aboutme=Beskriv dig själv och din mat
@@ -277,22 +275,23 @@ profile.create.form.lastName=Efternamn
 profile.create.form.lastName.help=Efternamn måste anges
 
 ## email-address
-profile.create.form.emailAddress=E-Postadress
-profile.create.form.emailAddress.help=E-postadress måste anges och vara korrekt
-profile.create.form.emailAddress.required=E-postadressen måste vara korrekt och unik, vid byte av e-postadress blir du utloggad
-profile.create.form.emailAddress.uniq=E-postadress är inte korrekt angiviet
+profile.create.form.emailAddress=E-post
+profile.create.form.emailAddress.help=E-post måste anges och vara korrekt
+profile.create.form.emailAddress.required=E-post måste vara korrekt och unik, vid byte av e-postadress blir du utloggad
+profile.create.form.emailAddress.uniq=E-post är inte korrekt angivet
 
 profile.create.form.zipCode=Postnummer
 profile.create.form.zipCode.help=Postnummer
 profile.create.form.city=Stad
 profile.create.form.city.help=Kommun eller stad
-profile.create.form.phoneNumber=Telefonnummer(kommer aldrig att visas)
+profile.create.form.phoneNumber=Telefonnummer (aldrig synligt)
 profile.create.form.phoneNumber.help=Mobilnummer eller telefonnummer
 
-profile.create.form.personnummer=Personnummer(kommer aldrig att visas)
-profile.create.form.personnummer.help=Personnummer ÅÅÅÅMMDDNNNN
+profile.create.form.personnummer=Personnummer (aldrig synligt)
+profile.create.form.personnummer.help=Format: ÅÅÅÅMMDDNNNN
 
-profile.create.form.host=Jag vill vara värd
+profile.create.form.host-label=Värdskap
+profile.create.form.host-text=Jag vill vara värd
 profile.create.form.host.childfriendly=Barnvänligt
 profile.create.form.host.handicapfriendly=Handikappvänligt
 profile.create.form.host.pets=Finns husdjur?
@@ -306,11 +305,12 @@ profile.create.form.host.no=Nej
 
 profile.create.form.open-media-btn=Öppna mitt mediabibliotek
 
-profile.create.form.host.payment.header=Betalning
-profile.create.save=Spara
+profile.create.form.host.payment.header=Hur tar du betalt?
+profile.create.save=Spara inställningarna
 profile.create.saved-successfully=Din profil sparades
 
-profile.create.accept.label=Jag godkänner användarvillkoren
+profile.create.accept.text=Jag godkänner användarvillkoren
+profile.create.accept.label=Användarvillkor
 profile.create.accept.help=(du måste {0} för att bli medlem)
 profile.create.accept.link.text=godkänna vilkoren
 
@@ -340,12 +340,14 @@ profile.blog.tab.body.non-admin=Här kommer alla värdar att kunna skriva och bl
 profile.firstname.label=Namn:
 profile.city.label=Stad:
 profile.control.unique=Profilnamn måste vara unikt
-profile.personalidentitynumber.unique=Personnummer måste vara korrekt angivet
+profile.personalidentitynumber.unique=Personnummer måste vara i korrekt format: ÅÅÅÅMMDDNNNN
 profile.approve.memberterms=Du måste acceptera vilkoren för att bli medlem
 profile.groupsize.min=Minst antal gäster i gruppen
 profile.groupsize.max=Maximalt antal gäster
-profile.form.unacceptedcontent=Profilen innehåller felaktig värden
+profile.form.unacceptedcontent=Profilen innehåller felaktig värden:
 profile.payment.label=Betalning:
+profile.options.moved-info.header=Vart är resten av mina uppgifter?
+profile.options.moved-info=Dina profiluppgifter har tagits bort och flyttats till <strong>Händelser</strong>, så du kan bestämma dessa per event istället. Bra, eller hur?
 profile.options.childFfriendly.label=Barnvänligt
 profile.options.handicapFriendly.label=Handikappvänligt
 profile.options.havePets.label=Husdjur finns?
@@ -360,6 +362,9 @@ profile.payment.izettle=IZettle
 profile.yes=Ja
 profile.no=Nej
 
+profile.visitors.header=Besökare av din profil
+profile.visitors.logged-in=Inloggade besökare:
+profile.visitors.not-logged-in=Anonyma besökare:
 
 # Recipe
 recipe.title={0} - Recept
@@ -742,7 +747,8 @@ securesocial.login.signUp=Ny medlem? Om du inte har ett konto, kan du skapa ett 
 securesocial.login.here=Registrera dig
 securesocial.login.invalidCredentials=Inloggningsuppgifterna du angav är felaktiga.
 securesocial.login.forgotPassword=Glömt lösenord?
-hdc.securesocial.login.newPassword=Jag vill byta lösenord
+hdc.securesocial.login.newPassword=Byt lösenord
+hdc.securesocial.login.newPassword-label=Lösenord
 
 # Sign up page
 securesocial.signup.title=Registrera

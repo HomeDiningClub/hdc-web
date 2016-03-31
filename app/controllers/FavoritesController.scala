@@ -58,7 +58,7 @@ class FavoritesController @Inject() (override implicit val env: SecureSocialRunt
 
       // Add to return variable
       favMe += formdata.FavoriteForm(cur.profileLinkName, cur.getOwner.firstName, preAmble, userImage, cur.objectId.toString, cur.getOwner.objectId.toString)
-      Logger.debug("ObjectId : " + cur.objectId + ", email : " + cur.email + ", LinkName: " + cur.profileLinkName)
+      Logger.debug("ObjectId : " + cur.objectId + ", email : " + cur.getOwner.emailAddress + ", LinkName: " + cur.profileLinkName)
     }
     favMe.toList
   }
@@ -83,7 +83,7 @@ class FavoritesController @Inject() (override implicit val env: SecureSocialRunt
 
       // Add to return variable
       favorites += formdata.FavoriteForm(fav.profileLinkName, fav.getOwner.firstName, preAmble, userImage, fav.objectId.toString, fav.getOwner.objectId.toString)
-      Logger.debug("ObjectId : " + fav.objectId + ", email : " + fav.email)
+      Logger.debug("ObjectId : " + fav.objectId + ", email : " + fav.getOwner.emailAddress)
     }
     favorites.toList
   }

@@ -85,3 +85,28 @@ NOT_IN	NotIn, IsNotIn (expects collection or array parameter)
 NOT_LIKE	NotLike, IsNotLike
 STARTING_WITH	StartingWith, IsStartingWith, StartsWith (String types only)
 TRUE	True, IsTrue (boolean types only)
+--
+
+--
+Migration of our UserProfile
+MATCH (n:`UserProfile`)
+    REMOVE n:childFfriendly:handicapFriendly:havePets:smoke:allkoholServing:maxNoOfGuest:minNoOfGuest:email:firstName:lastName:fistName
+    SET n.childFfriendly = NULL
+    SET n.handicapFriendly = NULL
+    SET n.havePets = NULL
+    SET n.smoke = NULL
+    SET n.allkoholServing = NULL
+    SET n.maxNoOfGuest = NULL
+    SET n.minNoOfGuest = NULL
+    SET n.email = NULL
+    SET n.firstName = NULL
+    SET n.fistName = NULL
+    SET n.lastName = NULL
+    SET n.payCash = (CASE n.payCache WHEN 'Kontanter' THEN true WHEN true THEN true ELSE false END)
+    SET n.payIZettle = (CASE n.payIZettle WHEN 'IZettle' THEN true WHEN true THEN true ELSE false END)
+    SET n.paySwish = (CASE n.paySwish WHEN 'Swish' THEN true WHEN true THEN true ELSE false END)
+    SET n.payBankCard = (CASE n.payBankCard WHEN 'Banköverföring' THEN true WHEN true THEN true ELSE false END)
+    REMOVE n:payCache
+    SET n.payCache = NULL
+    RETURN n
+--

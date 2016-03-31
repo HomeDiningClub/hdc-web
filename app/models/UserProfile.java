@@ -26,9 +26,8 @@ import java.util.Calendar;
 @NodeEntity
 public class UserProfile extends AuditEntity implements IEditable {
 
+    /*
     public String county = "";
-    public Calendar termsOfUseApproved = Calendar.getInstance();
-    public boolean isTermsOfUseApprovedAccepted = false;
     public String childFfriendly    = "";
     public String handicapFriendly  = "";
     public String havePets          = "";
@@ -36,19 +35,22 @@ public class UserProfile extends AuditEntity implements IEditable {
     public String allkoholServing   = "";
     public String maxNoOfGuest      = "";
     public String minNoOfGuest      = "";
-    public String payCache          = "";
-    public String paySwish          = "";
-    public String payBankCard       = "";
-    public String payIZettle        = "";
-    //public String firstName          = "";
-    //public String lastName          = "";
-    public String userIdentity      = "";
-    public String providerIdentity  = "";
+    public String firstName          = "";
+    public String lastName          = "";
     public String email             = "";
-    public String streetAddress     = "";
-    public String zipCode           = "";
-    public String city              = "";
-    public String phoneNumber       = "";
+    */
+
+    public boolean isTermsOfUseApprovedAccepted = false;
+    public boolean payCash           = false;
+    public boolean paySwish          = false;
+    public boolean payBankCard       = false;
+    public boolean payIZettle        = false;
+    public String userIdentity       = "";
+    public String providerIdentity   = "";
+    public String streetAddress      = "";
+    public String zipCode            = "";
+    public String city               = "";
+    public String phoneNumber        = "";
 
     // Profile look up name
     @Indexed(unique = true, indexType = IndexType.LABEL)

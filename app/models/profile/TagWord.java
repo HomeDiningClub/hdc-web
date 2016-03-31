@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.support.index.IndexType;
 
 @NodeEntity
-public class TagWord  extends AbstractEntity {
+public class TagWord extends AbstractEntity {
 
 
     @Indexed(indexType = IndexType.FULLTEXT, indexName = "TagWordSearchTagName")

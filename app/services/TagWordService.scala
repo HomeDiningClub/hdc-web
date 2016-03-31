@@ -54,6 +54,13 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
     }
   }
 
+  def findByListOfId(list: List[UUID]): Option[List[TagWord]] = withTransaction(template){
+    val arrOfStrings = list.map(c => c.toString).toArray
+    tagWordRepository.findByListOfobjectId(arrOfStrings).asScala.toList match {
+      case null | Nil => None
+      case items => Some(items)
+    }
+  }
 
   //@Transactional(readOnly = true)
   def listByGroupOption(groupName: String): Option[List[TagWord]] = withTransaction(template){

@@ -1,5 +1,6 @@
 package models.formdata
 
+/*
 case class UserProfileForm(userName: String,
                             emailAddress: String,
                             firstName: String,
@@ -12,3 +13,4 @@ case class UserProfileForm(userName: String,
                             phoneNumber: String,
                             idNo: Long
                             ) {}
+                            */

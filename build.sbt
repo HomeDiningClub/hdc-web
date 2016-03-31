@@ -12,7 +12,7 @@ resolvers ++= Seq(
   "Spring releases" at "http://repo.springsource.org/release",
   "Spring milestones" at "http://repo.spring.io/milestone",
   "Spring Data snapshot" at "http://repo.springsource.org/snapshot/",
-  //"Spring Snapshots" at "http://maven.springframework.org/snapshot",
+  "Spring Snapshots" at "http://maven.springframework.org/snapshot", // spring-guice
   "Neo4j" at "http://m2.neo4j.org/content/repositories/releases/",
   "Rhinofly Internal Repository" at "http://maven-repository.rhinofly.net:8081/artifactory/libs-release-local",
   "tuxburner.github.io" at "http://tuxburner.github.io/repo",

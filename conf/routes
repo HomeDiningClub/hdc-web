@@ -33,9 +33,10 @@ GET         /profile/view/:profileName                           @controllers.Us
 GET         /profile/view-my-profile                             @controllers.UserProfileController.viewProfileByLoggedInUser
 GET         /profile/edit                                        @controllers.UserProfileController.edit
 POST        /profile/skicka                                      @controllers.UserProfileController.editSubmit
-GET         /profile/showtag                                     @controllers.UserProfileController.showTags
-POST        /profile/savetags                                    @controllers.UserProfileController.saveTags
+#GET         /profile/showtag                                     @controllers.UserProfileController.showTags
+#POST        /profile/savetags                                    @controllers.UserProfileController.saveTags
 GET         /profile/verify                                      @controllers.UserProfileController.verifyUserProfile
+GET         /profile/addFavorite                                 @controllers.UserProfileController.showFavoritesPage
 
 # Add favorit to UserProfile
 GET         /profile/favorite/add                                @controllers.UserProfileController.addFavorite(userCredentialObjectId : String)
@@ -85,45 +86,24 @@ POST        /rate/user                                           @controllers.Ra
 # Like
 POST        /like/user                                           @controllers.LikeController.likeSubmit
 
+# Messages
 POST        /apply/host                                          @controllers.MessagesController.applyToHost
 POST        /reply/guest                                         @controllers.MessagesController.replyToGuest
 
-# Login page
-#GET         /login                                               @securesocial.controllers.LoginPage.login
-#GET         /logout                                              @securesocial.controllers.LoginPage.logout
-
-# User Registration and password handling
-#GET         /signup                                              @securesocial.controllers.Registration.startSignUp
-#POST        /signup                                              @securesocial.controllers.Registration.handleStartSignUp
-#GET         /signup/:token                                       @securesocial.controllers.Registration.signUp(token)
-#POST        /signup/:token                                       @securesocial.controllers.Registration.handleSignUp(token)
-
-#GET         /reset                                               @securesocial.controllers.PasswordReset.startResetPassword
-#POST        /reset                                               @securesocial.controllers.PasswordReset.handleStartResetPassword
-#GET         /reset/:token                                        @securesocial.controllers.PasswordReset.resetPassword(token)
-#POST        /reset/:token                                        @securesocial.controllers.PasswordReset.handleResetPassword(token)
-
-#GET         /password                                            @securesocial.controllers.PasswordChange.page
-#POST        /password                                            @securesocial.controllers.PasswordChange.handlePasswordChange
-
-# Providers entry points
-#GET         /authenticate/:provider                              @securesocial.controllers.ProviderController.authenticate(provider)
-#POST        /authenticate/:provider                              @securesocial.controllers.ProviderController.authenticateByPost(provider)
-
-##GET        /not-authenticated                                   @securesocial.controllers.ProviderController.notAuthorizedPage
-
+# SecureSocial - User Registration and password handling
 ->          /auth                                                securesocial.Routes
 
-# TEST
+# Test
 #GET         /profile/loggain                                    @controllers.UserProfileController.login
 #GET         /worlds                                             @controllers.test.WorldController.index
-#GET         /perftest                                             @controllers.test.PerformanceTestController.index
-
+#GET         /perftest                                           @controllers.test.PerformanceTestController.index
+GET         /test/grund                                          @controllers.test.SecureTestController.testAction
+GET         /test/grund2                                         @controllers.test.SecureTestController.testAction2(callingString : String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                        controllers.Assets.at(path="/public", file)
 
-# IMAGE
+# Images
 GET         /listimages.json                                     @controllers.ImageController.listImages(selected: String ?= "")
 GET         /previmages.json                                     @controllers.ImageController.previewImages(selected: String ?= "")
 POST        /uploadimage.json                                    @controllers.ImageController.uploadImageSubmit
@@ -226,14 +206,9 @@ GET         /admin/file                                          @controllers.ad
 POST        /admin/file/add                                      @controllers.admin.AdminFileController.add
 GET         /admin/file/delete/:objectId                         @controllers.admin.AdminFileController.deleteImage(objectId: java.util.UUID)
 
+# ADMIN - Backups
 GET         /admin/backupjobb/list                               @controllers.admin.AdminBackupController.listAllBackupJobs
 GET         /admin/backupjobb/backup                             @controllers.admin.AdminBackupController.doBackup
-
-
-GET         /test/grund                                          @controllers.UserProfileController.testAction
-GET         /test/grund2                                         @controllers.UserProfileController.testAction2(callingString : String)
-GET         /profile/addFavorite                                 @controllers.UserProfileController.showFavoritesPage
-
 
 
 

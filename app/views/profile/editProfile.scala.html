@@ -1,14 +1,62 @@
-@(EnvDataForm: Form[models.viewmodels.EnvData],
-        profileOpts : controllers.UserProfileOptValues,
-        element: List[Type], klass: Types,
-        optionsLocationAreas: Option[Seq[(String,String)]] = None,
+@(profileDataForm: Form[UserProfileDataForm],
+        profileOptsForm: Form[UserProfileOptionsForm],
+        listOfTags: Option[List[models.profile.TagWord]],
+        optionsLocationAreas: Option[Seq[(String, String)]] = None,
         editingProfile: Option[UserProfile] = None,
         termsAndConditions: Option[models.content.ContentPage] = None,
         extraValues: models.viewmodels.EditProfileExtraValues)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
 
-@import b3.vertical.fieldConstructor
+@implicitFieldConstructor = @{
+    b3.horizontal.fieldConstructor("col-md-4", "col-md-4")
+}
+@widerFC = @{
+    b3.horizontal.fieldConstructor("col-md-4", "col-md-6")
+}
+@inlineFC = @{
+    b3.inline.fieldConstructor
+}
 
-@main(Messages("profile.create.title"), footerHtml = file.modalImages.render(messages)){
+@scrollIntoView = {
+    <script>
+    var form = $('form');
+    var navbar = $('.header-navbar');
+
+    // listen for `invalid` events on all form inputs
+    form.find(':input').on('invalid', function (event) {
+        var input = $(this);
+
+        // the first invalid element in the form
+        var first = form.find(':invalid').first();
+
+        // only handle if this is the first invalid input
+        if (input[0] === first[0]) {
+
+            // Mark the closest tab
+            var id = $(this).parents(".tab-pane").attr("id");
+            $(".nav.nav-tabs li a[href=#" + id + "]").trigger('click').closest('li').addClass('tab-has-error');
+
+            // height of the nav bar plus some padding
+            var navbarHeight = navbar.height() + 50;
+
+            // the position to scroll to (accounting for the navbar)
+            var elementOffset = input.offset().top - navbarHeight;
+
+            // the current scroll position (accounting for the navbar)
+            var pageOffset = window.pageYOffset - navbarHeight;
+
+            // don't scroll if the element is already in view
+            if (elementOffset > pageOffset && elementOffset < pageOffset + window.innerHeight) {
+                return true
+            }
+
+            // note: avoid using animate, as it prevents the validation message displaying correctly
+            $('html,body').scrollTop(elementOffset)
+        }
+    })
+    </script>
+}
+
+@main(Messages("profile.create.title"), footerHtml = file.modalImages.render(messages), footerScripts = scrollIntoView) {
 
     <div class="container maincontent-container">
         <div class="row">
@@ -21,53 +69,60 @@
 
                 @shared.flashmsg(flash)
 
-                @if(EnvDataForm.hasGlobalErrors) {
+                @if(profileDataForm.hasErrors || profileOptsForm.hasErrors) {
                     <div class="alert alert-error">
                         <a class="close" data-dismiss="alert">×</a>
                         @Messages("profile.form.unacceptedcontent")
-                        @for(v <-EnvDataForm.globalErrors){
-                        <br> @v.message
-                        }
+                        <ul>
+                            @if(profileDataForm.hasErrors){ @for(v <- profileDataForm.errors) { <li>@v.message</li> }}
+                            @if(profileOptsForm.hasErrors){ @for(v <- profileOptsForm.errors) { <li>@v.message</li> }}
+                        </ul>
                     </div>
                 }
             </div>
         </div>
         <div class="row">
-            @b3.form(action = routes.UserProfileController.editSubmit(), 'enctype -> "multipart/form-data"){
+        @b3.form(action = routes.UserProfileController.editSubmit(), 'enctype -> "multipart/form-data") {
             <div class="col-xs-12">
                 <nav>
-                    <ul class="nav nav-tabs nav-tabs-profile">
+                    <ul class="nav nav-tabs nav-justified nav-tabs-profile">
                         <li class="active"><a data-toggle="tab" href="#profile-tab-name" title="@Messages("profile.create.tabs.profile-name.food.title")">@Messages("profile.create.tabs.profile-name.food.name")</a></li>
                         <li><a data-toggle="tab" href="#profile-tab-about-me" title="@Messages("profile.create.tabs.about-me.title")">@Messages("profile.create.tabs.about-me.name")</a></li>
                         <li><a data-toggle="tab" href="#profile-tab-food" title="@Messages("profile.create.tabs.food.title")">@Messages("profile.create.tabs.food.name")</a></li>
                         <li><a data-toggle="tab" href="#profile-tab-personal-info" title="@Messages("profile.create.tabs.personal-information.title")">@Messages("profile.create.tabs.personal-information.name")</a></li>
                         <li><a data-toggle="tab" href="#profile-tab-host" title="@Messages("profile.create.tabs.host.title")">@Messages("profile.create.tabs.host.name")</a></li>
                         <li><a data-toggle="tab" href="#profile-tab-media" title="@Messages("profile.create.tabs.media.title")">@Messages("profile.create.tabs.media.name")</a></li>
-                        <li class="disabled"><a data-toggle="tab" href="#profile-tab-other" title="@Messages("profile.create.tabs.other.title")">@Messages("profile.create.tabs.other.name")</a></li>
                     </ul>
                 </nav>
             </div>
 
             <div class="tab-content">
                 <div class="tab-pane tab-hdc fade in active" id="profile-tab-name">
-                    <div class="col-xs-12">
-                        <h3 class="lead">@Messages("profile.create.header.profile-name")</h3>
-                        @b3.text(EnvDataForm("name"),
+                    <div class="col-xs-12 big-margin-top">
+                        @b3.text(profileDataForm("name"),
                             'id -> "name",
-                            '_showErrors -> true,
                             '_label -> Messages("profile.create.form.profilename"),
-                            '_help -> Messages("profile.create.form.profilename.required"),
-                            '_error -> EnvDataForm.error("name")
+                            '_help -> Messages("profile.create.form.profilename.required")
                         )
-                        @Html(Messages("profile.create.form.profilename.help"))
+                        @helper.inputHidden(profileDataForm("name2"),
+                            'id -> "name2",
+                            '_label -> Messages("profile.create.form.profilename"),
+                            '_help -> ""
+                        )
 
-                        @helper.inputHidden(EnvDataForm("name2"),
-                            'id -> "name",
-                            '_showErrors -> true,
-                            '_label -> Messages("profile.create.form.profilename"),
-                            '_help -> "",
-                            '_error -> EnvDataForm.error("name")
-                        )
+                        <div class="row"><div class="col-xs-12 col-md-push-4 col-md-6">@Html(Messages("profile.create.form.profilename.help"))<hr></div></div>
+
+                        @defining("<a data-toggle=\"modal\" href=\"#modalAcceptTerms\">" + Messages("profile.create.accept.link.text") + "&nbsp;<span class=\"glyphicon glyphicon-new-window\"></span></a>") { linkToTerms: String =>
+                            @defining(Html(Messages("profile.create.accept.help", linkToTerms))){ helpMessage: Html =>
+                                @b3.checkbox(profileDataForm("acceptTerms"),
+                                    'id -> "acceptTerms",
+                                    '_label -> Messages("profile.create.accept.label"),
+                                    '_text -> Messages("profile.create.accept.text")
+                                )
+                                <div class="row"><div class="col-xs-12 col-md-push-4 col-md-6">@helpMessage</div></div>
+                            }
+
+                        }
                     </div>
                 </div>
 
@@ -75,48 +130,66 @@
                     <div class="col-xs-12">
                         <h3 class="lead">@Messages("profile.create.header.about-me")</h3>
 
-                        @helper.inputText(EnvDataForm("aboutmeheadline"),
+                        @b3.text(profileDataForm("aboutmeheadline"),
                             'id -> "aboutmeheadline",
-                            '_showErrors -> true,
                             '_label -> Messages("profile.create.form.aboutmeheadline"),
-                            '_help -> Messages("profile.create.form.aboutmeheadline.help"),
-                            '_error -> EnvDataForm.error("aboutmeheadline")
+                            '_help -> Messages("profile.create.form.aboutmeheadline.help")
                         )
 
                         <hr>
-                        <label>@Messages("profile.create.form.avatar-image")</label><br>
-                        @file.previewField(previewId = "inputchooseavatarimg", Messages("profile.create.form.avatar-image-preview"), blnShowText = false, prePopulatedWith = extraValues.avatarImagePrev)
-                        @file.openModalButton(btnId = "btnchooseavatarimg", inputSelector = "inputchooseavatarimg", selectorMaxItems = extraValues.avatarImageMaxNr, btnText = Messages("profile.create.form.avatar-image-btn"))
-                        @helper.inputHidden(EnvDataForm("avatarimage"), 'id -> "inputchooseavatarimg")
+                        <div class="form-group">
+                            <label class="control-label col-md-4">@Messages("profile.create.form.avatar-image")</label>
+                            <div class="col-md-8">
+                                @file.previewField(previewId = "inputchooseavatarimg", Messages("profile.create.form.avatar-image-preview"), blnShowText = false, prePopulatedWith = extraValues.avatarImagePrev)
+                                @file.openModalButton(btnId = "btnchooseavatarimg", inputSelector = "inputchooseavatarimg", selectorMaxItems = extraValues.avatarImageMaxNr, btnText = Messages("profile.create.form.avatar-image-btn"))
+                                @helper.inputHidden(profileDataForm("avatarimage"), 'id -> "inputchooseavatarimg")
+                            </div>
+                        </div>
                         <hr>
 
-
-                        @helper.textarea(EnvDataForm("aboutme"),
+                        @b3.textarea(profileDataForm("aboutme"),
                             'id -> "aboutme",
-                            '_showErrors -> true,
                             'class -> "richtext-extra",
                             '_label -> Messages("profile.create.form.aboutme"),
-                            '_help -> Messages("profile.create.form.aboutme.help"),
-                            '_error -> EnvDataForm.error("aboutme")
-                        )
+                            '_help -> Messages("profile.create.form.aboutme.help")
+                        )(widerFC, messages)
 
                         <hr>
-                        <label>@Messages("profile.create.form.main-image")</label><br>
-                        @file.previewField(previewId = "inputchoosemainimage", Messages("profile.create.form.main-image-preview"), blnShowText = false, prePopulatedWith = extraValues.mainImagePrev)
-                        @file.openModalButton(btnId = "btnchoosemainimage", inputSelector = "inputchoosemainimage", selectorMaxItems = extraValues.mainImageMaxNr, btnText = Messages("profile.create.form.main-image-btn"))
-                        @helper.inputHidden(EnvDataForm("mainimage"), 'id -> "inputchoosemainimage")
+                        <div class="form-group">
+                            <label class="control-label col-md-4">@Messages("profile.create.form.main-image")</label>
+                            <div class="col-md-8">
+                                @file.previewField(previewId = "inputchoosemainimage", Messages("profile.create.form.main-image-preview"), blnShowText = false, prePopulatedWith = extraValues.mainImagePrev)
+                                @file.openModalButton(btnId = "btnchoosemainimage", inputSelector = "inputchoosemainimage", selectorMaxItems = extraValues.mainImageMaxNr, btnText = Messages("profile.create.form.main-image-btn"))
+                                @helper.inputHidden(profileDataForm("mainimage"), 'id -> "inputchoosemainimage")
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="tab-pane tab-hdc fade" id="profile-tab-food">
                     <div class="col-xs-12">
                         <h3 class="lead">@Messages("profile.create.header.food")</h3>
-                        <!-- Tags -->
-                        @for(t <- element) {
-                            <input type="checkbox" id="@t.name" name="@t.v" value="@t.name" @klass.getString(t.name)>
-                            &nbsp;
-                            <label for="@t.name" class="notbold">@t.name</label><br>
-                        }
+
+                            <!-- Tags -->
+                        <div class="form-group">
+                            <label class="control-label col-md-4">@Messages("profile.create.header.food-label")</label>
+
+                            @if(listOfTags.nonEmpty){
+                                <div class="col-xs-12 col-md-2">
+                                    @for((t: models.profile.TagWord, index) <- listOfTags.get.zipWithIndex) {
+                                        @defining(index % 9 == 0 && index > 0) { colBreak: Boolean =>
+                                            @if(colBreak) { @Html("</div><div class='col-xs-12 col-md-2'>") }
+                                            @defining(if(profileOptsForm.get.tagList.nonEmpty && profileOptsForm.get.tagList.get.exists(b => b.value == t.objectId.toString)) {"checked"} else {""}) { selectedValue: String =>
+                                                @defining("tagList["+index+"]") { tagNumber: String =>
+                                                    <input type="checkbox" id="@(tagNumber + ".value")" name='@(tagNumber + ".value")' value="@t.objectId" @selectedValue> &nbsp; <label for="@(tagNumber + ".value")" class="notbold">@t.tagName</label><br>
+                                                }
+                                            }
+                                        }
+                                    }
+                                </div>
+                            }
+
+                        </div>
                     </div>
                 </div>
 
@@ -124,178 +197,110 @@
                     <div class="col-xs-12">
                         <h3 class="lead">@Messages("profile.create.header.personal-information")</h3>
 
-                        <!--
-                        <br>Förnamn
-                        <br><input type="text" value="" name="firstName">
-
-                        <br>Efternamn
-                        <br><input type="text" value="" name="lastName">
-                        <br>E-postadress:
-                        <br><input type="text" value="" name="emailAddress">
-                        -->
-
-                        <!-- firstName -->
-                        @helper.inputText(EnvDataForm("firstName"),
+                            <!-- firstName -->
+                        @b3.text(profileDataForm("firstName"),
                             'id -> "firstName",
-                            '_showErrors -> true,
                             '_label -> Messages("profile.create.form.firstName"),
-                            '_help -> Messages("profile.create.form.firstName.help"),
-                            '_error -> EnvDataForm.error("firstName")
+                            '_help -> Messages("profile.create.form.firstName.help")
                         )
 
-                        <!-- lastName -->
-                        @helper.inputText(EnvDataForm("lastName"),
+                            <!-- lastName -->
+                        @b3.text(profileDataForm("lastName"),
                             'id -> "lastName",
-                            '_showErrors -> true,
                             '_label -> Messages("profile.create.form.lastName"),
-                            '_help -> Messages("profile.create.form.lastName.help"),
-                            '_error -> EnvDataForm.error("lastName")
+                            '_help -> Messages("profile.create.form.lastName.help")
                         )
 
 
-                        <!-- e-mailaddress -->
-                        @helper.inputText(EnvDataForm("emailAddress"),
-                            'id -> "name",
-                            '_showErrors -> true,
+                            <!-- e-mailaddress -->
+                        @b3.text(profileDataForm("emailAddress"),
+                            'id -> "emailAddress",
                             '_label -> Messages("profile.create.form.emailAddress"),
-                            '_help -> Messages("profile.create.form.emailAddress.required"),
-                            '_error -> EnvDataForm.error("emailAddress")
+                            '_help -> Messages("profile.create.form.emailAddress.required")
                         )
 
 
-                        @helper.inputHidden(EnvDataForm("emailAddress2"),
-                            'id -> "name",
-                            '_showErrors -> true,
+                        @helper.inputHidden(profileDataForm("emailAddress2"),
+                            'id -> "emailAddress2",
                             '_label -> Messages("profile.create.form.emailAddress"),
-                            '_help -> "",
-                            '_error -> EnvDataForm.error("emailAddress2")
+                            '_help -> ""
                         )
 
 
-
-
-
-
-
-                        @helper.inputText(EnvDataForm("streetAddress"),
+                        @b3.text(profileDataForm("streetAddress"),
                             'id -> "streetAddress",
-                            '_showErrors -> true,
                             '_label -> Messages("profile.create.form.streetAddress"),
-                            '_help -> Messages("profile.create.form.streetAddress.help"),
-                            '_error -> EnvDataForm.error("streetAddress")
+                            '_help -> Messages("profile.create.form.streetAddress.help")
                         )
 
-                        @helper.inputText(EnvDataForm("zipCode"),
+                        @b3.text(profileDataForm("zipCode"),
                             'id -> "zipCode",
-                            '_showErrors -> true,
                             '_label -> Messages("profile.create.form.zipCode"),
-                            '_help -> Messages("profile.create.form.zipCode.help"),
-                            '_error -> EnvDataForm.error("zipCode")
+                            '_help -> Messages("profile.create.form.zipCode.help")
                         )
 
-                        @helper.inputText(EnvDataForm("city"),
+                        @b3.text(profileDataForm("city"),
                             'id -> "city",
-                            '_showErrors -> true,
                             '_label -> Messages("profile.create.form.city"),
-                            '_help -> Messages("profile.create.form.city.help"),
-                            '_error -> EnvDataForm.error("city")
+                            '_help -> Messages("profile.create.form.city.help")
                         )
 
-                        @if(!optionsLocationAreas.isEmpty) {
-                            @helper.select(EnvDataForm("county"),
+                        @if(optionsLocationAreas.isDefined) {
+                            @b3.select(profileDataForm("county"),
                                 optionsLocationAreas.get,
                                 '_label -> Messages("profile.create.form.area"),
-                                '_error -> EnvDataForm.error("county")
+                                'value -> profileDataForm("county").value
                             )
                         }
 
-
-                        @helper.inputText(EnvDataForm("phoneNumber"),
+                        @b3.text(profileDataForm("phoneNumber"),
                             'id -> "phoneNumber",
-                            '_showErrors -> true,
                             '_label -> Messages("profile.create.form.phoneNumber"),
-                            '_help -> Messages("profile.create.form.phoneNumber.help"),
-                            '_error -> EnvDataForm.error("phoneNumber")
+                            '_help -> Messages("profile.create.form.phoneNumber.help")
                         )
 
-                        @helper.inputText(EnvDataForm("personnummer"),
+                        @b3.text(profileDataForm("personnummer"),
                             'id -> "personnummer",
-                            '_showErrors -> true,
                             '_label -> Messages("profile.create.form.personnummer"),
-                            '_help -> Messages("profile.create.form.personnummer.help"),
-                            '_error -> EnvDataForm.error("personnummer")
+                            '_help -> Messages("profile.create.form.personnummer.help")
                         )
 
-                        <a class="btn" href="@securesocial.controllers.routes.PasswordReset.startResetPassword">@Messages("hdc.securesocial.login.newPassword")</a>
-
+                        <label class="control-label col-md-4">@Messages("hdc.securesocial.login.newPassword-label")</label>
+                        <div class="col-md-4">
+                            <a class="btn btn-warning" href="@securesocial.controllers.routes.PasswordReset.startResetPassword">@Messages("hdc.securesocial.login.newPassword")</a>
+                        </div>
                     </div>
                 </div>
 
                 <div class="tab-pane tab-hdc fade" id="profile-tab-host">
                     <div class="col-xs-12">
                         <h3 class="lead">@Messages("profile.create.header.host")</h3>
-                        <!-- Gäst och värd -->
-                        <input type="checkbox" name="roleHost" id="roleHost" value="VÄRD" @profileOpts.isroleHost>&nbsp;<label for="roleHost">@Messages("profile.create.form.host")</label>
-
+                        <!-- Choice of Guest and host -->
+                        @b3.checkbox(profileOptsForm("wantsToBeHost"),
+                            'id -> "wantsToBeHost",
+                            '_text -> Messages("profile.create.form.host-text"),
+                            '_label -> Messages("profile.create.form.host-label")
+                        )
                         <hr>
 
-                        <!--  New input -->
-
-                        @Messages("profile.create.form.host.childfriendly")
-                        <br>
-                        <input type="radio" name="childFfriendly" value="Ja"  @profileOpts.childFfriendlyJa()>@Messages("profile.create.form.host.yes")
-                        <input type="radio" name="childFfriendly" value="Nej" @profileOpts.childFfriendlyNej()>@Messages("profile.create.form.host.no")
-
-                        <br>
-
-                        @Messages("profile.create.form.host.handicapfriendly")
-                        <br>
-                        <input type="radio" name="handicapFriendly" value="Ja"  @profileOpts.handicapFriendlyJa()>@Messages("profile.create.form.host.yes")
-                        <input type="radio" name="handicapFriendly" value="Nej" @profileOpts.handicapFriendlyNej()>@Messages("profile.create.form.host.no")
-
-                        <br>
-
-                        @Messages("profile.create.form.host.pets")
-                        <br>
-                        <input type="radio" name="havePets" value="Ja"  @profileOpts.havePetsJa()>@Messages("profile.create.form.host.yes")
-                        <input type="radio" name="havePets" value="Nej" @profileOpts.havePetsNej()>@Messages("profile.create.form.host.no")
-
-                        <br>
-                        @Messages("profile.create.form.host.smoking")
-                        <br>
-                        <input type="radio" name="smoke" value="Ja"  @profileOpts.smokingPermittedJa()>@Messages("profile.create.form.host.yes")
-                        <input type="radio" name="smoke" value="Nej" @profileOpts.smokingPermittedNej()>@Messages("profile.create.form.host.no")
-
-
-                        @helper.inputRadioGroup(
-                            EnvDataForm("allkoholServing"),
-                            options = helper.options("Ta med eget"->Messages("profile.create.form.host.alcohol.option1"),"Tillhandahålls"->Messages("profile.create.form.host.alcohol.option2"), "Nej"->Messages("profile.create.form.host.alcohol.option3")),
-                            '_label -> Messages("profile.create.form.host.alcohol")
+                        <!-- Payment options -->
+                        @b3.checkbox(profileOptsForm("payCash"),
+                            'id -> "payCash",
+                            '_text -> Messages("profile.payment.cash"),
+                            '_label -> Messages("profile.create.form.host.payment.header")
                         )
-                        <br><br>
-
-                        <h4>@Messages("profile.create.form.host.payment.header")</h4>
-                        <div class="well well-hdc">
-                            <input type="checkbox" id="payCache" name="payCache" value="Kontanter" @profileOpts.ispayCache>&nbsp;<label for="payCache">@Messages("profile.payment.cash")</label><br>
-                            <input type="checkbox" id="paySwish" name="paySwish" value="Swish" @profileOpts.ispaySwish>&nbsp;<label for="paySwish">@Messages("profile.payment.Swish")</label><br>
-                            <input type="checkbox" id="payBankCard" name="payBankCard" value="Banköverföring" @profileOpts.ispayBankCard>&nbsp;<label for="payBankCard">@Messages("profile.payment.banktransfer")</label><br>
-                            <input type="checkbox" id="payIZettle" name="payIZettle" value="IZettle" @profileOpts.ispayIZettle>&nbsp;<label for="payIZettle">@Messages("profile.payment.izettle")</label><br>
-                        </div>
-
-
-                        <select name="minGuest" id="minGuest">
-                        @for(col <- List.range(1,11)) {
-                            <option value="@col" @profileOpts.minGuestsSelected(col.toString)>@col</option>
-                        }
-                        </select>
-                        <label for="minGuest">@Messages("profile.groupsize.min")</label><br>
-
-                        <select name="maxGuest" id="maxGuest">
-                        @for(col <- List.range(1,21)) {
-                            <option value="@col" @profileOpts.maxGuestsSelected(col.toString)>@col</option>
-                        }
-                        </select>
-                        <label for="maxGuest">@Messages("profile.groupsize.max")</label><br>
+                        @b3.checkbox(profileOptsForm("paySwish"),
+                            'id -> "paySwish",
+                            '_text -> Messages("profile.payment.Swish")
+                        )
+                        @b3.checkbox(profileOptsForm("payBankCard"),
+                            'id -> "payBankCard",
+                            '_text -> Messages("profile.payment.banktransfer")
+                        )
+                        @b3.checkbox(profileOptsForm("payIZettle"),
+                            'id -> "payIZettle",
+                            '_text -> Messages("profile.payment.izettle")
+                        )
 
                     </div>
                 </div>
@@ -303,40 +308,26 @@
                 <div class="tab-pane tab-hdc fade" id="profile-tab-media">
                     <div class="col-xs-12">
                         <h3 class="lead">@Messages("profile.create.header.media")</h3>
-                        @file.openModalButton(btnId = "btneditmedia", btnText = Messages("profile.create.form.open-media-btn"), editMode = true)
+                        <div class="form-group">
+                            <label class="control-label col-md-4">@Messages("profile.create.label.media")</label>
+                            <div class="col-md-4">
+                                @file.openModalButton(btnId = "btneditmedia", btnText = Messages("profile.create.form.open-media-btn"), editMode = true)
+                            </div>
+                        </div>
                         <hr>
                     </div>
                 </div>
-
-                <div class="tab-pane tab-hdc fade" id="profile-tab-other">
-                    <div class="col-xs-12">
-                        <h3 class="lead">@Messages("profile.create.header.other")</h3>
-
-                        <hr>
-                    </div>
-                </div>
-
             </div>
 
-            <div class="col-xs-12 text-center margin-top">
+            <div class="col-xs-12 text-center">
                 <hr>
-                @defining("<a data-toggle=\"modal\" href=\"#modalAcceptTerms\">" + Messages("profile.create.accept.link.text") + "&nbsp;<span class=\"glyphicon glyphicon-new-window\"></span></a>"){ linkToTerms: String =>
-                        @helper.checkbox(EnvDataForm("acceptTerms"),
-                            '_label -> Messages("profile.create.accept.label"),
-                            '_showErrors -> true,
-                            '_help -> "",
-                            'style -> "display:inline;"
-                        )
-                        @play.twirl.api.Html(Messages("profile.create.accept.help", linkToTerms))
-                }
+                <input class="btn btn-primary btn-lg" type="submit" value="@Messages("profile.create.save")">
             </div>
 
-            <div class="col-xs-12">
-                <input class="btn btn-primary pull-right" type="submit" value="@Messages("profile.create.save")">
-            </div>
-            }
+        }
         </div>
     </div>
+
 
 
 
@@ -347,20 +338,20 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">@Messages("profile.create.accept.modal.close")</span></button>
                     <h4 class="modal-title" id="modalAcceptTermsLabel">
-                        @if(termsAndConditions.nonEmpty){
-                            @termsAndConditions.get.title
-                        }else{
-                            @Messages("profile.create.accept.modal.header")
-                        }
+                    @if(termsAndConditions.nonEmpty) {
+                        @termsAndConditions.get.title
+                    } else {
+                        @Messages("profile.create.accept.modal.header")
+                    }
                     </h4>
                 </div>
                 <div class="modal-body">
-                    @if(termsAndConditions.nonEmpty){
-                        @Html(termsAndConditions.get.preamble)
-                        @Html(termsAndConditions.get.mainBody)
-                    }else{
-                        @Messages("profile.create.accept.modal.body")
-                    }
+                @if(termsAndConditions.nonEmpty) {
+                    @Html(termsAndConditions.get.preamble)
+                    @Html(termsAndConditions.get.mainBody)
+                } else {
+                    @Messages("profile.create.accept.modal.body")
+                }
 
                 </div>
                 <div class="modal-footer">
