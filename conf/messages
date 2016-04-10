@@ -406,12 +406,22 @@ event.edit.index.header=Dine
 event.edit.add.header=Lägg till / Redigera bjudning
 event.edit.add.name=Namn
 event.edit.add.name.validation=(Min 6, max 60 tecken)
-event.edit.add.name.help-text=<em><strong>Ett namn på ditt event, som beskriver din bjudning t.ex.:</strong><br>Sommarfest: Svenska härligheter<br>Fransk middag<br>Brunch med skaldjurstvist<br></em>
-event.edit.add.body=Menu (Huvudsaklig text)
-event.edit.add.body.help-text=<em><strong>Skriv din menu:</strong><br></em>
+event.edit.add.name.help-text=<em><strong>Ett namn på din bjudning, som beskriver din bjudning t.ex.:</strong><br>Sommarfest: Svenska härligheter<br>Fransk middag<br>Brunch med skaldjurstvist<br></em>
+event.edit.add.body=Meny / Huvudsaklig text
+event.edit.add.body.validation=Din huvudsakliga text bör vara tillräckligt lång så att dina besökare förstår vad de beställer.
+event.edit.add.body.help-text=Här beskriver du vad som ingår i ditt event, om det t.ex. är en vinprovning så kan du visa vilka viner som serveras, eller om det är en middag, vad som serveras till förrätt, huvudrätt och efterrätt.
 event.edit.add.preamble=Citat (valfritt)
 event.edit.add.preamble.validation=(Max 150 tecken)
 event.edit.add.preamble.help-text=<em><strong>Ett kort citat för att sälja in din bjudning:</strong><br>"Gott helt enkelt, italiensk pasta när den är som bäst."<br></em>
+event.edit.add.date=Välj datum & tid
+event.edit.add.date.help=(YYYY-MM-DD HH:MM)
+event.edit.add.date.validation=Ditt datum & tid måste vara av korrekt format: (YYYY-MM-DD HH:MM)
+
+event.edit.add.date-time.help-text=Här kan du välja ett eller flera datum
+event.edit.add.date-time.add-date=Lägg till fler datum & tider
+event.edit.add.date-time.remove-date=Ta bort
+event.edit.add.date-time.remove-date.guests-booked=Du kan inte ta bort en tid där gäster redan har bokat
+
 event.edit.add.main-image=Huvudsaklig bild för din bjudning
 event.edit.add.main-image-preview=Förhandsgranskning
 event.edit.add.main-image-btn=Välj bild

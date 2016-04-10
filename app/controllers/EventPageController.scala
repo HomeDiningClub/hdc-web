@@ -5,6 +5,7 @@ import javax.inject.{Named, Inject}
 import models.files.ContentFile
 import models.jsonmodels.{EventBoxJSON}
 import org.springframework.stereotype.{Controller => SpringController}
+import play.api.data.Form
 import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
 import models.{UserCredential, Event}
@@ -185,6 +186,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
   // Edit - Add Content
   def evtForm = eventService.eventFormMapping
+
   private def setExtraValues(item: Option[Event] = None): EditEventExtraValues = {
 
     if(item.isDefined){
@@ -226,7 +228,18 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
 
   def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
-    Ok(views.html.event.addOrEdit(eventForm = evtForm, extraValues = setExtraValues(None)))
+
+    val defaultForm = EventForm(
+      name = "",
+      preAmble = None,
+      id = None,
+      mainBody = None,
+      mainImage = None,
+      images = None,
+      eventDates = None
+      )
+
+    Ok(views.html.event.addOrEdit(eventForm = evtForm.fill(defaultForm), extraValues = setExtraValues(None)))
   }
 
   def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
