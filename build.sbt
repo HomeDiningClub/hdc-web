@@ -62,7 +62,7 @@ libraryDependencies ++= Seq(
   "commons-codec" % "commons-codec" % "1.9" withSources(),
   //"javax.enterprise" % "cdi-api" % "1.0-SP4",
   //"com.adrianhurt" %% "play-bootstrap3" % "0.4.4"
-  "com.adrianhurt" %% "play-bootstrap" % "1.0-P24-B3-SNAPSHOT" excludeAll(ExclusionRule(organization = "org.webjars", name="jquery"), ExclusionRule(organization = "org.webjars", name="bootstrap")) withSources()
+  "com.adrianhurt" %% "play-bootstrap" % "1.1-P24-B3-SNAPSHOT" excludeAll(ExclusionRule(organization = "org.webjars", name="jquery"), ExclusionRule(organization = "org.webjars", name="bootstrap")) withSources()
   //"com.typesafe.play" %% "play-plugins-util" % "2.4.0",
   //"nl.rhinofly" %% "play-s3" % "3.3.4",
   //"se.digiplant" %% "play-scalr" % "1.1.2",
@@ -98,6 +98,10 @@ scalacOptions ++= Seq(
   "-Ywarn-nullary-override", // Warn when non-nullary overrides nullary, e.g. def foo() over def foo.
   "-Ywarn-numeric-widen" // Warn when numerics are widened.
 )
+
+// Run Grunt tasks
+//PlayKeys.playRunHooks += Grunt(baseDirectory.value)
+//baseDirectory.map(base => GruntRunner(base / "app" / "assets"))
 
 // Enabled Less rendering
 includeFilter in (Assets, LessKeys.less) := "*.less"
