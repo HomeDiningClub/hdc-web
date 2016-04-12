@@ -1,5 +1,5 @@
 
-function initMultiForm(formValRules){
+function initMultiForm(formValRules, dateRules){
     var current = 1;
 
     widget      = $(".step");
@@ -54,6 +54,10 @@ function initMultiForm(formValRules){
     // Validation rules
     form.validate(formValRules);
 
+    $('.date-input').each(function() {
+        $(this).rules('add', dateRules);
+    });
+
 }
 
 // Change progress bar action
@@ -61,7 +65,7 @@ setProgress = function(currstep){
     var percent = parseFloat(100 / widget.length) * currstep;
     percent = percent.toFixed();
     progressBar.css("width",percent+"%").html(percent+"%");
-}
+};
 
 // Hide buttons according to the current step
 hideButtons = function(current){
@@ -77,5 +81,5 @@ hideButtons = function(current){
         btnabort.show();
         btndelete.show();
     }
-}
+};
 

@@ -12,13 +12,27 @@
         var formValRules = {
             ignore:":not(:visible)",
             rules: {
-                name : "required"
+                name: {
+                    required: true,
+                    minlength: 6,
+                    maxlength: 60
+                },
+                body: {
+                    required: true
+                }
             },
             messages: {
-                name: {
-                    required: '@{Messages("event.edit.add.name.validation")}'
+                name: '@{Messages("event.edit.add.name.validation")}',
+                body: {
+                    required: '@{Messages("event.edit.add.body.validation")}'
                 }
             }
+        };
+
+        var dateRules = {
+            required: true,
+            dateISO: true,
+            messages: '@{Messages("event.edit.add.date.validation")}'
         };
 
         var dateTimePickerOptions = {
@@ -30,39 +44,30 @@
 
         $(".date input[type=datetime]").datetimepicker(dateTimePickerOptions);
         $(".remove-button").on("click", removeDate);
+        $(".add-more-dates").on("click", {dateTimePickerOptions: dateTimePickerOptions, dateRules: dateRules }, cloneDate);
 
-/*
-        function dateTemplate(){
-            var str = '' +
-            '<div id="orig-date-group" class="input-group date">'
-            '<div class="form-group date" id="eventDates_0_date_field">'
-    		'<label class="control-label" for="eventDates_0_date"><span class="glyphicon glyphicon-calendar"></span>&nbsp;Välj datum &amp; tid</label>'
-	        '<input id="eventDates_0_date" name="eventDates[0].date" value="" aria-describedby="eventDates_0_date_info_0 eventDates_0_date_error_0" aria-invalid="false" class="form-control" type="datetime">'
-			'<span style="display: none;" id="eventDates_0_date_error_0" class="help-block"></span>'
-			'<span style="display: none;" id="eventDates_0_date_info_0" class="help-block"></span>'
-            '</div>'
-            '<input id="eventDates_0_id" name="eventDates[0].id" value="" type="hidden">'
-            '<input id="eventDates_0_guestsbooked" name="eventDates[0].guestsbooked" value="" type="hidden">'
-        }
-*/
-        $("#add-more-dates").click(function(){
-           var $dateContainer = $("#date-container");
-           var $dateClone = $("#orig-date-group").clone();
-           var nrOfDates = $dateContainer.children().length;
-
-           $dateClone = $dateClone.removeAttr("id").html(function(i, oldHTML) {
-            // Replaces _0_ and [0] and removes any values
-            oldHTML = oldHTML.replace(/value\=\"._\"/gi, "value=\"\"");
-            return oldHTML.replace(/0/gi, nrOfDates);
-           });
-           $dateClone.find("input[type=datetime]").datetimepicker(dateTimePickerOptions);
-           $dateClone.find(".remove-button").removeClass("hidden").on("click", removeDate);
-           $dateContainer.append($dateClone);
-        });
-
-        initMultiForm(formValRules);
+        initMultiForm(formValRules, dateRules);
 
     });
+
+    function cloneDate(event, dateTimePickerOptions, dateRules){
+       var $dateContainer = $("#date-container");
+       var $dateClone = $("#orig-date-group").clone();
+       var nrOfDates = $dateContainer.children().length;
+
+       $dateClone = $dateClone.removeAttr("id").html(function(i, oldHTML) {
+        // Replaces _0_ and [0] and removes any values
+        oldHTML = oldHTML.replace(/value\=\"._\"/gi, "value=\"\"");
+        return oldHTML.replace(/0/gi, nrOfDates);
+       });
+       $dateClone.addClass('big-margin');
+       $dateClone.find("input[type=datetime]").datetimepicker(dateTimePickerOptions);
+       $dateClone.find(".remove-button").removeClass("hidden").on("click", removeDate);
+       $dateContainer.append($dateClone);
+       $dateContainer.find(".date-input").each(function() {
+            $(this).rules("remove").rules("add", dateRules);
+       });
+    }
 
     function removeDate(){
         var $this = $(this);
@@ -92,7 +97,7 @@
                 @b3.form(action=controllers.routes.EventPageController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-multistep"){
                     <fieldset>
                         <div class="step">
-                            @helper.inputText(eventForm("name"), '_label -> Messages("event.edit.add.name"), '_error -> Messages("event.edit.add.name.validation"))
+                            @helper.inputText(eventForm("name"), '_label -> Messages("event.edit.add.name"), '_help -> Messages("event.edit.add.name.validation"), '_error -> Messages("event.edit.add.name.validation"))
                             <div class="margin-top">@Html(Messages("event.edit.add.name.help-text"))</div>
                         </div>
 
@@ -111,7 +116,7 @@
                                 <div id="date-container" class="col-xs-12 col-md-4">
                                     @helper.repeat(field = eventForm("eventDates"), min = 1) { eventDatesField =>
                                         <div id="orig-date-group" class="input-group date">
-                                            @b3.datetime(eventDatesField("date"), '_label -> Html("<span class=\"glyphicon glyphicon-calendar\"></span>&nbsp;" + Messages("event.edit.add.date")), '_help -> Messages("event.edit.add.date.help"), '_error -> Messages("event.edit.add.date.validation"), '_class -> "date")
+                                            @b3.datetime(eventDatesField("date"), 'class -> "date-input", '_label -> Html("<span class=\"glyphicon glyphicon-calendar\"></span>&nbsp;" + Messages("event.edit.add.date")), '_help -> Messages("event.edit.add.date.help"), '_error -> Messages("event.edit.add.date.validation"), '_class -> "date")
                                             @helper.inputHidden(eventDatesField("id"))
                                             @helper.inputHidden(eventDatesField("guestsbooked"), '_class -> "guestsbooked")
                                             @b3.button('class -> "remove-button btn btn-danger hidden", '_title -> Messages("event.edit.add.date-time.remove-date")){ <span class="glyphicon glyphicon-remove"></span> }
@@ -126,7 +131,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-xs-6">
-                                    @b3.button('id -> "add-more-dates", 'class -> "btn btn-default"){ <span class="glyphicon glyphicon-plus"></span> @Messages("event.edit.add.date-time.add-date") }
+                                    @b3.button('id -> "add-more-dates", 'class -> "btn btn-default add-more-dates"){ <span class="glyphicon glyphicon-plus"></span> @Messages("event.edit.add.date-time.add-date") }
                                 </div>
                             </div>
                         </div>
