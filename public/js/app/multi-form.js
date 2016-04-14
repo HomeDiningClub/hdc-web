@@ -1,5 +1,5 @@
 
-function initMultiForm(formValRules, dateRules){
+function initMultiForm(form, formValRules, dateRules){
     var current = 1;
 
     widget      = $(".step");
@@ -9,7 +9,6 @@ function initMultiForm(formValRules, dateRules){
     btndelete   = $(".delete");
     btnabort    = $(".abort");
     progressBar = $(".progress-bar");
-    form        = $(".form-multistep");
 
     // Init buttons and UI
     widget.not(':eq(0)').hide();
@@ -52,11 +51,14 @@ function initMultiForm(formValRules, dateRules){
     });*/
 
     // Validation rules
+    $.validator.addClassRules("date-input", dateRules);
     form.validate(formValRules);
 
-    $('.date-input').each(function() {
-        $(this).rules('add', dateRules);
+    /*
+    $(".date-input").each(function() {
+        $(this).rules("add", dateRules);
     });
+    */
 
 }
 

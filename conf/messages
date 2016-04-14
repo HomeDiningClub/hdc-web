@@ -415,7 +415,8 @@ event.edit.add.preamble.validation=(Max 150 tecken)
 event.edit.add.preamble.help-text=<em><strong>Ett kort citat för att sälja in din bjudning:</strong><br>"Gott helt enkelt, italiensk pasta när den är som bäst."<br></em>
 event.edit.add.date=Välj datum & tid
 event.edit.add.date.help=(YYYY-MM-DD HH:MM)
-event.edit.add.date.validation=Datum & tid måste vara av korrekt format: (YYYY-MM-DD HH:MM)
+event.edit.add.date.validation.required=*
+event.edit.add.date.validation.format=YYYY-MM-DD HH:MM
 
 event.edit.add.date-time.help-text=Här kan du välja ett eller flera datum
 event.edit.add.date-time.add-date=Lägg till fler datum & tider

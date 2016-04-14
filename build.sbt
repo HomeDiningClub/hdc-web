@@ -108,6 +108,11 @@ includeFilter in (Assets, LessKeys.less) := "*.less"
 
 LessKeys.compress in Assets := true
 
+// Don't reload app when editing public static resources
+watchSources := (watchSources.value
+  --- baseDirectory.value / "app/assets" ** "*"
+  --- baseDirectory.value / "public"     ** "*").get
+
 // For debugging when getting weird route compiler errors
 //sourcePositionMappers := Nil
 
