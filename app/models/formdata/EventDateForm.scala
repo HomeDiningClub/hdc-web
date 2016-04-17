@@ -5,6 +5,7 @@ import java.util.Date
 case class EventDateForm (
                           id: Option[String],
                           date: Date,
-                          guestsBooked: Int
+                          time: String,
+                          guestsBooked: Int = 0
                        )
 { }

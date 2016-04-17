@@ -1,7 +1,7 @@
 package customUtils
 
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.{UUID, Date}
 import javax.inject.{Named, Inject}
 
 import models.base.AuditEntity
@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import customUtils.security.SecureSocialRuntimeEnvironment
 import org.springframework.stereotype.{Controller => SpringController}
 import scala.language.postfixOps
+import scala.util.matching.Regex
 
 //@Named
 object Helpers {
@@ -82,6 +83,23 @@ object Helpers {
     }
   }
   */
+
+  def isValidUuid(uuid: String): Boolean = {
+    if(uuid.matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")){
+      true
+    }else{
+      false
+    }
+  }
+
+  def isValidTime(time: String): Boolean = {
+    if(time.matches("[0-9]{2}:[0-9]{2}")){
+      true
+    }else{
+      false
+    }
+  }
+
 
   def getDateForSharing(auditEntry: AuditEntity): String = {
     auditEntry.getLastModifiedDate match {

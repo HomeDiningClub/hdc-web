@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import traits.TransactionSupport
 import scala.language.existentials
 import repositories._
@@ -28,19 +29,10 @@ import org.joda.time.DateTime
 import play.api.Logger
 import models.formdata.{EventDateForm, EventForm}
 
-//@Named
-//@Service
 class EventService @Inject()(val template: Neo4jTemplate,
                              val eventRepository: EventRepository,
-                             val mealTypeService: MealTypeService) extends TransactionSupport {
-
-  /*
-  @Autowired
-  private var template: Neo4jTemplate = _
-
-  @Autowired
-  private var eventRepository: EventRepository = _
-*/
+                             val mealTypeService: MealTypeService,
+                             val messagesApi: MessagesApi) extends TransactionSupport with I18nSupport {
 
   //@Transactional(readOnly = true)
   def findByownerProfileProfileLinkNameAndEventLinkName(profileLinkName: String, eventLinkName: String): Option[Event] = withTransaction(template) {
@@ -112,7 +104,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
     inputList match {
       case None => None
       case Some(items) =>
-        Some(items.map(x => EventDateForm(Some(x.objectId.toString), x.getEventDateTime, 0)))
+        Some(items.map(x => EventDateForm(Some(x.objectId.toString), x.getEventDateTime, x.getEventDateTime.formatted("HH:MM"), 0)))
     }
   }
 
@@ -137,13 +129,17 @@ class EventService @Inject()(val template: Neo4jTemplate,
           mapping(
             "id" -> optional(text),
             "date" -> date,
-            "guestsbooked" -> number
+            "time" -> nonEmptyText(minLength = 5, maxLength = 5).verifying(Messages("event.edit.add.time.validation.format-error"), { t => isValidTime(t)} ),
+            "guestsbooked" -> number(min = 0)
           )(EventDateForm.apply)(EventDateForm.unapply)
         ))
       )(EventForm.apply)(EventForm.unapply)
     )
   }
 
+  private def isValidTime(time: String): Boolean ={
+    Helpers.isValidTime(time)
+  }
 
   def updateOrCreateEventDates(contentData: EventForm, event: Event) {
     if (contentData.eventDates.nonEmpty) {

@@ -3,6 +3,7 @@
 @(eventForm: Form[EventForm], editingEvent: Option[models.Event] = None, extraValues: models.viewmodels.EditEventExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages)
 
 @implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
+
 @inlineFC = @{
     b3.inline.fieldConstructor
 }
@@ -31,19 +32,29 @@
             }
         };
 
-        $.validator.addMethod("myRequired", $.validator.methods.required, '@{Messages("event.edit.add.date.validation.required")}');
+        /*
         $.validator.addMethod("myDateTime", function (value, element) {
             var stamp = value.split(" ");
             var validDate = !/Invalid|NaN/.test(new Date(stamp[0]).toString());
             var validTime = /^(([0-1]?[0-9])|([2][0-3])):([0-5]?[0-9])(:([0-5]?[0-9]))?$/i.test(stamp[1]);
             return this.optional(element) || (validDate && validTime);
-        }, '@{Messages("event.edit.add.date.validation.format")}');
+        }, '@{Messages("event.edit.add.time.validation.format")}');
+        */
 
-        //$.validator.addMethod("mydateISO", $.validator.methods.dateISO, '@{Messages("event.edit.add.date.validation.format")}');
+        $.validator.addMethod("myRequired", $.validator.methods.required, '@{Messages("event.edit.add.date.validation.required")}');
+        $.validator.addMethod("myTime", function(value, element) {
+            return this.optional(element) || /^(([0-1]?[0-9])|([2][0-3])):([0-5]?[0-9])(:([0-5]?[0-9]))?$/i.test(value);
+        }, '@{Messages("event.edit.add.date.validation.format")}');
+        $.validator.addMethod("myDateISO", $.validator.methods.dateISO, '@{Messages("event.edit.add.date.validation.format")}');
 
         var dateRules = {
             myRequired: true,
-            myDateTime: true
+            myDateISO: true
+        };
+
+        var timeRules = {
+            myRequired: true,
+            myTime: true
         };
 
         var dateTimePickerOptions = {
@@ -53,11 +64,25 @@
             stepping: 15
         };
 
-        $(".date input[type=datetime]").datetimepicker(dateTimePickerOptions);
+        var datePickerOptions = {
+            locale: "sv",
+            minDate: "now",
+            format: "YYYY-MM-DD"
+        };
+
+        var timePickerOptions = {
+            locale: "sv",
+            minDate: "now",
+            stepping: 15,
+            format: "LT"
+        };
+
+        $(".date input[type=date]").datetimepicker(datePickerOptions);
+        $(".time input[type=time]").datetimepicker(timePickerOptions);
         $(".remove-button").on("click", removeDate);
         $(".add-more-dates").on("click", {dateTimePickerOptions: dateTimePickerOptions, stepsForm: form }, cloneDate);
 
-        initMultiForm(form, formValRules, dateRules);
+        initMultiForm(form, formValRules, dateRules, timeRules);
 
     });
 
@@ -84,7 +109,7 @@
     }
 
     function removeDate(){
-        var $parent = $(this).closest(".input-group.date");
+        var $parent = $(this).closest(".date-row");
         // TODO add check for if people has booked
         if($parent.find(".guestsbooked").attr("value") > 0){
             alert("@Messages("event.edit.add.date-time.remove-date.guests-booked")");
@@ -126,29 +151,41 @@
 
                         <div class="step">
                             <div class="row">
-                                <div id="date-container" class="form-inline">
+                                <div class="col-xs-12">
+                                    <h3>@Messages("event.edit.add.date-time.header.date")</h3>
+                                </div>
+                            </div>
+                            <div class="row margin-top">
+                                <div id="date-container" class="col-xs-12 form-inline">
                                     @helper.repeat(field = eventForm("eventDates"), min = 1) { eventDatesField =>
-                                        <div id="orig-date-group">
-                                            <div class="input-group date">
-                                                <div class="input-group-addon">
-                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                        <div id="orig-date-group" class="date-row">
+                                            @b3.inputWrapped("date", eventDatesField("date"), 'class -> "date-input", 'placeholder -> Messages("event.edit.add.date.validation.format"), '_hiddenLabel -> Messages("event.edit.add.date"), '_error -> Messages("event.edit.add.date.validation.format"), '_class -> "date") { input =>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </div>
+                                                    @input
                                                 </div>
-                                                @b3.datetime(eventDatesField("date"), 'class -> "date-input", 'placeholder -> Messages("event.edit.add.date.validation.format"), '_hiddenLabel -> Messages("event.edit.add.date"), '_error -> Messages("event.edit.add.date.validation"), '_class -> "date")
-                                                <div class="input-group-btn">
-                                                    <a class="remove-button hidden" title="@Messages("event.edit.add.date-time.remove-date")"><span class="glyphicon glyphicon-remove"></span></a>
+                                            }
+                                            @b3.inputWrapped("time", eventDatesField("time"), 'class -> "time-input", 'placeholder -> Messages("event.edit.add.time.validation.format"), '_hiddenLabel -> Messages("event.edit.add.time"), '_error -> Messages("event.edit.add.time.validation.format"), '_class -> "time") { input =>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-time"></span>
+                                                    </div>
+                                                    @input
                                                 </div>
-                                                @helper.inputHidden(eventDatesField("id"))
-                                                @helper.inputHidden(eventDatesField("guestsbooked"), '_class -> "guestsbooked")
-                                                @{
-    /*
-                                                    @b3.button('class -> "remove-button btn btn-danger hidden", '_title -> Messages("event.edit.add.date-time.remove-date")) {
-                                                            <span class="glyphicon glyphicon-remove"></span>
-                                                    }
-                                                    */
-                                                }
+                                            }
 
+                                            <div class="form-group">
+                                                <button class="btn btn-danger remove-button hidden" title="@Messages("event.edit.add.date-time.remove-date")"><span class="glyphicon glyphicon-remove"></span></button>
                                             </div>
+                                        </div>
 
+                                        <div>
+                                            <h3>@Messages("event.edit.add.date-time.header.booked-guests")</h3>
+                                            @Messages("event.edit.add.date-time.booked-guests-label", eventDatesField("guestsbooked").value.getOrElse(0))
+                                            @helper.inputHidden(eventDatesField("id"))
+                                            @helper.inputHidden(eventDatesField("guestsbooked"), '_class -> "guestsbooked")
                                         </div>
                                     }
                                 </div>
@@ -195,8 +232,10 @@
                         <button class="btn btn-default pull-left action prev" type="button"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;@Messages("event.edit.prev")</button>
                         <button class="btn btn-default pull-right action next" type="button">@Messages("event.edit.next")&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></button>
                         <button class="btn btn-lg btn-orange pull-right action submit" type="submit"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;@Messages("event.edit.save")</button>
-                        @if(eventForm("id").value.nonEmpty) {
-                            <a class="btn btn-danger pull-right action delete" data-confirm-type="link" data-confirm-btn-ok="@Messages("event.edit.delete.ok")" data-confirm-title="@Messages("event.edit.delete.title")" data-confirm-btn-cancel="@Messages("event.edit.delete.abort")" data-confirm-text="@Messages("event.edit.delete.confirm")" href="@controllers.routes.EventPageController.delete(java.util.UUID.fromString(eventForm("id").value.get))"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("event.edit.delete")</a>
+                        @if(eventForm("id").value.nonEmpty && customUtils.Helpers.isValidUuid(eventForm("id").value.get)) {
+                            @defining(java.util.UUID.fromString(eventForm("id").value.get)) { parsedUUID: java.util.UUID =>
+                                <a class="btn btn-danger pull-right action delete" data-confirm-type="link" data-confirm-btn-ok="@Messages("event.edit.delete.ok")" data-confirm-title="@Messages("event.edit.delete.title")" data-confirm-btn-cancel="@Messages("event.edit.delete.abort")" data-confirm-text="@Messages("event.edit.delete.confirm")" href="@controllers.routes.EventPageController.delete(parsedUUID)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("event.edit.delete")</a>
+                            }
                         }
                         @defining(if(editingEvent.isDefined){
                             controllers.routes.EventPageController.viewEventByNameAndProfile(editingEvent.get.getOwnerProfile.profileLinkName,editingEvent.get.getLink).url

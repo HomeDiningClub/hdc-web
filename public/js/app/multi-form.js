@@ -1,5 +1,5 @@
 
-function initMultiForm(form, formValRules, dateRules){
+function initMultiForm(form, formValRules, dateRules, timeRules){
     var current = 1;
 
     widget      = $(".step");
@@ -52,6 +52,7 @@ function initMultiForm(form, formValRules, dateRules){
 
     // Validation rules
     $.validator.addClassRules("date-input", dateRules);
+    $.validator.addClassRules("time-input", timeRules);
     form.validate(formValRules);
 
     /*
