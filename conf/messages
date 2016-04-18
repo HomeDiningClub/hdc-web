@@ -415,19 +415,19 @@ event.edit.add.preamble.validation=(Max 150 tecken)
 event.edit.add.preamble.help-text=<em><strong>Ett kort citat för att sälja in din bjudning:</strong><br>"Gott helt enkelt, italiensk pasta när den är som bäst."<br></em>
 event.edit.add.date=Datum
 event.edit.add.time=Tid
-event.edit.add.date.help=(YYYY-MM-DD)
+event.edit.add.date.help=(ÅÅÅÅ-MM-DD)
 event.edit.add.date.validation.required=*
-event.edit.add.date.validation.format=YYYY-MM-DD
+event.edit.add.date.validation.format=ÅÅÅÅ-MM-DD
 event.edit.add.time.validation.format-error=Fel format på tiden, måste vara: HH:MM
-event.edit.add.time.validation.format=HH:MM
+event.edit.add.time.validation.format=TT:MM
 
-event.edit.add.date-time.help-text=Här kan du välja ett eller flera datum
-event.edit.add.date-time.add-date=Lägg till fler datum & tider
+event.edit.add.date-time.add-date=Lägg till ytterligare datum
 event.edit.add.date-time.remove-date=Ta bort
 event.edit.add.date-time.remove-date.guests-booked=Du kan inte ta bort en tid där gäster redan har bokat
-event.edit.add.date-time.header.date=Datum för event
-event.edit.add.date-time.header.booked-guests=Gäster
-event.edit.add.date-time.booked-guests-label=Bokade gäster: {0}
+event.edit.add.date-time.header.date=Välj tidpunkt för din bjudning
+event.edit.add.date-time.header.booked-guests=Du har redan bokade gäster på denna tid
+event.edit.add.date-time.booked-guests-label=Antal gäster bokade: {0}
+event.edit.add.date-time.booked-guests-info=När du har redan har bokade gäster kan du inte ta bort eller ändra din tid.
 
 event.edit.add.main-image=Huvudsaklig bild för din bjudning
 event.edit.add.main-image-preview=Förhandsgranskning

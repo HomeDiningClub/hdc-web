@@ -100,6 +100,22 @@ object Helpers {
     }
   }
 
+  def toInt(s: String): Int = {
+    try {
+      s.toInt
+    } catch {
+      case e: Exception => 0
+    }
+  }
+
+
+  def toInt(s: Option[String]): Int = {
+    if(s.isDefined){
+      toInt(s.get)
+    }else{
+      0
+    }
+  }
 
   def getDateForSharing(auditEntry: AuditEntity): String = {
     auditEntry.getLastModifiedDate match {

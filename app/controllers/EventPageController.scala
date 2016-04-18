@@ -239,7 +239,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       eventDates = None
       )
 
-    Ok(views.html.event.addOrEdit(eventForm = evtForm.fill(defaultForm), extraValues = setExtraValues(None)))
+    Ok(views.html.event.addOrEdit(eventForm = evtForm.fill(defaultForm).discardingErrors, extraValues = setExtraValues(None)))
   }
 
   def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
