@@ -15,7 +15,7 @@ import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
-import services.{UserProfileService, ContentFileService, RecipeService}
+import services.{NodeEntityService, UserProfileService, ContentFileService, RecipeService}
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
 import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
@@ -36,6 +36,7 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
                                       val recipeService: RecipeService,
                                       val userProfileService: UserProfileService,
                                       val fileService: ContentFileService,
+                                      implicit val nodeEntityService: NodeEntityService,
                                       val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 /*
   @Autowired

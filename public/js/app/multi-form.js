@@ -1,14 +1,15 @@
+// Global vars
+widget      = $(".step");
+btnnext     = $(".next");
+btnprev     = $(".prev");
+btnsubmit   = $(".submit");
+btndelete   = $(".delete");
+btnabort    = $(".abort");
+progressBar = $(".progress-bar");
+progress    = $(".progress");
 
 function initMultiForm(form, formValRules, dateRules, timeRules){
     var current = 1;
-
-    widget      = $(".step");
-    btnnext     = $(".next");
-    btnprev     = $(".prev");
-    btnsubmit   = $(".submit");
-    btndelete   = $(".delete");
-    btnabort    = $(".abort");
-    progressBar = $(".progress-bar");
 
     // Init buttons and UI
     widget.not(':eq(0)').hide();
@@ -50,16 +51,21 @@ function initMultiForm(form, formValRules, dateRules, timeRules){
         alert("Submit button clicked");
     });*/
 
+
+
+}
+
+function hideMultiFormItems(){
+    btnnext.hide();
+    btnprev.hide();
+    progress.hide();
+}
+
+function activateValidation(formValRules, dateRules, timeRules){
     // Validation rules
     $.validator.addClassRules("date-input", dateRules);
     $.validator.addClassRules("time-input", timeRules);
     form.validate(formValRules);
-
-    /*
-    $(".date-input").each(function() {
-        $(this).rules("add", dateRules);
-    });
-    */
 
 }
 

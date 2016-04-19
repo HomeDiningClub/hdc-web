@@ -68,17 +68,8 @@
                 <p>@Messages("profile.create.text")</p>
 
                 @shared.flashmsg(flash)
+                @shared.listFormErrors(profileDataForm, Some(profileOptsForm))
 
-                @if(profileDataForm.hasErrors || profileOptsForm.hasErrors) {
-                    <div class="alert alert-error">
-                        <a class="close" data-dismiss="alert">×</a>
-                        @Messages("profile.form.unacceptedcontent")
-                        <ul>
-                            @if(profileDataForm.hasErrors){ @for(v <- profileDataForm.errors) { <li>@v.message</li> }}
-                            @if(profileOptsForm.hasErrors){ @for(v <- profileOptsForm.errors) { <li>@v.message</li> }}
-                        </ul>
-                    </div>
-                }
             </div>
         </div>
         <div class="row">
@@ -314,7 +305,6 @@
                                 @file.openModalButton(btnId = "btneditmedia", btnText = Messages("profile.create.form.open-media-btn"), editMode = true)
                             </div>
                         </div>
-                        <hr>
                     </div>
                 </div>
             </div>

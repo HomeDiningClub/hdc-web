@@ -15,7 +15,7 @@ import play.api.mvc.{AnyContent, RequestHeader, Controller}
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
-import services.{RecipeService, RatingService, UserCredentialService}
+import services.{NodeEntityService, RecipeService, RatingService, UserCredentialService}
 import customUtils.authorization.WithRole
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
@@ -25,6 +25,7 @@ class RatingController @Inject() (override implicit val env: SecureSocialRuntime
                                   val messagesApi: MessagesApi,
                                   val userCredentialService: UserCredentialService,
                                   val recipeService: RecipeService,
+                                  implicit val nodeEntityService: NodeEntityService,
                                   val ratingService: RatingService) extends Controller with SecureSocial with I18nSupport {
 
   /*

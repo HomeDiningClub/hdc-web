@@ -16,7 +16,7 @@ import play.api.mvc.{AnyContent, RequestHeader, Controller}
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
-import services.{LikeService, RecipeService, UserCredentialService}
+import services.{NodeEntityService, LikeService, RecipeService, UserCredentialService}
 import customUtils.authorization.WithRole
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
@@ -26,6 +26,7 @@ class LikeController @Inject() (override implicit val env: SecureSocialRuntimeEn
                                 val userCredentialService: UserCredentialService,
                                 val recipeService: RecipeService,
                                 val likeService: LikeService,
+                                implicit val nodeEntityService: NodeEntityService,
                                 val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   /*

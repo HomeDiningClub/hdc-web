@@ -11,9 +11,9 @@ import java.util.UUID
 import scala.collection.JavaConverters._
 import play.api.mvc.RequestHeader
 
-case class WithRoleAndOwnerOfObject (role: RoleEnums, objectIdToControl: UUID) extends Authorization[UserCredential] {
+case class WithRoleAndOwnerOfObject (role: RoleEnums, objectIdToControl: UUID)(implicit nodeEntityService: NodeEntityService) extends Authorization[UserCredential] {
 
-  @Inject private lazy val nodeEntityService: NodeEntityService = null
+  //@Inject private lazy val nodeEntityService: NodeEntityService = null
 
   def isAuthorized(user: UserCredential, request: RequestHeader) = {
 

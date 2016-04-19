@@ -11,7 +11,7 @@ import java.util
 trait EventRepository extends GraphRepository[Event] {
 
   // Auto-mapped by Spring
-  @Query("MATCH (n:`Event`) WHERE n.objectId={0} RETURN n")
+  //@Query("MATCH (n:`Event`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): Event
 
   @Query("MATCH (n:`Event`) RETURN COUNT(*)")

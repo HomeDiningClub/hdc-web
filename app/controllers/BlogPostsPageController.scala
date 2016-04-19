@@ -11,7 +11,7 @@ import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
-import services.{UserProfileService, ContentFileService, BlogPostsService}
+import services.{NodeEntityService, UserProfileService, ContentFileService, BlogPostsService}
 import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
 import java.util.UUID
 import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
@@ -28,6 +28,7 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
                                          val blogPostsService: BlogPostsService,
                                          val userProfileService: UserProfileService,
                                          val fileService: ContentFileService,
+                                         implicit val nodeEntityService: NodeEntityService,
                                          val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   /*

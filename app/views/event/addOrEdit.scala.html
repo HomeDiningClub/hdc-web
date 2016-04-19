@@ -1,6 +1,9 @@
 @import models.formdata.EventForm
 
-@(eventForm: Form[EventForm], editingEvent: Option[models.Event] = None, extraValues: models.viewmodels.EditEventExtraValues)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages)
+@(eventForm: Form[EventForm],
+        editingEvent: Option[models.Event] = None,
+        extraValues: models.viewmodels.EditEventExtraValues,
+        activateMultipleStepsForm: Boolean = true)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages)
 
 @implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
 
@@ -82,8 +85,12 @@
         $(".remove-button").on("click", removeDate);
         $(".add-more-dates").on("click", {dateTimePickerOptions: dateTimePickerOptions, stepsForm: form }, cloneDate);
 
-        initMultiForm(form, formValRules, dateRules, timeRules);
-
+        @if(activateMultipleStepsForm) {
+            initMultiForm(form, formValRules);
+        }else{
+            hideMultiFormItems();
+        }
+        activateValidation(formValRules, dateRules, timeRules);
     });
 
     function cloneDate(event, dateTimePickerOptions, stepsForm){
@@ -131,6 +138,7 @@
                     <div class="progress-bar progress-bar-orange active" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 @shared.flashmsg(flash)
+                @shared.listFormErrors(eventForm)
 
                 @b3.form(action=controllers.routes.EventPageController.addSubmit(), 'enctype -> "multipart/form-data", 'class -> "form-multistep"){
                     <fieldset>
@@ -188,9 +196,7 @@
                                                 @Messages("event.edit.add.date-time.booked-guests-info")
                                             }
                                             @helper.inputHidden(eventDatesField("id"))
-
                                             @b3.hidden(eventDatesField("guestsbooked").name, eventDatesField("guestsbooked").value.getOrElse(0), 'class -> "guestsbooked")
-                                            @helper.inputHidden(eventDatesField("guestsbooked"), '_class -> "guestsbooked")
                                         </div>
                                     }
                                 </div>
@@ -227,14 +233,14 @@
                         @helper.inputHidden(eventForm("id"))
                     </fieldset>
 
-                    <hr class="hr-orange">
+
                     <div class="form-actions">
-                        <button class="btn btn-default pull-left action prev" type="button"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;@Messages("event.edit.prev")</button>
-                        <button class="btn btn-default pull-right action next" type="button">@Messages("event.edit.next")&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></button>
-                        <button class="btn btn-lg btn-orange pull-right action submit" type="submit"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;@Messages("event.edit.save")</button>
-                        @if(eventForm("id").value.nonEmpty && customUtils.Helpers.isValidUuid(eventForm("id").value.get)) {
+                        <button class="btn btn-default pull-left btn-margin-right action prev" type="button"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;@Messages("event.edit.prev")</button>
+                        <button class="btn btn-default pull-right btn-margin-left action next" type="button">@Messages("event.edit.next")&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></button>
+                        <button class="btn btn-primary pull-right btn-margin-left action submit" type="submit"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;@Messages("event.edit.save")</button>
+                        @if(eventForm("id").value.nonEmpty && customUtils.Helpers.isValidUuid(eventForm("id").value.get) && extraValues.nrOfTotalGuestsBookedForThisEvent == 0) {
                             @defining(java.util.UUID.fromString(eventForm("id").value.get)) { parsedUUID: java.util.UUID =>
-                                <a class="btn btn-danger pull-right action delete" data-confirm-type="link" data-confirm-btn-ok="@Messages("event.edit.delete.ok")" data-confirm-title="@Messages("event.edit.delete.title")" data-confirm-btn-cancel="@Messages("event.edit.delete.abort")" data-confirm-text="@Messages("event.edit.delete.confirm")" href="@controllers.routes.EventPageController.delete(parsedUUID)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("event.edit.delete")</a>
+                                <a class="btn btn-danger pull-right btn-margin-left action delete" data-confirm-type="link" data-confirm-btn-ok="@Messages("event.edit.delete.ok")" data-confirm-title="@Messages("event.edit.delete.title")" data-confirm-btn-cancel="@Messages("event.edit.delete.abort")" data-confirm-text="@Messages("event.edit.delete.confirm")" href="@controllers.routes.EventPageController.delete(parsedUUID)"><span class="glyphicon glyphicon-trash"></span>&nbsp;@Messages("event.edit.delete")</a>
                             }
                         }
                         @defining(if(editingEvent.isDefined){
@@ -242,7 +248,7 @@
                         }else{
                             controllers.routes.UserProfileController.viewProfileByLoggedInUser().url
                         }) { abortLink =>
-                            <a class="btn action pull-right abort" data-loading-text="@Messages("event.edit.saving")" href="@abortLink">@Messages("event.edit.abort")</a>
+                            <a class="btn action pull-right btn-margin-left abort" data-loading-text="@Messages("event.edit.saving")" href="@abortLink">@Messages("event.edit.abort")</a>
                         }
                     </div>
                 }

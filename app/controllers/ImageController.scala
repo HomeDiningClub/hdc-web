@@ -12,7 +12,7 @@ import org.springframework.stereotype.{Controller => SpringController}
 import org.springframework.beans.factory.annotation.Autowired
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
-import services.ContentFileService
+import services.{NodeEntityService, ContentFileService}
 import customUtils.Helpers
 import customUtils.authorization.WithRole
 import customUtils.scalr.api.Resizer
@@ -21,6 +21,7 @@ import customUtils.security.SecureSocialRuntimeEnvironment
 
 class ImageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                  val messagesApi: MessagesApi,
+                                 implicit val nodeEntityService: NodeEntityService,
                                  val contentFileService: ContentFileService) extends Controller with SecureSocial with I18nSupport {
 /*
   @Autowired

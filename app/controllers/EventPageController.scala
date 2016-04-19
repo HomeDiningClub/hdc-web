@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{SecuredRequest, RequestWithUser}
-import services.{EventService, UserProfileService, ContentFileService}
+import services.{NodeEntityService, EventService, UserProfileService, ContentFileService}
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
 import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
@@ -33,6 +33,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                                      val eventService: EventService,
                                      val userProfileService: UserProfileService,
                                      val fileService: ContentFileService,
+                                     implicit val nodeEntityService: NodeEntityService,
                                      val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   /*
@@ -202,6 +203,9 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         }
       }
 
+      val bookedGuestsCount = 0 //TODO: Implement count for Events //item.get.getEventDates.asScala.toList.
+
+
       EditEventExtraValues(
         mainImage match {
           case Some(mItem) => Some(List(routes.ImageController.imgChooserThumb(mItem).url))
@@ -212,7 +216,8 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
           case items => Some(items.map{ item => routes.ImageController.imgChooserThumb(item).url})
         },
         item.get.getMaxNrOfMainImages,
-        item.get.getMaxNrOfEventImages
+        item.get.getMaxNrOfEventImages,
+        bookedGuestsCount
       )
     }else{
 
@@ -222,7 +227,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       val maxImages = tempRec.getMaxNrOfEventImages
       tempRec = null
 
-      EditEventExtraValues(None,None,maxMainImage,maxImages)
+      EditEventExtraValues(None,None,maxMainImage,maxImages,0)
     }
   }
 
@@ -268,7 +273,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         // Get any images and sort them
         //val sortedImages = recipeService.getSortedRecipeImages(item)
 
-        Ok(views.html.event.addOrEdit(eventForm = evtForm.fill(form), editingEvent = editingItem, extraValues = setExtraValues(editingItem)))
+        Ok(views.html.event.addOrEdit(eventForm = evtForm.fill(form), editingEvent = editingItem, extraValues = setExtraValues(editingItem), activateMultipleStepsForm = false))
     }
   }
 

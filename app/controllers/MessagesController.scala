@@ -17,7 +17,7 @@ import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.{RequestHeader, Controller}
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
-import services.{MailService, MessageService, UserCredentialService}
+import services.{NodeEntityService, MailService, MessageService, UserCredentialService}
 import customUtils.authorization.WithRole
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
@@ -28,6 +28,7 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
                                     val messagesApi: MessagesApi,
                                     val userCredentialService: UserCredentialService,
                                     val messageService: MessageService,
+                                    implicit val nodeEntityService: NodeEntityService,
                                     val mailService: MailService) extends Controller with SecureSocial with I18nSupport {
 
   /*

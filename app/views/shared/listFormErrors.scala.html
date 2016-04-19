@@ -1,0 +1,12 @@
+@(form1: Form[_], form2: Option[Form[_]] = None)(implicit request: RequestHeader, messages: Messages)
+
+@if(form1.hasErrors || (form2.isDefined && form2.get.hasErrors)) {
+    <div class="alert alert-error">
+        <a class="close" data-dismiss="alert">×</a>
+        @Messages("profile.form.unacceptedcontent")
+        <ul>
+            @if(form1.hasErrors){ @for(v <- form1.errors) { <li>@v.message</li> }}
+            @if(form2.get.hasErrors){ @for(v <- form2.get.errors) { <li>@v.message</li> }}
+        </ul>
+    </div>
+}

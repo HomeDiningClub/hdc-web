@@ -43,6 +43,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
                                        val userCredentialService: UserCredentialService,
                                        val environment: Environment,
                                        val messageService: MessageService,
+                                       implicit val nodeEntityService: NodeEntityService,
                                        val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   // Constants
