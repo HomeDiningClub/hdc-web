@@ -61,7 +61,7 @@ function hideMultiFormItems(){
     progress.hide();
 }
 
-function activateValidation(formValRules, dateRules, timeRules){
+function activateValidation(form, formValRules, dateRules, timeRules){
     // Validation rules
     $.validator.addClassRules("date-input", dateRules);
     $.validator.addClassRules("time-input", timeRules);
