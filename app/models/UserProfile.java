@@ -1,12 +1,13 @@
 package models;
 
-import traits.IEditable;
 import models.base.AuditEntity;
+import models.event.BookedEventDate;
+import models.event.EventDate;
 import models.files.ContentFile;
+import models.location.County;
 import models.modelconstants.RelationshipTypesJava;
 import models.modelconstants.UserLevelJava;
 import models.profile.TagWord;
-import models.location.County;
 import models.profile.TaggedFavoritesToUserProfile;
 import models.profile.TaggedLocationUserProfile;
 import models.profile.TaggedUserProfile;
@@ -14,14 +15,9 @@ import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
+import traits.IEditable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.UUID;
-import java.lang.Boolean;
-import java.util.Calendar;
+import java.util.*;
 
 @NodeEntity
 public class UserProfile extends AuditEntity implements IEditable {
@@ -71,6 +67,9 @@ public class UserProfile extends AuditEntity implements IEditable {
 
     @RelatedToVia(type="FAVORITE_USER")
     private Set<TaggedFavoritesToUserProfile>userFriendsProfileTag;
+
+    @RelatedToVia(type = "BOOKED_EVENT_DATE")
+    private Set<BookedEventDate> bookedEventDates;
 
     @RelatedTo(type = RelationshipTypesJava.HAS_RECIPES.Constant, direction = Direction.OUTGOING)
     private Set<Recipe> recipes;
@@ -207,6 +206,12 @@ public class UserProfile extends AuditEntity implements IEditable {
         {
             this.avatarImage = null;
         }
+    }
+
+    public BookedEventDate addBookingToEvent(EventDate eventDate) {
+        BookedEventDate bookedEvent = new BookedEventDate(this, eventDate, eventDate.getEventDateTime());
+        bookedEventDates.add(bookedEvent);
+        return bookedEvent;
     }
 
 

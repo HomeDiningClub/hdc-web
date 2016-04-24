@@ -1,5 +1,6 @@
 package services
 
+import java.time.LocalDateTime
 import javax.inject.{Singleton, Named, Inject}
 import models.files.ContentFile
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,8 +32,13 @@ import models.formdata.{EventDateForm, EventForm}
 
 class EventService @Inject()(val template: Neo4jTemplate,
                              val eventRepository: EventRepository,
+                             val eventDateRepository: EventDateRepository,
                              val mealTypeService: MealTypeService,
                              val messagesApi: MessagesApi) extends TransactionSupport with I18nSupport {
+
+  implicit object LocalDateTimeOrdering extends Ordering[LocalDateTime] {
+    def compare(d1: LocalDateTime, d2: LocalDateTime) = d1.compareTo(d2)
+  }
 
   //@Transactional(readOnly = true)
   def findByownerProfileProfileLinkNameAndEventLinkName(profileLinkName: String, eventLinkName: String): Option[Event] = withTransaction(template) {
@@ -65,6 +71,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
       case item => Some(item)
     }
   }
+
+  def findEventDateById(objectId: UUID): Option[EventDate] = withTransaction(template){
+    eventDateRepository.findByobjectId(objectId) match {
+      case null => None
+      case item => Some(item)
+    }
+  }
+
 
   //@Transactional(readOnly = true)
   def getCountOfAll: Int = withTransaction(template) {
@@ -104,7 +118,11 @@ class EventService @Inject()(val template: Neo4jTemplate,
     inputList match {
       case None => None
       case Some(items) =>
-        Some(items.map(x => EventDateForm(Some(x.objectId.toString), x.getEventDateTime, x.getEventDateTime.formatted("HH:MM"), 0)))
+        Some(items.map(x =>
+          EventDateForm(Some(x.objectId.toString),
+            java.time.LocalDate.of(x.getEventDateTime.getYear, x.getEventDateTime.getMonth, x.getEventDateTime.getDayOfMonth),
+            java.time.LocalTime.of(x.getEventDateTime.getHour, x.getEventDateTime.getMinute)))
+        )
     }
   }
 
@@ -128,7 +146,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
         "eventDates" -> optional(list(
           mapping(
             "id" -> optional(text),
-            "date" -> date,
+            "date" -> traits.JavaTimeFormats.,
             "time" -> nonEmptyText(minLength = 5, maxLength = 5).verifying(Messages("event.edit.add.time.validation.format-error"), { t => isValidTime(t)} ),
             "guestsbooked" -> number(min = 0)
           )(EventDateForm.apply)(EventDateForm.unapply)
@@ -175,11 +193,11 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
   def updateOldEventDate(formDate: EventDateForm, storedDate: EventDate) {
     // TODO: Add guest reminder email
-    storedDate.setEventDateTime(formDate.date)
+    storedDate.setEventDateTime(Helpers.buildDateFromDateAndTime(formDate.date, formDate.time))
   }
 
   def addEventDate(formDate: EventDateForm, event: Event){
-    event.addEventDate(new EventDate(formDate.date))
+    event.addEventDate(new EventDate(Helpers.buildDateFromDateAndTime(formDate.date, formDate.time)))
   }
 
 
@@ -204,7 +222,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
     val iterator = list.iterator()
     var eventList : ListBuffer[EventBox] = new ListBuffer[EventBox]
 
-    while(iterator.hasNext()) {
+    while(iterator.hasNext) {
 
       val obj = iterator.next()
 
@@ -218,25 +236,25 @@ class EventService @Inject()(val template: Neo4jTemplate,
 //      val ratingValue : Int = v.toDouble.round.toInt
 
       // Link
-      val linkToEvent = (obj.getprofileLinkName, obj.getLinkName) match {
+      val linkToEvent = (obj.getprofileLinkName(), obj.getLinkName()) match {
         case (null|null) | ("","") => "#"
         case (profLink,evtLink) => routes.EventPageController.viewEventByNameAndProfile(profLink, evtLink).url
       }
 
       // Image
       var mainImage = Some("/assets/images/event/event-box-default.png")
-      if(obj.getMainImage().iterator().hasNext()){
+      if(obj.getMainImage().iterator().hasNext){
         mainImage = Some(routes.ImageController.eventBox(obj.getMainImage().iterator().next()).url)
       }
 
       // Build return-list
       var event = EventBox(
-        Some(UUID.fromString(obj.getobjectId)),
+        Some(UUID.fromString(obj.getobjectId())),
         linkToEvent,
-        obj.getName,
-        obj.getpreAmble match {
+        obj.getName(),
+        obj.getpreAmble() match {
         case "" | null =>
-          var retBody = Helpers.removeHtmlTags(obj.getMainBody)
+          var retBody = Helpers.removeHtmlTags(obj.getMainBody())
 
           if (retBody.length > 125)
             retBody = retBody.substring(0, 125) + "..."
@@ -311,6 +329,5 @@ class EventService @Inject()(val template: Neo4jTemplate,
   def add(newContent: Event): Event = withTransaction(template){
     eventRepository.save(newContent)
   }
-
 
 }

@@ -1,6 +1,6 @@
 package models;
 
-import traits.IEditable;
+import customUtils.Helpers;
 import models.content.ContentBase;
 import models.event.EventDate;
 import models.event.MealType;
@@ -11,7 +11,7 @@ import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
 import org.springframework.data.neo4j.support.index.IndexType;
-import customUtils.Helpers;
+import traits.IEditable;
 
 import java.util.*;
 
@@ -282,6 +282,18 @@ public class Event extends ContentBase implements IEditable {
             this.eventDates = new HashSet<>();
 
         this.eventDates.add(eventToAdd);
+    }
+    public void modifyEventDate(EventDate eventToModify) {
+        if(this.eventDates == null)
+            this.eventDates = new HashSet<>();
+
+         Optional<EventDate> optMathingEvent = this.eventDates.stream()
+                .filter(c -> c.objectId.equals(eventToModify.objectId))
+                .findFirst();
+
+        if(optMathingEvent.isPresent()){
+            optMathingEvent.get().setEventDateTime(eventToModify.getEventDateTime());
+        }
     }
     public void deleteEventDate(EventDate eventDate) {
         if(this.eventDates == null){

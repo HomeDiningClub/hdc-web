@@ -124,6 +124,10 @@ object Helpers {
     }
   }
 
+  def buildDateFromDateAndTime(date: java.time.LocalDate, time: java.time.LocalTime): java.time.LocalDateTime = {
+      date.atTime(time.getHour, time.getMinute)
+  }
+
   def formatDateForSharing(date: java.util.Date): String = {
     new SimpleDateFormat("yyyyMMddHHmmss").format(date)
   }
@@ -164,6 +168,11 @@ object Helpers {
     Random.nextInt(upperBound - lowerBound) + lowerBound
   }
 
+  def getCurrentLocalDateTime: java.time.LocalDateTime = {
+    java.time.LocalDateTime.now()
+  }
+
+  // Consider using getCurrentLocalDateTime, this is old way
   def getCurrentDateTime: java.util.Date = {
     DateTime.now().toDate
   }

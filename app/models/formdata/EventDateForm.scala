@@ -1,11 +1,9 @@
 package models.formdata
 
-import java.util.Date
-
 case class EventDateForm (
                           id: Option[String],
-                          date: Date,
-                          time: String,
+                          date: java.time.LocalDate,
+                          time: java.time.LocalTime,
                           guestsBooked: Int = 0
                        )
 { }
