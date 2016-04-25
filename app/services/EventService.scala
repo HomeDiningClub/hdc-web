@@ -29,6 +29,7 @@ import enums.SortOrderEnums.SortOrderEnums
 import org.joda.time.DateTime
 import play.api.Logger
 import models.formdata.{EventDateForm, EventForm}
+import customUtils.formhelpers.Formats._
 
 class EventService @Inject()(val template: Neo4jTemplate,
                              val eventRepository: EventRepository,
@@ -146,8 +147,9 @@ class EventService @Inject()(val template: Neo4jTemplate,
         "eventDates" -> optional(list(
           mapping(
             "id" -> optional(text),
-            "date" -> traits.JavaTimeFormats.,
-            "time" -> nonEmptyText(minLength = 5, maxLength = 5).verifying(Messages("event.edit.add.time.validation.format-error"), { t => isValidTime(t)} ),
+            "date" -> of[java.time.LocalDate],
+            "time" -> of[java.time.LocalTime],
+            //"time" -> nonEmptyText(minLength = 5, maxLength = 5).verifying(Messages("event.edit.add.time.validation.format-error"), { t => isValidTime(t)} ),
             "guestsbooked" -> number(min = 0)
           )(EventDateForm.apply)(EventDateForm.unapply)
         ))

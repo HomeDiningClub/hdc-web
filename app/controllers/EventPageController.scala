@@ -358,18 +358,23 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
           for(ed <- contentData.eventDates.get){
             val selectedDate = Helpers.buildDateFromDateAndTime(ed.date, ed.time)
 
-            // Edit old date
+            // Edit old date on existing event
             if(ed.id.nonEmpty && ed.guestsBooked == 0){
               eventService.findEventDateById(UUID.fromString(ed.id.get)) match {
                 case Some(eventDate) => eventService.updateOldEventDate(ed, eventDate)
                 case None => Logger.debug("Cannot find earlier EventDate using UUID to update date on")
               }
-              // Add new date
+              // Add new date on existing event
             }else if(ed.id.isEmpty && contentData.id.nonEmpty){
               eventService.findById(UUID.fromString(contentData.id.get)) match {
                 case Some(event) => eventService.addEventDate(ed,event)
                 case None => Logger.debug("Cannot find earlier Event using UUID, cannot add EventDate")
               }
+              // Add new date on new event
+            }else if(ed.id.isEmpty && contentData.id.isEmpty && newRec.isDefined) {
+              eventService.addEventDate(ed,newRec.get)
+            }else{
+              Logger.debug("Cannot add eventdate on event, no matching criteria is fullfilled. (Edit on existing, Add on existing, Add on new)")
             }
           }
         }
