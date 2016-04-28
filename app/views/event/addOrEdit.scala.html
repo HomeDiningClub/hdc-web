@@ -35,15 +35,6 @@
             }
         };
 
-        /*
-        $.validator.addMethod("myDateTime", function (value, element) {
-            var stamp = value.split(" ");
-            var validDate = !/Invalid|NaN/.test(new Date(stamp[0]).toString());
-            var validTime = /^(([0-1]?[0-9])|([2][0-3])):([0-5]?[0-9])(:([0-5]?[0-9]))?$/i.test(stamp[1]);
-            return this.optional(element) || (validDate && validTime);
-        }, '@{Messages("event.edit.add.time.validation.format")}');
-        */
-
         $.validator.addMethod("myRequired", $.validator.methods.required, '@{Messages("event.edit.add.date.validation.required")}');
         $.validator.addMethod("myTime", function(value, element) {
             return this.optional(element) || /^(([0-1]?[0-9])|([2][0-3])):([0-5]?[0-9])(:([0-5]?[0-9]))?$/i.test(value);
@@ -60,13 +51,6 @@
             myTime: true
         };
 
-        var dateTimePickerOptions = {
-            locale: "sv",
-            minDate: "now",
-            sideBySide: true,
-            stepping: 15
-        };
-
         var datePickerOptions = {
             locale: "sv",
             minDate: "now",
@@ -75,7 +59,6 @@
 
         var timePickerOptions = {
             locale: "sv",
-            minDate: "now",
             stepping: 15,
             format: "LT"
         };
@@ -83,7 +66,7 @@
         $(".date input[type=date]").datetimepicker(datePickerOptions);
         $(".time input[type=time]").datetimepicker(timePickerOptions);
         $(".remove-button").on("click", removeDate);
-        $(".add-more-dates").on("click", {dateTimePickerOptions: dateTimePickerOptions, stepsForm: form }, cloneDate);
+        $(".add-more-dates").on("click", {datePickerOptions: datePickerOptions, timePickerOptions: timePickerOptions, stepsForm: form }, cloneDate);
 
         @if(activateMultipleStepsForm) {
             initMultiForm(form, formValRules);
@@ -93,7 +76,7 @@
         activateValidation(form, formValRules, dateRules, timeRules);
     });
 
-    function cloneDate(event, dateTimePickerOptions, stepsForm){
+    function cloneDate(event, datePickerOptions, timePickerOptions, stepsForm){
        var $dateContainer = $("#date-container");
        var $dateClone = $("#orig-date-group").clone();
        var nrOfDates = $dateContainer.children().length;
@@ -104,7 +87,9 @@
         return oldHTML.replace(/0/gi, nrOfDates);
        });
        $dateClone.addClass("margin-top");
-       $dateClone.find("input[type=datetime]").datetimepicker(event.data.dateTimePickerOptions);
+       $dateClone.find(".guestsbooked,.eventdate-guid").attr("value","");
+       $dateClone.find("input[type=date]").attr("value","").datetimepicker(event.data.datePickerOptions);
+       $dateClone.find("input[type=time]").attr("value","").datetimepicker(event.data.timePickerOptions);
        $dateClone.find(".remove-button").removeClass("hidden").on("click", removeDate);
        $dateContainer.append($dateClone);
        event.data.stepsForm.validate().resetForm();
@@ -166,8 +151,15 @@
                             <div class="row">
                                 <div id="date-container" class="col-xs-12 form-inline">
                                     @helper.repeat(field = eventForm("eventDates"), min = 1) { eventDatesField =>
-                                        <div id="orig-date-group" class="date-row">
-                                            @b3.inputWrapped("date", eventDatesField("date"), 'class -> "date-input", 'disabled -> eventDatesField("guestsbooked").value.getOrElse(false), 'placeholder -> Messages("event.edit.add.date.validation.format"), '_hiddenLabel -> Messages("event.edit.add.date"), '_error -> Messages("event.edit.add.date.validation.format"), '_class -> "date") { input =>
+                                        <div @if(1 == 1) { id="orig-date-group" } class="date-row"> /* TODO Only render ID if first instance */
+                                            @b3.inputWrapped("date",
+                                                eventDatesField("date"),
+                                                'class -> "date-input",
+                                                'disabled -> (customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0),
+                                                'placeholder -> Messages("event.edit.add.date.validation.format"),
+                                                '_hiddenLabel -> Messages("event.edit.add.date"),
+                                                '_error -> Messages("event.edit.add.date.validation.format"),
+                                                '_class -> "date") { input =>
                                                 <div class="input-group">
                                                     <div class="input-group-addon">
                                                         <span class="glyphicon glyphicon-calendar"></span>
@@ -175,7 +167,14 @@
                                                     @input
                                                 </div>
                                             }
-                                            @b3.inputWrapped("time", eventDatesField("time"), 'class -> "time-input", 'disabled -> eventDatesField("guestsbooked").value.getOrElse(false), 'placeholder -> Messages("event.edit.add.time.validation.format"), '_hiddenLabel -> Messages("event.edit.add.time"), '_error -> Messages("event.edit.add.time.validation.format"), '_class -> "time") { input =>
+                                            @b3.inputWrapped("time",
+                                                eventDatesField("time"),
+                                                'class -> "time-input",
+                                                'disabled -> (customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0),
+                                                'placeholder -> Messages("event.edit.add.time.validation.format"),
+                                                '_hiddenLabel -> Messages("event.edit.add.time"),
+                                                '_error -> Messages("event.edit.add.time.validation.format"),
+                                                '_class -> "time") { input =>
                                                 <div class="input-group">
                                                     <div class="input-group-addon">
                                                         <span class="glyphicon glyphicon-time"></span>
@@ -183,7 +182,8 @@
                                                     @input
                                                 </div>
                                             }
-
+                                            @helper.inputHidden(eventDatesField("id"), 'class -> "eventdate-guid")
+                                            @b3.hidden(eventDatesField("guestsbooked").name, eventDatesField("guestsbooked").value.getOrElse(0), 'class -> "guestsbooked")
                                             <div class="form-group">
                                                 <button class="btn btn-danger remove-button hidden" title="@Messages("event.edit.add.date-time.remove-date")"><span class="glyphicon glyphicon-remove"></span></button>
                                             </div>
@@ -195,8 +195,6 @@
                                                 @Messages("event.edit.add.date-time.booked-guests-label", eventDatesField("guestsbooked").value.getOrElse(0).toString)<br>
                                                 @Messages("event.edit.add.date-time.booked-guests-info")
                                             }
-                                            @helper.inputHidden(eventDatesField("id"))
-                                            @b3.hidden(eventDatesField("guestsbooked").name, eventDatesField("guestsbooked").value.getOrElse(0), 'class -> "guestsbooked")
                                         </div>
                                     }
                                 </div>

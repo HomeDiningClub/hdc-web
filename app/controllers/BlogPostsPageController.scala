@@ -347,24 +347,33 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
       case None =>
         val errorMsg = "Wrong ID, cannot edit, Page cannot be found."
         Logger.debug(errorMsg)
-        print("error ..... ")
         NotFound(errorMsg)
       case Some(item) =>
-        item.isEditableBy(request.user.objectId)
-        item.setTitle(item.getTitle)
-        print("svar objectId : " + item.objectId)
+        item.isEditableBy(request.user.objectId).asInstanceOf[Boolean] match {
+          case true => {
+            item.setTitle(item.getTitle)
 
-        val form = BlogPostsForm.apply(
-          id = Some(item.objectId.toString),
-          title = Some(item.getTitle),
-          maintext = Some(item.getText),
-          mainImage = Some(""))
+            val form = BlogPostsForm.apply(
+              id = Some(item.objectId.toString),
+              title = Some(item.getTitle),
+              maintext = Some(item.getText),
+              mainImage = Some(""))
+
+            Ok(views.html.blog.addOrEdit(blogPostForm = recForm.fill(form), editingBlogPosts = editingRecipe, extraValues = setExtraValues(editingRecipe)))
+          }
+          case false => {
+            val errorMsg = "Cannot edit someone elses blog post"
+            Logger.debug(errorMsg)
+            NotFound(errorMsg)
+          }
+
+        }
 
 
         // Get any images and sort them
         //val sortedImages = recipeService.getSortedRecipeImages(item)
 
-        Ok(views.html.blog.addOrEdit(blogPostForm = recForm.fill(form), editingBlogPosts = editingRecipe, extraValues = setExtraValues(editingRecipe)))
+
     }
   }
 

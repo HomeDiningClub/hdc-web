@@ -250,30 +250,36 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
   def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val editingItem = eventService.findById(objectId)
 
-    editingItem match {
+    eventService.findById(objectId) match {
       case None =>
         val errorMsg = "Wrong ID, cannot edit, Page cannot be found."
         Logger.debug(errorMsg)
         NotFound(errorMsg)
       case Some(item) =>
-        item.isEditableBy(request.user.objectId)
-        val form = EventForm.apply(
-          id = Some(item.objectId.toString),
-          name = item.getName,
-          preAmble = item.getPreAmble match{case null|"" => None case _ => Some(item.getPreAmble)},
-          mainBody = Some(item.getMainBody),
-          mainImage = item.getMainImage match {
-            case null => None
-            case item => Some(item.objectId.toString)
-          },
-          images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
-          eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item))
-        )
+        item.isEditableBy(request.user.objectId).asInstanceOf[Boolean] match {
+          case true =>
+            val form = EventForm.apply(
+              id = Some(item.objectId.toString),
+              name = item.getName,
+              preAmble = item.getPreAmble match{case null|"" => None case _ => Some(item.getPreAmble)},
+              mainBody = Some(item.getMainBody),
+              mainImage = item.getMainImage match {
+                case null => None
+                case item => Some(item.objectId.toString)
+              },
+              images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
+              eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item))
+            )
 
+            Ok(views.html.event.addOrEdit(eventForm = evtForm.fill(form), editingEvent = editingItem, extraValues = setExtraValues(editingItem), activateMultipleStepsForm = false))
+          case false => {
+            val errorMsg = "Cannot edit, not owner of event"
+            Logger.debug(errorMsg)
+            NotFound(errorMsg)
+          }
+        }
         // Get any images and sort them
         //val sortedImages = recipeService.getSortedRecipeImages(item)
-
-        Ok(views.html.event.addOrEdit(eventForm = evtForm.fill(form), editingEvent = editingItem, extraValues = setExtraValues(editingItem), activateMultipleStepsForm = false))
     }
   }
 
@@ -354,30 +360,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         }
 
         // Set Event dates
-        if(contentData.eventDates.nonEmpty){
-          for(ed <- contentData.eventDates.get){
-            val selectedDate = Helpers.buildDateFromDateAndTime(ed.date, ed.time)
 
-            // Edit old date on existing event
-            if(ed.id.nonEmpty && ed.guestsBooked == 0){
-              eventService.findEventDateById(UUID.fromString(ed.id.get)) match {
-                case Some(eventDate) => eventService.updateOldEventDate(ed, eventDate)
-                case None => Logger.debug("Cannot find earlier EventDate using UUID to update date on")
-              }
-              // Add new date on existing event
-            }else if(ed.id.isEmpty && contentData.id.nonEmpty){
-              eventService.findById(UUID.fromString(contentData.id.get)) match {
-                case Some(event) => eventService.addEventDate(ed,event)
-                case None => Logger.debug("Cannot find earlier Event using UUID, cannot add EventDate")
-              }
-              // Add new date on new event
-            }else if(ed.id.isEmpty && contentData.id.isEmpty && newRec.isDefined) {
-              eventService.addEventDate(ed,newRec.get)
-            }else{
-              Logger.debug("Cannot add eventdate on event, no matching criteria is fullfilled. (Edit on existing, Add on existing, Add on new)")
-            }
-          }
-        }
 
 
         newRec.get.setMainBody(contentData.mainBody.getOrElse(""))

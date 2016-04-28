@@ -4,17 +4,19 @@ import models.base.AuditEntity;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 @NodeEntity
 public class EventDate extends AuditEntity {
 
-    private LocalDateTime eventDateTime;
+    private Date eventDateTime;
 
     public void setEventDateTime(LocalDateTime date){
-        this.eventDateTime = date;
+        this.eventDateTime = castToDate(date);
     }
     public LocalDateTime getEventDateTime(){
-        return this.eventDateTime;
+        return castToLocalDateTime(this.eventDateTime);
     }
 
     public EventDate(LocalDateTime date){
@@ -22,5 +24,13 @@ public class EventDate extends AuditEntity {
     }
     public EventDate(){
         setEventDateTime(customUtils.Helpers.getCurrentLocalDateTime());
+    }
+
+    private Date castToDate(LocalDateTime localDateTime){
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    private LocalDateTime castToLocalDateTime(Date date){
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 }

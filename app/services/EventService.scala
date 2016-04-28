@@ -162,34 +162,29 @@ class EventService @Inject()(val template: Neo4jTemplate,
   }
 
   def updateOrCreateEventDates(contentData: EventForm, event: Event) {
-    if (contentData.eventDates.nonEmpty) {
-      val currentEventDates = this.getSortedEventDates(event)
+    if(contentData.eventDates.nonEmpty){
+      for(ed <- contentData.eventDates.get){
+        val selectedDate = Helpers.buildDateFromDateAndTime(ed.date, ed.time)
 
-      contentData.eventDates.get.foreach { formDate =>
-
-        // Found id, verify it
-        if(formDate.id.nonEmpty){
-
-          if(currentEventDates.nonEmpty){
-            val formDateId = UUID.fromString(formDate.id.get)
-
-            currentEventDates.get.foreach { storedDate =>
-              storedDate.objectId.equals(formDateId) match {
-                case true => {
-                  updateOldEventDate(formDate, storedDate)
-                }
-                case false => {
-                  Logger.debug("Error updating event date: FormEventDate has a non-existing objectId")
-                }
-              }
-            } // end foreach
+        // Edit old date on existing event
+        if(ed.id.nonEmpty && ed.guestsBooked == 0){
+          this.findEventDateById(UUID.fromString(ed.id.get)) match {
+            case Some(eventDate) => this.updateOldEventDate(ed, eventDate)
+            case None => Logger.debug("Cannot find earlier EventDate using UUID to update date on")
           }
-
-        } else {
-          addEventDate(formDate, event)
+          // Add new date on existing event
+        }else if(ed.id.isEmpty && contentData.id.nonEmpty){
+          this.findById(UUID.fromString(contentData.id.get)) match {
+            case Some(event) => this.addEventDate(ed,event)
+            case None => Logger.debug("Cannot find earlier Event using UUID, cannot add EventDate")
+          }
+          // Add new date on new event
+        }else if(ed.id.isEmpty && contentData.id.isEmpty) {
+          this.addEventDate(ed,event)
+        }else{
+          Logger.debug("Cannot add eventdate on event, no matching criteria is fullfilled. (Edit on existing, Add on existing, Add on new)")
         }
-
-      } // end foreach
+      }
     }
   }
 
@@ -199,7 +194,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
   }
 
   def addEventDate(formDate: EventDateForm, event: Event){
-    event.addEventDate(new EventDate(Helpers.buildDateFromDateAndTime(formDate.date, formDate.time)))
+    val newEventDate = this.add(new EventDate(Helpers.buildDateFromDateAndTime(formDate.date, formDate.time)))
+    event.addEventDate(newEventDate)
   }
 
 
@@ -331,5 +327,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
   def add(newContent: Event): Event = withTransaction(template){
     eventRepository.save(newContent)
   }
+
+  def add(newContent: EventDate): EventDate = withTransaction(template){
+    eventDateRepository.save(newContent)
+  }
+
 
 }
