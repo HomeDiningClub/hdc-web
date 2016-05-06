@@ -51,6 +51,31 @@ footer.link.mail.text=info@homediningclub.se
 # Banner
 banner.header=Annonser:
 
+# Dates
+month1.long=Januari
+month1.short=Jan
+month2.long=Februari
+month2.short=Feb
+month3.long=Mars
+month3.short=Mar
+month4.long=April
+month4.short=Apr
+month5.long=Maj
+month5.short=Maj
+month6.long=Juni
+month6.short=Jun
+month7.long=Juli
+month7.short=Jul
+month8.long=Augusti
+month8.short=Aug
+month9.long=September
+month9.short=Sept
+month10.long=Oktober
+month10.short=Okt
+month11.long=November
+month11.short=Nov
+month12.long=December
+month12.short=Dec
 
 
 # Reviews
@@ -453,6 +478,11 @@ event.edit.delete.confirm=Du kan inte ångra denna åtgärd, är du säker att d
 event.edit.delete.ok=Ta bort!
 event.edit.delete.abort=Avbryt
 event.button.edit=Redigera händelse
+
+event.button.book=Boka
+event.price.header={0}:-
+event.button.see-more-dates=Se fler datum
+event.button.suggest-date=Föreslå datum
 
 # Blog
 blog.title={0} - {1} - Home dining club - Blogg

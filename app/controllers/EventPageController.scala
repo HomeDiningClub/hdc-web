@@ -54,6 +54,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       case Some(event) =>
           Ok(views.html.event.event(
             event,
+            event.getEventDates.asScala.toList,
             metaData = buildMetaData(event, request),
             eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
             shareUrl = createShareUrl(event),
@@ -117,6 +118,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       case Some(event) =>
         Ok(views.html.event.event(
           event,
+          event.getEventDates.asScala.toList,
           metaData = buildMetaData(event, request),
           eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
           shareUrl = createShareUrl(event),

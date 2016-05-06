@@ -21,6 +21,8 @@ public class Event extends ContentBase implements IEditable {
     @Indexed(indexType = IndexType.FULLTEXT,indexName = "eventName")
     private String name;
 
+    private Long price;
+
     @Indexed(indexType = IndexType.FULLTEXT,indexName = "eventpreAmble")
     private String preAmble;
 
@@ -82,6 +84,14 @@ public class Event extends ContentBase implements IEditable {
     public void setName(String name){
         this.name = name;
         setLink(name);
+    }
+
+    public Long getPrice() {
+        return this.price;
+    }
+
+    public void setPrice(Long price){
+        this.price = price;
     }
 
     public String getName() {

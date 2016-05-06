@@ -78,7 +78,7 @@
 
     function cloneDate(event, datePickerOptions, timePickerOptions, stepsForm){
        var $dateContainer = $("#date-container");
-       var $dateClone = $("#orig-date-group").clone();
+       var $dateClone = $dateContainer.children().first().clone();
        var nrOfDates = $dateContainer.children().length;
 
        $dateClone = $dateClone.removeAttr("id").html(function(i, oldHTML) {
@@ -151,7 +151,7 @@
                             <div class="row">
                                 <div id="date-container" class="col-xs-12 form-inline">
                                     @helper.repeat(field = eventForm("eventDates"), min = 1) { eventDatesField =>
-                                        <div @if(1 == 1) { id="orig-date-group" } class="date-row"> /* TODO Only render ID if first instance */
+                                        <div class="date-row">
                                             @b3.inputWrapped("date",
                                                 eventDatesField("date"),
                                                 'class -> "date-input",

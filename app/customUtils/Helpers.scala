@@ -5,6 +5,7 @@ import java.util.{UUID, Date}
 import javax.inject.{Named, Inject}
 
 import models.base.AuditEntity
+import play.api.i18n.Messages
 import play.api.mvc.RequestHeader
 import models.UserCredential
 import play.api.Logger
@@ -142,6 +143,19 @@ object Helpers {
 
   def formatDate(date: java.util.Date, format: String) = {
     new SimpleDateFormat(format).format(date)
+  }
+
+  // monthType: Can be "long or "short"
+  def formatDateGetMonthAsText(dateTime: java.time.LocalDateTime, monthType: String = "long")(implicit messages: Messages): String = {
+    Messages("month" + dateTime.getMonth.getValue + "." + monthType)
+  }
+
+  def formatDateGetDayOfMonth(dateTime: java.time.LocalDateTime): String = {
+    dateTime.getDayOfMonth.toString
+  }
+
+  def formatDateGetYear(dateTime: java.time.LocalDateTime): String = {
+    dateTime.getYear.toString
   }
 
 

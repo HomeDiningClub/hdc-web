@@ -40,6 +40,8 @@
 @hdc-light-orange: lighten(@hdc-orange,20%);
 @hdc-dark-orange: darken(@hdc-orange,20%);
 
+@hdc-white: #fff;
+
 @host-level-01-color: @hdc-green;
 @host-level-02-color: @hdc-black;
 @host-level-03-color: @hdc-gray;
@@ -152,6 +154,13 @@ img
   padding-right:0px;
 }
 
+.row-no-padding {
+  [class*="col-"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
 // Tooltips
 .hdc-tooltip + .tooltip > .tooltip-inner {
   background-color: #ffffff;
@@ -241,6 +250,10 @@ img
   margin-top:40px;
 }
 
+// General background-class
+.bg-color {
+  background-color: @hdc-white;
+}
 
 // General typography
 .notbold {
@@ -414,7 +427,7 @@ input[type="reset"]:hover
 .btn-orange:hover,
 .btn-orange:focus {
   background-color:#fff;
-  border-color:#fff;
+  border-color:@hdc-orange;
   color: @hdc-orange;
 }
 
@@ -731,6 +744,66 @@ input[type="reset"]:hover
 }
 .event-guest-info {
   border-bottom: 1px solid @hdc-light-gray;
+}
+.event-header {
+  color: white;
+}
+.event-image-wrapper {
+  width: 100%;
+  max-height: 400px;
+  overflow: hidden;
+  z-index:99;
+}
+.event-image {
+  width:100%;
+}
+.event-overlay {
+  position: relative;
+  margin-top:-120px;
+  margin-left:20px;
+  background-color: rgba(@hdc-green-r, @hdc-green-g, @hdc-green-b, 0.9);
+}
+.event-date-list {
+  overflow: hidden;
+  margin:0;
+  padding-bottom:20px;
+}
+.event-date-list li {
+  padding: 20px 0px 20px 0px;
+  overflow: hidden;
+  border-bottom:1px solid @hdc-light-orange;
+}
+.book-me {
+  margin-top:5px;
+}
+
+.event-date-list .month,
+.event-date-list .day-of-month,
+.event-date-list .year {
+  display:inline-block;
+  width:60px;
+  text-align: center;
+  font-size:1em;
+  clear:both;
+  float:left;
+  border-left: 1px solid @hdc-orange;
+  border-right: 1px solid @hdc-orange;
+}
+.event-date-list .month {
+  border-radius: 3px 3px 0px 0px;
+  background-color: @hdc-orange;
+  color: white;
+}
+.event-date-list .day-of-month {
+  font-size:2em;
+  background-color: white;
+  border-color: @hdc-orange;
+}
+.event-date-list .year {
+  background-color: @hdc-orange;
+  color: white;
+  border-radius: 0px 0px 3px 3px;
+  font-size:0.7em;
 }
 
 
@@ -1823,6 +1896,7 @@ h3.aside-title {
   position: relative;
   float: left;
   overflow: hidden;
+  z-index:150;
 }
 .reviews-list .host-image-link span {
   position: relative;
@@ -2087,6 +2161,7 @@ h3.aside-title {
   position: absolute;
   right:10px;
   top:-32px;
+  z-index: 99;
 }
 .host-header header .glyphicon-lowered {
   top:3px;
