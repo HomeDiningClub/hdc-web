@@ -143,6 +143,12 @@
                         </div>
 
                         <div class="step">
+                            @helper.inputText(eventForm("price"), '_label -> Messages("event.edit.add.price"), '_help -> Messages("event.edit.add.price.validation"), '_error -> Messages("event.edit.add.price.validation"))
+                            <div class="margin-top">@Html(Messages("event.edit.add.price.help-text"))</div>
+                        </div>
+
+
+                        <div class="step">
                             <div class="row">
                                 <div class="col-xs-12">
                                     <h3>@Messages("event.edit.add.date-time.header.date")</h3>

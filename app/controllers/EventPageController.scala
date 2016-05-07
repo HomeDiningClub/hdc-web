@@ -242,6 +242,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       id = None,
       mainBody = None,
       mainImage = None,
+      price = 0,
       images = None,
       eventDates = None
       )
@@ -269,6 +270,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                 case null => None
                 case item => Some(item.objectId.toString)
               },
+              price = item.getPrice.intValue(),
               images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
               eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item))
             )
@@ -367,6 +369,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
         newRec.get.setMainBody(contentData.mainBody.getOrElse(""))
         newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
+        newRec.get.setPrice(contentData.price.toLong)
         eventService.updateOrCreateEventDates(contentData, newRec.get)
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 

@@ -1,0 +1,27 @@
+@(price: Long = 0)(implicit messages: Messages)
+<ul class="price-circle">
+    <li>
+        <div class="circle">
+            <div class="front">
+                <div class="title">@Messages("event.price.front.header")</div>
+                <div class="price">
+                    <span class="currency">@Messages("event.price.currency")</span>
+                    <span class="total">@price</span>
+                    <span class="end">@Messages("event.price.currency.end")</span>
+                </div>
+                <div class="description">@Messages("event.price.front.description")</div>
+            </div><!-- end div .front -->
+            <div class="back info">
+                <div class="title">@Messages("event.price.back.header")</div>
+                <div class="description">
+                    <ul>
+                        <li>@Messages("event.price.back.list.text-01")</li>
+                        <li>@Messages("event.price.back.list.text-02")</li>
+                        <li>@Messages("event.price.back.list.text-03")</li>
+                        <li>@Messages("event.price.back.list.text-04")</li>
+                    </ul>
+                </div><!-- end div .description -->
+            </div><!-- end div .back color-1-bg info -->
+        </div><!-- end div .circle -->
+    </li>
+</ul>

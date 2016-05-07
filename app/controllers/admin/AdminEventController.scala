@@ -90,6 +90,7 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
 
         newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
         newRec.get.setMainBody(contentData.mainBody.getOrElse(""))
+        newRec.get.setPrice(contentData.price.toLong)
         eventService.updateOrCreateEventDates(contentData, newRec.get)
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
@@ -118,6 +119,7 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
             case null => None
             case item => Some(item.objectId.toString)
           },
+          price = item.getPrice.intValue(),
           images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
           eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item))
         )

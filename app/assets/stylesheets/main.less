@@ -29,6 +29,7 @@
 @hdc-gold: #a48b74;
 @hdc-black: #000;
 @hdc-red: #8E0000;
+@hdc-price-red: #d25b5b;
 @hdc-medium-light-red: #ffc1c1;
 @hdc-light-red: #fff4f4;
 @hdc-dark-light-green: lighten(@hdc-green, 5%);
@@ -746,23 +747,20 @@ input[type="reset"]:hover
   border-bottom: 1px solid @hdc-light-gray;
 }
 .event-header {
-  color: white;
+  color: @hdc-green;
 }
 .event-image-wrapper {
   width: 100%;
   max-height: 400px;
+  min-height: 400px;
+  background-color: @hdc-white;
   overflow: hidden;
   z-index:99;
 }
 .event-image {
   width:100%;
 }
-.event-overlay {
-  position: relative;
-  margin-top:-120px;
-  margin-left:20px;
-  background-color: rgba(@hdc-green-r, @hdc-green-g, @hdc-green-b, 0.9);
-}
+
 .event-date-list {
   overflow: hidden;
   margin:0;
@@ -774,7 +772,7 @@ input[type="reset"]:hover
   border-bottom:1px solid @hdc-light-orange;
 }
 .book-me {
-  margin-top:5px;
+  margin-top:13px;
 }
 
 .event-date-list .month,
@@ -805,6 +803,233 @@ input[type="reset"]:hover
   border-radius: 0px 0px 3px 3px;
   font-size:0.7em;
 }
+.event-date-list .time-header {
+  font-size:0.7em;
+}
+
+.event-date-list .time {
+  font-size:2em;
+  color: @hdc-green;
+}
+
+// Event time circle
+/* Price-Circle - MAIN LIST  */
+
+.event-overlay {
+  position: relative;
+  margin-top: -255px;
+  margin-left: 20px;
+}
+
+.price-circle {
+  list-style:none;
+  display:block;
+  width:100%;
+  margin:0;
+  padding:0;
+}
+
+.price-circle > li {
+  width:220px;
+  height:220px;
+  display:inline-block;
+  margin:8px;
+}
+
+.price-circle .front,
+.price-circle .back {
+  float:left;
+  width:220px;
+  height:220px;
+  -webkit-border-radius:100%;
+  -moz-border-radius:100%;
+  border-radius:100%;
+  -webkit-box-shadow:0 0 10px 0 #dbdbdb;
+  box-shadow:0 0 10px 0 #dbdbdb;
+  -webkit-transition:all .3s ease-in-out;
+  -moz-transition:all .3s ease-in-out;
+  -o-transition:all .3s ease-in-out;
+  -ms-transition:all .3s ease-in-out;
+  transition:all .3s ease-in-out;
+}
+
+
+/* Price-Circle - FRONT ELEMENTS */
+.price-circle .front {
+  background: @hdc-white;
+  color:@hdc-gray;
+}
+
+.price-circle .front > div {
+  text-align:center;
+}
+
+.price-circle .title {
+  font-size:25px;
+  text-transform:uppercase;
+  text-align:center;
+  padding:25px 10px 17px;
+  color:@hdc-green;
+}
+
+.price-circle .price span {
+  font-weight:bold;
+  vertical-align:middle;
+  margin-top:-5px;
+  display:inline-block;
+}
+
+.price-circle .price .total {
+  font-size:4em;
+  color: @hdc-price-red;
+}
+.price-circle .price .currency {
+  font-size:1em;
+  vertical-align:top;
+  margin-right:-10px;
+}
+.price-circle .price .end {
+  font-size:1.8em;
+}
+.price-circle .description {
+  text-align:center;
+}
+.price-circle .front .description {
+  font-size:14px;
+  padding:4px 45px 0;
+  color:@hdc-green;
+}
+
+/* Price-Circle - BACK ELEMENTS */
+
+.price-circle .back {
+  background-color: @hdc-green;
+  color:@hdc-white;
+}
+.price-circle .back .title {
+  color:@hdc-light-green;
+}
+.price-circle .back .description ul {
+  width:100%;
+  margin:0;
+}
+.price-circle .back .description ul li {
+  text-align:left;
+  list-style: square;
+  line-height:1.4;
+  margin-left:10px;
+}
+
+/* Price-Circle - CIRCLE ANIMATIONS ]*/
+
+.price-circle .circle {
+  border-radius:150px;
+  -moz-border-radius: 150px;
+  -webkit-border-radius: 150px;
+  position:relative;
+  -webkit-transition:all .4s ease-in-out;
+  -moz-transition:all .4s ease-in-out;
+  -o-transition:all .4s ease-in-out;
+  -ms-transition:all .4s ease-in-out;
+  transition:all .4s ease-in-out;
+  position: absolute;
+}
+
+.price-circle .info {
+  position:absolute;
+  border-radius:150px;
+  -moz-border-radius: 150px;
+  -webkit-border-radius: 150px;
+  opacity:0;
+  -moz-transform:scale(0) rotate(0deg) translateX(0px) translateY(0px) skewX(0deg) skewY(0deg);
+  -webkit-transform:scale(0) rotate(0deg) translateX(0px) translateY(0px) skewX(0deg) skewY(0deg);
+  -o-transform:scale(0) rotate(0deg) translateX(0px) translateY(0px) skewX(0deg) skewY(0deg);
+  -ms-transform:scale(0) rotate(0deg) translateX(0px) translateY(0px) skewX(0deg) skewY(0deg);
+  transform:scale(0) rotate(0deg) translateX(0px) translateY(0px) skewX(0deg) skewY(0deg);
+  -webkit-backface-visibility:hidden;
+}
+
+.price-circle .circle:hover .front {
+  -moz-transform:scale(1.1);
+  -webkit-transform:scale(1.1);
+  -o-transform:scale(1.1);
+  -ms-transform:scale(1.1);
+  transform:scale(1.1);
+  opacity:1;
+}
+
+.price-circle .circle:hover .info {
+  -moz-transform:scale(1) rotate(360deg) translateX(0px) translateY(0px) skewX(0deg) skewY(0deg);
+  -webkit-transform:scale(1) rotate(360deg) translateX(0px) translateY(0px) skewX(0deg) skewY(0deg);
+  -o-transform:scale(1) rotate(360deg) translateX(0px) translateY(0px) skewX(0deg) skewY(0deg);
+  -ms-transform:scale(1) rotate(360deg) translateX(0px) translateY(0px) skewX(0deg) skewY(0deg);
+  transform:scale(1) rotate(360deg) translateX(0px) translateY(0px) skewX(0deg) skewY(0deg);
+  opacity:1;
+}
+
+.price-circle .circle:hover .front-popular {
+  border-radius:10% 50% 50% 50%!important;
+}
+
+.price-circle .circle:hover .popular {
+  opacity:1;
+  animation:popularAnim 1s 1;
+  -webkit-animation:popularAnim 1s 1;
+}
+
+@keyframes popularAnim
+{
+  from {opacity:0; left:40px;}
+  to {opacity:1; left:0;}
+}
+
+@-webkit-keyframes popularAnim /* Safari and Chrome */
+{
+  from {opacity:0; left:40px;}
+  to {opacity:1; left:0;}
+}
+
+@-moz-keyframes popularAnim {
+  from {opacity:0; left:40px;}
+  to {opacity:1; left:0;}
+}
+
+@-ms-keyframes popularAnim {
+  from {opacity:0; left:40px;}
+  to {opacity:1; left:0;}
+}
+
+.price-circle .box > li{
+  *float:left;
+}
+
+.price-circle .circle .back{
+  *display:none;
+}
+
+.price-circle .circle .back{
+  z-index:0;
+}
+.price-circle .circle .front{
+  position:relative;
+  z-index:1;
+}
+.price-circle .circle:hover .back{
+  z-index:1;
+}
+.price-circle .circle:hover .front{
+  position:relative;
+  z-index:0;
+}
+
+.price-circle .circle:hover .back{
+  *display:inline;
+}
+.price-circle .circle:hover .front{
+  *display:none;
+}
+
+
 
 
 // Request popover

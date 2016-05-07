@@ -142,6 +142,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
         "name" -> nonEmptyText(minLength = 6, maxLength = 60),
         "preamble" -> optional(text(maxLength = 150)),
         "body" -> optional(text),
+        "price" -> number(min = 0, max = 9999, strict = true),
         "mainimage" -> optional(text),
         "images" -> optional(text),
         "eventDates" -> optional(list(
@@ -261,6 +262,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
         case content => Some(content)
         },
         mainImage,
+        obj.getPrice() match {
+          case null => 0
+          case p => p
+        },
 //        ratingValue,
         list.getTotalElements,
         list.hasNext,

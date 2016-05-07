@@ -1,6 +1,7 @@
 package customUtils
 
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.{UUID, Date}
 import javax.inject.{Named, Inject}
 
@@ -147,15 +148,19 @@ object Helpers {
 
   // monthType: Can be "long or "short"
   def formatDateGetMonthAsText(dateTime: java.time.LocalDateTime, monthType: String = "long")(implicit messages: Messages): String = {
-    Messages("month" + dateTime.getMonth.getValue + "." + monthType)
+    Messages("month" + dateTime.format(DateTimeFormatter.ofPattern("MM")) + "." + monthType)
   }
 
   def formatDateGetDayOfMonth(dateTime: java.time.LocalDateTime): String = {
-    dateTime.getDayOfMonth.toString
+    dateTime.format(DateTimeFormatter.ofPattern("dd"))
   }
 
   def formatDateGetYear(dateTime: java.time.LocalDateTime): String = {
-    dateTime.getYear.toString
+    dateTime.format(DateTimeFormatter.ofPattern("yyyy"))
+  }
+
+  def formatDateGetTime(dateTime: java.time.LocalDateTime): String = {
+    dateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
   }
 
 

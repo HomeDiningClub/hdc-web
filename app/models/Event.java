@@ -21,6 +21,7 @@ public class Event extends ContentBase implements IEditable {
     @Indexed(indexType = IndexType.FULLTEXT,indexName = "eventName")
     private String name;
 
+    @Indexed(indexType = IndexType.FULLTEXT,indexName = "eventPrice")
     private Long price;
 
     @Indexed(indexType = IndexType.FULLTEXT,indexName = "eventpreAmble")

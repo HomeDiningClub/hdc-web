@@ -17,10 +17,10 @@ trait EventRepository extends GraphRepository[Event] {
   @Query("MATCH (n:`Event`) RETURN COUNT(*)")
   def getCountOfAll(): Int
 
-  @Query("MATCH (tag {objectId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (r)-[:IMAGES]-(eventImages:`ContentFile`) optional match (r)-[g]-(ux:UserCredential) optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return r.name, r.preAmble, r.mainBody, r.objectId, COLLECT(eventImages.storeId) as EventImages, COLLECT(mainImage.storeId) as MainImage, uc.profileLinkName, r.eventLinkName, tag.userId")
+  @Query("MATCH (tag {objectId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (r)-[:IMAGES]-(eventImages:`ContentFile`) optional match (r)-[g]-(ux:UserCredential) optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return r.name, r.preAmble, r.mainBody, r.objectId, COLLECT(eventImages.storeId) as EventImages, COLLECT(mainImage.storeId) as MainImage, r.price as EventPrice, uc.profileLinkName, r.eventLinkName, tag.userId")
   def findEvents(userObjectId: String) : util.List[EventData]
 
-  @Query("MATCH (tag {objectId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (r)-[:IMAGES]-(eventImages:`ContentFile`) optional match (r)-[g]-(ux:UserCredential) optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return r.name, r.preAmble, r.mainBody, r.objectId, COLLECT(eventImages.storeId) as EventImages, COLLECT(mainImage.storeId) as MainImage, uc.profileLinkName, r.eventLinkName, tag.userId")
+  @Query("MATCH (tag {objectId:{0}})-[:IN_PROFILE]->(uc:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (tag)-[:IN_PROFILE]->(uc:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (r)-[:IMAGES]-(eventImages:`ContentFile`) optional match (r)-[g]-(ux:UserCredential) optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return r.name, r.preAmble, r.mainBody, r.objectId, COLLECT(eventImages.storeId) as EventImages, COLLECT(mainImage.storeId) as MainImage, r.price as EventPrice, uc.profileLinkName, r.eventLinkName, tag.userId")
   def findEventsOnPage(userObjectId: String, pageable: Pageable) : Page[EventData]
 
   def findByeventLinkName(eventLinkName: String): Event
@@ -42,6 +42,9 @@ trait EventRepository extends GraphRepository[Event] {
 
     @ResultColumn("r.name")
     def getName() : String
+
+    @ResultColumn("EventPrice")
+    def getPrice() : java.lang.Long
 
     @ResultColumn("r.objectId")
     def getobjectId() : String
