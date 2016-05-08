@@ -1,0 +1,26 @@
+@(eventDates: List[models.event.EventDate])(implicit messages: Messages)
+
+<ul class="event-date-list list-unstyled">
+  @for(eventDate <- eventDates) {
+    @defining(eventDate.getEventDateTime){ theDate =>
+      <li>
+        <div class="row">
+          <div class="col-xs-4">
+            <div class="month">@customUtils.Helpers.formatDateGetMonthAsText(theDate, "long")</div>
+            <div class="day-of-month">@customUtils.Helpers.formatDateGetDayOfMonth(theDate)</div>
+            <div class="year">@customUtils.Helpers.formatDateGetYear(theDate)</div>
+          </div>
+          <div class="col-xs-4 text-center">
+            <div>@Messages("event.list.time-header")</div>
+            <div class="time">@customUtils.Helpers.formatDateGetTime(theDate)</div>
+          </div>
+          <div class="col-xs-4">
+            <div class="select-date-wrap pull-right">
+                <button class="btn btn-orange select-date-button" data-selected-time="@customUtils.Helpers.formatDate(theDate, "HH:mm")" data-selected-date="@customUtils.Helpers.formatDate(theDate, "yyyy-MM-dd")" data-selected-uuid="@eventDate.objectId">@Messages("event.button.select-date")</button>
+            </div>
+          </div>
+        </div>
+      </li>
+    }
+  }
+<li><button class="btn btn-default btn-group-justified">@Messages("event.button.see-more-dates")</button><button class="btn btn-primary-flat btn-group-justified">@Messages("event.button.suggest-date")</button></li>

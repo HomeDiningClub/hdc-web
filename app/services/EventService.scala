@@ -28,7 +28,7 @@ import enums.SortOrderEnums
 import enums.SortOrderEnums.SortOrderEnums
 import org.joda.time.DateTime
 import play.api.Logger
-import models.formdata.{EventDateForm, EventForm}
+import models.formdata.{EventBookingForm, EventDateForm, EventForm}
 import customUtils.formhelpers.Formats._
 
 class EventService @Inject()(val template: Neo4jTemplate,
@@ -157,6 +157,20 @@ class EventService @Inject()(val template: Neo4jTemplate,
       )(EventForm.apply)(EventForm.unapply)
     )
   }
+
+
+  def eventBookingFormMapping: Form[EventBookingForm] = {
+    Form(
+      mapping(
+        "eventId" -> uuid,
+        "eventDateId" -> optional(uuid),
+        "date" -> optional(of[java.time.LocalDateTime]),
+        "guests" -> number(min = 1, max = 9),
+        "comment" -> optional(text)
+      )(EventBookingForm.apply)(EventBookingForm.unapply)
+    )
+  }
+
 
   private def isValidTime(time: String): Boolean ={
     Helpers.isValidTime(time)

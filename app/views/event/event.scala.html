@@ -1,5 +1,6 @@
 @(event: models.Event,
         eventDates: List[models.event.EventDate],
+        eventBookingForm: Form[EventBookingForm],
         metaData: Option[viewmodels.MetaData] = None,
         eventBoxes: Option[List[models.viewmodels.EventBox]] = None,
         shareUrl: String = "",
@@ -7,7 +8,12 @@
         eventLikeForm: play.twirl.api.Html = play.twirl.api.Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
 @import scala.collection.JavaConverters._
 
-@main(Messages("event.title", event.getName), metaData = metaData) {
+@eventScripts = {
+    <script src="@routes.Assets.at("js/app/event-booking.js")"></script>
+}
+
+
+@main(Messages("event.title", event.getName), metaData = metaData, footerScripts = eventScripts) {
 
     <div class="container">
         @defining(if(event.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(event.getOwnerProfile.getAvatarImage.getStoreId).url}else{""}) { avatarUrl: String =>
@@ -33,29 +39,7 @@
 
         <div class="row bg-color">
             <div class="col-xs-12 col-md-4 col-lg-3">
-                <ul class="event-date-list list-unstyled">
-                    @for(eventDate <- eventDates) {
-                        @defining(eventDate.getEventDateTime){ theDate =>
-                            <li>
-                                <div class="row">
-                                    <div class="col-xs-4">
-                                        <div class="month">@customUtils.Helpers.formatDateGetMonthAsText(theDate, "long")</div>
-                                        <div class="day-of-month">@customUtils.Helpers.formatDateGetDayOfMonth(theDate)</div>
-                                        <div class="year">@customUtils.Helpers.formatDateGetYear(theDate)</div>
-                                    </div>
-                                    <div class="col-xs-4 text-center">
-                                        <div>@Messages("event.list.time-header")</div>
-                                        <div class="time">@customUtils.Helpers.formatDateGetTime(theDate)</div>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <div class="book-me pull-right"><button class="btn btn-orange">@Messages("event.button.book")</button></div>
-                                    </div>
-                                </div>
-                            </li>
-                        }
-                    }
-                    <li><button class="btn btn-default btn-group-justified">@Messages("event.button.see-more-dates")</button><button class="btn btn-primary-flat btn-group-justified">@Messages("event.button.suggest-date")</button></li>
-                </ul>
+                @views.html.event.eventDateSelector(eventDates)
 
                 @eventLikeForm
                 @shared.fbShare(shareUrl)
@@ -66,12 +50,17 @@
                     </div>
                 }
             </div>
-            <div class="col-xs-12 col-md-8 col-lg-9 bg-color margin-top">
-            @if(!flash.isEmpty) {
-                <div class="col-xs-12">@shared.flashmsg(flash)</div>
-            }
 
-            @if(!event.getPreAmble.isEmpty || !event.getMainBody.isEmpty || !event.getName.isEmpty) {
+            <div id="booking-form" class="col-xs-12 col-sm-4 bg-color margin-top clearfix hidden">
+                @views.html.event.eventBookForm(eventBookingForm)
+            </div>
+
+            <div class="col-xs-12 col-md-8 col-lg-9 bg-color margin-top">
+                @if(!flash.isEmpty) {
+                    <div class="col-xs-12">@shared.flashmsg(flash)</div>
+                }
+
+                @if(!event.getPreAmble.isEmpty || !event.getMainBody.isEmpty || !event.getName.isEmpty) {
                 <section>
                     <article>
                         <h1 class="event-header">@event.getName</h1>
@@ -90,19 +79,19 @@
                 @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url)(request)
                 </article>
                 *@
-            }
+                }
 
-            @defining(event.getEventImages.asScala) { eventImages =>
-                @if(eventImages.nonEmpty) {
-                    <div class="row bg-color">
-                    @for(eventImage <- eventImages) {
-                        <div class="col-xs-4">
-                        @shared.img(routes.ImageController.eventNormal(eventImage.getStoreId).url, cssClass = "img-responsive")
+                @defining(event.getEventImages.asScala) { eventImages =>
+                    @if(eventImages.nonEmpty) {
+                        <div class="row bg-color">
+                        @for(eventImage <- eventImages) {
+                            <div class="col-xs-4">
+                            @shared.img(routes.ImageController.eventNormal(eventImage.getStoreId).url, cssClass = "img-responsive")
+                            </div>
+                        }
                         </div>
                     }
-                    </div>
                 }
-            }
             </div>
         </div>
     </div>

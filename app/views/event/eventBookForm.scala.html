@@ -1,0 +1,19 @@
+@(eventBookingForm: Form[models.formdata.EventBookingForm])(implicit messages: Messages)
+@implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
+
+@inlineFC = @{
+    b3.inline.fieldConstructor
+}
+
+    @Messages("event.book.chosen.date")
+    <div id="booking-chosen-date"></div><br>
+    @Messages("event.book.chosen.time")
+    <div id="booking-chosen-time"></div>
+
+    @b3.form(action=controllers.routes.EventPageController.addSubmit(), 'enctype -> "multipart/form-data"){
+        @helper.inputHidden(eventBookingForm("eventId"), 'class -> "event-guid")
+        @helper.inputHidden(eventBookingForm("eventDateId"), 'class -> "eventdate-uuid")
+        @b3.select(eventBookingForm("guests"), helper.options("1"->"1","2"->"2","3"->"3","4"->"4","5"->"5","6"->"6","7"->"7","8"->"8","9"->"9"), '_label -> Messages("event.book.nr-of-guests.label"))
+        @b3.textarea(eventBookingForm("comment"), '_label -> Messages("event.book.comment.label"))
+        @b3.submit('class -> "btn btn-lg btn-orange"){ <span class="glyphicon glyphicon-book"></span> @Messages("event.book.submit") }
+    }

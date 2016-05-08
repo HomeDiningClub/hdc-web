@@ -163,6 +163,10 @@ object Helpers {
     dateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
   }
 
+  def formatDate(dateTime: java.time.LocalDateTime, pattern: String = "yyyy-MM-dd HH:mm"): String = {
+    dateTime.format(DateTimeFormatter.ofPattern(pattern))
+  }
+
 
   def limitLength(input: String, limitLength: Int): String = {
     if(input == null)

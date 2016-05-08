@@ -26,7 +26,7 @@ import customUtils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
-import models.formdata.EventForm
+import models.formdata.{EventBookingForm, EventForm}
 
 class EventPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val likeController: LikeController,
@@ -55,6 +55,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
           Ok(views.html.event.event(
             event,
             event.getEventDates.asScala.toList,
+            createEventBookingForm(event),
             metaData = buildMetaData(event, request),
             eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
             shareUrl = createShareUrl(event),
@@ -119,6 +120,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         Ok(views.html.event.event(
           event,
           event.getEventDates.asScala.toList,
+          createEventBookingForm(event),
           metaData = buildMetaData(event, request),
           eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
           shareUrl = createShareUrl(event),
@@ -186,10 +188,23 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
     }
   }
 
+  // Forms
+  def evtForm = eventService.eventFormMapping
+  def evtBookingForm = eventService.eventBookingFormMapping
+
+  // Booking
+  private def createEventBookingForm(event: Event): Form[EventBookingForm] = {
+    val bookingFormDefaults = EventBookingForm(
+      event.objectId,
+      None,
+      None,
+      1,
+      None
+    )
+    evtBookingForm.fill(bookingFormDefaults).discardingErrors
+  }
 
   // Edit - Add Content
-  def evtForm = eventService.eventFormMapping
-
   private def setExtraValues(item: Option[Event] = None): EditEventExtraValues = {
 
     if(item.isDefined){

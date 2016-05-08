@@ -241,9 +241,7 @@
                                     <li><a data-toggle="tab" href="#@tabMenu.tab4" title="@Messages("profile.tabs.inbox.title")"><span class="glyphicon glyphicon-envelope"></span>&nbsp;@Messages("profile.tabs.inbox.name")</a></li>
                                     <li><a data-toggle="tab" href="#@tabMenu.tab5" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
                                 }
-                                @if(customUtils.Helpers.isUserAdmin(currentUser)) {
-                                    <li><a data-toggle="tab" href="#@tabMenu.tab6" title="@Messages("profile.tabs.event.title")"><span class="glyphicon glyphicon-calendar"></span>&nbsp;@Messages("profile.tabs.event.name")</a></li>
-                                }
+                                <li><a data-toggle="tab" href="#@tabMenu.tab6" title="@Messages("profile.tabs.event.title")"><span class="glyphicon glyphicon-calendar"></span>&nbsp;@Messages("profile.tabs.event.name")</a></li>
                             </ul>
                         </nav>
 
@@ -353,23 +351,22 @@
                                 @*FavoritesController.renderFavorites(userProfile)*@
                             </div>
                             }
-                            @if(customUtils.Helpers.isUserAdmin(currentUser)) {
-                                <div class="tab-pane tab-hdc fade" id="@tabMenu.tab6">
-                                    <div class="row">
-                                    @if(isThisMyProfile) {
-                                        <div class="col-xs-12">
-                                            <div class="btn-group btn-edit-group">
-                                                <a href="@controllers.routes.EventPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.event.add")</a>
-                                            </div>
-                                        </div>
-                                    }
-                                    </div>
-                                    @if(eventBoxes.nonEmpty) {
-                                        @views.html.event.eventBox(userProfile.profileLinkName)
-                                    }
 
+                            <div class="tab-pane tab-hdc fade" id="@tabMenu.tab6">
+                                <div class="row">
+                                @if(isThisMyProfile) {
+                                    <div class="col-xs-12">
+                                        <div class="btn-group btn-edit-group">
+                                            <a href="@controllers.routes.EventPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.event.add")</a>
+                                        </div>
+                                    </div>
+                                }
                                 </div>
-                            }
+                                @if(eventBoxes.nonEmpty) {
+                                    @views.html.event.eventBox(userProfile.profileLinkName)
+                                }
+
+                            </div>
                         </div>
 
                     </div>
