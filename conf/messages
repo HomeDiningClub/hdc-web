@@ -495,11 +495,12 @@ event.price.back.list.text-03=5% går till HDC
 event.price.back.list.text-04=Boka och njut!
 
 event.list.time-header=Klockan
-event.button.see-more-dates=Se fler datum
-event.button.suggest-date=Föreslå datum
+event.choose-date.header=Välj datum & boka
+event.button.suggest-date=...eller föreslå ett datum
 
 event.book.chosen.date=Valt datum
-event.book.chosen.time=Tid
+event.book.chosen.time=Klockan
+event.book.chosen.total-cost=Totalkostnad
 event.book.nr-of-guests.label=Antal gäster
 event.book.comment.label=Kommentar (valfri)
 event.book.submit=Skicka bokning

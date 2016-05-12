@@ -71,7 +71,7 @@ function attachEventsToButtons(config){
 //config.queryParam = 'profileName';
 //config.queryValue = '@profileName';
 //config.htmlTemplate = htmlTemplate;
-function getAjax(config){
+function getJson(config){
     var queryParams = "";
     if(config.queryParam && config.queryValue) {
         queryParams = '?' + config.queryParam + '=' + config.queryValue

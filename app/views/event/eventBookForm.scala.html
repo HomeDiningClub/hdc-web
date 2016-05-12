@@ -5,15 +5,24 @@
     b3.inline.fieldConstructor
 }
 
-    @Messages("event.book.chosen.date")
-    <div id="booking-chosen-date"></div><br>
-    @Messages("event.book.chosen.time")
-    <div id="booking-chosen-time"></div>
 
-    @b3.form(action=controllers.routes.EventPageController.addSubmit(), 'enctype -> "multipart/form-data"){
-        @helper.inputHidden(eventBookingForm("eventId"), 'class -> "event-guid")
-        @helper.inputHidden(eventBookingForm("eventDateId"), 'class -> "eventdate-uuid")
-        @b3.select(eventBookingForm("guests"), helper.options("1"->"1","2"->"2","3"->"3","4"->"4","5"->"5","6"->"6","7"->"7","8"->"8","9"->"9"), '_label -> Messages("event.book.nr-of-guests.label"))
-        @b3.textarea(eventBookingForm("comment"), '_label -> Messages("event.book.comment.label"))
-        @b3.submit('class -> "btn btn-lg btn-orange"){ <span class="glyphicon glyphicon-book"></span> @Messages("event.book.submit") }
-    }
+@b3.form(action=controllers.routes.EventPageController.addSubmit(), 'enctype -> "multipart/form-data"){
+
+    @b3.static(Messages("event.book.chosen.date")){
+        <span id="booking-chosen-date"></span>
+    }(inlineFC)
+    @b3.static(Messages("event.book.chosen.time")){
+        <span id="booking-chosen-time"></span>
+    }(inlineFC)
+    @b3.static(Messages("event.book.chosen.total-cost"), '_class -> "animated"){
+        <span class="currency">@Messages("event.price.currency")</span>
+        <span id="booking-total-cost" data-price-route="@{routes.EventPageController.getEventPriceJSON()}"></span>
+        <span class="end">@Messages("event.price.currency.end")</span>
+    }(inlineFC)
+
+    @helper.inputHidden(eventBookingForm("eventId"), 'class -> "event-uuid")
+    @helper.inputHidden(eventBookingForm("eventDateId"), 'class -> "eventdate-uuid")
+    @b3.select(eventBookingForm("guests"), helper.options("1"->"1","2"->"2","3"->"3","4"->"4","5"->"5","6"->"6","7"->"7","8"->"8","9"->"9"), '_label -> Messages("event.book.nr-of-guests.label"))
+    @b3.textarea(eventBookingForm("comment"), '_label -> Messages("event.book.comment.label"))
+    @b3.submit('class -> "btn btn-lg btn-orange"){ <span class="glyphicon glyphicon-book"></span> @Messages("event.book.submit") }
+}

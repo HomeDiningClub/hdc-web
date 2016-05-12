@@ -1,5 +1,6 @@
 package controllers
 
+import java.time.LocalDate
 import javax.inject.{Named, Inject}
 
 import models.files.ContentFile
@@ -72,6 +73,18 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
   def getEventLikeForm(event: Event)(implicit request: RequestWithUser[AnyContent,UserCredential]): Html = {
     val likeForm = likeController.renderEventLikeForm(event, request.user)
     likeForm
+  }
+
+  def getEventPriceJSON(eventUUID: UUID, nrOfGuests: Int) = UserAwareAction() {
+    Ok(Json.toJson(eventService.getEventPrice(eventUUID, nrOfGuests)))
+  }
+
+  def getEventTimesForDateAJAX(eventUUID: UUID, date: LocalDate) = UserAwareAction() {
+    Ok(views.html.event.eventDateTimeList(eventService.getEventTimesForDate(eventUUID, date)))
+  }
+
+  def getAllAvailableDatesJSON(eventUUID: UUID) = UserAwareAction() {
+    Ok(Json.toJson(eventService.getAvailableDates(eventUUID)))
   }
 
   def viewEventByNameAndProfilePageJSON(profileName: String, page: Int) = UserAwareAction() { implicit request =>

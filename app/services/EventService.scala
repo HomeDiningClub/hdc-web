@@ -1,6 +1,7 @@
 package services
 
-import java.time.LocalDateTime
+import java.security.InvalidParameterException
+import java.time.{LocalDate, LocalDateTime}
 import javax.inject.{Singleton, Named, Inject}
 import models.files.ContentFile
 import org.springframework.beans.factory.annotation.Autowired
@@ -175,6 +176,52 @@ class EventService @Inject()(val template: Neo4jTemplate,
   private def isValidTime(time: String): Boolean ={
     Helpers.isValidTime(time)
   }
+
+  def getEventPrice(eventUUID: UUID, nrOfGuests: Int): Int = {
+    if(nrOfGuests == 0){
+      Logger.debug("nrOfGuests must be minimal 1")
+      0
+    }
+
+    findById(eventUUID) match {
+      case None => {
+        Logger.debug("Not a valid event UUID")
+        0
+      }
+      case Some(event) => event.getPrice.intValue() * nrOfGuests
+    }
+  }
+
+  def getEventTimesForDate(eventUUID: UUID, date: LocalDate): Option[List[EventDate]] = {
+    findById(eventUUID) match {
+      case None => {
+        Logger.debug("Not a valid event UUID")
+        None
+      }
+      case Some(event) => {
+        event.getEventDates.asScala.filter(d => d.getEventDateTime.toLocalDate.isEqual(date)).toList match {
+          case Nil => None
+          case dateTimeList => Some(dateTimeList)
+        }
+      }
+    }
+  }
+
+  def getAvailableDates(eventUUID: UUID): Option[List[LocalDate]] = {
+    findById(eventUUID) match {
+      case None => {
+        Logger.debug("Not a valid event UUID")
+        None
+      }
+      case Some(event) => {
+        event.getEventDates.asScala.filter(d => d.getEventDateTime.isAfter(LocalDateTime.now())).toList match {
+          case Nil => None
+          case dateTimeList => Some(dateTimeList.map(d => d.getEventDateTime.toLocalDate))
+        }
+      }
+    }
+  }
+
 
   def updateOrCreateEventDates(contentData: EventForm, event: Event) {
     if(contentData.eventDates.nonEmpty){

@@ -69,6 +69,9 @@ GET         /event/add                                           @controllers.Ev
 POST        /event/add                                           @controllers.EventPageController.addSubmit
 GET         /event/edit/:objectId                                @controllers.EventPageController.edit(objectId: java.util.UUID)
 GET         /event/delete/:objectId                              @controllers.EventPageController.delete(objectId: java.util.UUID)
+GET         /event/getPrice.json                                 @controllers.EventPageController.getEventPriceJSON(eventUUID: java.util.UUID ?= null, nrOfGuests: Int ?= 1)
+GET         /event/getEventTimesForDate.ajax                     @controllers.EventPageController.getEventTimesForDateAJAX(eventUUID: java.util.UUID ?= null, date: java.time.LocalDate ?= null)
+GET         /event/getAllAvailableDates.json                      @controllers.EventPageController.getAllAvailableDatesJSON(eventUUID: java.util.UUID ?= null)
 
 # Blog
 GET         /blog/add                                            @controllers.BlogPostsPageController.add

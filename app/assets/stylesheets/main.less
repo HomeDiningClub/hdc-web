@@ -766,7 +766,7 @@ input[type="reset"]:hover
   margin:0;
   padding-bottom:20px;
 }
-.event-date-list li {
+.event-date-list > li {
   padding: 20px 0px 20px 0px;
   overflow: hidden;
   border-bottom:1px solid @hdc-light-orange;
@@ -810,6 +810,29 @@ input[type="reset"]:hover
 .event-date-list .time {
   font-size:2em;
   color: @hdc-green;
+}
+.event-date-list-header {
+  display: block;
+  padding: 1em;
+  background-color: @hdc-light-gray;
+  font-size: 1.0em;
+  margin-top:13px;
+}
+.inline-date-selector .bootstrap-datetimepicker-widget table td.day {
+  color: @hdc-black;
+  border: 1px solid @hdc-orange;
+  font-weight: bold;
+}
+.inline-date-selector .bootstrap-datetimepicker-widget table td.day.disabled {
+  font-weight:normal;
+  border:none;
+  color:@hdc-gray;
+}
+.inline-date-selector .bootstrap-datetimepicker-widget table td.active {
+  background-color: @hdc-orange;
+  border:none;
+  font-weight: bold;
+  color: @hdc-white;
 }
 
 // Event time circle

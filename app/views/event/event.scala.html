@@ -39,23 +39,17 @@
 
         <div class="row bg-color">
             <div class="col-xs-12 col-md-4 col-lg-3">
-                @views.html.event.eventDateSelector(eventDates)
+                @views.html.event.eventDateSelector(event)
 
                 @eventLikeForm
                 @shared.fbShare(shareUrl)
-
-                @if(isThisMyEvent){
-                    <div class="col-xs-12 text-center margin-top">
-                        <a href="@controllers.routes.EventPageController.edit(event.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> @Messages("event.button.edit")</a><br>
-                    </div>
-                }
             </div>
 
             <div id="booking-form" class="col-xs-12 col-sm-4 bg-color margin-top clearfix hidden">
                 @views.html.event.eventBookForm(eventBookingForm)
             </div>
 
-            <div class="col-xs-12 col-md-8 col-lg-9 bg-color margin-top">
+            <div class="col-xs-12 col-md-8 col-lg-9 bg-color">
                 @if(!flash.isEmpty) {
                     <div class="col-xs-12">@shared.flashmsg(flash)</div>
                 }
@@ -91,6 +85,11 @@
                         }
                         </div>
                     }
+                }
+                @if(isThisMyEvent){
+                    <div class="col-xs-12 text-center margin-top">
+                        <a href="@controllers.routes.EventPageController.edit(event.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> @Messages("event.button.edit")</a><br>
+                    </div>
                 }
             </div>
         </div>
