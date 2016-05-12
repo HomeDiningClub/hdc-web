@@ -1,6 +1,6 @@
 @(event: models.Event)(implicit messages: Messages)
 
-<h3 class="event-date-list-header text-center">@Messages("event.choose-date.header")</h3>
+<h3 class="event-date-list-header text-center hidden">@Messages("event.choose-date.header")</h3>
 <div id="event-date-list-picker"
     data-event-uuid="@event.objectId"
     data-get-all-available-dates-route="@{routes.EventPageController.getAllAvailableDatesJSON()}"
