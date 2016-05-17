@@ -121,9 +121,12 @@ class EventService @Inject()(val template: Neo4jTemplate,
       case None => None
       case Some(items) =>
         Some(items.map(x =>
-          EventDateForm(Some(x.objectId.toString),
-            java.time.LocalDate.of(x.getEventDateTime.getYear, x.getEventDateTime.getMonth, x.getEventDateTime.getDayOfMonth),
-            java.time.LocalTime.of(x.getEventDateTime.getHour, x.getEventDateTime.getMinute)))
+          EventDateForm(
+            id = Some(x.objectId.toString),
+            date = java.time.LocalDate.of(x.getEventDateTime.getYear, x.getEventDateTime.getMonth, x.getEventDateTime.getDayOfMonth),
+            time = java.time.LocalTime.of(x.getEventDateTime.getHour, x.getEventDateTime.getMinute),
+            guestsBooked = x.getGuestsBooked
+          ))
         )
     }
   }
@@ -236,9 +239,9 @@ class EventService @Inject()(val template: Neo4jTemplate,
           }
           // Add new date on existing event
         }else if(ed.id.isEmpty && contentData.id.nonEmpty){
-          this.findById(UUID.fromString(contentData.id.get)) match {
-            case Some(event) => this.addEventDate(ed,event)
-            case None => Logger.debug("Cannot find earlier Event using UUID, cannot add EventDate")
+          event.objectId.equals(UUID.fromString(contentData.id.get)) match {
+            case true => this.addEventDate(ed,event)
+            case false => Logger.debug("Cannot find earlier Event using UUID, cannot add EventDate")
           }
           // Add new date on new event
         }else if(ed.id.isEmpty && contentData.id.isEmpty) {
@@ -256,8 +259,9 @@ class EventService @Inject()(val template: Neo4jTemplate,
   }
 
   def addEventDate(formDate: EventDateForm, event: Event){
-    val newEventDate = this.add(new EventDate(Helpers.buildDateFromDateAndTime(formDate.date, formDate.time)))
+    val newEventDate = this.save(new EventDate(Helpers.buildDateFromDateAndTime(formDate.date, formDate.time)))
     event.addEventDate(newEventDate)
+    this.save(event)
   }
 
 
@@ -390,11 +394,11 @@ class EventService @Inject()(val template: Neo4jTemplate,
   }
 
   //@Transactional(readOnly = false)
-  def add(newContent: Event): Event = withTransaction(template){
+  def save(newContent: Event): Event = withTransaction(template){
     eventRepository.save(newContent)
   }
 
-  def add(newContent: EventDate): EventDate = withTransaction(template){
+  def save(newContent: EventDate): EventDate = withTransaction(template){
     eventDateRepository.save(newContent)
   }
 

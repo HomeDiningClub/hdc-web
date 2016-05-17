@@ -113,6 +113,10 @@ public final class RelationshipTypesJava {
         public String name() { return Constant; }
         public static final String Constant = "HAS_BLOGPOSTS";
     }
+    public static class BOOKED_EVENT_DATE implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "BOOKED_EVENT_DATE";
+    }
 
     public static class RECOMMENDED implements RelationshipType {
         public String name() { return Constant; }

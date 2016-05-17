@@ -68,7 +68,7 @@ public class UserProfile extends AuditEntity implements IEditable {
     @RelatedToVia(type="FAVORITE_USER")
     private Set<TaggedFavoritesToUserProfile>userFriendsProfileTag;
 
-    @RelatedToVia(type = "BOOKED_EVENT_DATE")
+    @RelatedToVia(type = RelationshipTypesJava.BOOKED_EVENT_DATE.Constant, direction = Direction.OUTGOING)
     private Set<BookedEventDate> bookedEventDates;
 
     @RelatedTo(type = RelationshipTypesJava.HAS_RECIPES.Constant, direction = Direction.OUTGOING)

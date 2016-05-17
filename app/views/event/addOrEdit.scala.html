@@ -87,7 +87,8 @@
         return oldHTML.replace(/0/gi, nrOfDates);
        });
        $dateClone.addClass("margin-top");
-       $dateClone.find(".guestsbooked,.eventdate-guid").attr("value","");
+       $dateClone.find(".eventdate-guid").attr("value","");
+       $dateClone.find(".guestsbooked").attr("value","0");
        $dateClone.find("input[type=date]").attr("value","").datetimepicker(event.data.datePickerOptions);
        $dateClone.find("input[type=time]").attr("value","").datetimepicker(event.data.timePickerOptions);
        $dateClone.find(".remove-button").removeClass("hidden").on("click", removeDate);

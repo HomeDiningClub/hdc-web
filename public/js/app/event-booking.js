@@ -1,7 +1,6 @@
 $(document).ready(function(){
 
     // Init booking
-    activateBookingButtons();
     activateGuestSelector();
     activateDateSelector();
 
@@ -35,6 +34,7 @@ $(document).ready(function(){
             $datePicker.datetimepicker(datePickerOptions).on("dp.change", function(e){
                 $datePickerResults.load(eventTimeRoute + '?' + eventUUIDPar + '=' + eventUUID + "&" + datePar + '=' + e.date.format(dateFormat), function(){
                     $(this).removeClass("flipOutX").addClass("flipInX");
+                    activateBookingButtons();
                 });
             });
 

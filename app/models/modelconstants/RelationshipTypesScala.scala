@@ -113,4 +113,10 @@ object RelationshipTypesScala {
      final val Constant = "PROFILE_LOCATION"
      def name(): String = Constant
    }
+
+  object BOOKED_EVENT_DATE extends RelationshipType {
+    final val Constant = "BOOKED_EVENT_DATE"
+    def name(): String = Constant
+  }
+
  }

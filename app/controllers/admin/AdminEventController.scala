@@ -94,7 +94,7 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
         eventService.updateOrCreateEventDates(contentData, newRec.get)
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
-        val saved = eventService.add(newRec.get)
+        val saved = eventService.save(newRec.get)
         val savedProfile = userProfileService.addEventToProfile(currentUser.getUserProfile, saved)
         val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.getName, saved.objectId.toString)
         Redirect(controllers.admin.routes.AdminEventController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)

@@ -401,7 +401,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         eventService.updateOrCreateEventDates(contentData, newRec.get)
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
-        val savedItem = eventService.add(newRec.get)
+        val savedItem = eventService.save(newRec.get)
         val savedProfile = userProfileService.addEventToProfile(currentUser.getUserProfile, savedItem)
         val successMessage = Messages("event.add.success", savedItem.getName)
         Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(currentUser.getUserProfile.profileLinkName,savedItem.getLink)).flashing(FlashMsgConstants.Success -> successMessage)
