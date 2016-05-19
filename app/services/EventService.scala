@@ -169,22 +169,34 @@ class EventService @Inject()(val template: Neo4jTemplate,
         "eventId" -> uuid,
         "eventDateId" -> optional(uuid),
         "date" -> optional(of[java.time.LocalDateTime]),
+        "suggestedDate" -> boolean,
         "guests" -> number(min = 1, max = 9),
         "comment" -> optional(text)
       )(EventBookingForm.apply)(EventBookingForm.unapply)
     )
   }
 
+  def getSpacesLeft(event: Event, eventDate: EventDate): Int = {
+    var spaceLeft = 0
+    if(event.getMaxNrOfGuests > eventDate.getGuestsBooked){
+      spaceLeft = event.getMaxNrOfGuests - eventDate.getGuestsBooked
+    }
+    spaceLeft
+  }
+
+  def doesEventDateHasSpaceFor(event: Event, eventDate: EventDate, nrOfGuests: Int): Boolean = {
+    getSpacesLeft(event, eventDate) match {
+      case 0 => false
+      case _ => true
+    }
+  }
 
   private def isValidTime(time: String): Boolean ={
     Helpers.isValidTime(time)
   }
 
   def getEventPrice(eventUUID: UUID, nrOfGuests: Int): Int = {
-    if(nrOfGuests == 0){
-      Logger.debug("nrOfGuests must be minimal 1")
-      0
-    }
+    verifyMinimalGuests(nrOfGuests)
 
     findById(eventUUID) match {
       case None => {
@@ -192,6 +204,18 @@ class EventService @Inject()(val template: Neo4jTemplate,
         0
       }
       case Some(event) => event.getPrice.intValue() * nrOfGuests
+    }
+  }
+
+  def getEventPrice(event: Event, nrOfGuests: Int): Int = {
+    verifyMinimalGuests(nrOfGuests)
+    event.getPrice.intValue() * nrOfGuests
+  }
+
+  private def verifyMinimalGuests(nrOfGuests: Int): AnyVal = {
+    if (nrOfGuests == 0) {
+      Logger.debug("nrOfGuests must be minimal 1")
+      0
     }
   }
 

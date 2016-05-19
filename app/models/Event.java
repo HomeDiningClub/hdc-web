@@ -30,6 +30,9 @@ public class Event extends ContentBase implements IEditable {
     @Indexed(indexType = IndexType.FULLTEXT,indexName = "eventMainBody")
     private String mainBody;
 
+    private Integer maxNrOfGuests;
+    private Integer minNrOfGuests;
+
     @Fetch
     @RelatedTo(type = RelationshipTypesJava.MAIN_IMAGE.Constant, direction = Direction.OUTGOING)
     private ContentFile mainImage;
@@ -62,6 +65,28 @@ public class Event extends ContentBase implements IEditable {
 
 
     // Getter & Setters
+    public void setMaxNrOfGuests(Integer maxNr){
+        this.maxNrOfGuests = maxNr;
+    }
+
+    public Integer getMaxNrOfGuests(){
+        if(this.maxNrOfGuests == null)
+            this.maxNrOfGuests = 0;
+
+        return this.maxNrOfGuests;
+    }
+
+    public void setMinNrOfGuests(Integer minNr){
+        this.minNrOfGuests = minNr;
+    }
+
+    public Integer getMinNrOfGuests(){
+        if(this.minNrOfGuests == null)
+            this.minNrOfGuests = 0;
+
+        return this.minNrOfGuests;
+    }
+
     public void setMainBody(String mainBody){
         this.mainBody = mainBody;
     }

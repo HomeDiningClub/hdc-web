@@ -504,6 +504,10 @@ event.book.chosen.total-cost=Totalkostnad
 event.book.nr-of-guests.label=Antal gäster
 event.book.comment.label=Kommentar (valfri)
 event.book.submit=Skicka bokning
+event.book.chosen.address=Adress
+event.book.add.error=Någonting gick fel prova att ladda om sidan och boka igen.
+event.book.success.header=Din bokning är slutförd!
+event.book.success.body=Du har nu genomfört din bokning, en påminnellse är skickad till din e-post: {0}
 
 # Blog
 blog.title={0} - {1} - Home dining club - Blogg

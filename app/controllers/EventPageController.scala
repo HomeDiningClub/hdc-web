@@ -22,7 +22,7 @@ import java.util.UUID
 import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
 
 import scala.Some
-import models.viewmodels.{MetaData, EditEventExtraValues, EventBox}
+import models.viewmodels.{EventBookingSuccess, MetaData, EditEventExtraValues, EventBox}
 import customUtils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
@@ -211,6 +211,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       event.objectId,
       None,
       None,
+      false,
       1,
       None
     )
@@ -313,6 +314,88 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         // Get any images and sort them
         //val sortedImages = recipeService.getSortedRecipeImages(item)
     }
+  }
+
+  def addBookingSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
+
+    val currentUser = request.user
+
+    evtBookingForm.bindFromRequest.fold(
+      errors => {
+        val errorMessage = Messages("event.book.add.error")
+          eventService.findById(evtBookingForm.get.eventId) match {
+              case Some(item) => Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(item.getOwnerProfile.profileLinkName,item.getLink)).flashing(FlashMsgConstants.Error -> errorMessage)
+              case None =>  {
+                val errorMsg = "Cannot return to event to show error, no valid eventUUID"
+                Logger.debug(errorMsg)
+                NotFound(errorMsg)
+              }
+          }
+      },
+      contentData => {
+        eventService.findById(contentData.eventId) match {
+          case Some(event) => {
+
+            // If user selected a pre-chosen date
+            if(contentData.eventDateId.nonEmpty && !contentData.isSuggestedDate){
+              // Verify that the date actually exists
+              eventService.findEventDateById(contentData.eventDateId.get)  match {
+                case Some(eventDate) => {
+
+                  // Lastly check space
+
+                  if(eventService.doesEventDateHasSpaceFor(event, eventDate, contentData.guests)){
+                    val successMessage = Messages("event.book.add.success")
+
+                    val successValues = EventBookingSuccess(
+                      date = eventDate.getEventDateTime.toLocalDate,
+                      time = eventDate.getEventDateTime.toLocalTime,
+                      locationAddress = event.getOwnerProfile.streetAddress,
+                      locationCounty = event.getOwnerProfile.getLocations.asScala.head.county.name,
+                      locationZipCode = event.getOwnerProfile.zipCode,
+                      phoneNumberToHost = event.getOwnerProfile.phoneNumber,
+                      nrOfGuests = contentData.guests,
+                      totalCost = eventService.getEventPrice(event,contentData.guests),
+                      email = currentUser.emailAddress
+                    )
+                    // TODO: Add booking itself
+
+                    Ok(views.html.event.eventBookingSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
+                  }else{
+                    val errorMsg = "Cannot add booking to event, too many bookings"
+                    Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(currentUser.getUserProfile.profileLinkName,event.getLink)).flashing(FlashMsgConstants.Error -> errorMsg)
+                  }
+
+                }
+                case None => {
+                  val errorMsg = "Cannot add booking to event, no valid eventUUID"
+                  Logger.debug(errorMsg)
+                  NotFound(errorMsg)
+                }
+              }
+              // Is user chosen to suggest a date
+            }else if(contentData.isSuggestedDate){
+              // TODO: Add suggestion code
+              Ok("TODO: Add suggestion code")
+
+            }else{
+              val errorMsg = "Cannot add booking nor suggest a booking, not correct values posted"
+              Logger.debug(errorMsg)
+              NotFound(errorMsg)
+            }
+
+          }
+          case _ => {
+            val errorMsg = "Cannot add booking to event, no valid eventUUID"
+            Logger.debug(errorMsg)
+            NotFound(errorMsg)
+          }
+
+        }
+      }
+
+    )
+
   }
 
 
