@@ -1,36 +1,34 @@
 package controllers.admin
 
-import javax.inject.{Named, Inject}
-
-import org.springframework.stereotype.{Controller => SpringController}
-
-import play.api.mvc._
-import play.api.data.Form
-import play.api.data.Forms._
-import org.springframework.beans.factory.annotation.Autowired
-import securesocial.core.SecureSocial
-import securesocial.core.SecureSocial.SecuredRequest
-import services.{MealTypeService}
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
-import constants.FlashMsgConstants
 import java.util.UUID
+import javax.inject.Inject
+
+import constants.FlashMsgConstants
 import customUtils.authorization.WithRole
+import customUtils.security.SecureSocialRuntimeEnvironment
 import enums.RoleEnums
 import models.UserCredential
-import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.EventPropertyForm
+import org.springframework.stereotype.{Controller => SpringController}
+import play.api.data.Form
+import play.api.data.Forms._
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.mvc._
+import securesocial.core.SecureSocial
+import securesocial.core.SecureSocial.SecuredRequest
+import services.{AlcoholServingService, MealTypeService}
 
-class AdminMealTypeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
-                                         val mealTypeService: MealTypeService,
+class AdminAlcoholServingController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
+                                         val alcoholServingService: AlcoholServingService,
                                          val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
-    Ok(views.html.admin.event.mealtype.list(mealTypeService.listAll()))
+    Ok(views.html.admin.event.alcoholServing.list(alcoholServingService.listAll()))
   }
 
   // Edit - Add
-  val mealForm = Form(
+  val alcoForm = Form(
     mapping(
       "id" -> optional(text),
       "name" -> nonEmptyText(minLength = 1, maxLength = 255),
@@ -39,38 +37,38 @@ class AdminMealTypeController @Inject() (override implicit val env: SecureSocial
   )
 
   def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
-    Ok(views.html.admin.event.mealtype.index())
+    Ok(views.html.admin.event.alcoholServing.index())
   }
 
   def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
-    Ok(views.html.admin.event.mealtype.add(mealForm.fill(EventPropertyForm.apply(None,"",0))))
+    Ok(views.html.admin.event.alcoholServing.add(alcoForm.fill(EventPropertyForm.apply(None,"",0))))
   }
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
-    mealForm.bindFromRequest.fold(
+    alcoForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
-        BadRequest(views.html.admin.event.mealtype.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.admin.event.alcoholServing.add(errors)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
 
         val saved = contentData.id match {
           case Some(id) =>
-            val item = mealTypeService.findById(UUID.fromString(id)) match {
-              case None => mealTypeService.create(contentData.name,contentData.order)
+            val item = alcoholServingService.findById(UUID.fromString(id)) match {
+              case None => alcoholServingService.create(contentData.name,contentData.order)
               case Some(existingItem) =>
                 existingItem.name = contentData.name
                 existingItem.order = contentData.order
                 existingItem
             }
-            mealTypeService.save(item)
+            alcoholServingService.save(item)
           case None =>
-            mealTypeService.create(contentData.name,contentData.order)
+            alcoholServingService.create(contentData.name,contentData.order)
         }
 
         val successMessage = Messages("admin.success") + " - " + Messages("admin.add.success", saved.name, saved.objectId.toString)
-        Redirect(controllers.admin.routes.AdminMealTypeController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.admin.routes.AdminAlcoholServingController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       }
     )
 
@@ -79,30 +77,30 @@ class AdminMealTypeController @Inject() (override implicit val env: SecureSocial
 
   // Edit - Edit content
   def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
-    mealTypeService.findById(objectId) match {
+    alcoholServingService.findById(objectId) match {
       case None =>
-        Ok(views.html.admin.event.mealtype.index())
+        Ok(views.html.admin.event.alcoholServing.index())
       case Some(item) =>
         val form = EventPropertyForm.apply(
           Some(item.objectId.toString),
           item.name,
           item.order
         )
-        Ok(views.html.admin.event.mealtype.add(mealForm.fill(form)))
+        Ok(views.html.admin.event.alcoholServing.add(alcoForm.fill(form)))
     }
   }
 
   // Edit - Delete content
   def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
-    val result: Boolean = mealTypeService.deleteById(objectId)
+    val result: Boolean = alcoholServingService.deleteById(objectId)
 
     result match {
       case true =>
         val successMessage = Messages("admin.success") + " - " + Messages("admin.delete.success", objectId.toString)
-        Redirect(controllers.admin.routes.AdminMealTypeController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
+        Redirect(controllers.admin.routes.AdminAlcoholServingController.listAll()).flashing(FlashMsgConstants.Success -> successMessage)
       case false =>
         val errorMessage = Messages("admin.error") + " - " + Messages("admin.delete.error")
-        Redirect(controllers.admin.routes.AdminMealTypeController.listAll()).flashing(FlashMsgConstants.Error -> errorMessage)
+        Redirect(controllers.admin.routes.AdminAlcoholServingController.listAll()).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
   }

@@ -3,6 +3,8 @@
 @(eventForm: Form[EventForm],
         editingEvent: Option[models.Event] = None,
         extraValues: models.viewmodels.EditEventExtraValues,
+        optionsMealTypes: Option[Seq[(String, String)]],
+        optionsAlcoholServings: Option[Seq[(String, String)]],
         activateMultipleStepsForm: Boolean = true)(implicit flash: Flash = Flash.emptyCookie, request: RequestHeader, messages: Messages)
 
 @implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
@@ -134,11 +136,32 @@
                         </div>
 
                         <div class="step">
+                            @if(optionsMealTypes.isDefined) {
+                                @b3.select(eventForm("eventOptionsForm.mealType"),
+                                    optionsMealTypes.get,
+                                    '_label -> Messages("event.edit.add.meal-type"),
+                                    'value -> eventForm("eventOptionsForm.mealType").value.getOrElse("")
+                                )
+                            }
+
                             @helper.textarea(eventForm("body"), '_label -> Messages("event.edit.add.body"), '_error -> Messages("event.edit.add.body.validation"), 'class -> "richtext-extra")
                             <div class="margin-top">@Html(Messages("event.edit.add.body.help-text"))</div>
                         </div>
 
                         <div class="step">
+                            @b3.checkbox(eventForm("eventOptionsForm.childFriendly"), '_text -> Messages("event.edit.add.child-friendly"))
+                            @b3.checkbox(eventForm("eventOptionsForm.handicapFriendly"), '_text -> Messages("event.edit.add.handicap-friendly"))
+                            @b3.checkbox(eventForm("eventOptionsForm.havePets"), '_text -> Messages("event.edit.add.have-pets"))
+                            @b3.checkbox(eventForm("eventOptionsForm.smokingAllowed"), '_text -> Messages("event.edit.add.smoking-allowed"))
+
+                            @if(optionsAlcoholServings.isDefined) {
+                                @b3.select(eventForm("eventOptionsForm.alcoholServing"),
+                                    optionsAlcoholServings.get,
+                                    '_label -> Messages("event.edit.add.alcohol-servings"),
+                                    'value -> eventForm("eventOptionsForm.alcoholServing").value.getOrElse("")
+                                )
+                            }
+
                             @helper.textarea(eventForm("preamble"), '_label -> Messages("event.edit.add.preamble"), '_help -> Messages("event.edit.add.preamble.validation"), '_class -> "event-addedit-form-preamble")
                             <div class="margin-top">@Html(Messages("event.edit.add.preamble.help-text"))</div>
                         </div>
@@ -146,6 +169,12 @@
                         <div class="step">
                             @helper.inputText(eventForm("price"), '_label -> Messages("event.edit.add.price"), '_help -> Messages("event.edit.add.price.validation"), '_error -> Messages("event.edit.add.price.validation"))
                             <div class="margin-top">@Html(Messages("event.edit.add.price.help-text"))</div>
+                        </div>
+
+                        <div class="step">
+                            @b3.select(eventForm("minNrOfGuests"), helper.options("1"->"1","2"->"2","3"->"3","4"->"4","5"->"5","6"->"6","7"->"7","8"->"8","9"->"9"), '_label -> Messages("event.edit.add.min-nr-of-guests.label"))
+                            @b3.select(eventForm("maxNrOfGuests"), helper.options("1"->"1","2"->"2","3"->"3","4"->"4","5"->"5","6"->"6","7"->"7","8"->"8","9"->"9"), '_label -> Messages("event.edit.add.max-nr-of-guests.label"))
+                            <div class="margin-top">@Html(Messages("event.edit.add.nr-of-guests.help-text"))</div>
                         </div>
 
 
@@ -165,7 +194,6 @@
                                                 'disabled -> (customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0),
                                                 'placeholder -> Messages("event.edit.add.date.validation.format"),
                                                 '_hiddenLabel -> Messages("event.edit.add.date"),
-                                                '_error -> Messages("event.edit.add.date.validation.format"),
                                                 '_class -> "date") { input =>
                                                 <div class="input-group">
                                                     <div class="input-group-addon">
@@ -180,7 +208,6 @@
                                                 'disabled -> (customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0),
                                                 'placeholder -> Messages("event.edit.add.time.validation.format"),
                                                 '_hiddenLabel -> Messages("event.edit.add.time"),
-                                                '_error -> Messages("event.edit.add.time.validation.format"),
                                                 '_class -> "time") { input =>
                                                 <div class="input-group">
                                                     <div class="input-group-addon">

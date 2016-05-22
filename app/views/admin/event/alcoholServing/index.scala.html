@@ -1,0 +1,15 @@
+@()(implicit flash: Flash, messages: Messages)
+
+@mainedit(Messages("admin.title")){
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="page-header">@Messages("admin.alcohol-serving.index.header")</h1>
+            <div class="btn-group">
+                <a href="@controllers.admin.routes.AdminAlcoholServingController.add()" class="btn btn-primary">@Messages("admin.actions.add")</a>
+                <a href="@controllers.admin.routes.AdminAlcoholServingController.listAll()" class="btn btn-primary">@Messages("admin.actions.list")</a>
+            </div>
+        </div>
+    </div>
+
+}

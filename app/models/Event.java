@@ -2,6 +2,7 @@ package models;
 
 import customUtils.Helpers;
 import models.content.ContentBase;
+import models.event.AlcoholServing;
 import models.event.EventDate;
 import models.event.MealType;
 import models.files.ContentFile;
@@ -32,6 +33,13 @@ public class Event extends ContentBase implements IEditable {
 
     private Integer maxNrOfGuests;
     private Integer minNrOfGuests;
+    private Boolean childFriendly;
+    private Boolean handicapFriendly;
+    private Boolean havePets;
+    private Boolean smokingAllowed;
+
+    @RelatedTo(type = RelationshipTypesJava.ALCOHOL_SERVING.Constant, direction = Direction.INCOMING)
+    private AlcoholServing alcoholServing;
 
     @Fetch
     @RelatedTo(type = RelationshipTypesJava.MAIN_IMAGE.Constant, direction = Direction.OUTGOING)
@@ -65,6 +73,46 @@ public class Event extends ContentBase implements IEditable {
 
 
     // Getter & Setters
+    public void setChildFriendly(Boolean value){
+        this.childFriendly = value;
+    }
+    public Boolean getChildFriendly(){
+        if(this.childFriendly == null)
+            this.childFriendly = true;
+
+        return this.childFriendly;
+    }
+
+    public void setHandicapFriendly(Boolean value){
+        this.handicapFriendly = value;
+    }
+    public Boolean getHandicapFriendly(){
+        if(this.handicapFriendly == null)
+            this.handicapFriendly = true;
+
+        return this.handicapFriendly;
+    }
+
+    public void setHavePets(Boolean value){
+        this.havePets = value;
+    }
+    public Boolean getHavePets(){
+        if(this.havePets == null)
+            this.havePets = false;
+
+        return this.havePets;
+    }
+
+    public void setSmokingAllowed(Boolean value){
+        this.smokingAllowed = value;
+    }
+    public Boolean getSmokingAllowed(){
+        if(this.smokingAllowed == null)
+            this.smokingAllowed = false;
+
+        return this.smokingAllowed;
+    }
+
     public void setMaxNrOfGuests(Integer maxNr){
         this.maxNrOfGuests = maxNr;
     }
@@ -132,6 +180,16 @@ public class Event extends ContentBase implements IEditable {
     public MealType getMealType() {
         return this.mealType;
     }
+
+    public AlcoholServing setAlcoholServing(AlcoholServing serving) {
+        this.alcoholServing = serving;
+        return this.alcoholServing;
+    }
+
+    public AlcoholServing getAlcoholServing() {
+        return this.alcoholServing;
+    }
+
 
     public Iterable<ContentFile> getEventImages() {
         return this.eventImages;

@@ -12,41 +12,37 @@ import repositories.MealTypeRepository
 import traits.TransactionSupport
 import scala.collection.JavaConverters._
 
-//@Named
-//@Service
 class MealTypeService @Inject() (val template: Neo4jTemplate,
                                  val mealTypeRepository: MealTypeRepository) extends TransactionSupport {
 
-  /*
-  @Autowired
-  var template: Neo4jTemplate = _
-
-  @Autowired
-  var mealTypeRepository: MealTypeRepository = _
-*/
-
-  //@Transactional(readOnly = false)
    def create(name: String, order: Int = 0): MealType = withTransaction(template){
     mealTypeRepository.save(new MealType(name,order))
   }
 
-  //@Transactional(readOnly = true)
   def listAll(): Option[List[MealType]] = withTransaction(template){
     IteratorUtil.asCollection(mealTypeRepository.findAll()).asScala.toList match {
       case null => None
-      case tags => Some(tags)
+      case items => Some(items.sortBy(m => m.order))
     }
   }
 
-  //@Transactional(readOnly = true)
+  def getMealTypesAsSeq: Option[Seq[(String, String)]] ={
+    this.listAll() match {
+      case None => None
+      case Some(list) =>
+        Some(list.map {as =>
+          (as.objectId.toString,as.name)
+        }.toSeq)
+    }
+  }
+
   def findById(objectId: UUID): Option[MealType] = withTransaction(template){
-    mealTypeRepository.findByobjectId(objectId) match {
+    mealTypeRepository.findByobjectId(objectId.toString) match {
       case null => None
       case item => Some(item)
     }
   }
 
-  //@Transactional(readOnly = false)
   def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false
@@ -56,13 +52,11 @@ class MealTypeService @Inject() (val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
   def deleteAll(): Boolean = withTransaction(template){
     mealTypeRepository.deleteAll()
     true
   }
 
-  //@Transactional(readOnly = false)
   def save(item: MealType): MealType = withTransaction(template){
     mealTypeRepository.save(item)
   }

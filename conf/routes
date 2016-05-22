@@ -200,6 +200,14 @@ POST        /admin/mealtype/add                                  @controllers.ad
 GET         /admin/mealtype/edit/:objectId                       @controllers.admin.AdminMealTypeController.edit(objectId: java.util.UUID)
 GET         /admin/mealtype/delete/:objectId                     @controllers.admin.AdminMealTypeController.delete(objectId: java.util.UUID)
 
+# ADMIN - AlcoholServing
+GET         /admin/alcoholserving                                @controllers.admin.AdminAlcoholServingController.editIndex
+GET         /admin/alcoholserving/listall                        @controllers.admin.AdminAlcoholServingController.listAll
+GET         /admin/alcoholserving/add                            @controllers.admin.AdminAlcoholServingController.add
+POST        /admin/alcoholserving/add                            @controllers.admin.AdminAlcoholServingController.addSubmit
+GET         /admin/alcoholserving/edit/:objectId                 @controllers.admin.AdminAlcoholServingController.edit(objectId: java.util.UUID)
+GET         /admin/alcoholserving/delete/:objectId               @controllers.admin.AdminAlcoholServingController.delete(objectId: java.util.UUID)
+
 # ADMIN - Release & Batch
 GET         /admin/release                                       @controllers.admin.AdminReleaseController.editIndex
 GET         /admin/release/run                                   @controllers.admin.AdminReleaseController.createDefaultData

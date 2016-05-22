@@ -21,7 +21,7 @@ import play.api.Logger
 import models.event.EventDate
 import org.joda.time.DateTime
 import customUtils.security.SecureSocialRuntimeEnvironment
-import models.formdata.EventForm
+import models.formdata.{EventOptionsForm, EventForm}
 
 class AdminEventController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                       val eventService: EventService,
@@ -29,16 +29,6 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
                                       val fileService: ContentFileService,
                                       val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
-  /*
-  @Autowired
-  private var eventService: EventService = _
-
-  @Autowired
-  private var userProfileService: UserProfileService = _
-
-  @Autowired
-  private var fileService: ContentFileService = _
-*/
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
@@ -117,11 +107,27 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
           Some(item.getMainBody),
           mainImage = item.getMainImage match {
             case null => None
-            case item => Some(item.objectId.toString)
+            case mi => Some(mi.objectId.toString)
           },
           price = item.getPrice.intValue(),
           images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
-          eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item))
+          eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item)),
+          minNoOfGuest = item.getMinNrOfGuests,
+          maxNoOfGuest = item.getMaxNrOfGuests,
+          eventOptionsForm = EventOptionsForm(
+            childFriendly = item.getChildFriendly,
+            handicapFriendly = item.getHandicapFriendly,
+            havePets = item.getHavePets,
+            smokingAllowed = item.getSmokingAllowed,
+            alcoholServing = item.getAlcoholServing match {
+              case null => None
+              case as => Some(as.objectId)
+            },
+            mealType = item.getMealType match {
+              case null => None
+              case mt => Some(mt.objectId)
+            }
+          )
         )
 
         // Get any images and sort them

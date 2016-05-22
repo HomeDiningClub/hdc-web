@@ -29,22 +29,6 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
                                      val contentService: ContentService,
                                      val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
-  /*
-  @Autowired
-  var userProfileService: UserProfileService = _
-
-  @Autowired
-  var tagWordService : TagWordService = _
-
-  @Autowired
-  var countyService : CountyService = _
-
-  @Autowired
-  var contentService : ContentService = _
-
-  @Autowired
-  var ratingService: RatingService = _
-*/
 
   // Search form
   val searchForm = Form(

@@ -3,6 +3,7 @@ package controllers
 import java.time.LocalDate
 import javax.inject.{Named, Inject}
 
+import models.event.{MealType, AlcoholServing}
 import models.files.ContentFile
 import models.jsonmodels.{EventBoxJSON}
 import org.springframework.stereotype.{Controller => SpringController}
@@ -16,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{SecuredRequest, RequestWithUser}
-import services.{NodeEntityService, EventService, UserProfileService, ContentFileService}
+import services._
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
 import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
@@ -27,26 +28,18 @@ import customUtils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
-import models.formdata.{EventBookingForm, EventForm}
+import models.formdata.{EventOptionsForm, EventBookingForm, EventForm}
 
 class EventPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val likeController: LikeController,
                                      val eventService: EventService,
+                                     val mealTypeService: MealTypeService,
+                                     val alcoholServingService: AlcoholServingService,
                                      val userProfileService: UserProfileService,
                                      val fileService: ContentFileService,
                                      implicit val nodeEntityService: NodeEntityService,
                                      val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
-  /*
-  @Autowired
-  private var eventService: EventService = _
-
-  @Autowired
-  private var userProfileService: UserProfileService = _
-
-  @Autowired
-  private var fileService: ContentFileService = _
-*/
 
   def viewEventByNameAndProfile(profileName: String, eventName: String) = UserAwareAction() { implicit request =>
 
@@ -234,8 +227,11 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         }
       }
 
-      val bookedGuestsCount = 0 //TODO: Implement count for Events //item.get.getEventDates.asScala.toList.
-
+      var bookedGuestsCount = 0
+      val listOfBookedGuests = item.get.getEventDates.asScala
+      if(listOfBookedGuests.nonEmpty){
+        bookedGuestsCount = listOfBookedGuests.map(ed => ed.getGuestsBooked).sum
+      }
 
       EditEventExtraValues(
         mainImage match {
@@ -263,7 +259,21 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
   }
 
 
+
+
   def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
+
+    val mealSeq = mealTypeService.getMealTypesAsSeq
+    val mealDefault =  mealSeq match {
+      case None => None
+      case Some(x) => Some(UUID.fromString(x.head._1)) // 1 = Object id, 2 = Name
+    }
+
+    var alcoSeq = alcoholServingService.getAlcoholServingsAsSeq
+    val alcoDefault =  alcoSeq match {
+      case None => None
+      case Some(x) => Some(UUID.fromString(x.head._1)) // 1 = Object id, 2 = Name
+    }
 
     val defaultForm = EventForm(
       name = "",
@@ -273,10 +283,24 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       mainImage = None,
       price = 0,
       images = None,
-      eventDates = None
+      eventDates = None,
+      maxNoOfGuest = 6,
+      minNoOfGuest = 2,
+      eventOptionsForm = EventOptionsForm(
+        childFriendly = true,
+        handicapFriendly = true,
+        havePets = false,
+        smokingAllowed = false,
+        alcoholServing = alcoDefault,
+        mealType = mealDefault
       )
+    )
 
-    Ok(views.html.event.addOrEdit(eventForm = evtForm.fill(defaultForm).discardingErrors, extraValues = setExtraValues(None)))
+    Ok(views.html.event.addOrEdit(
+      eventForm = evtForm.fill(defaultForm).discardingErrors,
+      extraValues = setExtraValues(None),
+      optionsAlcoholServings = alcoSeq,
+      optionsMealTypes = mealSeq))
   }
 
   def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
@@ -297,22 +321,43 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
               mainBody = Some(item.getMainBody),
               mainImage = item.getMainImage match {
                 case null => None
-                case item => Some(item.objectId.toString)
+                case mainImg => Some(mainImg.objectId.toString)
               },
               price = item.getPrice.intValue(),
               images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
-              eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item))
+              eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item)),
+              minNoOfGuest = item.getMinNrOfGuests,
+              maxNoOfGuest = item.getMaxNrOfGuests,
+              eventOptionsForm = EventOptionsForm(
+                childFriendly = item.getChildFriendly,
+                handicapFriendly = item.getHandicapFriendly,
+                havePets = item.getHavePets,
+                smokingAllowed = item.getSmokingAllowed,
+                alcoholServing = item.getAlcoholServing match {
+                  case null => None
+                  case as => Some(as.objectId)
+                },
+                mealType = item.getMealType match {
+                  case null => None
+                  case mt => Some(mt.objectId)
+                }
+              )
             )
 
-            Ok(views.html.event.addOrEdit(eventForm = evtForm.fill(form), editingEvent = editingItem, extraValues = setExtraValues(editingItem), activateMultipleStepsForm = false))
+            Ok(views.html.event.addOrEdit(
+              eventForm = evtForm.fill(form),
+              editingEvent = editingItem,
+              extraValues = setExtraValues(editingItem),
+              optionsAlcoholServings = alcoholServingService.getAlcoholServingsAsSeq,
+              optionsMealTypes = mealTypeService.getMealTypesAsSeq,
+              activateMultipleStepsForm = false))
+
           case false => {
             val errorMsg = "Cannot edit, not owner of event"
             Logger.debug(errorMsg)
             NotFound(errorMsg)
           }
         }
-        // Get any images and sort them
-        //val sortedImages = recipeService.getSortedRecipeImages(item)
     }
   }
 
@@ -406,7 +451,11 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
     evtForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("event.add.error")
-        BadRequest(views.html.event.addOrEdit(errors,extraValues = setExtraValues(None))).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.event.addOrEdit(
+          eventForm = errors,
+          extraValues = setExtraValues(None),
+          optionsAlcoholServings = alcoholServingService.getAlcoholServingsAsSeq,
+          optionsMealTypes = mealTypeService.getMealTypesAsSeq)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
 
@@ -430,7 +479,11 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         if (newRec.isEmpty) {
           Logger.debug("Error saving Event: User used a non-existing, or someone else's Event")
           val errorMessage = Messages("event.add.error")
-          BadRequest(views.html.event.addOrEdit(evtForm.fill(contentData), extraValues = setExtraValues(None))).flashing(FlashMsgConstants.Error -> errorMessage)
+          BadRequest(views.html.event.addOrEdit(
+            eventForm = evtForm.fill(contentData),
+            extraValues = setExtraValues(None),
+            optionsAlcoholServings = alcoholServingService.getAlcoholServingsAsSeq,
+            optionsMealTypes = mealTypeService.getMealTypesAsSeq)).flashing(FlashMsgConstants.Error -> errorMessage)
         }
 
         // Main image
@@ -474,10 +527,26 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
             }
         }
 
-        // Set Event dates
+        contentData.eventOptionsForm.alcoholServing match {
+          case Some(uuid) => alcoholServingService.findById(uuid) match {
+            case None => Logger.debug("Error adding AlcoholServing to event, the uuid didn't match any alcoholservings-entry:" + uuid)
+            case Some(as) => newRec.get.setAlcoholServing(as)
+          }
+        }
 
+        contentData.eventOptionsForm.mealType match {
+          case Some(uuid) => mealTypeService.findById(uuid) match {
+            case None => Logger.debug("Error adding Mealtype to event, the uuid didn't match any mealtype-entry:" + uuid)
+            case Some(mt) => newRec.get.setMealType(mt)
+          }
+        }
 
-
+        newRec.get.setChildFriendly(contentData.eventOptionsForm.childFriendly)
+        newRec.get.setHandicapFriendly(contentData.eventOptionsForm.handicapFriendly)
+        newRec.get.setHavePets(contentData.eventOptionsForm.havePets)
+        newRec.get.setSmokingAllowed(contentData.eventOptionsForm.smokingAllowed)
+        newRec.get.setMaxNrOfGuests(contentData.maxNoOfGuest)
+        newRec.get.setMinNrOfGuests(contentData.minNoOfGuest)
         newRec.get.setMainBody(contentData.mainBody.getOrElse(""))
         newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
         newRec.get.setPrice(contentData.price.toLong)

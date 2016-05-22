@@ -90,9 +90,14 @@ object RelationshipTypesScala {
   }
 
   object RECOMMENDED extends RelationshipType {
-     final val Constant = "RECOMMENDED"
-     def name(): String = Constant
-   }
+    final val Constant = "RECOMMENDED"
+    def name(): String = Constant
+  }
+
+  object ALCOHOL_SERVING extends RelationshipType {
+    final val Constant = "ALCOHOL_SERVING"
+    def name(): String = Constant
+  }
 
    object FILE_TRANSFORMATION extends RelationshipType {
      final val Constant = "FILE_TRANSFORMATION"

@@ -29,20 +29,18 @@ import enums.SortOrderEnums
 import enums.SortOrderEnums.SortOrderEnums
 import org.joda.time.DateTime
 import play.api.Logger
-import models.formdata.{EventBookingForm, EventDateForm, EventForm}
+import models.formdata.{EventOptionsForm, EventBookingForm, EventDateForm, EventForm}
 import customUtils.formhelpers.Formats._
 
 class EventService @Inject()(val template: Neo4jTemplate,
                              val eventRepository: EventRepository,
                              val eventDateRepository: EventDateRepository,
-                             val mealTypeService: MealTypeService,
                              val messagesApi: MessagesApi) extends TransactionSupport with I18nSupport {
 
   implicit object LocalDateTimeOrdering extends Ordering[LocalDateTime] {
     def compare(d1: LocalDateTime, d2: LocalDateTime) = d1.compareTo(d2)
   }
 
-  //@Transactional(readOnly = true)
   def findByownerProfileProfileLinkNameAndEventLinkName(profileLinkName: String, eventLinkName: String): Option[Event] = withTransaction(template) {
     eventRepository.findByownerProfileProfileLinkNameAndEventLinkName(profileLinkName, eventLinkName) match {
       case null => None
@@ -51,7 +49,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = true)
   def findByeventLinkName(eventLinkName: String): Option[Event] = withTransaction(template){
 
     var returnObject: Option[Event] = None
@@ -66,7 +63,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
     returnObject
   }
 
-  //@Transactional(readOnly = true)
   def findById(objectId: UUID): Option[Event] = withTransaction(template){
     eventRepository.findByobjectId(objectId) match {
       case null => None
@@ -81,14 +77,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-
-  //@Transactional(readOnly = true)
   def getCountOfAll: Int = withTransaction(template) {
     eventRepository.getCountOfAll()
   }
 
-
-  //@Transactional(readOnly = true)
   def getListOfAll: List[Event] = withTransaction(template){
     eventRepository.findAll.iterator.asScala.toList match {
       case null => null
@@ -96,7 +88,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  // Get sorted images
   def getSortedEventImages(event: Event): Option[List[ContentFile]] = {
     event.getEventImages.asScala match {
       case Nil => None
@@ -147,6 +138,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
         "preamble" -> optional(text(maxLength = 150)),
         "body" -> optional(text),
         "price" -> number(min = 0, max = 9999, strict = true),
+        "minNrOfGuests" -> number(min=1, max=9),
+        "maxNrOfGuests" -> number(min=1, max=9),
         "mainimage" -> optional(text),
         "images" -> optional(text),
         "eventDates" -> optional(list(
@@ -157,11 +150,20 @@ class EventService @Inject()(val template: Neo4jTemplate,
             //"time" -> nonEmptyText(minLength = 5, maxLength = 5).verifying(Messages("event.edit.add.time.validation.format-error"), { t => isValidTime(t)} ),
             "guestsbooked" -> number(min = 0)
           )(EventDateForm.apply)(EventDateForm.unapply)
-        ))
+        )),
+        "eventOptionsForm" -> mapping(
+          "childFriendly" -> boolean,
+          "handicapFriendly" -> boolean,
+          "havePets" -> boolean,
+          "smokingAllowed" -> boolean,
+          "alcoholServing" -> optional(uuid),
+          "mealType" -> optional(uuid)
+        )(EventOptionsForm.apply)(EventOptionsForm.unapply)
       )(EventForm.apply)(EventForm.unapply)
+        verifying(Messages("event.edit.add.min-nr-of-guests.validation"), t => isValidMinValue(t.minNoOfGuest, t.maxNoOfGuest))
+        verifying(Messages("event.edit.add.max-nr-of-guests.validation"), t => isValidMaxValue(t.minNoOfGuest, t.maxNoOfGuest))
     )
   }
-
 
   def eventBookingFormMapping: Form[EventBookingForm] = {
     Form(
@@ -169,7 +171,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
         "eventId" -> uuid,
         "eventDateId" -> optional(uuid),
         "date" -> optional(of[java.time.LocalDateTime]),
-        "suggestedDate" -> boolean,
+        "isSuggestedDate" -> boolean,
         "guests" -> number(min = 1, max = 9),
         "comment" -> optional(text)
       )(EventBookingForm.apply)(EventBookingForm.unapply)
@@ -189,6 +191,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
       case 0 => false
       case _ => true
     }
+  }
+
+  private def isValidMinValue(minValue: Int, maxValue: Int): Boolean ={
+    minValue <= maxValue
+  }
+
+  private def isValidMaxValue(minValue: Int, maxValue: Int): Boolean ={
+    maxValue >= minValue
   }
 
   private def isValidTime(time: String): Boolean ={
@@ -277,6 +287,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+
+
   def updateOldEventDate(formDate: EventDateForm, storedDate: EventDate) {
     // TODO: Add guest reminder email
     storedDate.setEventDateTime(Helpers.buildDateFromDateAndTime(formDate.date, formDate.time))
@@ -288,19 +300,11 @@ class EventService @Inject()(val template: Neo4jTemplate,
     this.save(event)
   }
 
-
-  //@Transactional(readOnly = true)
-  def getMealTypes(): Option[List[MealType]] = withTransaction(template){
-    mealTypeService.listAll()
-  }
-
-  //@Transactional(readOnly = true)
   def getEventBoxes(user: UserCredential): Option[List[EventBox]] = withTransaction(template){
     // Without paging
     this.getEventBoxesPage(user, 0)
   }
 
-  //@Transactional(readOnly = true)
   def getEventBoxesPage(user: UserCredential, pageNo: Integer): Option[List[EventBox]] = withTransaction(template){
 
     // With paging
@@ -374,8 +378,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
 
 
-
-  //@Transactional(readOnly = true)
   def getListOwnedBy(user: UserCredential): Option[List[Event]] = withTransaction(template){
     eventRepository.findByownerProfileOwner(user).iterator.asScala.toList match {
       case null => None
@@ -383,7 +385,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = true)
   def getListOwnedBy(userProfile: UserProfile): Option[List[Event]] = withTransaction(template){
     eventRepository.findByownerProfile(userProfile).iterator.asScala.toList match {
       case null => None
@@ -391,7 +392,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
   def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false
@@ -406,18 +406,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
   }
 
   // Fetching
-  //@Transactional(readOnly = true)
   def fetchEvent(event: Event): Event = withTransaction(template){
     template.fetch(event)
   }
 
-
-  //@Transactional(readOnly = false)
   private def deleteAll() = withTransaction(template){
     eventRepository.deleteAll()
   }
 
-  //@Transactional(readOnly = false)
   def save(newContent: Event): Event = withTransaction(template){
     eventRepository.save(newContent)
   }
