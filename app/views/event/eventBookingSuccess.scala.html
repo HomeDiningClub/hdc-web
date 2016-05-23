@@ -34,9 +34,10 @@
                     <p class="list-group-item-text">@eventBookingSuccess.totalCost</p>
                 </li>
                 <li class="list-group-item">
-                    <h4 class="list-group-item-heading">@Messages("event.book.chosen.address")</h4>
+                    <h4 class="list-group-item-heading">@Messages("event.prop.address")</h4>
                     <p class="list-group-item-text">
                         @eventBookingSuccess.locationAddress<br>
+                        @eventBookingSuccess.locationZipCode<br>
                         @eventBookingSuccess.locationCounty
                     </p>
                 </li>

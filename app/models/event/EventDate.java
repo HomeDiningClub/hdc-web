@@ -1,9 +1,11 @@
 package models.event;
 
+import models.Event;
 import models.base.AuditEntity;
 import models.modelconstants.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.annotation.RelatedToVia;
 
 import java.time.LocalDateTime;
@@ -19,6 +21,9 @@ public class EventDate extends AuditEntity {
 
     @RelatedToVia(type = RelationshipTypesJava.BOOKED_EVENT_DATE.Constant, direction = Direction.INCOMING)
     private Set<BookedEventDate> bookedEventDates;
+
+    @RelatedTo(type = RelationshipTypesJava.EVENT_TIMES.Constant, direction = Direction.INCOMING)
+    private Event ownerEvent;
 
     public Boolean deleteBooking(BookedEventDate bookingToAdd){
         return this.bookedEventDates != null && this.bookedEventDates.removeIf(b -> b.objectId.equals(bookingToAdd.objectId));
@@ -40,6 +45,10 @@ public class EventDate extends AuditEntity {
             this.bookedEventDates = new HashSet<>();
 
         return this.bookedEventDates;
+    }
+
+    public Event getOwnerEvent(){
+        return this.ownerEvent;
     }
 
     public int getGuestsBooked(){

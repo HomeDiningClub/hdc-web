@@ -7,7 +7,7 @@ case class EventBookingSuccess(date: LocalDate,
                                 locationAddress: String,
                                 locationCounty: String,
                                 locationZipCode: String,
-                                phoneNumberToHost: String,
+                                phoneNumberToHost: Option[String],
                                 nrOfGuests: Int,
                                 totalCost: Int,
                                 email: String) {

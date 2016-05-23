@@ -109,7 +109,10 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
             case null => None
             case mi => Some(mi.objectId.toString)
           },
-          price = item.getPrice.intValue(),
+          price = item.getPrice match {
+            case null => 0
+            case p => p.intValue()
+          },
           images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
           eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item)),
           minNoOfGuest = item.getMinNrOfGuests,
@@ -139,7 +142,7 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
 
   // Edit - Delete content
   def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
-    val result: Boolean = eventService.deleteById(objectId)
+    var result: Boolean = eventService.deleteById(objectId)
 
     result match {
       case true =>

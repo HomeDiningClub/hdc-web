@@ -23,7 +23,7 @@ import java.util.UUID
 import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
 
 import scala.Some
-import models.viewmodels.{EventBookingSuccess, MetaData, EditEventExtraValues, EventBox}
+import models.viewmodels._
 import customUtils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
@@ -47,9 +47,10 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
     eventService.findByownerProfileProfileLinkNameAndEventLinkName(profileName,eventName) match {
       case Some(event) =>
           Ok(views.html.event.event(
-            event,
-            event.getEventDates.asScala.toList,
-            createEventBookingForm(event),
+            event = event,
+            eventDates = event.getEventDates.asScala.toList,
+            eventBookingForm = createEventBookingForm(event),
+            eventPropertyList = createEventPropertyList(event, request.user),
             metaData = buildMetaData(event, request),
             eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
             shareUrl = createShareUrl(event),
@@ -124,9 +125,10 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
     eventService.findByownerProfileProfileLinkNameAndEventLinkName(profileName,eventName) match {
       case Some(event) =>
         Ok(views.html.event.event(
-          event,
-          event.getEventDates.asScala.toList,
-          createEventBookingForm(event),
+          event = event,
+          eventDates = event.getEventDates.asScala.toList,
+          eventBookingForm = createEventBookingForm(event),
+          eventPropertyList = createEventPropertyList(event, request.user),
           metaData = buildMetaData(event, request),
           eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
           shareUrl = createShareUrl(event),
@@ -209,6 +211,44 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       None
     )
     evtBookingForm.fill(bookingFormDefaults).discardingErrors
+  }
+
+  private def createEventPropertyList(event: Event, currentUser: Option[UserCredential] = None): EventPropertyList = {
+    val op = event.getOwnerProfile
+    val locCounty: Option[String] = op.getLocations.asScala.toList match {
+      case null | Nil => None
+      case items => Some(items.head.county.name)
+    }
+    var locStreetAddress: Option[String] = None
+    var locCity: Option[String] = None
+    var locZipCode: Option[String] = None
+
+    if(currentUser.isDefined){
+      if(eventService.isGuestBookedAtEvent(currentUser.get, event)){
+        locStreetAddress = Some(op.streetAddress)
+        locZipCode = Some(op.zipCode)
+        locCity = Some(op.city)
+      }
+    }
+
+    EventPropertyList(
+      locationAddress = locStreetAddress,
+      locationCounty = locCounty,
+      locationZipCode = locZipCode,
+      locationCity = locCity,
+      childFriendly = event.getChildFriendly,
+      handicapFriendly = event.getHandicapFriendly,
+      havePets = event.getHavePets,
+      smokingAllowed = event.getSmokingAllowed,
+      alcoholServing = event.getAlcoholServing match {
+        case null => None
+        case as => Some(as.name)
+      },
+      mealType = event.getMealType match {
+        case null => None
+        case mt => Some(mt.name)
+      }
+    )
   }
 
   // Edit - Add Content
@@ -398,7 +438,10 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                       locationAddress = event.getOwnerProfile.streetAddress,
                       locationCounty = event.getOwnerProfile.getLocations.asScala.head.county.name,
                       locationZipCode = event.getOwnerProfile.zipCode,
-                      phoneNumberToHost = event.getOwnerProfile.phoneNumber,
+                      phoneNumberToHost = event.getOwnerProfile.phoneNumber match {
+                        case "" => None
+                        case p => Some(p)
+                      },
                       nrOfGuests = contentData.guests,
                       totalCost = eventService.getEventPrice(event,contentData.guests),
                       email = currentUser.emailAddress

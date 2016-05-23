@@ -21,7 +21,7 @@ import models.viewmodels.EventBox
 import controllers.routes
 import customUtils.Helpers
 import scala.collection.mutable.ListBuffer
-import models.event.{EventDate, MealType}
+import models.event.{BookedEventDate, EventDate, MealType}
 import play.api.data.Form
 import play.api.data.Forms._
 import scala.Some
@@ -35,6 +35,7 @@ import customUtils.formhelpers.Formats._
 class EventService @Inject()(val template: Neo4jTemplate,
                              val eventRepository: EventRepository,
                              val eventDateRepository: EventDateRepository,
+                             val bookedEventDateRepository: BookedEventDateRepository,
                              val messagesApi: MessagesApi) extends TransactionSupport with I18nSupport {
 
   implicit object LocalDateTimeOrdering extends Ordering[LocalDateTime] {
@@ -74,6 +75,13 @@ class EventService @Inject()(val template: Neo4jTemplate,
     eventDateRepository.findByobjectId(objectId) match {
       case null => None
       case item => Some(item)
+    }
+  }
+
+  def findBookedDatesByUserAndEvent(user: UserCredential, event: Event): Option[List[BookedEventDate]] = withTransaction(template){
+    bookedEventDateRepository.findBookedDatesByUserAndEvent(user.getUserProfile.objectId, event.objectId).asScala.toList match {
+      case null | Nil => None
+      case items => Some(items)
     }
   }
 
@@ -137,7 +145,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
         "name" -> nonEmptyText(minLength = 6, maxLength = 60),
         "preamble" -> optional(text(maxLength = 150)),
         "body" -> optional(text),
-        "price" -> number(min = 0, max = 9999, strict = true),
+        "price" -> number(min = 0, max = 9999),
         "minNrOfGuests" -> number(min=1, max=9),
         "maxNrOfGuests" -> number(min=1, max=9),
         "mainimage" -> optional(text),
@@ -241,6 +249,13 @@ class EventService @Inject()(val template: Neo4jTemplate,
           case dateTimeList => Some(dateTimeList)
         }
       }
+    }
+  }
+
+  def isGuestBookedAtEvent(user: UserCredential, event: Event): Boolean = {
+    this.findBookedDatesByUserAndEvent(user,event) match {
+      case None => false
+      case Some(items) => true
     }
   }
 
@@ -398,6 +413,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
       case Some(item) =>
         item.deleteMainImage()
         item.deleteEventImages()
+        item.deleteEventDates()
         //item.deleteRatings()
         item.deleteLikes()
         eventRepository.delete(item)

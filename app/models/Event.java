@@ -38,6 +38,7 @@ public class Event extends ContentBase implements IEditable {
     private Boolean havePets;
     private Boolean smokingAllowed;
 
+    @Fetch
     @RelatedTo(type = RelationshipTypesJava.ALCOHOL_SERVING.Constant, direction = Direction.INCOMING)
     private AlcoholServing alcoholServing;
 
@@ -52,6 +53,7 @@ public class Event extends ContentBase implements IEditable {
     @RelatedTo(type = RelationshipTypesJava.HOSTS_EVENTS.Constant, direction = Direction.INCOMING)
     private UserProfile ownerProfile;
 
+    @Fetch
     @RelatedTo(type = RelationshipTypesJava.MEAL_TYPE.Constant, direction = Direction.INCOMING)
     private MealType mealType;
 
@@ -396,7 +398,22 @@ public class Event extends ContentBase implements IEditable {
             this.eventDates.remove(eventDate);
         }
     }
+    public void deleteEventDates() {
+        if(this.eventDates != null && !this.eventDates.isEmpty())
+        {
+            // Temporary store all
+            ArrayList<EventDate> arr = new ArrayList<EventDate>();
+            for (EventDate ed : this.eventDates) {
+                arr.add(ed);
+            }
 
+            // Remove all
+            Iterator<EventDate> iteration = (Iterator<EventDate>) arr.iterator();
+            while (iteration.hasNext()) {
+                deleteEventDate(iteration.next());
+            }
+        }
+    }
 
 
     // Constructors
