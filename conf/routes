@@ -68,6 +68,7 @@ GET         /event/eventlist.json                                @controllers.Ev
 GET         /event/add                                           @controllers.EventPageController.add
 POST        /event/add                                           @controllers.EventPageController.addSubmit
 POST        /event/addBooking                                    @controllers.EventPageController.addBookingSubmit
+POST        /event/addDateSuggestion                             @controllers.EventPageController.addDateSuggestionSubmit
 GET         /event/edit/:objectId                                @controllers.EventPageController.edit(objectId: java.util.UUID)
 GET         /event/delete/:objectId                              @controllers.EventPageController.delete(objectId: java.util.UUID)
 GET         /event/getPrice.json                                 @controllers.EventPageController.getEventPriceJSON(eventUUID: java.util.UUID ?= null, nrOfGuests: Int ?= 1)

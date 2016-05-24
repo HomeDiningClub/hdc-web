@@ -29,7 +29,7 @@ import enums.SortOrderEnums
 import enums.SortOrderEnums.SortOrderEnums
 import org.joda.time.DateTime
 import play.api.Logger
-import models.formdata.{EventOptionsForm, EventBookingForm, EventDateForm, EventForm}
+import models.formdata._
 import customUtils.formhelpers.Formats._
 
 class EventService @Inject()(val template: Neo4jTemplate,
@@ -179,10 +179,21 @@ class EventService @Inject()(val template: Neo4jTemplate,
         "eventId" -> uuid,
         "eventDateId" -> optional(uuid),
         "date" -> optional(of[java.time.LocalDateTime]),
-        "isSuggestedDate" -> boolean,
         "guests" -> number(min = 1, max = 9),
         "comment" -> optional(text)
       )(EventBookingForm.apply)(EventBookingForm.unapply)
+    )
+  }
+
+  def eventDateSuggestionFormMapping: Form[EventDateSuggestionForm] = {
+    Form(
+      mapping(
+        "eventId" -> uuid,
+        "date" -> of[java.time.LocalDate],
+        "time" -> of[java.time.LocalTime],
+        "guests" -> number(min = 1, max = 9),
+        "comment" -> optional(text)
+      )(EventDateSuggestionForm.apply)(EventDateSuggestionForm.unapply)
     )
   }
 

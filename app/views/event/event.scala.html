@@ -1,6 +1,7 @@
 @(event: models.Event,
         eventDates: List[models.event.EventDate],
         eventBookingForm: Form[EventBookingForm],
+        eventDateSuggestionForm: Form[EventDateSuggestionForm],
         eventPropertyList: EventPropertyList,
         metaData: Option[viewmodels.MetaData] = None,
         eventBoxes: Option[List[models.viewmodels.EventBox]] = None,
@@ -11,6 +12,7 @@
 
 @eventScripts = {
     <script src="@routes.Assets.at("js/app/event-booking.js")"></script>
+    <script src="@routes.Assets.at("js/app/event-date-suggestion.js")"></script>
 }
 
 
@@ -41,14 +43,19 @@
         <div class="row bg-color">
             <div class="col-xs-12 col-md-4 col-lg-3">
                 @views.html.event.eventDateSelector(event)
-
+                @views.html.event.eventDateSuggestionButton(event)
                 @eventLikeForm
                 @shared.fbShare(shareUrl)
+
+                @if(isThisMyEvent){
+                    <div class="col-xs-12 text-center margin-top">
+                        <a href="@controllers.routes.EventPageController.edit(event.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> @Messages("event.button.edit")</a><br>
+                    </div>
+                }
             </div>
 
-            <div id="booking-form" class="col-xs-12 col-sm-4 bg-color clearfix hidden">
-                @views.html.event.eventBookForm(eventBookingForm)
-            </div>
+            @views.html.event.eventBookForm(eventBookingForm)
+            @views.html.event.eventDateSuggestionForm(eventDateSuggestionForm)
 
             <div class="col-xs-12 col-md-8 col-lg-9 bg-color">
                 @if(!flash.isEmpty) {
@@ -79,11 +86,6 @@
                 <article>
                     @views.html.event.eventPropertiesList(eventPropertyList)
                 </article>
-                @if(isThisMyEvent){
-                    <div class="col-xs-12 text-center margin-top">
-                        <a href="@controllers.routes.EventPageController.edit(event.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> @Messages("event.button.edit")</a><br>
-                    </div>
-                }
             </div>
         </div>
         @defining(event.getEventImages.asScala) { eventImages =>

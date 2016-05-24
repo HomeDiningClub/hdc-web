@@ -3,6 +3,7 @@ $(document).ready(function(){
     // Init booking
     activateGuestSelector();
     activateDateSelector();
+    var $dateBookForm = $("#booking-form");
 
     function activateDateSelector(){
         var $datePicker = $("#event-date-list-picker");
@@ -54,10 +55,11 @@ $(document).ready(function(){
             var time = $(this).data("selected-time");
 
             updatePrice();
-            $("#eventDateId").val(uuid);
-            $("#booking-chosen-date").text(date);
-            $("#booking-chosen-time").text(time);
-            $("#booking-form").removeClass("hidden");
+
+            $dateBookForm.find(".event-uuid").val(uuid);
+            $dateBookForm.find("#booking-chosen-date").text(date);
+            $dateBookForm.find("#booking-chosen-time").text(time);
+            $dateBookForm.removeClass("hidden");
         });
     }
 

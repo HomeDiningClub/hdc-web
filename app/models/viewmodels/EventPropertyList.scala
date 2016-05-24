@@ -8,5 +8,7 @@ case class EventPropertyList(locationAddress: Option[String],
                               handicapFriendly: Boolean,
                               havePets: Boolean,
                               smokingAllowed: Boolean,
+                              minNrOfGuests: Int,
+                              maxNrOfGuests: Int,
                               alcoholServing: Option[String],
                               mealType: Option[String]) {}

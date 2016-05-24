@@ -11,38 +11,58 @@
         @if(!flash.isEmpty) {
             <div class="col-xs-12">@shared.flashmsg(flash)</div>
         }
+
         <div class="jumbotron">
             <h1>@Messages("event.book.success.header")</h1>
             <p>@Messages("event.book.success.body", eventBookingSuccess.email)</p>
         </div>
+
         <div class="col-xs-12">
             <ul class="list-group">
                 <li class="list-group-item">
-                    <h4 class="list-group-item-heading">@Messages("event.book.chosen.date")</h4>
-                    <p class="list-group-item-text">@eventBookingSuccess.date</p>
+                    <div class="row">
+                        <div class="col-md-3"><span class="glyphicon glyphicon-calendar"></span> @Messages("event.book.chosen.date")</div>
+                        <div class="col-md-9">@eventBookingSuccess.date</div>
+                    </div>
                 </li>
                 <li class="list-group-item">
-                    <h4 class="list-group-item-heading">@Messages("event.book.chosen.time")</h4>
-                    <p class="list-group-item-text">@eventBookingSuccess.time</p>
+                    <div class="row">
+                        <div class="col-md-3"><span class="glyphicon glyphicon-time"></span> @Messages("event.book.chosen.time")</div>
+                        <div class="col-md-9">>@eventBookingSuccess.time</div>
+                    </div>
                 </li>
                 <li class="list-group-item">
-                    <h4 class="list-group-item-heading">@Messages("event.book.nr-of-guests.label")</h4>
-                    <p class="list-group-item-text">@eventBookingSuccess.nrOfGuests.toString</p>
+                    <div class="row">
+                        <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.book.nr-of-guests.label")</div>
+                        <div class="col-md-9">@eventBookingSuccess.nrOfGuests.toString</div>
+                    </div>
                 </li>
                 <li class="list-group-item">
-                    <h4 class="list-group-item-heading">@Messages("event.book.chosen.total-cost")</h4>
-                    <p class="list-group-item-text">@eventBookingSuccess.totalCost</p>
+                    <div class="row">
+                        <div class="col-md-3">@Messages("event.book.chosen.total-cost")</div>
+                        <div class="col-md-9">@eventBookingSuccess.totalCost</div>
+                    </div>
                 </li>
                 <li class="list-group-item">
-                    <h4 class="list-group-item-heading">@Messages("event.prop.address")</h4>
-                    <p class="list-group-item-text">
-                        @eventBookingSuccess.locationAddress<br>
-                        @eventBookingSuccess.locationZipCode<br>
-                        @eventBookingSuccess.locationCounty
-                    </p>
+                    <div class="row">
+                        <div class="col-md-3"><span class="glyphicon glyphicon-map-marker"></span> @Messages("event.prop.address")</div>
+                        <div class="col-md-9">
+                            @eventBookingSuccess.locationAddress<br>
+                            @eventBookingSuccess.locationZipCode<br>
+                            @eventBookingSuccess.locationCity
+                        </div>
+                    </div>
                 </li>
+                @if(eventBookingSuccess.phoneNumberToHost.isDefined){
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-3"><span class="glyphicon glyphicon-earphone"></span> @Messages("event.prop.phone")</div>
+                            <div class="col-md-9">@eventBookingSuccess.phoneNumberToHost.get</div>
+                        </div>
+                    </li>
+                }
                 <li class="list-group-item">
-                    <button class="btn btn-primary btn-lg" onclick="window.print();">@Messages("event.book.success.print")</button>
+                    <button class="btn btn-primary btn-lg" onclick="window.print();"><span class="glyphicon glyphicon-print"></span> @Messages("event.book.success.print")</button>
                 </li>
             </ul>
         </div>

@@ -28,7 +28,7 @@ import customUtils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
-import models.formdata.{EventOptionsForm, EventBookingForm, EventForm}
+import models.formdata.{EventDateSuggestionForm, EventOptionsForm, EventBookingForm, EventForm}
 
 class EventPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val likeController: LikeController,
@@ -50,6 +50,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
             event = event,
             eventDates = event.getEventDates.asScala.toList,
             eventBookingForm = createEventBookingForm(event),
+            eventDateSuggestionForm = createDateSuggestionForm(event),
             eventPropertyList = createEventPropertyList(event, request.user),
             metaData = buildMetaData(event, request),
             eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
@@ -128,6 +129,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
           event = event,
           eventDates = event.getEventDates.asScala.toList,
           eventBookingForm = createEventBookingForm(event),
+          eventDateSuggestionForm = createDateSuggestionForm(event),
           eventPropertyList = createEventPropertyList(event, request.user),
           metaData = buildMetaData(event, request),
           eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
@@ -199,18 +201,24 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
   // Forms
   def evtForm = eventService.eventFormMapping
   def evtBookingForm = eventService.eventBookingFormMapping
+  def evtDateSuggestionForm = eventService.eventDateSuggestionFormMapping
+
 
   // Booking
   private def createEventBookingForm(event: Event): Form[EventBookingForm] = {
-    val bookingFormDefaults = EventBookingForm(
+    val formDefaults = EventBookingForm(
       event.objectId,
       None,
       None,
-      false,
       1,
       None
     )
-    evtBookingForm.fill(bookingFormDefaults).discardingErrors
+    evtBookingForm.fill(formDefaults).discardingErrors
+  }
+
+  // Suggestion
+  private def createDateSuggestionForm(event: Event): Form[EventDateSuggestionForm] = {
+    evtDateSuggestionForm
   }
 
   private def createEventPropertyList(event: Event, currentUser: Option[UserCredential] = None): EventPropertyList = {
@@ -240,6 +248,8 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       handicapFriendly = event.getHandicapFriendly,
       havePets = event.getHavePets,
       smokingAllowed = event.getSmokingAllowed,
+      minNrOfGuests = event.getMinNrOfGuests,
+      maxNrOfGuests = event.getMaxNrOfGuests,
       alcoholServing = event.getAlcoholServing match {
         case null => None
         case as => Some(as.name)
@@ -401,28 +411,55 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
     }
   }
 
+
+  def addDateSuggestionSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
+    val currentUser = request.user
+
+    evtDateSuggestionForm.bindFromRequest.fold(
+      errors => {
+        Logger.debug("Cannot return to event to show error, no valid eventUUID")
+        NotFound(Messages("event.suggest.add.error"))
+      },
+      contentData => {
+        eventService.findById(contentData.eventId) match {
+          case Some(event) => {
+            // TODO: Add suggestion
+
+            val successValues = EventDateSuggestionSuccess(
+              date = contentData.date,
+              time = contentData.time,
+              nrOfGuests = contentData.guests,
+              comment = contentData.comment
+            )
+
+            val successMessage = Messages("event.suggest.add.success")
+            Ok(views.html.event.eventDateSuggestionSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
+          }
+          case _ => {
+            val errorMsg = "Cannot suggest date to event, no valid eventUUID"
+            Logger.debug(errorMsg)
+            NotFound(errorMsg)
+          }
+        }
+      }
+    )
+  }
+
   def addBookingSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
     val currentUser = request.user
 
     evtBookingForm.bindFromRequest.fold(
       errors => {
-        val errorMessage = Messages("event.book.add.error")
-          eventService.findById(evtBookingForm.get.eventId) match {
-              case Some(item) => Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(item.getOwnerProfile.profileLinkName,item.getLink)).flashing(FlashMsgConstants.Error -> errorMessage)
-              case None =>  {
-                val errorMsg = "Cannot return to event to show error, no valid eventUUID"
-                Logger.debug(errorMsg)
-                NotFound(errorMsg)
-              }
-          }
+          Logger.debug("Cannot return to event to show error, no valid eventUUID")
+          NotFound(Messages("event.book.add.error"))
       },
       contentData => {
         eventService.findById(contentData.eventId) match {
           case Some(event) => {
 
             // If user selected a pre-chosen date
-            if(contentData.eventDateId.nonEmpty && !contentData.isSuggestedDate){
+            if(contentData.eventDateId.nonEmpty){
               // Verify that the date actually exists
               eventService.findEventDateById(contentData.eventDateId.get)  match {
                 case Some(eventDate) => {
@@ -430,12 +467,12 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                   // Lastly check space
 
                   if(eventService.doesEventDateHasSpaceFor(event, eventDate, contentData.guests)){
-                    val successMessage = Messages("event.book.add.success")
 
                     val successValues = EventBookingSuccess(
                       date = eventDate.getEventDateTime.toLocalDate,
                       time = eventDate.getEventDateTime.toLocalTime,
                       locationAddress = event.getOwnerProfile.streetAddress,
+                      locationCity = event.getOwnerProfile.city,
                       locationCounty = event.getOwnerProfile.getLocations.asScala.head.county.name,
                       locationZipCode = event.getOwnerProfile.zipCode,
                       phoneNumberToHost = event.getOwnerProfile.phoneNumber match {
@@ -448,6 +485,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                     )
                     // TODO: Add booking itself
 
+                    val successMessage = Messages("event.book.add.success")
                     Ok(views.html.event.eventBookingSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
                   }else{
                     val errorMsg = "Cannot add booking to event, too many bookings"
@@ -461,11 +499,6 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                   NotFound(errorMsg)
                 }
               }
-              // Is user chosen to suggest a date
-            }else if(contentData.isSuggestedDate){
-              // TODO: Add suggestion code
-              Ok("TODO: Add suggestion code")
-
             }else{
               val errorMsg = "Cannot add booking nor suggest a booking, not correct values posted"
               Logger.debug(errorMsg)

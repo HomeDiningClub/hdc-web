@@ -1,0 +1,41 @@
+@(eventDateSuggestionForm: Form[models.formdata.EventDateSuggestionForm])(implicit messages: Messages)
+@implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
+
+<div id="date-suggestion-form" class="col-xs-12 col-sm-4 bg-color clearfix hidden">
+    @b3.form(action=controllers.routes.EventPageController.addDateSuggestionSubmit(), 'enctype -> "multipart/form-data"){
+
+        @b3.inputWrapped("date",
+            eventDateSuggestionForm("date"),
+            'class -> "date-input",
+            'placeholder -> Messages("event.edit.add.date.validation.format"),
+            '_label -> Messages("event.edit.add.date"),
+            '_class -> "date") { input =>
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </div>
+                @input
+            </div>
+        }
+        @b3.inputWrapped("time",
+            eventDateSuggestionForm("time"),
+            'class -> "time-input",
+            'placeholder -> Messages("event.edit.add.time.validation.format"),
+            '_label -> Messages("event.edit.add.time"),
+            '_class -> "time") { input =>
+            <div class="input-group">
+                <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </div>
+                @input
+            </div>
+        }
+
+        @b3.select(eventDateSuggestionForm("guests"), helper.options("1"->"1","2"->"2","3"->"3","4"->"4","5"->"5","6"->"6","7"->"7","8"->"8","9"->"9"), '_label -> Messages("event.book.nr-of-guests.label"))
+        @b3.textarea(eventDateSuggestionForm("comment"), '_text -> Messages("event.suggest.comment.text"), '_label -> Messages("event.suggest.comment.label"))
+
+        @helper.inputHidden(eventDateSuggestionForm("eventId"), 'class -> "event-uuid")
+        @b3.submit('class -> "btn btn-lg btn-orange"){ <span class="glyphicon glyphicon-calendar"></span> @Messages("event.suggest.submit") }
+        <strong>@Messages("event.suggest.submit.help")</strong>
+    }
+</div>
