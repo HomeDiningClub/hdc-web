@@ -1,6 +1,6 @@
 package controllers
 
-import java.time.LocalDate
+import java.time.{LocalDateTime, LocalDate}
 import javax.inject.{Named, Inject}
 
 import models.event.{MealType, AlcoholServing}
@@ -375,7 +375,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
               },
               price = item.getPrice.intValue(),
               images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
-              eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item)),
+              eventDates = eventService.convertToEventFormDates(eventService.filterEventDatesValidForEditing(eventService.getSortedEventDates(item))),
               minNoOfGuest = item.getMinNrOfGuests,
               maxNoOfGuest = item.getMaxNrOfGuests,
               eventOptionsForm = EventOptionsForm(

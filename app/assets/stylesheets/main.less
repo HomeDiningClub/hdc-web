@@ -60,7 +60,7 @@
 @link-color: @hdc-green;
 @link-color-hover: darken(@link-color, 30%);
 @label-color: #666;
-@input-border-color: #eee;
+@input-border-color: #ccc;
 @input-button-bg-color: @hdc-green;
 @input-button-border-color: #264540;
 @input-button-text-color: #fff;
@@ -494,6 +494,25 @@ input[type="reset"]:hover
   box-shadow: 2px 2px 5px -5px rgba(166,166,166,1);
 }
 
+.panel-orange {
+  border-color: @hdc-orange;
+}
+.panel-orange > .panel-heading {
+  color: @hdc-white;
+  background-color: @hdc-orange;
+  border-color: @hdc-orange;
+}
+
+.panel-green {
+  border-color: @hdc-green;
+}
+.panel-green > .panel-heading {
+  color: @hdc-white;
+  background-color: @hdc-green;
+  border-color: @hdc-green;
+}
+
+
 
 // Pagination
 .pagination-hdc #resultsTotal {
@@ -817,7 +836,6 @@ input[type="reset"]:hover
   display: block;
   padding: 1em;
   background-color: @hdc-light-gray;
-  font-size: 1.0em;
   margin-top:13px;
 }
 .event-date-list-result {
@@ -839,6 +857,15 @@ input[type="reset"]:hover
   border:none;
   font-weight: bold;
   color: @hdc-white;
+}
+.panel-date-suggestion-form, .panel-booking-form {
+  background-color: @hdc-light-gray;
+}
+.panel-date-suggestion-form .comment-field {
+  min-height: 150px;
+}
+.btn-event-date-suggest {
+  margin-top: 20px;
 }
 
 // Event time circle

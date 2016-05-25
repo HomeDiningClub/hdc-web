@@ -1,9 +1,9 @@
 $(document).ready(function(){
 
     // Init booking
+    var $dateBookForm = $("#booking-form");
     activateGuestSelector();
     activateDateSelector();
-    var $dateBookForm = $("#booking-form");
 
     function activateDateSelector(){
         var $datePicker = $("#event-date-list-picker");
@@ -17,29 +17,35 @@ $(document).ready(function(){
 
         $.getJSON(availableDatesRoute + '?' + eventUUIDPar + '=' + eventUUID, function(data) {
             var availableDates = [];
-            $.each(data, function(key, val) {
-                availableDates.push(val);
-            });
+            if(data) {
+                $datePickerResults.toggleClass("hidden");
 
-            //var availableDates = ["2016-05-17","2016-05-16","2016-05-30","2016-05-25"];
-
-            var datePickerOptions = {
-                locale: "sv",
-                minDate: "now",
-                useCurrent: false,
-                format: dateFormat,
-                inline: true,
-                enabledDates: availableDates
-            };
-
-            $datePicker.datetimepicker(datePickerOptions).on("dp.change", function(e){
-                $datePickerResults.load(eventTimeRoute + '?' + eventUUIDPar + '=' + eventUUID + "&" + datePar + '=' + e.date.format(dateFormat), function(){
-                    $(this).removeClass("flipOutX").addClass("flipInX");
-                    activateBookingButtons();
+                $.each(data, function(key, val) {
+                    availableDates.push(val);
                 });
-            });
 
-            $datePicker.slideDown();
+                //var availableDates = ["2016-05-17","2016-05-16","2016-05-30","2016-05-25"];
+
+                var datePickerOptions = {
+                    locale: "sv",
+                    minDate: "now",
+                    useCurrent: false,
+                    format: dateFormat,
+                    inline: true,
+                    enabledDates: availableDates
+                };
+
+                $datePicker.datetimepicker(datePickerOptions).on("dp.change", function(e){
+                    $datePickerResults.load(eventTimeRoute + '?' + eventUUIDPar + '=' + eventUUID + "&" + datePar + '=' + e.date.format(dateFormat), function(){
+                        $(this).removeClass("flipOutX").addClass("flipInX");
+                        activateBookingButtons();
+                    });
+                });
+
+                $datePicker.slideDown();
+            }else{
+                $("#event-date-list-suggest-date").hide().trigger("click");
+            }
 
         });
 
@@ -59,21 +65,22 @@ $(document).ready(function(){
             $dateBookForm.find(".event-uuid").val(uuid);
             $dateBookForm.find("#booking-chosen-date").text(date);
             $dateBookForm.find("#booking-chosen-time").text(time);
-            $dateBookForm.removeClass("hidden");
+            $(".event-cta-form:visible").not($dateBookForm).addClass("hidden");
+            $dateBookForm.toggleClass("hidden");
         });
     }
 
     function activateGuestSelector(){
-        $("#guests").on("change", updatePrice);
+        $dateBookForm.find("#guests").on("change", updatePrice);
     }
 
     function updatePrice(){
         var $costDiv = $("#booking-total-cost");
         var priceRoute = $costDiv.data("price-route");
         var nrOfGuestsPar = "nrOfGuests";
-        var nrOfGuests = $("#guests").val();
+        var nrOfGuests = $dateBookForm.find("#guests").val();
         var eventUUIDPar = "eventUUID";
-        var eventUUID = $("#eventId").val();
+        var eventUUID = $dateBookForm.find("#eventId").val();
         var $formGrp = $costDiv.parents(".form-group");
 
         $formGrp.removeClass("flipInX").addClass("flipOutX");

@@ -29,7 +29,8 @@ $(document).ready(function(){
             var uuid = $(this).data("event-uuid");
             $dateSugForm.find(".event-uuid").val(uuid);
             activateDateSelector();
-            $dateSugForm.removeClass("hidden");
+            $(".event-cta-form:visible").not($dateSugForm).addClass("hidden");
+            $dateSugForm.toggleClass("hidden");
         });
     }
 

@@ -506,7 +506,7 @@ event.price.back.list.text-03=5% går till HDC
 event.price.back.list.text-04=Boka och njut!
 
 event.list.time-header=Klockan
-event.choose-date.header=Välj datum & boka
+event.choose-date.header=Välj ett datum
 event.button.suggest-date=...eller föreslå ett datum
 
 event.prop.header=Detaljer om bjudningen
@@ -527,6 +527,7 @@ event.prop.alcohol-servings=Alkohol / dryck
 event.prop.meal-type=Måltidstyp
 event.prop.phone=Telefon
 
+event.book.heading=Boka bjudning
 event.book.chosen.date=Valt datum
 event.book.chosen.time=Klockan
 event.book.chosen.total-cost=Totalkostnad
@@ -537,12 +538,13 @@ event.book.add.error=Någonting gick fel prova att ladda om sidan och boka igen.
 event.book.success.header=Din bokning är slutförd!
 event.book.success.body=Du har nu genomfört din bokning, en påminnelse är skickad till din e-post: {0}
 
-event.suggest.date=Valt datum
+event.suggest.date=datum
 event.suggest.time=Klockan
 event.suggest.comment.label=Kommentar
 event.suggest.comment.text=Hej, vi/jag skulle vilja komma på middag hos er, skulle det vara möjligt vid denna tid?
+event.suggest.heading=Föreslå ett datum
 event.suggest.submit=Föreslå datum
-event.suggest.submit.help=OBS! Ingen debitering kommer att ske.
+event.suggest.submit.help=OBS! Ingen bokning kommer att ske
 event.suggest.add.error=Någonting gick fel, du kan inte föreslå ett datum.
 event.suggest.add.success=Önskemålet skickat!
 event.suggest.success.header=Ett önskemål om datum är skickad till värden!

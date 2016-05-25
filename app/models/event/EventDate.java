@@ -65,8 +65,9 @@ public class EventDate extends AuditEntity {
     public EventDate(LocalDateTime date){
         setEventDateTime(date);
     }
-    public EventDate(){
-        setEventDateTime(customUtils.Helpers.getCurrentLocalDateTime());
+
+    private EventDate(){
+        //setEventDateTime(customUtils.Helpers.getCurrentLocalDateTime());
     }
 
     private Date castToDate(LocalDateTime localDateTime){

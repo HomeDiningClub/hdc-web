@@ -115,6 +115,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+  def filterEventDatesValidForEditing(dates: Option[List[EventDate]]): Option[List[EventDate]] = {
+    dates match {
+      case Some(list) => Some(list.filter(d => d.getEventDateTime.isAfter(LocalDateTime.now())))
+      case None => None
+    }
+
+  }
+
   def convertToEventFormDates(inputList: Option[List[EventDate]]): Option[List[EventDateForm]] = {
     inputList match {
       case None => None
@@ -293,9 +301,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
         // Edit old date on existing event
         if(ed.id.nonEmpty && ed.guestsBooked == 0){
-          this.findEventDateById(UUID.fromString(ed.id.get)) match {
-            case Some(eventDate) => this.updateOldEventDate(ed, eventDate)
-            case None => Logger.debug("Cannot find earlier EventDate using UUID to update date on")
+          event.getEventDates.asScala.toList match {
+            case eventDates => {
+              eventDates.find(x => x.objectId.equals(UUID.fromString(ed.id.get))) match {
+                case Some(matchingEventDate) => this.updateOldEventDate(ed,matchingEventDate)
+                case None => Logger.debug("Cannot find earlier EventDate using UUID to update date on")
+              }
+            }
+            case Nil => Logger.debug("Cannot find any EventDate at all on the event objectId: " + event.objectId)
           }
           // Add new date on existing event
         }else if(ed.id.isEmpty && contentData.id.nonEmpty){
