@@ -56,6 +56,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
             eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
             shareUrl = createShareUrl(event),
             isThisMyEvent = isThisMyEvent(event),
+            memberUser = request.user,
             eventLikeForm = getEventLikeForm(event)))
           case None =>
             val errMess = "Cannot find event using name:" + eventName + " and profileName:" + profileName
@@ -75,7 +76,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
   }
 
   def getEventTimesForDateAJAX(eventUUID: UUID, date: LocalDate) = UserAwareAction() {
-    Ok(views.html.event.eventDateTimeList(eventService.getEventTimesForDate(eventUUID, date)))
+    Ok(views.html.event.bookingTimeList(eventService.getEventTimesForDate(eventUUID, date)))
   }
 
   def getAllAvailableDatesJSON(eventUUID: UUID) = UserAwareAction() {
@@ -135,6 +136,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
           eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
           shareUrl = createShareUrl(event),
           isThisMyEvent = isThisMyEvent(event),
+          memberUser = request.user,
           eventLikeForm = getEventLikeForm(event)
         ))
       case None =>
@@ -207,11 +209,11 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
   // Booking
   private def createEventBookingForm(event: Event): Form[EventBookingForm] = {
     val formDefaults = EventBookingForm(
-      event.objectId,
-      None,
-      None,
-      1,
-      None
+      eventId = event.objectId,
+      eventDateId = None,
+      date = None,
+      guests = 2,
+      comment = None
     )
     evtBookingForm.fill(formDefaults).discardingErrors
   }
@@ -433,7 +435,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
             )
 
             val successMessage = Messages("event.suggest.add.success")
-            Ok(views.html.event.eventDateSuggestionSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
+            Ok(views.html.event.suggestionSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
           }
           case _ => {
             val errorMsg = "Cannot suggest date to event, no valid eventUUID"
@@ -486,7 +488,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                     // TODO: Add booking itself
 
                     val successMessage = Messages("event.book.add.success")
-                    Ok(views.html.event.eventBookingSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
+                    Ok(views.html.event.bookingSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
                   }else{
                     val errorMsg = "Cannot add booking to event, too many bookings"
                     Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(currentUser.getUserProfile.profileLinkName,event.getLink)).flashing(FlashMsgConstants.Error -> errorMsg)
@@ -604,6 +606,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         }
 
         contentData.eventOptionsForm.alcoholServing match {
+          case None => Logger.debug("Error adding AlcoholServing to event, no uuid")
           case Some(uuid) => alcoholServingService.findById(uuid) match {
             case None => Logger.debug("Error adding AlcoholServing to event, the uuid didn't match any alcoholservings-entry:" + uuid)
             case Some(as) => newRec.get.setAlcoholServing(as)
@@ -611,6 +614,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         }
 
         contentData.eventOptionsForm.mealType match {
+          case None => Logger.debug("Error adding Mealtype to event, no uuid")
           case Some(uuid) => mealTypeService.findById(uuid) match {
             case None => Logger.debug("Error adding Mealtype to event, the uuid didn't match any mealtype-entry:" + uuid)
             case Some(mt) => newRec.get.setMealType(mt)

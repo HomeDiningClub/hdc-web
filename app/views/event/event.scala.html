@@ -7,6 +7,7 @@
         eventBoxes: Option[List[models.viewmodels.EventBox]] = None,
         shareUrl: String = "",
         isThisMyEvent: Boolean = false,
+        memberUser: Option[UserCredential] = None,
         eventLikeForm: play.twirl.api.Html = play.twirl.api.Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
 @import scala.collection.JavaConverters._
 
@@ -14,7 +15,6 @@
     <script src="@routes.Assets.at("js/app/event-booking.js")"></script>
     <script src="@routes.Assets.at("js/app/event-date-suggestion.js")"></script>
 }
-
 
 @main(Messages("event.title", event.getName), metaData = metaData, footerScripts = eventScripts) {
 
@@ -42,10 +42,11 @@
 
         <div class="row bg-color">
             <div class="col-xs-12 col-md-4">
-                @views.html.event.eventDateSelector(event)
+                @views.html.event.bookingDatePicker(event)
+                @views.html.event.suggestionButton(event)
 
-                @views.html.event.eventDateSuggestionButton(event)
-                @views.html.event.eventDateSuggestionForm(eventDateSuggestionForm)
+                @views.html.event.bookingForm(eventBookingForm, memberUser)
+                @views.html.event.suggestionForm(eventDateSuggestionForm, memberUser)
 
                 @eventLikeForm
                 @shared.fbShare(shareUrl)
@@ -57,7 +58,7 @@
                 }
             </div>
 
-            @views.html.event.eventBookForm(eventBookingForm)
+
 
             <div class="col-xs-12 col-md-8 bg-color">
                 @if(!flash.isEmpty) {
@@ -86,7 +87,7 @@
                 }
 
                 <article>
-                    @views.html.event.eventPropertiesList(eventPropertyList)
+                    @views.html.event.propertiesList(eventPropertyList)
                 </article>
 
                 @defining(event.getEventImages.asScala) { eventImages =>

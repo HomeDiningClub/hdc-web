@@ -62,7 +62,7 @@ $(document).ready(function(){
 
             updatePrice();
 
-            $dateBookForm.find(".event-uuid").val(uuid);
+            $dateBookForm.find("#book-eventDateId").val(uuid);
             $dateBookForm.find("#booking-chosen-date").text(date);
             $dateBookForm.find("#booking-chosen-time").text(time);
             $(".event-cta-form:visible").not($dateBookForm).addClass("hidden");
@@ -71,14 +71,14 @@ $(document).ready(function(){
     }
 
     function activateGuestSelector(){
-        $dateBookForm.find("#guests").on("change", updatePrice);
+        $dateBookForm.find("#book-guests").on("change", updatePrice);
     }
 
     function updatePrice(){
         var $costDiv = $("#booking-total-cost");
         var priceRoute = $costDiv.data("price-route");
         var nrOfGuestsPar = "nrOfGuests";
-        var nrOfGuests = $dateBookForm.find("#guests").val();
+        var nrOfGuests = $dateBookForm.find("#book-guests").val();
         var eventUUIDPar = "eventUUID";
         var eventUUID = $dateBookForm.find("#eventId").val();
         var $formGrp = $costDiv.parents(".form-group");

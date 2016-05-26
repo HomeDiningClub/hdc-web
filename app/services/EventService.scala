@@ -185,10 +185,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
     Form(
       mapping(
         "eventId" -> uuid,
-        "eventDateId" -> optional(uuid),
-        "date" -> optional(of[java.time.LocalDateTime]),
-        "guests" -> number(min = 1, max = 9),
-        "comment" -> optional(text)
+        "book-eventDateId" -> optional(uuid),
+        "book-date" -> optional(of[java.time.LocalDateTime]),
+        "book-guests" -> number(min = 1, max = 9),
+        "book-comment" -> optional(text)
       )(EventBookingForm.apply)(EventBookingForm.unapply)
     )
   }
@@ -196,11 +196,11 @@ class EventService @Inject()(val template: Neo4jTemplate,
   def eventDateSuggestionFormMapping: Form[EventDateSuggestionForm] = {
     Form(
       mapping(
-        "eventId" -> uuid,
-        "date" -> of[java.time.LocalDate],
-        "time" -> of[java.time.LocalTime],
-        "guests" -> number(min = 1, max = 9),
-        "comment" -> optional(text)
+        "suggest-eventId" -> uuid,
+        "suggest-date" -> of[java.time.LocalDate],
+        "suggest-time" -> of[java.time.LocalTime],
+        "suggest-guests" -> number(min = 1, max = 9),
+        "suggest-comment" -> optional(text)
       )(EventDateSuggestionForm.apply)(EventDateSuggestionForm.unapply)
     )
   }
@@ -302,13 +302,13 @@ class EventService @Inject()(val template: Neo4jTemplate,
         // Edit old date on existing event
         if(ed.id.nonEmpty && ed.guestsBooked == 0){
           event.getEventDates.asScala.toList match {
+            case Nil | null => Logger.debug("Cannot find any EventDate at all on the event objectId: " + event.objectId)
             case eventDates => {
               eventDates.find(x => x.objectId.equals(UUID.fromString(ed.id.get))) match {
                 case Some(matchingEventDate) => this.updateOldEventDate(ed,matchingEventDate)
                 case None => Logger.debug("Cannot find earlier EventDate using UUID to update date on")
               }
             }
-            case Nil => Logger.debug("Cannot find any EventDate at all on the event objectId: " + event.objectId)
           }
           // Add new date on existing event
         }else if(ed.id.isEmpty && contentData.id.nonEmpty){
