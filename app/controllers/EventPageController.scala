@@ -3,7 +3,7 @@ package controllers
 import java.time.{LocalDateTime, LocalDate}
 import javax.inject.{Named, Inject}
 
-import models.event.{MealType, AlcoholServing}
+import models.event.{BookedEventDate, MealType, AlcoholServing}
 import models.files.ContentFile
 import models.jsonmodels.{EventBoxJSON}
 import org.springframework.stereotype.{Controller => SpringController}
@@ -466,33 +466,43 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
               eventService.findEventDateById(contentData.eventDateId.get)  match {
                 case Some(eventDate) => {
 
-                  // Lastly check space
+                  if(!eventService.isUserBookedToEventDate(eventDate, currentUser)) {
 
-                  if(eventService.doesEventDateHasSpaceFor(event, eventDate, contentData.guests)){
+                    // Lastly check space and if user hasn't booked before
+                    if (eventService.doesEventDateHasSpaceFor(event, eventDate, contentData.guests)) {
 
-                    val successValues = EventBookingSuccess(
-                      date = eventDate.getEventDateTime.toLocalDate,
-                      time = eventDate.getEventDateTime.toLocalTime,
-                      locationAddress = event.getOwnerProfile.streetAddress,
-                      locationCity = event.getOwnerProfile.city,
-                      locationCounty = event.getOwnerProfile.getLocations.asScala.head.county.name,
-                      locationZipCode = event.getOwnerProfile.zipCode,
-                      phoneNumberToHost = event.getOwnerProfile.phoneNumber match {
-                        case "" => None
-                        case p => Some(p)
-                      },
-                      nrOfGuests = contentData.guests,
-                      totalCost = eventService.getEventPrice(event,contentData.guests),
-                      email = currentUser.emailAddress
-                    )
-                    // TODO: Add booking itself
+                      // TODO: Add booking-number
+                      val newBooking = eventService.addBooking(currentUser,eventDate,contentData.guests)
 
-                    val successMessage = Messages("event.book.add.success")
-                    Ok(views.html.event.bookingSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
+                      val successValues = EventBookingSuccess(
+                        bookingNumber = newBooking.objectId.hashCode().toLong,
+                        date = eventDate.getEventDateTime.toLocalDate,
+                        time = eventDate.getEventDateTime.toLocalTime,
+                        locationAddress = event.getOwnerProfile.streetAddress,
+                        locationCity = event.getOwnerProfile.city,
+                        locationCounty = event.getOwnerProfile.getLocations.asScala.head.county.name,
+                        locationZipCode = event.getOwnerProfile.zipCode,
+                        phoneNumberToHost = event.getOwnerProfile.phoneNumber match {
+                          case "" => None
+                          case p => Some(p)
+                        },
+                        nrOfGuests = contentData.guests,
+                        totalCost = eventService.getEventPrice(event, contentData.guests),
+                        email = currentUser.emailAddress
+                      )
+
+                      Logger.debug("Successful booking performed eventDateId: " + eventDate.objectId)
+                      Ok(views.html.event.bookingSuccess(event, successValues))
+                    }else{
+                      val errorMsg = Messages("event.book.add.too-many-bookings")
+                      Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(currentUser.getUserProfile.profileLinkName,event.getLink)).flashing(FlashMsgConstants.Error -> errorMsg)
+                    }
+
                   }else{
-                    val errorMsg = "Cannot add booking to event, too many bookings"
+                    val errorMsg = Messages("event.book.add.already-booked")
                     Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(currentUser.getUserProfile.profileLinkName,event.getLink)).flashing(FlashMsgConstants.Error -> errorMsg)
                   }
+
 
                 }
                 case None => {

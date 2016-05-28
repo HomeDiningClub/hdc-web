@@ -12,62 +12,66 @@
             <div class="col-xs-12">@shared.flashmsg(flash)</div>
         }
 
-        <div class="jumbotron">
-            <h1>@Messages("event.book.success.header")</h1>
-            <p>@Messages("event.book.success.body", eventBookingSuccess.email)</p>
-        </div>
-
         <div class="col-xs-12">
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-3"><span class="glyphicon glyphicon-calendar"></span> @Messages("event.book.chosen.date")</div>
-                        <div class="col-md-9">@eventBookingSuccess.date</div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-3"><span class="glyphicon glyphicon-time"></span> @Messages("event.book.chosen.time")</div>
-                        <div class="col-md-9">>@eventBookingSuccess.time</div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.book.nr-of-guests.label")</div>
-                        <div class="col-md-9">@eventBookingSuccess.nrOfGuests.toString</div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-3">@Messages("event.book.chosen.total-cost")</div>
-                        <div class="col-md-9">@eventBookingSuccess.totalCost</div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-3"><span class="glyphicon glyphicon-map-marker"></span> @Messages("event.prop.address")</div>
-                        <div class="col-md-9">
-                            @eventBookingSuccess.locationAddress<br>
-                            @eventBookingSuccess.locationZipCode<br>
-                            @eventBookingSuccess.locationCity
-                        </div>
-                    </div>
-                </li>
-                @if(eventBookingSuccess.phoneNumberToHost.isDefined){
+            <div class="jumbotron">
+                <h1>@Messages("event.book.success.header")</h1>
+                <p>@Html(Messages("event.book.success.body", eventBookingSuccess.email))</p>
+
+                <ul class="list-group big-margin-top">
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-md-3"><span class="glyphicon glyphicon-earphone"></span> @Messages("event.prop.phone")</div>
-                            <div class="col-md-9">@eventBookingSuccess.phoneNumberToHost.get</div>
+                            <div class="col-md-3">@Messages("event.book.booking-number")</div>
+                            <div class="col-md-9">@eventBookingSuccess.bookingNumber</div>
                         </div>
                     </li>
-                }
-                <li class="list-group-item">
-                    <button class="btn btn-primary btn-lg" onclick="window.print();"><span class="glyphicon glyphicon-print"></span> @Messages("event.book.success.print")</button>
-                </li>
-            </ul>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-3"><span class="glyphicon glyphicon-calendar"></span> @Messages("event.book.chosen.date")</div>
+                            <div class="col-md-9">@eventBookingSuccess.date</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-3"><span class="glyphicon glyphicon-time"></span> @Messages("event.book.chosen.time")</div>
+                            <div class="col-md-9">@eventBookingSuccess.time</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.book.nr-of-guests.label")</div>
+                            <div class="col-md-9">@eventBookingSuccess.nrOfGuests.toString</div>
+                        </div>
+                    </li>
+                    @if(eventBookingSuccess.phoneNumberToHost.isDefined){
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-3"><span class="glyphicon glyphicon-earphone"></span> @Messages("event.prop.phone")</div>
+                                <div class="col-md-9">@eventBookingSuccess.phoneNumberToHost.get</div>
+                            </div>
+                        </li>
+                    }
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-3"><span class="glyphicon glyphicon-map-marker"></span> @Messages("event.prop.address")</div>
+                            <div class="col-md-9">
+                                @eventBookingSuccess.locationAddress<br>
+                                @eventBookingSuccess.locationZipCode<br>
+                            @eventBookingSuccess.locationCity
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-3"><strong>@Messages("event.book.chosen.total-cost")</strong></div>
+                            <div class="col-md-9"><strong>@Messages("event.price.currency") eventBookingSuccess.totalCost @Messages("event.price.currency.end")</strong></div>
+                        </div>
+                    </li>
+                </ul>
+
+                <button class="btn btn-primary btn-lg margin-top" onclick="window.print();"><span class="glyphicon glyphicon-print"></span> @Messages("event.book.success.print")</button>
+            </div>
         </div>
+
     </div>
   </div>
-
-
 }

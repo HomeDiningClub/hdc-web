@@ -2,7 +2,8 @@ package models.viewmodels
 
 import java.time.{LocalTime, LocalDate}
 
-case class EventBookingSuccess(date: LocalDate,
+case class EventBookingSuccess(bookingNumber: Long,
+                               date: LocalDate,
                                 time: LocalTime,
                                 locationAddress: String,
                                 locationCity: String,

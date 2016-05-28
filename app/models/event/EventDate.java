@@ -52,7 +52,26 @@ public class EventDate extends AuditEntity {
     }
 
     public int getGuestsBooked(){
-        return this.getBookings().size();
+        int nrOfTotalGuests = 0;
+
+        if(!this.getBookings().isEmpty()){
+            for (BookedEventDate booking : this.getBookings()) {
+                if(booking.getApprovedByHost()) {
+                    nrOfTotalGuests += booking.getNrOfGuests();
+                }
+            }
+        }
+
+        return nrOfTotalGuests;
+    }
+
+
+    public int getSpacesLeft(){
+        return this.getMaxNrOfGuests() - this.getGuestsBooked();
+    }
+
+    public int getMaxNrOfGuests(){
+        return getOwnerEvent().getMaxNrOfGuests();
     }
 
     public void setEventDateTime(LocalDateTime date){

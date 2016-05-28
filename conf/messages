@@ -494,7 +494,7 @@ event.edit.delete.abort=Avbryt
 event.button.edit=Redigera händelse
 
 event.button.book=Boka
-event.button.select-date=Välj
+event.button.select-date=Kl. {0}
 event.price.currency=SEK
 event.price.currency.end=:-
 event.price.front.header=Pris
@@ -505,13 +505,14 @@ event.price.back.list.text-02=Inga gömda avgifter
 event.price.back.list.text-03=5% går till HDC
 event.price.back.list.text-04=Boka och njut!
 
-event.list.time-header=Klockan
+event.list.spaces-left=Platser kvar
+event.list.spaces-booked-out-of-spaces-left={0} av {1}
 event.choose-date.header=Välj ett datum
 event.button.suggest-date=...eller föreslå ett datum
 
 event.prop.header=Detaljer om bjudningen
 event.prop.body=Här är bjudningen i korthet, dessa kan komma att ändras, uppgifterna gäller vid bokning.
-event.prop.address=Adress
+event.prop.address=Värdens adress
 event.prop.county=Plats
 event.prop.address-only-visible-to-booked-guests=Adress endast synlig för bokade gäster
 event.prop.min-max-nr-of-guests=Antal gäster (min-max)
@@ -527,8 +528,9 @@ event.prop.alcohol-servings=Alkohol / dryck
 event.prop.meal-type=Måltidstyp
 event.prop.phone=Telefon
 
-event.book.heading=Boka bjudning
-event.book.chosen.date=Valt datum
+event.book.heading=Slutför bokning
+event.book.booking-number=Bokningsnummer
+event.book.chosen.date=Bokat datum
 event.book.chosen.time=Klockan
 event.book.chosen.total-cost=Totalkostnad
 event.book.nr-of-guests.label=Antal gäster
@@ -536,7 +538,10 @@ event.book.comment.label=Kommentar (valfri)
 event.book.submit=Skicka bokning
 event.book.add.error=Någonting gick fel prova att ladda om sidan och boka igen.
 event.book.success.header=Din bokning är slutförd!
-event.book.success.body=Du har nu genomfört din bokning, en påminnelse är skickad till din e-post: {0}
+event.book.success.body=En påminnelse är skickad till din e-post: <strong>{0}</strong>
+event.book.success.print=Skriv ut
+event.book.add.already-booked=Du kan inte boka samma event mer än 1 gång.
+event.book.add.too-many-bookings=Kan inte boka, för många bokningar på detta event redan.
 
 event.suggest.date=datum
 event.suggest.time=Klockan

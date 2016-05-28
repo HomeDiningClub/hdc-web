@@ -792,8 +792,12 @@ input[type="reset"]:hover
   overflow: hidden;
   border-bottom:1px solid @hdc-light-orange;
 }
-.select-date-wrap {
+.event-date-list .spots-left {
+  font-size:1.2em;
   margin-top:13px;
+}
+.select-date-wrap {
+  margin-top:6px;
 }
 
 .event-date-list .month,
@@ -805,21 +809,21 @@ input[type="reset"]:hover
   font-size:1em;
   clear:both;
   float:left;
-  border-left: 1px solid @hdc-orange;
-  border-right: 1px solid @hdc-orange;
+  border-left: 1px solid @hdc-gray;
+  border-right: 1px solid @hdc-gray;
 }
 .event-date-list .month {
   border-radius: 3px 3px 0px 0px;
-  background-color: @hdc-orange;
+  background-color: @hdc-gray;
   color: white;
 }
 .event-date-list .day-of-month {
   font-size:2em;
   background-color: white;
-  border-color: @hdc-orange;
+  border-color: @hdc-gray;
 }
 .event-date-list .year {
-  background-color: @hdc-orange;
+  background-color: @hdc-gray;
   color: white;
   border-radius: 0px 0px 3px 3px;
   font-size:0.7em;
@@ -828,10 +832,7 @@ input[type="reset"]:hover
   font-size:0.7em;
 }
 
-.event-date-list .time {
-  font-size:2em;
-  color: @hdc-green;
-}
+
 .event-date-list-header {
   display: block;
   padding: 1em;

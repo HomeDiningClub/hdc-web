@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
     // Init suggestion
-    var $dateSugForm = $("#date-suggestion-form");
+    var dateSugForm = $("#date-suggestion-form");
     activateDateSuggestionButtons();
 
 
@@ -20,18 +20,18 @@ $(document).ready(function(){
             stepping: 15,
             format: "LT"
         };
-        $dateSugForm.find(".date input[type=date]").datetimepicker(datePickerOptions);
-        $dateSugForm.find(".time input[type=time]").datetimepicker(timePickerOptions);
+        dateSugForm.find(".date input[type=date]").datetimepicker(datePickerOptions);
+        dateSugForm.find(".time input[type=time]").datetimepicker(timePickerOptions);
     }
 
 
     function activateDateSuggestionButtons(){
         $("#event-date-list-suggest-date").on("click", function(){
             var uuid = $(this).data("event-uuid");
-            $dateSugForm.find("#event-uuid").val(uuid);
+            dateSugForm.find("#event-uuid").val(uuid);
             activateDateSelector();
-            $(".event-cta-form:visible").not($dateSugForm).addClass("hidden");
-            $dateSugForm.toggleClass("hidden");
+            $(".event-cta-form:visible").not(dateSugForm).addClass("hidden");
+            dateSugForm.toggleClass("hidden");
         });
     }
 

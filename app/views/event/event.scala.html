@@ -43,9 +43,8 @@
         <div class="row bg-color">
             <div class="col-xs-12 col-md-4">
                 @views.html.event.bookingDatePicker(event)
-                @views.html.event.suggestionButton(event)
-
                 @views.html.event.bookingForm(eventBookingForm, memberUser)
+                @views.html.event.suggestionButton(event)
                 @views.html.event.suggestionForm(eventDateSuggestionForm, memberUser)
 
                 @eventLikeForm

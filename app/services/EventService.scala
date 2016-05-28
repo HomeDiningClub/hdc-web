@@ -220,6 +220,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+  def isUserBookedToEventDate(eventDate: EventDate, user: UserCredential): Boolean = {
+    val bookings = eventDate.getBookings.asScala
+    if(bookings.nonEmpty){
+      bookings.exists(x => x.userProfile.getOwner.objectId.equals(user.objectId))
+    }
+    false
+  }
+
   private def isValidMinValue(minValue: Int, maxValue: Int): Boolean ={
     minValue <= maxValue
   }
@@ -293,6 +301,11 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+  def addBooking(currentUser: UserCredential, eventDate: EventDate, nrOfGuestsToBeBooked: Integer): BookedEventDate = withTransaction(template){
+    val newBooking: BookedEventDate = new BookedEventDate(currentUser.getUserProfile,nrOfGuestsToBeBooked,eventDate)
+    eventDate.addOrUpdateBooking(newBooking)
+    newBooking
+  }
 
   def updateOrCreateEventDates(contentData: EventForm, event: Event) {
     if(contentData.eventDates.nonEmpty){
