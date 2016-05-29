@@ -1,4 +1,4 @@
-@(event: models.Event)(implicit messages: Messages)
+@(event: models.Event, isThisMyEvent: Boolean)(implicit messages: Messages)
 
 <h3 class="event-date-list-header text-center">@Messages("event.choose-date.header")</h3>
 <div class="row">
@@ -12,3 +12,17 @@
     </div>
 </div>
 <div id="event-date-list-result" class="event-date-list-result hidden"></div>
+<div id="event-date-list-result-no-results" class="event-date-list-no-results hidden">
+    <div class="row">
+        @if(isThisMyEvent) {
+            <div class="col-xs-12 text-center">
+                @Messages("event.choose-date.no-results.my-event")<br>
+                <a href="@controllers.routes.EventPageController.edit(event.objectId)#edit-date-time" class="btn btn-primary">@Messages("event.choose-date.no-results.my-event.button")</a>
+            </div>
+        }else{
+            <div class="col-xs-12 text-center">
+                @Messages("event.choose-date.no-results")
+            </div>
+        }
+    </div>
+</div>

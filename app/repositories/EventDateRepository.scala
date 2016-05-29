@@ -10,7 +10,7 @@ import java.util
 trait EventDateRepository extends GraphRepository[EventDate] {
 
   // Auto-mapped by Spring
-  @Query("MATCH (n:`EventDate`) WHERE n.objectId={0} RETURN n")
-  def findByobjectId(objectId: UUID): EventDate
+  @Query("MATCH (n:`EventDate`{objectId:{0}}) RETURN n")
+  def findByobjectId(objectId: String): EventDate
 
 }

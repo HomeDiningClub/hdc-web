@@ -1,9 +1,15 @@
 package models.viewmodels
 
 import java.time.{LocalTime, LocalDate}
+import java.util.UUID
 
-case class EventBookingSuccess(bookingNumber: Long,
-                               date: LocalDate,
+import models.event.MealType
+
+case class EventBookingSuccess(bookingNumber: UUID,
+                                eventName: String,
+                                eventLink: String,
+                                mealType: Option[String],
+                                date: LocalDate,
                                 time: LocalTime,
                                 locationAddress: String,
                                 locationCity: String,

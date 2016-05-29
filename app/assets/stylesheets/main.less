@@ -251,6 +251,14 @@ img
   margin-top:40px;
 }
 
+// General Fixed header-anchor
+:target:before {
+  content:"";
+  display:block;
+  height:200px; /* fixed header height*/
+  margin:-200px 0 0; /* negative fixed header height */
+}
+
 // General background-class
 .bg-color {
   background-color: @hdc-white;
@@ -554,7 +562,10 @@ input[type="reset"]:hover
   font-family:arial,'Open Sans',tahoma,geneva,verdana,helvetica,sans-serif;
 }
 
-
+// Typhography
+.text-green {
+  color: @hdc-green;
+}
 
 // Host levels / grade / rating
 .host-level-icon
@@ -837,11 +848,16 @@ input[type="reset"]:hover
   display: block;
   padding: 1em;
   background-color: @hdc-light-gray;
-  margin-top:13px;
+  margin-top:0px;
 }
 .event-date-list-result {
   border-top: 1px solid @hdc-light-orange;
   margin-top:15px;
+}
+.event-date-list-no-results {
+  border-radius: 3px;
+  border:2px dashed @hdc-gray;
+  padding:2em;
 }
 .inline-date-selector .bootstrap-datetimepicker-widget table td.day {
   color: @hdc-black;

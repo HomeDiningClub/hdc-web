@@ -1,4 +1,4 @@
-@(eventBookingForm: Form[models.formdata.EventBookingForm], memberUser: Option[UserCredential])(implicit messages: Messages)
+@(eventBookingForm: Form[models.formdata.EventBookingForm], memberUser: Option[UserCredential], isThisMyEvent: Boolean)(implicit messages: Messages)
 @implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
 
 @inlineFC = @{
@@ -6,7 +6,7 @@
 }
 
 <div id="booking-form" class="margin-top event-cta-form hidden">
-    @if(memberUser.isDefined) {
+    @if(memberUser.isDefined && (!isThisMyEvent || customUtils.Helpers.isUserAdmin(memberUser.get))) {
         <div class="panel panel-orange panel-booking-form">
             <div class="panel-heading">@Messages("event.book.heading")</div>
             <div class="panel-body">
@@ -36,7 +36,14 @@
             }
             </div>
         </div>
+    }
+
+    @if(memberUser.isDefined && (isThisMyEvent && !customUtils.Helpers.isUserAdmin(memberUser.get))){
+        <div class="well well-hdc">
+            @Messages("event.book.booking-my-own-event")
+        </div>
     }else{
         @views.html.event.notLoggedIn()
     }
+
 </div>

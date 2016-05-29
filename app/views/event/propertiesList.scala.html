@@ -19,7 +19,7 @@
         <div class="row">
             <div class="col-md-3"><span class="glyphicon glyphicon-map-marker"></span> <strong>@Messages("event.prop.address")</strong></div>
             <div class="col-md-8">
-                @if(evp.locationAddress.isDefined){
+                @if(evp.showAddress){
                     @evp.locationAddress<br>
                     @evp.locationCity<br>
                     @evp.locationZipCode

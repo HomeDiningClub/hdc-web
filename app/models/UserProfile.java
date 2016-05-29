@@ -208,8 +208,8 @@ public class UserProfile extends AuditEntity implements IEditable {
         }
     }
 
-    public BookedEventDate addBookingToEvent(EventDate eventDate, Integer nrOfGuestsToBeBooked) {
-        BookedEventDate bookedEvent = new BookedEventDate(this, nrOfGuestsToBeBooked, eventDate);
+    public BookedEventDate addBookingToEvent(EventDate eventDate, Integer nrOfGuestsToBeBooked, String comment) {
+        BookedEventDate bookedEvent = new BookedEventDate(this, nrOfGuestsToBeBooked, eventDate, comment);
         bookedEventDates.add(bookedEvent);
         return bookedEvent;
     }

@@ -10,6 +10,7 @@ import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.libs.mailer.Email
 import traits.TransactionSupport
 import scala.language.existentials
 import repositories._
@@ -17,7 +18,7 @@ import models.{Event, UserProfile, UserCredential}
 import scala.collection.JavaConverters._
 import scala.List
 import java.util.UUID
-import models.viewmodels.EventBox
+import models.viewmodels.{EmailAndName, EventBookingSuccess, EventBox}
 import controllers.routes
 import customUtils.Helpers
 import scala.collection.mutable.ListBuffer
@@ -36,6 +37,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
                              val eventRepository: EventRepository,
                              val eventDateRepository: EventDateRepository,
                              val bookedEventDateRepository: BookedEventDateRepository,
+                             val mailService: MailService,
                              val messagesApi: MessagesApi) extends TransactionSupport with I18nSupport {
 
   implicit object LocalDateTimeOrdering extends Ordering[LocalDateTime] {
@@ -72,14 +74,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
   }
 
   def findEventDateById(objectId: UUID): Option[EventDate] = withTransaction(template){
-    eventDateRepository.findByobjectId(objectId) match {
+    eventDateRepository.findByobjectId(objectId.toString) match {
       case null => None
       case item => Some(item)
     }
   }
 
   def findBookedDatesByUserAndEvent(user: UserCredential, event: Event): Option[List[BookedEventDate]] = withTransaction(template){
-    bookedEventDateRepository.findBookedDatesByUserAndEvent(user.getUserProfile.objectId, event.objectId).asScala.toList match {
+    bookedEventDateRepository.findBookedDatesByUserAndEvent(user.getUserProfile.objectId.toString, event.objectId.toString).asScala.toList match {
       case null | Nil => None
       case items => Some(items)
     }
@@ -213,19 +215,20 @@ class EventService @Inject()(val template: Neo4jTemplate,
     spaceLeft
   }
 
-  def doesEventDateHasSpaceFor(event: Event, eventDate: EventDate, nrOfGuests: Int): Boolean = {
+  def doesEventDateHasSpaceForNewBooking(event: Event, eventDate: EventDate, nrOfGuests: Int): Boolean = {
     getSpacesLeft(event, eventDate) match {
       case 0 => false
-      case _ => true
+      case spacesLeft => if(spacesLeft >= nrOfGuests){ true } else { false }
     }
   }
 
   def isUserBookedToEventDate(eventDate: EventDate, user: UserCredential): Boolean = {
     val bookings = eventDate.getBookings.asScala
-    if(bookings.nonEmpty){
+    if (bookings.nonEmpty) {
       bookings.exists(x => x.userProfile.getOwner.objectId.equals(user.objectId))
+    } else {
+      false
     }
-    false
   }
 
   private def isValidMinValue(minValue: Int, maxValue: Int): Boolean ={
@@ -279,7 +282,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  def isGuestBookedAtEvent(user: UserCredential, event: Event): Boolean = {
+  def isUserBookedAtEvent(user: UserCredential, event: Event): Boolean = {
     this.findBookedDatesByUserAndEvent(user,event) match {
       case None => false
       case Some(items) => true
@@ -301,8 +304,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  def addBooking(currentUser: UserCredential, eventDate: EventDate, nrOfGuestsToBeBooked: Integer): BookedEventDate = withTransaction(template){
-    val newBooking: BookedEventDate = new BookedEventDate(currentUser.getUserProfile,nrOfGuestsToBeBooked,eventDate)
+  def addBooking(currentUser: UserCredential, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String]): BookedEventDate = withTransaction(template){
+    val newBooking: BookedEventDate = new BookedEventDate(currentUser.getUserProfile,nrOfGuestsToBeBooked,eventDate, comment.getOrElse(""))
     eventDate.addOrUpdateBooking(newBooking)
     newBooking
   }
@@ -351,6 +354,16 @@ class EventService @Inject()(val template: Neo4jTemplate,
     event.addEventDate(newEventDate)
     this.save(event)
   }
+
+  def createBookingSuccessEmail(successValues: EventBookingSuccess): Email = {
+    mailService.createAndSendMailNoReply(
+      subject =  Messages("event.book.success.email.subject", successValues.eventName),
+      message = Messages("event.book.success.email.body") + views.html.event.bookingSuccessDetails(successValues).toString(),
+      recipient = EmailAndName(successValues.email,successValues.email),
+      from = mailService.getDefaultAnonSender
+    )
+  }
+
 
   def getEventBoxes(user: UserCredential): Option[List[EventBox]] = withTransaction(template){
     // Without paging

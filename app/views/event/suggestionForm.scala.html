@@ -1,8 +1,8 @@
-@(eventDateSuggestionForm: Form[models.formdata.EventDateSuggestionForm], memberUser: Option[UserCredential])(implicit messages: Messages)
+@(eventDateSuggestionForm: Form[models.formdata.EventDateSuggestionForm], memberUser: Option[UserCredential], isThisMyEvent: Boolean)(implicit messages: Messages)
 @implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
 
 <div id="date-suggestion-form" class="margin-top event-cta-form hidden">
-    @if(memberUser.isDefined) {
+    @if(memberUser.isDefined && !isThisMyEvent) {
     <div class="panel panel-green panel-date-suggestion-form">
         <div class="panel-heading">@Messages("event.suggest.heading")</div>
         <div class="panel-body">

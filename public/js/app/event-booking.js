@@ -39,13 +39,17 @@ $(document).ready(function(){
                 $datePicker.datetimepicker(datePickerOptions).on("dp.change", function(e){
                     $datePickerResults.load(eventTimeRoute + '?' + eventUUIDPar + '=' + eventUUID + "&" + datePar + '=' + e.date.format(dateFormat), function(){
                         $(this).removeClass("flipOutX").addClass("flipInX");
+                        dateBookForm.addClass("hidden");
                         activateBookingButtons();
                     });
                 });
 
                 $datePicker.slideDown();
             }else{
-                $("#event-date-list-suggest-date").hide().trigger("click");
+                //$("#event-date-list-suggest-date").hide().trigger("click");
+                $("#event-date-list-result-no-results, .suggest-date-btn-text-no-options").removeClass("hidden");
+                $(".suggest-date-btn-text").addClass("hidden");
+                $("#event-date-list-suggest-date").addClass("btn-request").removeClass("btn-primary-flat");
             }
 
         });

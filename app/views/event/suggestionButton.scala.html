@@ -1,3 +1,8 @@
-@(event: models.Event)(implicit messages: Messages)
+@(event: models.Event, isThisMyEvent: Boolean)(implicit messages: Messages)
 
-<button id="event-date-list-suggest-date" data-event-uuid="@event.objectId" class="btn btn-primary-flat btn-group-justified btn-event-date-suggest">@Messages("event.button.suggest-date")</button>
+@if(!isThisMyEvent) {
+    <button id="event-date-list-suggest-date" data-event-uuid="@event.objectId" class="btn btn-primary-flat btn-group-justified btn-event-date-suggest">
+        <span class="hidden suggest-date-btn-text-no-options">@Messages("event.button.suggest-date-no-other-options")</span>
+        <span class="suggest-date-btn-text">@Messages("event.button.suggest-date")</span>
+    </button>
+}
