@@ -4,45 +4,28 @@
 
 @main(Messages("event.title", event.getName)) {
 
-  <div class="container">
-    <div class="row">
-        @if(!flash.isEmpty) {
-            <div class="col-xs-12">@shared.flashmsg(flash)</div>
-        }
+    <div class="container">
+        <div class="row">
+            @if(!flash.isEmpty) {
+                <div class="col-xs-12">@shared.flashmsg(flash)</div>
+            }
+            <div class="col-xs-12">
 
-        <div class="jumbotron">
-            <h1>@Messages("event.suggest.success.header")</h1>
-            <p class="lead">@Messages("event.suggest.success.sub-header")</p>
-            <p>@Messages("event.suggest.success.body")</p>
-        </div>
+                <div class="jumbotron">
+                    <h1><span class="glyphicon glyphicon-ok text-green"></span> @Messages("event.suggest.success.header")</h1>
+                    <p><strong>@Messages("event.suggest.success.sub-header")</strong><br>@Messages("event.suggest.success.body")</p>
 
-        <div class="col-xs-12">
-            <ul class="list-group">
-                <li class="list-group-item">
+                    @views.html.event.suggestionSuccessDetails(eventDateSuggestionSuccess)
+
                     <div class="row">
-                        <div class="col-md-3"><span class="glyphicon glyphicon-calendar"></span> @Messages("event.suggest.success.chosen.date")</div>
-                        <div class="col-md-9">@eventDateSuggestionSuccess.date</div>
+                        <div class="col-xs-12">
+                            <a class="btn btn-primary btn-lg pull-left margin-top" href="@eventDateSuggestionSuccess.eventLink"><span class="glyphicon glyphicon-chevron-left"></span> @Messages("event.suggest.success.back")</a>
+                            <button class="btn btn-primary btn-lg pull-right margin-top" onclick="window.print();"><span class="glyphicon glyphicon-print"></span> @Messages("event.suggest.success.print")</button>
+                        </div>
                     </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-3"><span class="glyphicon glyphicon-time"></span> @Messages("event.suggest.success.chosen.time")</div>
-                        <div class="col-md-9">>@eventDateSuggestionSuccess.time</div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.suggest.success.nr-of-guests")</div>
-                        <div class="col-md-9">@eventDateSuggestionSuccess.nrOfGuests.toString</div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <button class="btn btn-primary btn-lg" onclick="window.print();"><span class="glyphicon glyphicon-print"></span> @Messages("event.suggest.success.print")</button>
-                </li>
-            </ul>
+                </div>
+
+            </div>
         </div>
     </div>
-  </div>
-
-
 }

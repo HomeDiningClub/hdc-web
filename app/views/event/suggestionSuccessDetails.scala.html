@@ -1,0 +1,28 @@
+@(eventDateSuggestionSuccess: EventDateSuggestionSuccess)(implicit messages: Messages)
+
+<ul class="list-group big-margin-top">
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-3">@Messages("event.suggest.success.event-name")</div>
+            <div class="col-md-9"><a href="@eventDateSuggestionSuccess.eventLink">@eventDateSuggestionSuccess.eventName</a></div>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-3"><span class="glyphicon glyphicon-calendar"></span> @Messages("event.suggest.success.chosen.date")</div>
+            <div class="col-md-9">@eventDateSuggestionSuccess.date</div>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-3"><span class="glyphicon glyphicon-time"></span> @Messages("event.suggest.success.chosen.time")</div>
+            <div class="col-md-9">@eventDateSuggestionSuccess.time</div>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.suggest.success.nr-of-guests")</div>
+            <div class="col-md-9">@eventDateSuggestionSuccess.nrOfGuests.toString</div>
+        </div>
+    </li>
+</ul>

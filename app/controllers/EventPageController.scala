@@ -423,21 +423,14 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
     evtDateSuggestionForm.bindFromRequest.fold(
       errors => {
-        Logger.debug("Cannot return to event to show error, no valid eventUUID")
-        NotFound(Messages("event.suggest.add.error"))
+        val errorMsg = Messages("event.suggest.add.error")
+        Logger.debug(errorMsg)
+        BadRequest(errorMsg)
       },
       contentData => {
-        eventService.findById(contentData.eventId) match {
+        eventService.findById(contentData.suggestEventId) match {
           case Some(event) => {
-            // TODO: Add suggestion
-
-            val successValues = EventDateSuggestionSuccess(
-              date = contentData.date,
-              time = contentData.time,
-              nrOfGuests = contentData.guests,
-              comment = contentData.comment
-            )
-
+            val successValues = eventService.addSuggestion(currentUser, event, contentData.date, contentData.time, contentData.guests, contentData.comment)
             val successMessage = Messages("event.suggest.add.success")
             Ok(views.html.event.suggestionSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
           }
@@ -457,8 +450,9 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
     evtBookingForm.bindFromRequest.fold(
       errors => {
-          Logger.debug("Cannot return to event to show error, no valid eventUUID")
-          NotFound(Messages("event.book.add.error"))
+        val errorMsg = Messages("event.book.add.error")
+        Logger.debug(errorMsg)
+        BadRequest(errorMsg)
       },
       contentData => {
         eventService.findById(contentData.eventId) match {
@@ -478,34 +472,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                     if (eventService.doesEventDateHasSpaceForNewBooking(event, eventDate, contentData.guests)) {
 
                       // Adding booking
-                      val newBooking = eventService.addBooking(currentUser,eventDate,contentData.guests,contentData.comment)
-
-                      // Creating success-data
-                      val successValues = EventBookingSuccess(
-                        bookingNumber = newBooking.objectId,
-                        eventName = event.getName,
-                        eventLink = controllers.routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName,event.getLink).url,
-                        mealType = event.getMealType match {
-                          case null => None
-                          case mt => Some(mt.name)
-                        },
-                        date = eventDate.getEventDateTime.toLocalDate,
-                        time = eventDate.getEventDateTime.toLocalTime,
-                        locationAddress = event.getOwnerProfile.streetAddress,
-                        locationCity = event.getOwnerProfile.city,
-                        locationCounty = event.getOwnerProfile.getLocations.asScala.head.county.name,
-                        locationZipCode = event.getOwnerProfile.zipCode,
-                        phoneNumberToHost = event.getOwnerProfile.phoneNumber match {
-                          case "" => None
-                          case p => Some(p)
-                        },
-                        nrOfGuests = contentData.guests,
-                        totalCost = eventService.getEventPrice(event, contentData.guests),
-                        email = currentUser.emailAddress
-                      )
-
-                      // Sending it to email
-                      eventService.createBookingSuccessEmail(successValues)
+                      val successValues = eventService.addBookingAndSendEmail(currentUser,event,eventDate,contentData.guests,contentData.comment)
 
                       // Returning
                       Logger.debug("Successful booking performed eventDateId: " + eventDate.objectId)
@@ -520,25 +487,24 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                     Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName,event.getLink)).flashing(FlashMsgConstants.Error -> errorMsg)
                   }
 
-
                 }
                 case None => {
                   val errorMsg = "Cannot add booking to event, no valid EventDate-UUID"
                   Logger.debug(errorMsg)
-                  NotFound(errorMsg)
+                  BadRequest(errorMsg)
                 }
               }
             }else{
               val errorMsg = "Cannot add booking nor suggest a booking, not correct values posted. (No EventDate)"
               Logger.debug(errorMsg)
-              NotFound(errorMsg)
+              BadRequest(errorMsg)
             }
 
           }
           case _ => {
             val errorMsg = "Cannot add booking to event, no valid Event-UUID"
             Logger.debug(errorMsg)
-            NotFound(errorMsg)
+            BadRequest(errorMsg)
           }
 
         }

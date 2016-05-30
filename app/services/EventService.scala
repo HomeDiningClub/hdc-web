@@ -1,7 +1,7 @@
 package services
 
 import java.security.InvalidParameterException
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{LocalTime, LocalDate, LocalDateTime}
 import javax.inject.{Singleton, Named, Inject}
 import models.files.ContentFile
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +18,7 @@ import models.{Event, UserProfile, UserCredential}
 import scala.collection.JavaConverters._
 import scala.List
 import java.util.UUID
-import models.viewmodels.{EmailAndName, EventBookingSuccess, EventBox}
+import models.viewmodels.{EventDateSuggestionSuccess, EmailAndName, EventBookingSuccess, EventBox}
 import controllers.routes
 import customUtils.Helpers
 import scala.collection.mutable.ListBuffer
@@ -198,7 +198,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
   def eventDateSuggestionFormMapping: Form[EventDateSuggestionForm] = {
     Form(
       mapping(
-        "suggest-eventId" -> uuid,
+        "suggestEventId" -> uuid,
         "suggest-date" -> of[java.time.LocalDate],
         "suggest-time" -> of[java.time.LocalTime],
         "suggest-guests" -> number(min = 1, max = 9),
@@ -304,16 +304,65 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+  def addSuggestion(currentUser: UserCredential, event: Event, suggDate: LocalDate, suggTime: LocalTime, nrOfGuestsToBeBooked: Integer, comment: Option[String]): EventDateSuggestionSuccess = withTransaction(template){
+    //val selectedDate = Helpers.buildDateFromDateAndTime(suggDate, suggTime)
+
+    val successValues = EventDateSuggestionSuccess(
+      eventName = event.getName,
+      eventLink = event.getLink,
+      date = suggDate,
+      time = suggTime,
+      nrOfGuests = nrOfGuestsToBeBooked,
+      comment = comment,
+      hostEmail = event.getOwnerProfile.getOwner.emailAddress,
+      guestEmail = currentUser.emailAddress
+    )
+
+    this.createSuggestionEmail(successValues)
+    successValues
+  }
+
   def addBooking(currentUser: UserCredential, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String]): BookedEventDate = withTransaction(template){
     val newBooking: BookedEventDate = new BookedEventDate(currentUser.getUserProfile,nrOfGuestsToBeBooked,eventDate, comment.getOrElse(""))
     eventDate.addOrUpdateBooking(newBooking)
     newBooking
   }
 
+  def addBookingAndSendEmail(currentUser: UserCredential, event: Event, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String]): EventBookingSuccess ={
+    val newBooking = this.addBooking(currentUser, eventDate, nrOfGuestsToBeBooked, comment)
+
+    val successValues = EventBookingSuccess(
+      bookingNumber = newBooking.objectId,
+      eventName = event.getName,
+      eventLink = controllers.routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName,event.getLink).url,
+      mealType = event.getMealType match {
+        case null => None
+        case mt => Some(mt.name)
+      },
+      date = eventDate.getEventDateTime.toLocalDate,
+      time = eventDate.getEventDateTime.toLocalTime,
+      locationAddress = event.getOwnerProfile.streetAddress,
+      locationCity = event.getOwnerProfile.city,
+      locationCounty = event.getOwnerProfile.getLocations.asScala.head.county.name,
+      locationZipCode = event.getOwnerProfile.zipCode,
+      phoneNumberToHost = event.getOwnerProfile.phoneNumber match {
+        case "" => None
+        case p => Some(p)
+      },
+      nrOfGuests = nrOfGuestsToBeBooked,
+      totalCost = this.getEventPrice(event, nrOfGuestsToBeBooked),
+      email = currentUser.emailAddress
+    )
+
+    // Sending it to email
+    this.createBookingSuccessEmail(successValues)
+
+    successValues
+  }
+
   def updateOrCreateEventDates(contentData: EventForm, event: Event) {
     if(contentData.eventDates.nonEmpty){
       for(ed <- contentData.eventDates.get){
-        val selectedDate = Helpers.buildDateFromDateAndTime(ed.date, ed.time)
 
         // Edit old date on existing event
         if(ed.id.nonEmpty && ed.guestsBooked == 0){
@@ -345,7 +394,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
 
   def updateOldEventDate(formDate: EventDateForm, storedDate: EventDate) {
-    // TODO: Add guest reminder email
     storedDate.setEventDateTime(Helpers.buildDateFromDateAndTime(formDate.date, formDate.time))
   }
 
@@ -360,6 +408,15 @@ class EventService @Inject()(val template: Neo4jTemplate,
       subject =  Messages("event.book.success.email.subject", successValues.eventName),
       message = Messages("event.book.success.email.body") + views.html.event.bookingSuccessDetails(successValues).toString(),
       recipient = EmailAndName(successValues.email,successValues.email),
+      from = mailService.getDefaultAnonSender
+    )
+  }
+
+  def createSuggestionEmail(successValues: EventDateSuggestionSuccess): Email = {
+    mailService.createAndSendMailNoReply(
+      subject =  Messages("event.suggest.email.subject"),
+      message = Messages("event.suggest.email.body", successValues.eventName) + views.html.event.suggestionSuccessDetails(successValues).toString(),
+      recipient = EmailAndName(successValues.hostEmail,successValues.hostEmail),
       from = mailService.getDefaultAnonSender
     )
   }

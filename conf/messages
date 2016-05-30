@@ -561,13 +561,17 @@ event.suggest.submit=Föreslå datum
 event.suggest.submit.help=OBS! Ingen bokning kommer att ske
 event.suggest.add.error=Någonting gick fel, du kan inte föreslå ett datum.
 event.suggest.add.success=Önskemålet skickat!
-event.suggest.success.header=Ett önskemål om datum är skickad till värden!
+event.suggest.success.header=Skickat till värden!
 event.suggest.success.sub-header=Vad händer nu?
-event.suggest.success.body=Du har nu genomfört ditt önskemål, en förfrågan har skickats till värden som nu kan skapa ett datum åt dig, eller kontakta dig med ett alternativt datum.
+event.suggest.success.body=Förfrågan har skickats till värden som skapar en plats åt dig, eller kontaktar dig med ett alternativt datum, när datumet är tillgänglig går enkelt in och slutför din bokning som vanligt.
+event.suggest.success.event-name=Bjudning
 event.suggest.success.chosen.date=Föreslaget datum
 event.suggest.success.chosen.time=Föreslagen tid
 event.suggest.success.nr-of-guests=Antal gäster
 event.suggest.success.print=Skriv ut förslag
+event.suggest.success.back=Tillbaka
+event.suggest.email.subject=Du har ett förslag till bokning!
+event.suggest.email.body=En gäst på HDC har föreslagit att boka ett datum för bjudning: {0}
 
 # Blog
 blog.title={0} - {1} - Home dining club - Blogg

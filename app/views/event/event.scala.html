@@ -44,7 +44,7 @@
             <div class="col-xs-12 col-md-4 margin-top">
                 @views.html.event.bookingDatePicker(event, isThisMyEvent)
                 @views.html.event.bookingForm(eventBookingForm, memberUser, isThisMyEvent)
-                @views.html.event.suggestionButton(event, isThisMyEvent)
+                @views.html.event.suggestionButton(event, memberUser, isThisMyEvent)
                 @views.html.event.suggestionForm(eventDateSuggestionForm, memberUser, isThisMyEvent)
 
                 @eventLikeForm

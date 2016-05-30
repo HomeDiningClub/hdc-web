@@ -28,7 +28,7 @@ $(document).ready(function(){
     function activateDateSuggestionButtons(){
         $("#event-date-list-suggest-date").on("click", function(){
             var uuid = $(this).data("event-uuid");
-            dateSugForm.find("#event-uuid").val(uuid);
+            dateSugForm.find(".suggest-event-uuid").val(uuid);
             activateDateSelector();
             $(".event-cta-form:visible").not(dateSugForm).addClass("hidden");
             dateSugForm.toggleClass("hidden");

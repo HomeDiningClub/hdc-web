@@ -60,9 +60,14 @@ $(document).ready(function(){
 
 
     function activateBookingButtons(){
-        // Don't activate buttons if user is not logged in
-            $(".select-date-button").on("click", function(){
 
+        var selDateBtn = $(".select-date-button");
+        var spacesLeft = selDateBtn.data("selected-spaces-left");
+
+        // Deactivate if too many users booked
+        if(spacesLeft > 0){
+            selDateBtn.on("click", function(){
+                // Don't activate buttons if user is not logged in
                 if(costDiv.length > 0){
                     var uuid = $(this).data("selected-uuid");
                     var date = $(this).data("selected-date");
@@ -77,8 +82,11 @@ $(document).ready(function(){
 
                 $(".event-cta-form:visible").not(dateBookForm).addClass("hidden");
                 dateBookForm.toggleClass("hidden");
-
             });
+
+        }else{
+            selDateBtn.prop("disabled", true);
+        }
     }
 
     function activateGuestSelector(){
