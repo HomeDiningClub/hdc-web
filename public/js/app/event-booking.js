@@ -60,33 +60,23 @@ $(document).ready(function(){
 
 
     function activateBookingButtons(){
+        $(".select-date-button").on("click", function(){
+            // Don't activate buttons if user is not logged in
+            if(costDiv.length > 0){
+                var uuid = $(this).data("selected-uuid");
+                var date = $(this).data("selected-date");
+                var time = $(this).data("selected-time");
 
-        var selDateBtn = $(".select-date-button");
-        var spacesLeft = selDateBtn.data("selected-spaces-left");
+                updatePrice();
 
-        // Deactivate if too many users booked
-        if(spacesLeft > 0){
-            selDateBtn.on("click", function(){
-                // Don't activate buttons if user is not logged in
-                if(costDiv.length > 0){
-                    var uuid = $(this).data("selected-uuid");
-                    var date = $(this).data("selected-date");
-                    var time = $(this).data("selected-time");
+                dateBookForm.find("#book-eventDateId").val(uuid);
+                dateBookForm.find("#booking-chosen-date").text(date);
+                dateBookForm.find("#booking-chosen-time").text(time);
+            }
 
-                    updatePrice();
-
-                    dateBookForm.find("#book-eventDateId").val(uuid);
-                    dateBookForm.find("#booking-chosen-date").text(date);
-                    dateBookForm.find("#booking-chosen-time").text(time);
-                }
-
-                $(".event-cta-form:visible").not(dateBookForm).addClass("hidden");
-                dateBookForm.toggleClass("hidden");
-            });
-
-        }else{
-            selDateBtn.prop("disabled", true);
-        }
+            $(".event-cta-form:visible").not(dateBookForm).addClass("hidden");
+            dateBookForm.toggleClass("hidden");
+        });
     }
 
     function activateGuestSelector(){

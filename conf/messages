@@ -140,10 +140,10 @@ startpage.wizard.tab.step3.header=Steg 3
 startpage.wizard.tab.step4.header=Steg 4
 startpage.wizard.tab.step5.header=Steg 5
 
-startpage.wizard.pager.first=Första
-startpage.wizard.pager.last=Sista
-startpage.wizard.pager.prev=Föreg.
-startpage.wizard.pager.next=Nästa
+wizard.pager.first=Första
+wizard.pager.last=Sista
+wizard.pager.prev=Föreg.
+wizard.pager.next=Nästa
 
 # Browse members page
 browse.title=Bläddra medlemmar
@@ -492,6 +492,7 @@ event.edit.delete.confirm=Du kan inte ångra denna åtgärd, är du säker att d
 event.edit.delete.ok=Ta bort!
 event.edit.delete.abort=Avbryt
 event.button.edit=Redigera händelse
+event.more-images.header=Bilder
 
 event.button.book=Boka
 event.button.select-date=Kl. {0}
@@ -507,7 +508,8 @@ event.price.back.list.text-04=Boka och njut!
 
 event.list.spaces-left=Platser kvar
 event.list.spaces-booked-out-of-spaces-left={0} av {1}
-event.choose-date.header=Välj ett datum
+event.choose-date.header=Boka
+event.choose-date.sub-header=Välj ett datum
 event.choose-date.no-results.my-event=Du har inte några aktiva datum för gäster att boka, gör det lättare genom att addera några.
 event.choose-date.no-results.my-event.button=Lägg till datum
 event.choose-date.no-results=Värden har inte valt några fasta datum, föreslå ett datum.
@@ -515,7 +517,7 @@ event.button.suggest-date=...eller föreslå ett datum
 event.button.suggest-date-no-other-options=Föreslå ett datum
 
 event.prop.header=Detaljer om bjudningen
-event.prop.body=Här är bjudningen i korthet, dessa kan komma att ändras, uppgifterna gäller vid bokning.
+event.prop.body=Uppgifterna kan komma att ändras, dessa gäller vid bokning.
 event.prop.address=Värdens adress
 event.prop.county=Plats
 event.prop.address-only-visible-to-booked-guests=Adress endast synlig för bokade gäster
@@ -544,6 +546,7 @@ event.book.add.error=Någonting gick fel prova att ladda om sidan och boka igen.
 event.book.success.header=Din bokning är slutförd!
 event.book.success.body=En påminnelse är skickad till din e-post: <strong>{0}</strong>
 event.book.success.event-name=Bjudning
+event.book.success.meal-type=Måltidstyp
 event.book.success.payment-info=Betalas hos värden via ett av tillgängliga betalningssätt
 event.book.success.print=Skriv ut
 event.book.success.back=Tillbaka

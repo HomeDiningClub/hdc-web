@@ -1,4 +1,4 @@
-@(eventDateSuggestionForm: Form[models.formdata.EventDateSuggestionForm], memberUser: Option[UserCredential], isThisMyEvent: Boolean)(implicit messages: Messages)
+@(eventDateSuggestionForm: Form[models.formdata.EventDateSuggestionForm], maxNrOfGuests: Int, memberUser: Option[UserCredential], isThisMyEvent: Boolean)(implicit messages: Messages)
 @implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
 
 <div id="date-suggestion-form" class="margin-top event-cta-form hidden">
@@ -35,7 +35,7 @@
                         </div>
                     }
 
-                    @b3.select(eventDateSuggestionForm("suggest-guests"), helper.options("1"->"1","2"->"2","3"->"3","4"->"4","5"->"5","6"->"6","7"->"7","8"->"8","9"->"9"), '_label -> Messages("event.book.nr-of-guests.label"))
+                    @b3.select(eventDateSuggestionForm("suggest-guests"), helper.options(List.range(1, maxNrOfGuests + 1).map(_.toString)), '_label -> Messages("event.book.nr-of-guests.label"))
                     @b3.textarea(eventDateSuggestionForm("suggest-comment"), 'value -> Messages("event.suggest.comment.text"), 'class -> "comment-field", '_label -> Messages("event.suggest.comment.label"))
 
                     @helper.inputHidden(eventDateSuggestionForm("suggestEventId"), 'class -> "suggest-event-uuid")

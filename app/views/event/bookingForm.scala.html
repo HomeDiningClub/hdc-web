@@ -1,4 +1,4 @@
-@(eventBookingForm: Form[models.formdata.EventBookingForm], memberUser: Option[UserCredential], isThisMyEvent: Boolean)(implicit messages: Messages)
+@(eventBookingForm: Form[models.formdata.EventBookingForm], maxNrOfGuests: Int, memberUser: Option[UserCredential], isThisMyEvent: Boolean)(implicit messages: Messages)
 @implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
 
 @inlineFC = @{
@@ -28,7 +28,7 @@
 
                 @helper.inputHidden(eventBookingForm("eventId"), 'class -> "book-event-uuid")
                 @helper.inputHidden(eventBookingForm("book-eventDateId"), 'class -> "book-eventdate-uuid")
-                @b3.select(eventBookingForm("book-guests"), helper.options("1" -> "1", "2" -> "2", "3" -> "3", "4" -> "4", "5" -> "5", "6" -> "6", "7" -> "7", "8" -> "8", "9" -> "9"), '_label -> Messages("event.book.nr-of-guests.label"))
+                @b3.select(eventBookingForm("book-guests"), helper.options(List.range(1, maxNrOfGuests + 1).map(_.toString)), '_label -> Messages("event.book.nr-of-guests.label"))
                 @b3.textarea(eventBookingForm("book-comment"), '_label -> Messages("event.book.comment.label"))
                 @b3.submit('class -> "btn btn-lg btn-orange") {
                     <span class="glyphicon glyphicon-book"></span> @Messages("event.book.submit")

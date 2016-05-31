@@ -4,14 +4,14 @@
 <ul class="list-group big-margin-top">
     <li class="list-group-item">
         <div class="row">
-            <div class="col-md-3">@Messages("event.book.success.event-name")</div>
-            <div class="col-md-9"><a href="@eventBookingSuccess.eventLink">@eventBookingSuccess.eventName</a></div>
+            <div class="col-md-3"><strong>@Messages("event.book.success.event-name")</strong></div>
+            <div class="col-md-9"><strong><a href="@eventBookingSuccess.eventLink">@eventBookingSuccess.eventName</a></strong></div>
         </div>
     </li>
     @if(eventBookingSuccess.mealType.isDefined) {
         <li class="list-group-item">
             <div class="row">
-                <div class="col-md-3">@Messages("event.book.success.meal-type")</div>
+                <div class="col-md-3"><span class="glyphicon glyphicon-cutlery"></span> @Messages("event.book.success.meal-type")</div>
                 <div class="col-md-9">@eventBookingSuccess.mealType.get</div>
             </div>
         </li>

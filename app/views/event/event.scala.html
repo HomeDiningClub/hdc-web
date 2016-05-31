@@ -9,11 +9,13 @@
         isThisMyEvent: Boolean = false,
         memberUser: Option[UserCredential] = None,
         eventLikeForm: play.twirl.api.Html = play.twirl.api.Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
-@import scala.collection.JavaConverters._
+
 
 @eventScripts = {
+    <script src="@routes.Assets.at("js/libs/twitter-bootstrap-wizard-1.0.0/jquery.bootstrap.wizard.min.js")"></script>
     <script src="@routes.Assets.at("js/app/event-booking.js")"></script>
     <script src="@routes.Assets.at("js/app/event-date-suggestion.js")"></script>
+    <script src="@routes.Assets.at("js/app/event-image-gallery.js")"></script>
 }
 
 @main(Messages("event.title", event.getName), metaData = metaData, footerScripts = eventScripts) {
@@ -43,9 +45,9 @@
         <div class="row bg-color">
             <div class="col-xs-12 col-md-4 margin-top">
                 @views.html.event.bookingDatePicker(event, isThisMyEvent)
-                @views.html.event.bookingForm(eventBookingForm, memberUser, isThisMyEvent)
+                @views.html.event.bookingForm(eventBookingForm, event.getMaxNrOfGuests, memberUser, isThisMyEvent)
                 @views.html.event.suggestionButton(event, memberUser, isThisMyEvent)
-                @views.html.event.suggestionForm(eventDateSuggestionForm, memberUser, isThisMyEvent)
+                @views.html.event.suggestionForm(eventDateSuggestionForm, event.getMaxNrOfGuests, memberUser, isThisMyEvent)
 
                 @eventLikeForm
                 @shared.fbShare(shareUrl)
@@ -89,19 +91,8 @@
                     @views.html.event.propertiesList(eventPropertyList)
                 </article>
 
-                @defining(event.getEventImages.asScala) { eventImages =>
-                    @if(eventImages.nonEmpty) {
-                        <div class="event-more-images">
-                        @for(eventImage <- eventImages) {
-                            <div class="col-xs-4">
-                                <div class="thumbnail">
-                                @shared.img(routes.ImageController.eventNormal(eventImage.getStoreId).url, cssClass = "img-responsive")
-                                </div>
-                            </div>
-                        }
-                        </div>
-                    }
-                }
+                @views.html.event.eventMoreImages(event)
+
             </div>
         </div>
     </div>

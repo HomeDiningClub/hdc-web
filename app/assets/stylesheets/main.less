@@ -781,17 +781,30 @@ input[type="reset"]:hover
 }
 .event-image-wrapper {
   width: 100%;
-  max-height: 400px;
-  min-height: 400px;
+  max-height: 500px;
+  min-height: 500px;
   background-color: @hdc-white;
   overflow: hidden;
-  z-index:99;
+  position: relative;
+  z-index:1;
 }
 .event-image {
   width:100%;
+  position: absolute;
+  left: -1000%;
+  right: -1000%;
+  top: -1000%;
+  bottom: -1000%;
+  margin: auto;
+  min-height: 100%;
+  min-width: 100%;
 }
-.event-more-images {
-  background-color: @hdc-gray;
+.event-more-images .thumbnail {
+  background-color: @hdc-light-gray;
+}
+.event-more-images img {
+  max-height: 150px;
+  min-height: 150px;
 }
 
 .event-date-list {
@@ -885,6 +898,11 @@ input[type="reset"]:hover
   margin-top: 20px;
 }
 
+// Event Image gallery
+.modal-event-image-gallery-dialog {
+  width:800px;
+}
+
 // Event time circle
 /* Price-Circle - MAIN LIST  */
 
@@ -892,6 +910,7 @@ input[type="reset"]:hover
   position: relative;
   margin-top: -255px;
   margin-left: 20px;
+  z-index: 10;
 }
 
 .price-circle {
@@ -1746,6 +1765,71 @@ input[type="reset"]:hover
 }
 
 
+// Wizards
+.modal-wizards .wiz-modal-header {
+  padding:10px 10px 25px 0px;
+  background-color:#fff;
+  min-height:37px;
+  border-radius:6px 6px 0px 0px;
+}
+.modal-wizards .wiz-modal-header button.close {
+  margin-top:-7px;
+}
+.modal-wizards .wiz-modal-header button.close span {
+  font-size:30px;
+}
+
+.modal-wizards .tab-pane .overlay {
+  position: relative;
+  padding:15px 20px 10px 20px;
+  margin-top:-86px;
+  width:100%;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.modal-wizards .tab-pane .overlay h2 {
+  display:block;
+  color:#fff;
+  margin-top:0px;
+  font-weight:bold;
+}
+.modal-wizards .tab-pane .overlay p {
+  color:#fff;
+}
+.modal-wizards .pager {
+  background-color:#333;
+  margin:0px;
+  padding:0px 10px;
+  border-radius:0px 0px 5px 5px;
+}
+.modal-wizards .modal-content {
+  background-color:#333;
+  border:none;
+}
+.modal-wizards .hdc-green-wizard .pager li > a {
+  background-color:@hdc-green;
+  border-color:@hdc-green;
+  color: #fff;
+}
+.modal-wizards .hdc-green-wizard .pager li > a:hover,
+.modal-wizards .hdc-green-wizard .pager li > a:active{
+  background-color:@hdc-dark-light-green;
+  border-color:@hdc-green;
+  color: #fff;
+}
+.modal-wizards .pager li > a {
+  background-color:@hdc-orange;
+  border-color:@hdc-orange;
+  color: #fff;
+}
+.modal-wizards .pager li > a:hover,
+.modal-wizards .pager li > a:active{
+  background-color:@hdc-medium-light-orange;
+  border-color:@hdc-orange;
+  color: #fff;
+}
+
+
+
 // Footer
 #footer, #footer-push{
   display: block;
@@ -1969,7 +2053,7 @@ h3.aside-title {
   color:#fff;
 }
 
-// Startpage - Wizard
+// Startpage - Wizard buttons
 .startpage-wizards-buttons {
   padding:15px;
   background-color:@hdc-light-gray;
@@ -2012,67 +2096,6 @@ h3.aside-title {
 }
 .startpage-wizards-buttons .host-wizard .select-step:hover {
   background-color: rgba(@hdc-orange-r, @hdc-orange-g, @hdc-orange-b, 1.0);
-}
-.startpage-wizards .wiz-modal-header {
-  padding:10px 10px 25px 0px;
-  background-color:#fff;
-  min-height:37px;
-  border-radius:6px 6px 0px 0px;
-}
-.startpage-wizards .wiz-modal-header button.close {
-  margin-top:-7px;
-}
-.startpage-wizards .wiz-modal-header button.close span {
-  font-size:30px;
-}
-
-.startpage-wizards .tab-pane .overlay {
-  position: relative;
-  padding:15px 20px 10px 20px;
-  margin-top:-86px;
-  width:100%;
-  background-color: rgba(0, 0, 0, 0.6);
-}
-.startpage-wizards .tab-pane .overlay h2 {
-  display:block;
-  color:#fff;
-  margin-top:0px;
-  font-weight:bold;
-}
-.startpage-wizards .tab-pane .overlay p {
-  color:#fff;
-}
-.startpage-wizards .pager {
-  background-color:#333;
-  margin:0px;
-  padding:0px 10px;
-  border-radius:0px 0px 5px 5px;
-}
-.startpage-wizards .modal-content {
-  background-color:#333;
-  border:none;
-}
-.startpage-wizards #guest-wizard .pager li > a {
-  background-color:@hdc-green;
-  border-color:@hdc-green;
-  color: #fff;
-}
-.startpage-wizards #guest-wizard .pager li > a:hover,
-.startpage-wizards #guest-wizard .pager li > a:active{
-  background-color:@hdc-dark-light-green;
-  border-color:@hdc-green;
-  color: #fff;
-}
-.startpage-wizards .pager li > a {
-  background-color:@hdc-orange;
-  border-color:@hdc-orange;
-  color: #fff;
-}
-.startpage-wizards .pager li > a:hover,
-.startpage-wizards .pager li > a:active{
-  background-color:@hdc-medium-light-orange;
-  border-color:@hdc-orange;
-  color: #fff;
 }
 
 
@@ -2963,7 +2986,7 @@ a.morelink {
   }
 
   // Startpage - wizard
-  .startpage-wizards .tab-pane .overlay {
+  .modal-wizards .tab-pane .overlay {
     margin-top:5px;
   }
 

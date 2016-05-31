@@ -18,7 +18,7 @@
                     </div>
                     <div class="col-xs-12 col-sm-4">
                         <div class="select-date-wrap pull-right">
-                            <button class="btn btn-lg btn-orange select-date-button" data-spaces-left="@eventDate.getSpacesLeft" data-selected-time="@customUtils.Helpers.formatDate(theDate, "HH:mm")" data-selected-date="@customUtils.Helpers.formatDate(theDate, "yyyy-MM-dd")" data-selected-uuid="@eventDate.objectId">@Messages("event.button.select-date", customUtils.Helpers.formatDateGetTime(theDate))</button>
+                            <button class="btn btn-lg btn-orange select-date-button" @if(eventDate.getSpacesLeft == 0){disabled="disabled"} data-selected-time="@customUtils.Helpers.formatDate(theDate, "HH:mm")" data-selected-date="@customUtils.Helpers.formatDate(theDate, "yyyy-MM-dd")" data-selected-uuid="@eventDate.objectId">@Messages("event.button.select-date", customUtils.Helpers.formatDateGetTime(theDate))</button>
                         </div>
                     </div>
                 </div>

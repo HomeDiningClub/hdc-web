@@ -126,6 +126,7 @@ GET         /dynassets/recipe/normal/*file                       @controllers.Im
 GET         /dynassets/event/thumb/*file                         @controllers.ImageController.eventThumb(file)
 GET         /dynassets/event/box/*file                           @controllers.ImageController.eventBox(file)
 GET         /dynassets/event/normal/*file                        @controllers.ImageController.eventNormal(file)
+GET         /dynassets/event/imggal/*file                        @controllers.ImageController.eventImageGallery(file)
 GET         /dynassets/profile/thumb/*file                       @controllers.ImageController.profileThumb(file)
 GET         /dynassets/profile/box/*file                         @controllers.ImageController.profileBox(file)
 GET         /dynassets/profile/normal/*file                      @controllers.ImageController.profileNormal(file)
