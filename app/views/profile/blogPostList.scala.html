@@ -1,0 +1,9 @@
+@(userProfile: UserProfile, isThisMyProfile: Boolean)(implicit messages: Messages)
+@if(isThisMyProfile) {
+  <div class="col-xs-12">
+    <div class="btn-group btn-edit-group">
+      <a href="@controllers.routes.BlogPostsPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.blog.add")</a>
+    </div>
+  </div>
+}
+@blog.blogBox(userProfile.profileLinkName)

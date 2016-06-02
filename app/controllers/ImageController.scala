@@ -203,7 +203,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        customUtils.scalr.ScalrResAssets.at(id, 460, 305, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
+        customUtils.scalr.ScalrResAssets.at(id, 1170, 445, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
   def profileBig(fileUid: String) = {

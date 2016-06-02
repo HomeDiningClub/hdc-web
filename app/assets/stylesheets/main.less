@@ -769,17 +769,8 @@ input[type="reset"]:hover
   padding-bottom:20px;
 }
 
-// Events
-.input-group .remove-button {
-  margin:0px 10px 0px 10px;
-}
-.event-guest-info {
-  border-bottom: 1px solid @hdc-light-gray;
-}
-.event-header {
-  color: @hdc-green;
-}
-.event-image-wrapper {
+// Image spans
+.full-width-image-wrapper {
   width: 100%;
   max-height: 500px;
   min-height: 500px;
@@ -788,7 +779,7 @@ input[type="reset"]:hover
   position: relative;
   z-index:1;
 }
-.event-image {
+.full-width-image {
   width:100%;
   position: absolute;
   left: -1000%;
@@ -798,6 +789,17 @@ input[type="reset"]:hover
   margin: auto;
   min-height: 100%;
   min-width: 100%;
+}
+
+// Events
+.input-group .remove-button {
+  margin:0px 10px 0px 10px;
+}
+.event-guest-info {
+  border-bottom: 1px solid @hdc-light-gray;
+}
+.event-header {
+  color: @hdc-green;
 }
 .event-more-images .thumbnail {
   background-color: @hdc-light-gray;
@@ -1475,22 +1477,22 @@ input[type="reset"]:hover
 .btn-favorite-active .glyphicon {
   color:@hdc-orange;
 }
-.host-container .favorite-box .host-image-favorite {
+.favorite-box .host-image-favorite {
   position:absolute;
   left:-32px;
   top:-2px;
 }
-.host-container .favorite-box .host-image-favorite img {
+.favorite-box .host-image-favorite img {
   width:80px;
   height:80px;
   margin:0px 13px 5px 0px;
 }
-.host-container .favorite-box .name {
+.favorite-box .name {
   font-size:16px;
   display: inline-block;
   margin-top: 6px;
 }
-.host-container .favorite-box .preamble {
+.favorite-box .preamble {
   font-size:13px;
   color:@hdc-gray;
   display: block;
@@ -1875,17 +1877,13 @@ input[type="reset"]:hover
 
 
 // Main content
-.maincontent-container,
-.host-container,
-{
+.maincontent-container {
   background-color: @maincontent-background-color;
   border-radius: 10px;
   padding-bottom:60px;
   margin-bottom:30px;
 }
-.maincontent-container .row,
-.host-container .row
-{
+.maincontent-container .row {
   margin-left:-10px;
   margin-right:-10px;
 }
@@ -2501,31 +2499,6 @@ h3.aside-title {
 }
 
 // Profile
-.host-container h1
-{
-  margin-top:0px;
-}
-.host-container h2
-{
-  color:@hdc-gray;
-}
-.host-container .memberid
-{
-  font-size:11px;
-}
-.host-container .breadtext
-{
-  margin-top:20px;
-}
-
-#host-main-carousel
-{
-  border-bottom:1px solid white;
-}
-#host-main-carousel .carousel-control span
-{
-  font-size:2em;
-}
 .host-image-gallery img,
 .host-main-carousel-thumbs img
 {
@@ -2884,8 +2857,7 @@ a.morelink {
     margin-bottom:0px;
   }
 
-  .maincontent-container,
-  .host-container{
+  .maincontent-container {
     border-radius: 0px;
     margin-bottom:0px;
   }

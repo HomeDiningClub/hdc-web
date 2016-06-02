@@ -1,0 +1,64 @@
+@(reviewBoxesAboutMe: Option[List[ReviewBox]],
+        reviewBoxesAboutMyFood: Option[List[ReviewBox]],
+        myReviewBoxes: Option[List[ReviewBox]],
+        myRecipeReviewBoxes: Option[List[ReviewBox]],
+        userProfile: UserProfile,
+        isThisMyProfile: Boolean)(implicit messages: Messages)
+
+@if(reviewBoxesAboutMe.nonEmpty || reviewBoxesAboutMyFood.nonEmpty) {
+    <h2 class="lead"><span class="glyphicon glyphicon-star"></span>&nbsp;@Messages("profile.tabs.ratings.name")</h2>
+}
+
+@if(reviewBoxesAboutMe.nonEmpty){
+  <!-- Reviews about user -->
+  <div class="row">
+    <div class="col-xs-12">
+      <h3>
+      @if(isThisMyProfile) {
+        @Messages("profile.reviews.reviews.aboutme.header")
+      }else {
+        @Messages("profile.reviews.reviews.aboutme.username.header", userProfile.profileLinkName)
+      }
+      </h3>
+    </div>
+    @shared.reviewBox(reviewBoxesAboutMe.get)
+  </div>
+}
+@if(reviewBoxesAboutMyFood.nonEmpty){
+  <!-- Reviews about his recipes -->
+  <div class="row">
+    <div class="col-xs-12 big-margin-top">
+      <h3>
+      @if(isThisMyProfile) {
+        @Messages("profile.reviews.reviews.aboutmyfood.header")
+      }else {
+        @Messages("profile.reviews.reviews.aboutmyfood.username.header", userProfile.profileLinkName)
+      }
+      </h3>
+    </div>
+    @shared.reviewBox(reviewBoxesAboutMyFood.get)
+  </div>
+}
+
+@if(isThisMyProfile) {
+
+    @if(myReviewBoxes.nonEmpty || myRecipeReviewBoxes.nonEmpty) {
+      <hr class="hr-orange big-margin-top">
+    }
+
+    @if(myReviewBoxes.nonEmpty){
+      <!-- Reviews by me -->
+      <div class="row big-margin-top">
+        <div class="col-xs-12"><h3>@Messages("profile.reviews.myreviews.user.header")</h3></div>
+        @shared.reviewBox(myReviewBoxes.get)
+      </div>
+    }
+
+    @if(myRecipeReviewBoxes.nonEmpty){
+      <!-- Food-Reviews by me -->
+      <div class="row big-margin-top">
+        <div class="col-xs-12"><h3>@Messages("profile.reviews.myreviews.food.header")</h3></div>
+        @shared.reviewBox(myRecipeReviewBoxes.get)
+      </div>
+    }
+}

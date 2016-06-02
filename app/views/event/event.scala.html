@@ -26,13 +26,13 @@
         }
         <div class="row row-no-padding">
             <div class="col-xs-12">
-                <div class="event-image-wrapper">
+                <div class="full-width-image-wrapper">
                 @event.getMainImage match {
                     case null => {
-                        @shared.img("images/campaign/campaign_header.jpg", cssClass = "img-responsive event-image")
+                        @shared.img("images/campaign/campaign_header.jpg", cssClass = "img-responsive full-width-image")
                     }
                     case image: models.files.ContentFile => {
-                        @shared.img(routes.ImageController.eventNormal(image.getStoreId).url, cssClass = "img-responsive event-image")
+                        @shared.img(routes.ImageController.eventNormal(image.getStoreId).url, cssClass = "img-responsive full-width-image")
                     }
                 }
                 </div>

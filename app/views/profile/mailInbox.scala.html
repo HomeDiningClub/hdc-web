@@ -1,0 +1,19 @@
+@(userMessages: Option[List[ReplyToGuestMessage]], currentUser: Option[models.UserCredential], isThisMyProfile: Boolean)(implicit messages: Messages, request: RequestHeader)
+
+@if(isThisMyProfile && userMessages.nonEmpty) {
+
+  <table class="table inbox-table">
+    <thead>
+      <tr>
+        <th>@Messages("mails.inbox.header.read")</th>
+        <th>@Messages("mails.inbox.header.from")</th>
+        <th>@Messages("mails.inbox.header.message")</th>
+        <th>@Messages("mails.inbox.header.date")</th>
+      </tr>
+    </thead>
+    <tbody>
+      @views.html.host.listMessages(userMessages,currentUser)
+    </tbody>
+  </table>
+
+}
