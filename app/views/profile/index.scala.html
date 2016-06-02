@@ -30,7 +30,7 @@
     <div class="container">
         @views.html.profile.profileHeader(userProfile.profileLinkName, userProfile.getOwner.firstName, avatarUrl, showLinkBack = false)
 
-        <div class="row">
+        <div class="row row-no-padding">
             <div class="col-xs-12 bg-color">
                 <div class="full-width-image-wrapper">
                     @userProfile.getMainImage match {
