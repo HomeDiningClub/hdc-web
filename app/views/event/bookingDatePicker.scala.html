@@ -17,7 +17,7 @@
         @if(isThisMyEvent) {
             <div class="col-xs-12 text-center">
                 @Messages("event.choose-date.no-results.my-event")<br>
-                <a href="@controllers.routes.EventPageController.edit(event.objectId)#edit-date-time" class="btn btn-primary">@Messages("event.choose-date.no-results.my-event.button")</a>
+                <a href="@controllers.routes.EventPageController.edit(event.objectId)#edit-date-time" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>&nbsp;@Messages("event.choose-date.no-results.my-event.button")</a>
             </div>
         }else{
             <div class="col-xs-12 text-center">

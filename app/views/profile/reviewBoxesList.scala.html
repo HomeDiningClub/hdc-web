@@ -6,7 +6,7 @@
         isThisMyProfile: Boolean)(implicit messages: Messages)
 
 @if(reviewBoxesAboutMe.nonEmpty || reviewBoxesAboutMyFood.nonEmpty) {
-    <h2 class="lead"><span class="glyphicon glyphicon-star"></span>&nbsp;@Messages("profile.tabs.ratings.name")</h2>
+    <h2 class="sub-with-border"><span class="glyphicon glyphicon-star-empty text-green pull-right"></span>&nbsp;@Messages("profile.tabs.ratings.name")</h2>
 }
 
 @if(reviewBoxesAboutMe.nonEmpty){

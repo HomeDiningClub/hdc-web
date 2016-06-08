@@ -6,4 +6,10 @@
     </div>
   </div>
 }
-@blog.blogBox(userProfile.profileLinkName)
+@if(userProfile.getBlogPosts.iterator().hasNext) {
+    @blog.blogBox(userProfile.profileLinkName)
+}else{
+    <div class="well well-hdc">
+        @Messages("profile.blog.no-entries", userProfile.profileLinkName)
+    </div>
+}

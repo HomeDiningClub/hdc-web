@@ -46,15 +46,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
                                        implicit val nodeEntityService: NodeEntityService,
                                        val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
-  // Constants
-  val FOOD = "food-tab"
-  val BLOG = "blog-tab"
-  val REVIEWS = "reviews-tab"
-  val INBOX = "inbox-tab"
-  val FAVOURITES = "favourites-tab"
-  val EVENT = "event-tab"
 
-  val tabMenu: TabMenu = TabMenu(FOOD, BLOG, REVIEWS, INBOX, FAVOURITES, EVENT)
 
   /*
   // Form
@@ -221,7 +213,6 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
         Ok(views.html.profile.index(
           userProfile = profile,
-          tabMenu = tabMenu,
           recipeBoxes = recipeBoxes,
           eventBoxes = eventBoxes,
           myReviewBoxes = myReviewBoxes,

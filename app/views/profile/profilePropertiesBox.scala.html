@@ -1,6 +1,6 @@
 @(tagList: Option[List[models.profile.TagWord]], userProfile: UserProfile)(implicit messages: Messages)
 
-<div class="panel panel-default panel-dropshadow big-margin-top">
+<div class="panel panel-default panel-dropshadow margin-top">
     <div class="panel-body">
         @shared.tagList(tagList, userProfile.getOwner.firstName)
     <br><strong>@Messages("profile.firstname.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.getOwner.firstName)</span>

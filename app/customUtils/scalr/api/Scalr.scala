@@ -100,8 +100,8 @@ object Scalr {
    */
   def resize(file: File, width: Int, height: Int, mode: Resizer.Mode = Resizer.Mode.AUTOMATIC, method: Resizer.Method = Resizer.Method.ULTRA_QUALITY): File = {
     val image = ImageIO.read(file)
-    //val resized = Resizer.resize(image, method, mode, width, height, Resizer.OP_ANTIALIAS)
-    val resized = Resizer.resize(image, method, mode, width, height)
+    val resized = Resizer.resize(image, method, mode, width, height, Resizer.OP_ANTIALIAS)
+    //val resized = Resizer.resize(image, method, mode, width, height)
     val ext = guessImageFormat(file)
     val tmp = File.createTempFile(Random.nextString(20), ext)
     ImageIO.write(resized, ext.toUpperCase, tmp)
@@ -119,8 +119,8 @@ object Scalr {
    */
   def resizeToStream(file: File, width: Int, height: Int, mode: Resizer.Mode = Resizer.Mode.AUTOMATIC, method: Resizer.Method = Resizer.Method.ULTRA_QUALITY): OutputStream = {
     val image = ImageIO.read(file)
-    //val resized = Resizer.resize(image, method, mode, width, height, Resizer.OP_ANTIALIAS)
-    val resized = Resizer.resize(image, method, mode, width, height)
+    val resized = Resizer.resize(image, method, mode, width, height, Resizer.OP_ANTIALIAS)
+    //val resized = Resizer.resize(image, method, mode, width, height)
     val ext = guessImageFormat(file)
     val out: OutputStream = null
     ImageIO.write(resized, ext.toUpperCase, out)
