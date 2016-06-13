@@ -17,13 +17,26 @@ $(document).ready(function(){
 
     function eventHtmlTemplate(value){
         var l = "";
-        l = l + "<div class='col-xs-12 col-sm-6 col-sm-offset-0 col-md-4 col-md-offset-0 col-event-boxes'><a href='" + value.linkToEvent + "' class='link-event-panel'>";
-        l = l + "<div class='thumbnail panel-event hover-green-dropshadow'>";
-        l = l + "<div class='body'>";
-        l = l + "<div class='crop-height'><img src='" + value.mainImage + "' class='img-responsive'></div>";
+        l = l + "<div class='col-xs-12 col-event-boxes'><a href='" + value.linkToEvent + "' class='link-event-panel'>";
+        l = l + "<div class='row'>";
+
+        l = l + "<div class='col-xs-12 col-sm-6 no-gutter'>";
+        l = l + "<div class='full-width-image-wrapper'><img class='full-width-image' src='" + value.mainImage + "' class='img-responsive'></div>";
+        l = l + "<div class='price-wrapper'>";
+        l = l + "<div class='currency'>" + '@Messages("event.price.currency")' + "</div>";
+        l = l + "<div class='price'>" + value.price + "<span class='price-end'>" + '@Messages("event.price.currency.end")' + "</span></div>";
+        l = l + "<div class='price-info'>" + '@Messages("event.price.front.description")' + "</div>";
+        l = l + "</div>";
+        l = l + "</div>";
+
+        l = l + "<div class='col-xs-12 col-sm-6 info-wrapper'>";
         l = l + "<h2>" + value.name + "</h2>";
+        l = l + "<div class='location'>" + value.location + "</div>";
         l = l + "<div class='preamble'>" + value.preAmble + "</div>";
-        l = l + "</div></div>";
+        l = l + "<button class='btn btn-lg btn-orange btn-booking'><span class='glyphicon glyphicon-book'></span>&nbsp;" + '@Messages("event.button.select")' + "</button>";
+        l = l + "</div>";
+
+        l = l + "</div>";
         l = l + "</a></div>";
 
         return l;
@@ -36,7 +49,7 @@ $(document).ready(function(){
 });
 </script>
 
-<div class="row" id="event-list"></div>
+<div id="event-list"></div>
 <div id="pagination-event" class="row pagination-hdc">
     <div class="col-xs-6 col-sm-5">
         <button class="btn btn-default pull-right result-next"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;@Messages("button.previous")</button>

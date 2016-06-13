@@ -108,6 +108,8 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
             e.name,
             e.preAmble.getOrElse(""),
             e.mainImage.getOrElse(""),
+            e.price.toInt,
+            e.location.getOrElse(""),
             //e.eventRating.toString,
             e.eventBoxCount,
             e.hasNext,

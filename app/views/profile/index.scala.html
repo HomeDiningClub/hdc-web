@@ -90,6 +90,7 @@
                             </div>
                             <div class="@columnLayout">
 
+                                @* Title & Text *@
                                 <section>
                                     <article>
                                         <h1 class="hidden">@userProfile.profileLinkName</h1>
@@ -105,12 +106,13 @@
                                         <div class="breadtext">
                                             @Html(userProfile.aboutMe)
                                         </div>
-                                        <hr class="hr-orange hr-like">
                                         @shared.flashmsg(flash)
 
                                     </article>
                                 </section>
 
+                                @*  Profile Properties box *@
+                                @views.html.profile.profilePropertiesBox(tagList,userProfile)
 
                                 @*  Share / Like / Fav *@
                                 <div class="row">
@@ -121,7 +123,6 @@
                                     </div>
                                 </div>
 
-                                @views.html.profile.profilePropertiesBox(tagList,userProfile)
 
                             </div>
                         </div>

@@ -927,6 +927,84 @@ input[type="reset"]:hover
   width:800px;
 }
 
+// EventBox
+.col-event-boxes {
+  border:1px solid #eee;
+  border-radius: 5px;
+  overflow: visible;
+  background-color: @hdc-light-gray;
+}
+.col-event-boxes .full-width-image-wrapper {
+  min-height:200px;
+  max-height:200px;
+  border-radius: 5px 0px 0px 5px;
+}
+.col-event-boxes .info-wrapper {
+  min-height:200px;
+}
+.col-event-boxes h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: @hdc-dark-gray;
+}
+.col-event-boxes .price-wrapper {
+  position: absolute;
+  left:-15px;
+  bottom:-35px;
+  z-index: 100;
+  color:@hdc-dark-gray;
+  background-color: @hdc-white;
+  padding: 5px 0;
+  border: 3px solid @hdc-gray;
+  width: 100px;
+  height: 100px;
+  border-radius: 100px;
+  text-align: center;
+  margin-bottom:20px;
+}
+.col-event-boxes .currency {
+  display: inline-block;
+  font-size:0.8em;
+  margin-top:12px;
+}
+.col-event-boxes .price {
+  position: relative;
+  left: 3px;
+  color:@hdc-price-red;
+  font-size:1.8em;
+  font-weight: bold;
+  line-height: 0.8em;
+}
+.col-event-boxes .price-end {
+  font-size:0.8em;
+}
+.col-event-boxes .price-info {
+  font-size:0.8em;
+}
+.col-event-boxes hr {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  display: block;
+  height: 1px;
+  border: none;
+  color: @hdc-gray;
+  background-color: @hdc-gray;
+}
+.col-event-boxes .location {
+  color:@hdc-black;
+  font-size: 0.9em;
+}
+.col-event-boxes .preamble {
+  color:@hdc-black;
+  font-size: 0.9em;
+}
+.col-event-boxes .btn-booking {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-right:15px;
+}
+
 // Event time circle
 /* Price-Circle - MAIN LIST  */
 

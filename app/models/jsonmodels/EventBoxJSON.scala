@@ -4,17 +4,19 @@ import play.api.libs.json._
 import play.api.libs.json.JsString
 
 case class EventBoxJSON(
-  objectId: String,
-  linkToEvent: String,
-  name: String,
-  preAmble: String,
-  mainImage: String,
-//  eventRating: String,
-  eventBoxCount: Long,
-  hasNext: Boolean,
-  hasPrevious: Boolean,
-  totalPages: Int
-)
+                         objectId: String,
+                         linkToEvent: String,
+                         name: String,
+                         preAmble: String,
+                         mainImage: String,
+                         price: Int,
+                         location: String,
+                         //  eventRating: String,
+                         eventBoxCount: Long,
+                         hasNext: Boolean,
+                         hasPrevious: Boolean,
+                         totalPages: Int
+                         )
 
 object EventBoxJSON {
 
@@ -24,23 +26,25 @@ object EventBoxJSON {
     def writes(jsonObject: EventBoxJSON): JsValue = {
 
       val jsonCaseSeq = Seq(
-        "objectId"        -> JsString(jsonObject.objectId),
-        "linkToEvent"    -> JsString(jsonObject.linkToEvent),
-        "name"            -> JsString(jsonObject.name),
-        "preAmble"        -> JsString(jsonObject.preAmble),
-        "mainImage"       -> JsString(jsonObject.mainImage),
-//        "eventRating"    -> JsString(jsonObject.eventRating),
-        "eventBoxCount"  -> JsNumber(jsonObject.eventBoxCount),
-        "hasNext"         -> JsBoolean(jsonObject.hasNext),
-        "hasPrevious"     -> JsBoolean(jsonObject.hasPrevious),
-        "totalPages"      -> JsNumber(jsonObject.totalPages)
+        "objectId" -> JsString(jsonObject.objectId),
+        "linkToEvent" -> JsString(jsonObject.linkToEvent),
+        "name" -> JsString(jsonObject.name),
+        "preAmble" -> JsString(jsonObject.preAmble),
+        "mainImage" -> JsString(jsonObject.mainImage),
+        "price" -> JsNumber(jsonObject.price),
+        "location" -> JsString(jsonObject.location),
+        //        "eventRating"    -> JsString(jsonObject.eventRating),
+        "eventBoxCount" -> JsNumber(jsonObject.eventBoxCount),
+        "hasNext" -> JsBoolean(jsonObject.hasNext),
+        "hasPrevious" -> JsBoolean(jsonObject.hasPrevious),
+        "totalPages" -> JsNumber(jsonObject.totalPages)
       )
       JsObject(jsonCaseSeq)
     }
 
 
     def reads(json: JsValue): JsResult[EventBoxJSON] = {
-      JsSuccess(EventBoxJSON("", "", "", "", "", 0, false, false, 0))
+      JsSuccess(EventBoxJSON("", "", "", "", "", 0, "", 0, false, false, 0))
     }
 
   }

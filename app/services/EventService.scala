@@ -435,7 +435,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
     val list = eventRepository.findEventsOnPage(user.objectId.toString, new PageRequest(pageNo, 6))
     val iterator = list.iterator()
     var eventList : ListBuffer[EventBox] = new ListBuffer[EventBox]
-
+    val location = user.getUserProfile.getLocations.asScala.headOption match {
+      case None => None
+      case Some(countyTag) => Some(countyTag.county.name)
+    }
     while(iterator.hasNext) {
 
       val obj = iterator.next()
@@ -481,6 +484,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
           case null => 0
           case p => p
         },
+        location,
 //        ratingValue,
         list.getTotalElements,
         list.hasNext,

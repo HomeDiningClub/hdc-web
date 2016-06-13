@@ -9,6 +9,7 @@ case class EventBox (
     preAmble: Option[String],
     mainImage: Option[String],
     price: Long,
+    location: Option[String],
     //    eventRating: Int,
     eventBoxCount: Long,
     hasNext: Boolean,
