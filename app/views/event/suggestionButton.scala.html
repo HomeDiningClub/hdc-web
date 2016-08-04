@@ -1,0 +1,8 @@
+@(event: models.Event, memberUser: Option[UserCredential], isThisMyEvent: Boolean)(implicit messages: Messages)
+
+@if(!isThisMyEvent || (memberUser.isDefined && customUtils.Helpers.isUserAdmin(memberUser.get))) {
+    <button id="event-date-list-suggest-date" data-event-uuid="@event.objectId" class="btn btn-primary-flat btn-group-justified btn-event-date-suggest">
+        <span class="hidden suggest-date-btn-text-no-options">@Messages("event.button.suggest-date-no-other-options")</span>
+        <span class="suggest-date-btn-text">@Messages("event.button.suggest-date")</span>
+    </button>
+}

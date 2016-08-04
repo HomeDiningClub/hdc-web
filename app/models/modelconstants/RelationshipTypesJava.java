@@ -104,6 +104,11 @@ public final class RelationshipTypesJava {
         public static final String Constant = "MEAL_TYPE";
     }
 
+    public final static class ALCOHOL_SERVING implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "ALCOHOL_SERVING";
+    }
+
     public final static class HOSTS_EVENTS implements RelationshipType {
         public String name() { return Constant; }
         public static final String Constant = "HOSTS_EVENTS";
@@ -112,6 +117,10 @@ public final class RelationshipTypesJava {
     public final static class HAS_BLOGPOSTS implements RelationshipType {
         public String name() { return Constant; }
         public static final String Constant = "HAS_BLOGPOSTS";
+    }
+    public static class BOOKED_EVENT_DATE implements RelationshipType {
+        public String name() { return Constant; }
+        public static final String Constant = "BOOKED_EVENT_DATE";
     }
 
     public static class RECOMMENDED implements RelationshipType {

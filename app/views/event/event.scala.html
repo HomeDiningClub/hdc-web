@@ -1,17 +1,22 @@
 @(event: models.Event,
         eventDates: List[models.event.EventDate],
         eventBookingForm: Form[EventBookingForm],
+        eventDateSuggestionForm: Form[EventDateSuggestionForm],
+        eventPropertyList: EventPropertyList,
         metaData: Option[viewmodels.MetaData] = None,
         eventBoxes: Option[List[models.viewmodels.EventBox]] = None,
         shareUrl: String = "",
         isThisMyEvent: Boolean = false,
+        memberUser: Option[UserCredential] = None,
         eventLikeForm: play.twirl.api.Html = play.twirl.api.Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
-@import scala.collection.JavaConverters._
+
 
 @eventScripts = {
+    <script src="@routes.Assets.at("js/libs/twitter-bootstrap-wizard-1.0.0/jquery.bootstrap.wizard.min.js")"></script>
     <script src="@routes.Assets.at("js/app/event-booking.js")"></script>
+    <script src="@routes.Assets.at("js/app/event-date-suggestion.js")"></script>
+    <script src="@routes.Assets.at("js/app/event-image-gallery.js")"></script>
 }
-
 
 @main(Messages("event.title", event.getName), metaData = metaData, footerScripts = eventScripts) {
 
@@ -21,13 +26,13 @@
         }
         <div class="row row-no-padding">
             <div class="col-xs-12">
-                <div class="event-image-wrapper">
+                <div class="full-width-image-wrapper">
                 @event.getMainImage match {
                     case null => {
-                        @shared.img("images/campaign/campaign_header.jpg", cssClass = "img-responsive event-image")
+                        @shared.img("images/campaign/campaign_header.jpg", cssClass = "img-responsive full-width-image")
                     }
                     case image: models.files.ContentFile => {
-                        @shared.img(routes.ImageController.eventNormal(image.getStoreId).url, cssClass = "img-responsive event-image")
+                        @shared.img(routes.ImageController.eventNormal(image.getStoreId).url, cssClass = "img-responsive full-width-image")
                     }
                 }
                 </div>
@@ -38,59 +43,56 @@
         </div>
 
         <div class="row bg-color">
-            <div class="col-xs-12 col-md-4 col-lg-3">
-                @views.html.event.eventDateSelector(event)
+            <div class="col-xs-12 col-md-4 margin-top">
+                @views.html.event.bookingDatePicker(event, isThisMyEvent)
+                @views.html.event.bookingForm(eventBookingForm, event.getMaxNrOfGuests, memberUser, isThisMyEvent)
+                @views.html.event.suggestionButton(event, memberUser, isThisMyEvent)
+                @views.html.event.suggestionForm(eventDateSuggestionForm, event.getMaxNrOfGuests, memberUser, isThisMyEvent)
 
                 @eventLikeForm
                 @shared.fbShare(shareUrl)
+
+                @if(isThisMyEvent){
+                    <div class="col-xs-12 text-center margin-top">
+                        <a href="@controllers.routes.EventPageController.edit(event.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> @Messages("event.button.edit")</a><br>
+                    </div>
+                }
             </div>
 
-            <div id="booking-form" class="col-xs-12 col-sm-4 bg-color margin-top clearfix hidden">
-                @views.html.event.eventBookForm(eventBookingForm)
-            </div>
 
-            <div class="col-xs-12 col-md-8 col-lg-9 bg-color">
+
+            <div class="col-xs-12 col-md-8 bg-color">
                 @if(!flash.isEmpty) {
-                    <div class="col-xs-12">@shared.flashmsg(flash)</div>
+                    <div class="col-xs-12 margin-top">@shared.flashmsg(flash)</div>
                 }
 
                 @if(!event.getPreAmble.isEmpty || !event.getMainBody.isEmpty || !event.getName.isEmpty) {
-                <section>
+                    <section>
+                        <article>
+                            <h1 class="event-header">@event.getName</h1>
+                            @if(!event.getPreAmble.isEmpty) {
+                                <blockquote><p>"@event.getPreAmble"</p><p><small>@event.getOwnerProfile.getOwner.getFullName</small></p></blockquote>
+                            }
+                            @if(!event.getMainBody.isEmpty) {
+                                <div class="breadtext">@Html(event.getMainBody)</div>
+                            }
+                        </article>
+                    </section>
+
+                    @*
                     <article>
-                        <h1 class="event-header">@event.getName</h1>
-                        @if(!event.getPreAmble.isEmpty) {
-                            <blockquote><p>"@event.getPreAmble"</p><p><small>@event.getOwnerProfile.getOwner.getFullName</small></p></blockquote>
-                        }
-                        @if(!event.getMainBody.isEmpty) {
-                            <div class="breadtext">@Html(event.getMainBody)</div>
-                        }
+                    @shared.grade(inputId = "event-grade", initialValue = recipe.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = recipe.getNrOfRatings)
+                    @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url)(request)
                     </article>
-                </section>
+                    *@
+                }
 
-                @*
                 <article>
-                @shared.grade(inputId = "event-grade", initialValue = recipe.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = recipe.getNrOfRatings)
-                @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url)(request)
+                    @views.html.event.propertiesList(eventPropertyList)
                 </article>
-                *@
-                }
 
-                @defining(event.getEventImages.asScala) { eventImages =>
-                    @if(eventImages.nonEmpty) {
-                        <div class="row bg-color">
-                        @for(eventImage <- eventImages) {
-                            <div class="col-xs-4">
-                            @shared.img(routes.ImageController.eventNormal(eventImage.getStoreId).url, cssClass = "img-responsive")
-                            </div>
-                        }
-                        </div>
-                    }
-                }
-                @if(isThisMyEvent){
-                    <div class="col-xs-12 text-center margin-top">
-                        <a href="@controllers.routes.EventPageController.edit(event.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> @Messages("event.button.edit")</a><br>
-                    </div>
-                }
+                @views.html.event.eventMoreImages(event)
+
             </div>
         </div>
     </div>

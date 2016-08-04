@@ -203,7 +203,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        customUtils.scalr.ScalrResAssets.at(id, 460, 305, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
+        customUtils.scalr.ScalrResAssets.at(id, 1170, 445, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
   def profileBig(fileUid: String) = {
@@ -258,7 +258,15 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        customUtils.scalr.ScalrResAssets.at(id, 150, 100, mode = Resizer.Mode.CROP.toString)
+        customUtils.scalr.ScalrResAssets.at(id, 150, 100, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
+    }
+  }
+  def eventImageGallery(fileUid: String) = {
+    fileUid match {
+      case "null" =>
+        faultyImageRequestAction
+      case id: String =>
+        customUtils.scalr.ScalrResAssets.at(id, 1024, 0, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
   def eventBox(fileUid: String) = {
@@ -266,7 +274,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        customUtils.scalr.ScalrResAssets.at(id, 275, 160, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
+        customUtils.scalr.ScalrResAssets.at(id, 400, 0, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
   def eventNormal(fileUid: String) = {
@@ -274,7 +282,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        customUtils.scalr.ScalrResAssets.at(id, 1170, 345, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
+        customUtils.scalr.ScalrResAssets.at(id, 1170, 445, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
 

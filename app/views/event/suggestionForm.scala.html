@@ -1,0 +1,50 @@
+@(eventDateSuggestionForm: Form[models.formdata.EventDateSuggestionForm], maxNrOfGuests: Int, memberUser: Option[UserCredential], isThisMyEvent: Boolean)(implicit messages: Messages)
+@implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
+
+<div id="date-suggestion-form" class="margin-top event-cta-form hidden">
+    @if(memberUser.isDefined && (!isThisMyEvent || customUtils.Helpers.isUserAdmin(memberUser.get))) {
+        <div class="panel panel-green panel-date-suggestion-form">
+            <div class="panel-heading">@Messages("event.suggest.heading")</div>
+            <div class="panel-body">
+                @b3.form(action=controllers.routes.EventPageController.addDateSuggestionSubmit(), 'enctype -> "multipart/form-data"){
+
+                    @b3.inputWrapped("date",
+                        eventDateSuggestionForm("suggest-date"),
+                        'class -> "date-input",
+                        'placeholder -> Messages("event.edit.add.date.validation.format"),
+                        '_label -> Messages("event.suggest.date"),
+                        '_class -> "date") { input =>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </div>
+                            @input
+                        </div>
+                    }
+                    @b3.inputWrapped("time",
+                        eventDateSuggestionForm("suggest-time"),
+                        'class -> "time-input",
+                        'placeholder -> Messages("event.edit.add.time.validation.format"),
+                        '_label -> Messages("event.suggest.time"),
+                        '_class -> "time") { input =>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-time"></span>
+                            </div>
+                            @input
+                        </div>
+                    }
+
+                    @b3.select(eventDateSuggestionForm("suggest-guests"), helper.options(List.range(1, maxNrOfGuests + 1).map(_.toString)), '_label -> Messages("event.book.nr-of-guests.label"))
+                    @b3.textarea(eventDateSuggestionForm("suggest-comment"), 'value -> Messages("event.suggest.comment.text"), 'class -> "comment-field", '_label -> Messages("event.suggest.comment.label"))
+
+                    @helper.inputHidden(eventDateSuggestionForm("suggestEventId"), 'class -> "suggest-event-uuid")
+                    <strong>@Messages("event.suggest.submit.help")</strong>
+                    @b3.submit('class -> "btn btn-lg btn-orange"){ <span class="glyphicon glyphicon-calendar"></span> @Messages("event.suggest.submit") }
+                }
+            </div>
+        </div>
+    }else{
+        @views.html.event.notLoggedIn()
+    }
+</div>

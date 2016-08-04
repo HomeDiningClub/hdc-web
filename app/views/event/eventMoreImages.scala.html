@@ -1,0 +1,54 @@
+@(event: models.Event)(implicit messages: Messages)
+@import scala.collection.JavaConverters._
+
+@defining(event.getEventImages.asScala) { eventImages =>
+  @if(eventImages.nonEmpty) {
+    <div class="row">
+      <div class="col-xs-12">
+        <h3 class="lead">@Messages("event.more-images.header")</h3>
+      </div>
+    </div>
+    <div class="row event-more-images">
+      @for((eventImage,i) <- eventImages.zipWithIndex) {
+        <div class="col-xs-12 col-sm-6 col-md-4">
+          <a href="#event-image-gallery" data-target="#event-image-gallery-modal" data-toggle="modal" onclick="$('#event-image-gallery').bootstrapWizard('show',@i);">
+            <div class="thumbnail">
+              @shared.img(routes.ImageController.eventThumb(eventImage.getStoreId).url, cssClass = "img-responsive")
+            </div>
+          </a>
+        </div>
+      }
+    </div>
+
+    <div class="modal-wizards">
+      <div class="modal fade" id="event-image-gallery-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-event-image-gallery-dialog" role="document">
+          <div class="modal-header wiz-modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
+          <div class="modal-content">
+            <section>
+              <div id="event-image-gallery" class="hdc-green-wizard">
+                <ul class="hidden">
+                  @for((eventImage, i) <- eventImages.zipWithIndex) {
+                    <li><a href="#galimage@i" data-toggle="tab">@eventImage.name</a></li>
+                  }
+                </ul>
+                <div class="tab-content">
+                  @for((eventImage, i) <- eventImages.zipWithIndex) {
+                    <div class="tab-pane animated fadeIn" id="galimage@i">
+                      @shared.img(routes.ImageController.eventImageGallery(eventImage.getStoreId).url, alt = "", cssClass = "img-responsive")
+                    </div>
+                  }
+                  <ul class="pager wizard">
+                    <li class="previous" style="display: none"><a class="btn" href="javascript:void(0);"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;@Messages("wizard.pager.prev")</a></li>
+                    <li class="next"><a class="btn" href="javascript:void(0);">@Messages("wizard.pager.next")&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  }
+}

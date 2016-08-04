@@ -1,7 +1,8 @@
 $(document).ready(function(){
 
     // Init booking
-    activateBookingButtons();
+    var dateBookForm = $("#booking-form");
+    var costDiv = $("#booking-total-cost");
     activateGuestSelector();
     activateDateSelector();
 
@@ -17,28 +18,39 @@ $(document).ready(function(){
 
         $.getJSON(availableDatesRoute + '?' + eventUUIDPar + '=' + eventUUID, function(data) {
             var availableDates = [];
-            $.each(data, function(key, val) {
-                availableDates.push(val);
-            });
+            if(data) {
+                $datePickerResults.toggleClass("hidden");
 
-            //var availableDates = ["2016-05-17","2016-05-16","2016-05-30","2016-05-25"];
-
-            var datePickerOptions = {
-                locale: "sv",
-                minDate: "now",
-                useCurrent: false,
-                format: dateFormat,
-                inline: true,
-                enabledDates: availableDates
-            };
-
-            $datePicker.datetimepicker(datePickerOptions).on("dp.change", function(e){
-                $datePickerResults.load(eventTimeRoute + '?' + eventUUIDPar + '=' + eventUUID + "&" + datePar + '=' + e.date.format(dateFormat), function(){
-                    $(this).removeClass("flipOutX").addClass("flipInX");
+                $.each(data, function(key, val) {
+                    availableDates.push(val);
                 });
-            });
 
-            $datePicker.slideDown();
+                //var availableDates = ["2016-05-17","2016-05-16","2016-05-30","2016-05-25"];
+
+                var datePickerOptions = {
+                    locale: "sv",
+                    minDate: "now",
+                    useCurrent: false,
+                    format: dateFormat,
+                    inline: true,
+                    enabledDates: availableDates
+                };
+
+                $datePicker.datetimepicker(datePickerOptions).on("dp.change", function(e){
+                    $datePickerResults.load(eventTimeRoute + '?' + eventUUIDPar + '=' + eventUUID + "&" + datePar + '=' + e.date.format(dateFormat), function(){
+                        $(this).removeClass("flipOutX").addClass("flipInX");
+                        dateBookForm.addClass("hidden");
+                        activateBookingButtons();
+                    });
+                });
+
+                $datePicker.slideDown();
+            }else{
+                //$("#event-date-list-suggest-date").hide().trigger("click");
+                $("#event-date-list-result-no-results, .suggest-date-btn-text-no-options").removeClass("hidden");
+                $(".suggest-date-btn-text").addClass("hidden");
+                $("#event-date-list-suggest-date").addClass("btn-request").removeClass("btn-primary-flat");
+            }
 
         });
 
@@ -49,35 +61,41 @@ $(document).ready(function(){
 
     function activateBookingButtons(){
         $(".select-date-button").on("click", function(){
-            var uuid = $(this).data("selected-uuid");
-            var date = $(this).data("selected-date");
-            var time = $(this).data("selected-time");
+            // Don't activate buttons if user is not logged in
+            if(costDiv.length > 0){
+                var uuid = $(this).data("selected-uuid");
+                var date = $(this).data("selected-date");
+                var time = $(this).data("selected-time");
 
-            updatePrice();
-            $("#eventDateId").val(uuid);
-            $("#booking-chosen-date").text(date);
-            $("#booking-chosen-time").text(time);
-            $("#booking-form").removeClass("hidden");
+                updatePrice();
+
+                dateBookForm.find("#book-eventDateId").val(uuid);
+                dateBookForm.find("#booking-chosen-date").text(date);
+                dateBookForm.find("#booking-chosen-time").text(time);
+            }
+
+            $(".event-cta-form:visible").not(dateBookForm).addClass("hidden");
+            dateBookForm.toggleClass("hidden");
         });
     }
 
     function activateGuestSelector(){
-        $("#guests").on("change", updatePrice);
+        dateBookForm.find("#book-guests").on("change", updatePrice);
     }
 
     function updatePrice(){
-        var $costDiv = $("#booking-total-cost");
-        var priceRoute = $costDiv.data("price-route");
+
+        var priceRoute = costDiv.data("price-route");
         var nrOfGuestsPar = "nrOfGuests";
-        var nrOfGuests = $("#guests").val();
+        var nrOfGuests = dateBookForm.find("#book-guests").val();
         var eventUUIDPar = "eventUUID";
-        var eventUUID = $("#eventId").val();
-        var $formGrp = $costDiv.parents(".form-group");
+        var eventUUID = dateBookForm.find("#eventId").val();
+        var $formGrp = costDiv.parents(".form-group");
 
         $formGrp.removeClass("flipInX").addClass("flipOutX");
 
         $.getJSON(priceRoute + '?' + eventUUIDPar + '=' + eventUUID + "&" + nrOfGuestsPar + '=' + nrOfGuests + '&tid=' + Date(), function(data){
-            $costDiv.text(data);
+            costDiv.text(data);
             $formGrp.removeClass("flipOutX").addClass("flipInX");
         });
     }

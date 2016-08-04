@@ -2,6 +2,7 @@ package models;
 
 import customUtils.Helpers;
 import models.content.ContentBase;
+import models.event.AlcoholServing;
 import models.event.EventDate;
 import models.event.MealType;
 import models.files.ContentFile;
@@ -30,6 +31,17 @@ public class Event extends ContentBase implements IEditable {
     @Indexed(indexType = IndexType.FULLTEXT,indexName = "eventMainBody")
     private String mainBody;
 
+    private Integer maxNrOfGuests;
+    private Integer minNrOfGuests;
+    private Boolean childFriendly;
+    private Boolean handicapFriendly;
+    private Boolean havePets;
+    private Boolean smokingAllowed;
+
+    @Fetch
+    @RelatedTo(type = RelationshipTypesJava.ALCOHOL_SERVING.Constant, direction = Direction.INCOMING)
+    private AlcoholServing alcoholServing;
+
     @Fetch
     @RelatedTo(type = RelationshipTypesJava.MAIN_IMAGE.Constant, direction = Direction.OUTGOING)
     private ContentFile mainImage;
@@ -41,6 +53,7 @@ public class Event extends ContentBase implements IEditable {
     @RelatedTo(type = RelationshipTypesJava.HOSTS_EVENTS.Constant, direction = Direction.INCOMING)
     private UserProfile ownerProfile;
 
+    @Fetch
     @RelatedTo(type = RelationshipTypesJava.MEAL_TYPE.Constant, direction = Direction.INCOMING)
     private MealType mealType;
 
@@ -62,6 +75,68 @@ public class Event extends ContentBase implements IEditable {
 
 
     // Getter & Setters
+    public void setChildFriendly(Boolean value){
+        this.childFriendly = value;
+    }
+    public Boolean getChildFriendly(){
+        if(this.childFriendly == null)
+            this.childFriendly = true;
+
+        return this.childFriendly;
+    }
+
+    public void setHandicapFriendly(Boolean value){
+        this.handicapFriendly = value;
+    }
+    public Boolean getHandicapFriendly(){
+        if(this.handicapFriendly == null)
+            this.handicapFriendly = true;
+
+        return this.handicapFriendly;
+    }
+
+    public void setHavePets(Boolean value){
+        this.havePets = value;
+    }
+    public Boolean getHavePets(){
+        if(this.havePets == null)
+            this.havePets = false;
+
+        return this.havePets;
+    }
+
+    public void setSmokingAllowed(Boolean value){
+        this.smokingAllowed = value;
+    }
+    public Boolean getSmokingAllowed(){
+        if(this.smokingAllowed == null)
+            this.smokingAllowed = false;
+
+        return this.smokingAllowed;
+    }
+
+    public void setMaxNrOfGuests(Integer maxNr){
+        this.maxNrOfGuests = maxNr;
+    }
+
+    public Integer getMaxNrOfGuests(){
+        if(this.maxNrOfGuests == null)
+            this.maxNrOfGuests = 0;
+
+        return this.maxNrOfGuests;
+    }
+
+    public void setMinNrOfGuests(Integer minNr){
+        this.minNrOfGuests = minNr;
+    }
+
+    public Integer getMinNrOfGuests(){
+        if(this.minNrOfGuests == null)
+            this.minNrOfGuests = 0;
+
+        return this.minNrOfGuests;
+    }
+
     public void setMainBody(String mainBody){
         this.mainBody = mainBody;
     }
@@ -107,6 +182,16 @@ public class Event extends ContentBase implements IEditable {
     public MealType getMealType() {
         return this.mealType;
     }
+
+    public AlcoholServing setAlcoholServing(AlcoholServing serving) {
+        this.alcoholServing = serving;
+        return this.alcoholServing;
+    }
+
+    public AlcoholServing getAlcoholServing() {
+        return this.alcoholServing;
+    }
+
 
     public Iterable<ContentFile> getEventImages() {
         return this.eventImages;
@@ -313,7 +398,22 @@ public class Event extends ContentBase implements IEditable {
             this.eventDates.remove(eventDate);
         }
     }
+    public void deleteEventDates() {
+        if(this.eventDates != null && !this.eventDates.isEmpty())
+        {
+            // Temporary store all
+            ArrayList<EventDate> arr = new ArrayList<EventDate>();
+            for (EventDate ed : this.eventDates) {
+                arr.add(ed);
+            }
 
+            // Remove all
+            Iterator<EventDate> iteration = (Iterator<EventDate>) arr.iterator();
+            while (iteration.hasNext()) {
+                deleteEventDate(iteration.next());
+            }
+        }
+    }
 
 
     // Constructors

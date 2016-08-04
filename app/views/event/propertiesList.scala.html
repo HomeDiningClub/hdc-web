@@ -1,0 +1,100 @@
+@(evp: EventPropertyList)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
+
+<h3 class="lead big-margin-top">@Messages("event.prop.header")</h3>
+<ul class="list-group">
+    @if(evp.mealType.isDefined){
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-md-3"><span class="glyphicon glyphicon-cutlery"></span> <strong>@Messages("event.prop.meal-type")</strong></div>
+                <div class="col-md-9">@evp.mealType.get</div>
+            </div>
+        </li>
+    }
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-3"><span class="glyphicon glyphicon-map-marker"></span> <strong>@Messages("event.prop.address")</strong></div>
+            <div class="col-md-8">
+                @if(evp.showAddress){
+                    @evp.locationAddress<br>
+                    @evp.locationCity<br>
+                    @evp.locationZipCode
+                }else{
+                    <em>@Messages("event.prop.address-only-visible-to-booked-guests")</em>
+                }
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-3"><strong>@Messages("event.prop.county")</strong></div>
+            <div class="col-md-9">
+                @evp.locationCounty
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-3"><strong>@Messages("event.prop.min-max-nr-of-guests")</strong></div>
+            <div class="col-md-9">@evp.minNrOfGuests - @evp.maxNrOfGuests</div>
+        </div>
+    </li>
+    @if(evp.alcoholServing.isDefined){
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-md-3"><strong>@Messages("event.prop.alcohol-servings")</strong></div>
+                <div class="col-md-9">@evp.alcoholServing.get</div>
+            </div>
+        </li>
+    }
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-3"><strong>@Messages("event.prop.child-friendly")</strong></div>
+            <div class="col-md-9">
+            @if(evp.childFriendly){
+                <span class="glyphicon glyphicon-ok text-success"></span>
+            }else{
+                <span class="glyphicon glyphicon-remove text-danger"></span>
+            }
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-3"><strong>@Messages("event.prop.handicap-friendly")</strong></div>
+            <div class="col-md-9">
+            @if(evp.handicapFriendly){
+                <span class="glyphicon glyphicon-ok text-success"></span>
+            }else{
+                <span class="glyphicon glyphicon-remove text-danger"></span>
+            }
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-3"><strong>@Messages("event.prop.have-pets")</strong></div>
+            <div class="col-md-9">
+            @if(evp.havePets){
+                @Messages("event.prop.have-pets.true")
+            }else{
+                @Messages("event.prop.have-pets.false")
+            }
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-md-3"><strong>@Messages("event.prop.smoking-allowed")</strong></div>
+            <div class="col-md-9">
+            @if(evp.smokingAllowed){
+                <span class="text-success">@Messages("event.prop.smoking-allowed.true")</span>
+            }else{
+                <span class="text-danger">@Messages("event.prop.smoking-allowed.false")</span>
+            }
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <p><em>@Messages("event.prop.body")</em></p>
+    </li>
+</ul>

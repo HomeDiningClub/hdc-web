@@ -1,0 +1,19 @@
+@(recipeBoxes: Option[List[RecipeBox]], userProfile: UserProfile, isThisMyProfile: Boolean)(implicit messages: Messages)
+
+@if(recipeBoxes.nonEmpty || isThisMyProfile) {
+    <h2 class="sub-with-border"><span class="glyphicon glyphicon-cutlery text-green pull-right"></span>&nbsp;@Messages("profile.tabs.food.name")</h2>
+}
+
+@if(recipeBoxes.nonEmpty){
+    @recipe.recipeBox(userProfile.profileLinkName)
+}
+
+@if(isThisMyProfile) {
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="btn-group btn-edit-group">
+                <a href="@controllers.routes.RecipePageController.add" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.recipe.add")</a>
+            </div>
+        </div>
+    </div>
+}

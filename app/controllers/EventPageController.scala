@@ -1,13 +1,15 @@
 package controllers
 
-import java.time.LocalDate
+import java.time.{LocalDateTime, LocalDate}
 import javax.inject.{Named, Inject}
 
+import models.event.{BookedEventDate, MealType, AlcoholServing}
 import models.files.ContentFile
 import models.jsonmodels.{EventBoxJSON}
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.data.Form
 import play.api.libs.json.{Json, JsValue}
+import play.api.libs.mailer.Email
 import play.api.mvc._
 import models.{UserCredential, Event}
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
@@ -16,37 +18,29 @@ import org.springframework.beans.factory.annotation.Autowired
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{SecuredRequest, RequestWithUser}
-import services.{NodeEntityService, EventService, UserProfileService, ContentFileService}
+import services._
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
 import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
 
 import scala.Some
-import models.viewmodels.{MetaData, EditEventExtraValues, EventBox}
+import models.viewmodels._
 import customUtils.Helpers
 import play.api.Logger
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
-import models.formdata.{EventBookingForm, EventForm}
+import models.formdata.{EventDateSuggestionForm, EventOptionsForm, EventBookingForm, EventForm}
 
 class EventPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val likeController: LikeController,
                                      val eventService: EventService,
+                                     val mealTypeService: MealTypeService,
+                                     val alcoholServingService: AlcoholServingService,
                                      val userProfileService: UserProfileService,
                                      val fileService: ContentFileService,
                                      implicit val nodeEntityService: NodeEntityService,
                                      val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
-  /*
-  @Autowired
-  private var eventService: EventService = _
-
-  @Autowired
-  private var userProfileService: UserProfileService = _
-
-  @Autowired
-  private var fileService: ContentFileService = _
-*/
 
   def viewEventByNameAndProfile(profileName: String, eventName: String) = UserAwareAction() { implicit request =>
 
@@ -54,13 +48,16 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
     eventService.findByownerProfileProfileLinkNameAndEventLinkName(profileName,eventName) match {
       case Some(event) =>
           Ok(views.html.event.event(
-            event,
-            event.getEventDates.asScala.toList,
-            createEventBookingForm(event),
+            event = event,
+            eventDates = event.getEventDates.asScala.toList,
+            eventBookingForm = createEventBookingForm(event),
+            eventDateSuggestionForm = createDateSuggestionForm(event),
+            eventPropertyList = createEventPropertyList(event, request.user),
             metaData = buildMetaData(event, request),
             eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
             shareUrl = createShareUrl(event),
             isThisMyEvent = isThisMyEvent(event),
+            memberUser = request.user,
             eventLikeForm = getEventLikeForm(event)))
           case None =>
             val errMess = "Cannot find event using name:" + eventName + " and profileName:" + profileName
@@ -80,7 +77,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
   }
 
   def getEventTimesForDateAJAX(eventUUID: UUID, date: LocalDate) = UserAwareAction() {
-    Ok(views.html.event.eventDateTimeList(eventService.getEventTimesForDate(eventUUID, date)))
+    Ok(views.html.event.bookingTimeList(eventService.getEventTimesForDate(eventUUID, date)))
   }
 
   def getAllAvailableDatesJSON(eventUUID: UUID) = UserAwareAction() {
@@ -111,6 +108,8 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
             e.name,
             e.preAmble.getOrElse(""),
             e.mainImage.getOrElse(""),
+            e.price.toInt,
+            e.location.getOrElse(""),
             //e.eventRating.toString,
             e.eventBoxCount,
             e.hasNext,
@@ -131,13 +130,16 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
     eventService.findByownerProfileProfileLinkNameAndEventLinkName(profileName,eventName) match {
       case Some(event) =>
         Ok(views.html.event.event(
-          event,
-          event.getEventDates.asScala.toList,
-          createEventBookingForm(event),
+          event = event,
+          eventDates = event.getEventDates.asScala.toList,
+          eventBookingForm = createEventBookingForm(event),
+          eventDateSuggestionForm = createDateSuggestionForm(event),
+          eventPropertyList = createEventPropertyList(event, request.user),
           metaData = buildMetaData(event, request),
           eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
           shareUrl = createShareUrl(event),
           isThisMyEvent = isThisMyEvent(event),
+          memberUser = request.user,
           eventLikeForm = getEventLikeForm(event)
         ))
       case None =>
@@ -204,17 +206,67 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
   // Forms
   def evtForm = eventService.eventFormMapping
   def evtBookingForm = eventService.eventBookingFormMapping
+  def evtDateSuggestionForm = eventService.eventDateSuggestionFormMapping
+
 
   // Booking
   private def createEventBookingForm(event: Event): Form[EventBookingForm] = {
-    val bookingFormDefaults = EventBookingForm(
-      event.objectId,
-      None,
-      None,
-      1,
-      None
+    val formDefaults = EventBookingForm(
+      eventId = event.objectId,
+      eventDateId = None,
+      date = None,
+      guests = 2,
+      comment = None
     )
-    evtBookingForm.fill(bookingFormDefaults).discardingErrors
+    evtBookingForm.fill(formDefaults).discardingErrors
+  }
+
+  // Suggestion
+  private def createDateSuggestionForm(event: Event): Form[EventDateSuggestionForm] = {
+    evtDateSuggestionForm
+  }
+
+  private def createEventPropertyList(event: Event, currentUser: Option[UserCredential] = None): EventPropertyList = {
+    val op = event.getOwnerProfile
+    val locCounty: Option[String] = op.getLocations.asScala.toList match {
+      case null | Nil => None
+      case items => Some(items.head.county.name)
+    }
+    var locStreetAddress: Option[String] = None
+    var locCity: Option[String] = None
+    var locZipCode: Option[String] = None
+    var showAddress = false
+
+    if(currentUser.isDefined){
+      if(eventService.isUserBookedAtEvent(currentUser.get, event)){
+        locStreetAddress = Some(op.streetAddress)
+        locZipCode = Some(op.zipCode)
+        locCity = Some(op.city)
+        showAddress = true
+      }
+    }
+
+    EventPropertyList(
+      showAddress = showAddress,
+      locationAddress = locStreetAddress,
+      locationCounty = locCounty,
+      locationZipCode = locZipCode,
+      locationCity = locCity,
+      childFriendly = event.getChildFriendly,
+      handicapFriendly = event.getHandicapFriendly,
+      havePets = event.getHavePets,
+      smokingAllowed = event.getSmokingAllowed,
+      minNrOfGuests = event.getMinNrOfGuests,
+      maxNrOfGuests = event.getMaxNrOfGuests,
+      alcoholServing = event.getAlcoholServing match {
+        case null => None
+        case as => Some(as.name)
+      },
+      mealType = event.getMealType match {
+        case null => None
+        case mt => Some(mt.name)
+      }
+    )
   }
 
   // Edit - Add Content
@@ -233,8 +285,11 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         }
       }
 
-      val bookedGuestsCount = 0 //TODO: Implement count for Events //item.get.getEventDates.asScala.toList.
-
+      var bookedGuestsCount = 0
+      val listOfBookedGuests = item.get.getEventDates.asScala
+      if(listOfBookedGuests.nonEmpty){
+        bookedGuestsCount = listOfBookedGuests.map(ed => ed.getGuestsBooked).sum
+      }
 
       EditEventExtraValues(
         mainImage match {
@@ -262,7 +317,21 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
   }
 
 
+
+
   def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
+
+    val mealSeq = mealTypeService.getMealTypesAsSeq
+    val mealDefault =  mealSeq match {
+      case None => None
+      case Some(x) => Some(UUID.fromString(x.head._1)) // 1 = Object id, 2 = Name
+    }
+
+    var alcoSeq = alcoholServingService.getAlcoholServingsAsSeq
+    val alcoDefault =  alcoSeq match {
+      case None => None
+      case Some(x) => Some(UUID.fromString(x.head._1)) // 1 = Object id, 2 = Name
+    }
 
     val defaultForm = EventForm(
       name = "",
@@ -272,10 +341,24 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       mainImage = None,
       price = 0,
       images = None,
-      eventDates = None
+      eventDates = None,
+      maxNoOfGuest = 6,
+      minNoOfGuest = 2,
+      eventOptionsForm = EventOptionsForm(
+        childFriendly = true,
+        handicapFriendly = true,
+        havePets = false,
+        smokingAllowed = false,
+        alcoholServing = alcoDefault,
+        mealType = mealDefault
       )
+    )
 
-    Ok(views.html.event.addOrEdit(eventForm = evtForm.fill(defaultForm).discardingErrors, extraValues = setExtraValues(None)))
+    Ok(views.html.event.addOrEdit(
+      eventForm = evtForm.fill(defaultForm).discardingErrors,
+      extraValues = setExtraValues(None),
+      optionsAlcoholServings = alcoSeq,
+      optionsMealTypes = mealSeq))
   }
 
   def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
@@ -296,23 +379,141 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
               mainBody = Some(item.getMainBody),
               mainImage = item.getMainImage match {
                 case null => None
-                case item => Some(item.objectId.toString)
+                case mainImg => Some(mainImg.objectId.toString)
               },
               price = item.getPrice.intValue(),
               images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
-              eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item))
+              eventDates = eventService.convertToEventFormDates(eventService.filterEventDatesValidForEditing(eventService.getSortedEventDates(item))),
+              minNoOfGuest = item.getMinNrOfGuests,
+              maxNoOfGuest = item.getMaxNrOfGuests,
+              eventOptionsForm = EventOptionsForm(
+                childFriendly = item.getChildFriendly,
+                handicapFriendly = item.getHandicapFriendly,
+                havePets = item.getHavePets,
+                smokingAllowed = item.getSmokingAllowed,
+                alcoholServing = item.getAlcoholServing match {
+                  case null => None
+                  case as => Some(as.objectId)
+                },
+                mealType = item.getMealType match {
+                  case null => None
+                  case mt => Some(mt.objectId)
+                }
+              )
             )
 
-            Ok(views.html.event.addOrEdit(eventForm = evtForm.fill(form), editingEvent = editingItem, extraValues = setExtraValues(editingItem), activateMultipleStepsForm = false))
+            Ok(views.html.event.addOrEdit(
+              eventForm = evtForm.fill(form),
+              editingEvent = editingItem,
+              extraValues = setExtraValues(editingItem),
+              optionsAlcoholServings = alcoholServingService.getAlcoholServingsAsSeq,
+              optionsMealTypes = mealTypeService.getMealTypesAsSeq,
+              activateMultipleStepsForm = false))
+
           case false => {
             val errorMsg = "Cannot edit, not owner of event"
             Logger.debug(errorMsg)
             NotFound(errorMsg)
           }
         }
-        // Get any images and sort them
-        //val sortedImages = recipeService.getSortedRecipeImages(item)
     }
+  }
+
+
+  def addDateSuggestionSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
+    val currentUser = request.user
+
+    evtDateSuggestionForm.bindFromRequest.fold(
+      errors => {
+        val errorMsg = Messages("event.suggest.add.error")
+        Logger.debug(errorMsg)
+        BadRequest(errorMsg)
+      },
+      contentData => {
+        eventService.findById(contentData.suggestEventId) match {
+          case Some(event) => {
+            val successValues = eventService.addSuggestion(currentUser, event, contentData.date, contentData.time, contentData.guests, contentData.comment)
+            val successMessage = Messages("event.suggest.add.success")
+            Ok(views.html.event.suggestionSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
+          }
+          case _ => {
+            val errorMsg = "Cannot suggest date to event, no valid eventUUID"
+            Logger.debug(errorMsg)
+            NotFound(errorMsg)
+          }
+        }
+      }
+    )
+  }
+
+  def addBookingSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
+
+    val currentUser = request.user
+
+    evtBookingForm.bindFromRequest.fold(
+      errors => {
+        val errorMsg = Messages("event.book.add.error")
+        Logger.debug(errorMsg)
+        BadRequest(errorMsg)
+      },
+      contentData => {
+        eventService.findById(contentData.eventId) match {
+          case Some(event) => {
+
+            // If user selected a pre-chosen date
+            if(contentData.eventDateId.nonEmpty){
+
+              // Verify that the date actually exists
+              eventService.findEventDateById(contentData.eventDateId.get)  match {
+                case Some(eventDate) => {
+
+                  // Has user already booked this date?
+                  if(!eventService.isUserBookedToEventDate(eventDate, currentUser)) {
+
+                    // Lastly check space
+                    if (eventService.doesEventDateHasSpaceForNewBooking(event, eventDate, contentData.guests)) {
+
+                      // Adding booking
+                      val successValues = eventService.addBookingAndSendEmail(currentUser,event,eventDate,contentData.guests,contentData.comment)
+
+                      // Returning
+                      Logger.debug("Successful booking performed eventDateId: " + eventDate.objectId)
+                      Ok(views.html.event.bookingSuccess(event, successValues))
+                    }else{
+                      val errorMsg = Messages("event.book.add.too-many-bookings")
+                      Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName,event.getLink)).flashing(FlashMsgConstants.Error -> errorMsg)
+                    }
+
+                  }else{
+                    val errorMsg = Messages("event.book.add.already-booked")
+                    Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName,event.getLink)).flashing(FlashMsgConstants.Error -> errorMsg)
+                  }
+
+                }
+                case None => {
+                  val errorMsg = "Cannot add booking to event, no valid EventDate-UUID"
+                  Logger.debug(errorMsg)
+                  BadRequest(errorMsg)
+                }
+              }
+            }else{
+              val errorMsg = "Cannot add booking nor suggest a booking, not correct values posted. (No EventDate)"
+              Logger.debug(errorMsg)
+              BadRequest(errorMsg)
+            }
+
+          }
+          case _ => {
+            val errorMsg = "Cannot add booking to event, no valid Event-UUID"
+            Logger.debug(errorMsg)
+            BadRequest(errorMsg)
+          }
+
+        }
+      }
+
+    )
+
   }
 
 
@@ -323,7 +524,11 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
     evtForm.bindFromRequest.fold(
       errors => {
         val errorMessage = Messages("event.add.error")
-        BadRequest(views.html.event.addOrEdit(errors,extraValues = setExtraValues(None))).flashing(FlashMsgConstants.Error -> errorMessage)
+        BadRequest(views.html.event.addOrEdit(
+          eventForm = errors,
+          extraValues = setExtraValues(None),
+          optionsAlcoholServings = alcoholServingService.getAlcoholServingsAsSeq,
+          optionsMealTypes = mealTypeService.getMealTypesAsSeq)).flashing(FlashMsgConstants.Error -> errorMessage)
       },
       contentData => {
 
@@ -347,7 +552,11 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         if (newRec.isEmpty) {
           Logger.debug("Error saving Event: User used a non-existing, or someone else's Event")
           val errorMessage = Messages("event.add.error")
-          BadRequest(views.html.event.addOrEdit(evtForm.fill(contentData), extraValues = setExtraValues(None))).flashing(FlashMsgConstants.Error -> errorMessage)
+          BadRequest(views.html.event.addOrEdit(
+            eventForm = evtForm.fill(contentData),
+            extraValues = setExtraValues(None),
+            optionsAlcoholServings = alcoholServingService.getAlcoholServingsAsSeq,
+            optionsMealTypes = mealTypeService.getMealTypesAsSeq)).flashing(FlashMsgConstants.Error -> errorMessage)
         }
 
         // Main image
@@ -391,17 +600,35 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
             }
         }
 
-        // Set Event dates
+        contentData.eventOptionsForm.alcoholServing match {
+          case None => Logger.debug("Error adding AlcoholServing to event, no uuid")
+          case Some(uuid) => alcoholServingService.findById(uuid) match {
+            case None => Logger.debug("Error adding AlcoholServing to event, the uuid didn't match any alcoholservings-entry:" + uuid)
+            case Some(as) => newRec.get.setAlcoholServing(as)
+          }
+        }
 
+        contentData.eventOptionsForm.mealType match {
+          case None => Logger.debug("Error adding Mealtype to event, no uuid")
+          case Some(uuid) => mealTypeService.findById(uuid) match {
+            case None => Logger.debug("Error adding Mealtype to event, the uuid didn't match any mealtype-entry:" + uuid)
+            case Some(mt) => newRec.get.setMealType(mt)
+          }
+        }
 
-
+        newRec.get.setChildFriendly(contentData.eventOptionsForm.childFriendly)
+        newRec.get.setHandicapFriendly(contentData.eventOptionsForm.handicapFriendly)
+        newRec.get.setHavePets(contentData.eventOptionsForm.havePets)
+        newRec.get.setSmokingAllowed(contentData.eventOptionsForm.smokingAllowed)
+        newRec.get.setMaxNrOfGuests(contentData.maxNoOfGuest)
+        newRec.get.setMinNrOfGuests(contentData.minNoOfGuest)
         newRec.get.setMainBody(contentData.mainBody.getOrElse(""))
         newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
         newRec.get.setPrice(contentData.price.toLong)
         eventService.updateOrCreateEventDates(contentData, newRec.get)
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
-        val savedItem = eventService.add(newRec.get)
+        val savedItem = eventService.save(newRec.get)
         val savedProfile = userProfileService.addEventToProfile(currentUser.getUserProfile, savedItem)
         val successMessage = Messages("event.add.success", savedItem.getName)
         Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(currentUser.getUserProfile.profileLinkName,savedItem.getLink)).flashing(FlashMsgConstants.Success -> successMessage)

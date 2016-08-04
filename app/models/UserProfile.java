@@ -68,7 +68,7 @@ public class UserProfile extends AuditEntity implements IEditable {
     @RelatedToVia(type="FAVORITE_USER")
     private Set<TaggedFavoritesToUserProfile>userFriendsProfileTag;
 
-    @RelatedToVia(type = "BOOKED_EVENT_DATE")
+    @RelatedToVia(type = RelationshipTypesJava.BOOKED_EVENT_DATE.Constant, direction = Direction.OUTGOING)
     private Set<BookedEventDate> bookedEventDates;
 
     @RelatedTo(type = RelationshipTypesJava.HAS_RECIPES.Constant, direction = Direction.OUTGOING)
@@ -208,8 +208,8 @@ public class UserProfile extends AuditEntity implements IEditable {
         }
     }
 
-    public BookedEventDate addBookingToEvent(EventDate eventDate) {
-        BookedEventDate bookedEvent = new BookedEventDate(this, eventDate, eventDate.getEventDateTime());
+    public BookedEventDate addBookingToEvent(EventDate eventDate, Integer nrOfGuestsToBeBooked, String comment) {
+        BookedEventDate bookedEvent = new BookedEventDate(this, nrOfGuestsToBeBooked, eventDate, comment);
         bookedEventDates.add(bookedEvent);
         return bookedEvent;
     }

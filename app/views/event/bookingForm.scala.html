@@ -1,0 +1,49 @@
+@(eventBookingForm: Form[models.formdata.EventBookingForm], maxNrOfGuests: Int, memberUser: Option[UserCredential], isThisMyEvent: Boolean)(implicit messages: Messages)
+@implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
+
+@inlineFC = @{
+    b3.inline.fieldConstructor
+}
+
+<div id="booking-form" class="margin-top event-cta-form hidden">
+    @if(memberUser.isDefined && (!isThisMyEvent || customUtils.Helpers.isUserAdmin(memberUser.get))) {
+        <div class="panel panel-orange panel-booking-form">
+            <div class="panel-heading">@Messages("event.book.heading")</div>
+            <div class="panel-body">
+            @b3.form(action = controllers.routes.EventPageController.addBookingSubmit(), 'enctype -> "multipart/form-data") {
+
+                @b3.static(Messages("event.book.chosen.date")) {
+                    <span id="booking-chosen-date"></span>
+                }(inlineFC)
+                @b3.static(Messages("event.book.chosen.time")) {
+                    <span id="booking-chosen-time"></span>
+                }(inlineFC)
+                @b3.static(Messages("event.book.chosen.total-cost"), '_class -> "animated") {
+                    <span class="currency">@Messages("event.price.currency")</span>
+                    <span id="booking-total-cost" data-price-route="@{
+                        routes.EventPageController.getEventPriceJSON()
+                    }"></span>
+                    <span class="end">@Messages("event.price.currency.end")</span>
+                }(inlineFC)
+
+                @helper.inputHidden(eventBookingForm("eventId"), 'class -> "book-event-uuid")
+                @helper.inputHidden(eventBookingForm("book-eventDateId"), 'class -> "book-eventdate-uuid")
+                @b3.select(eventBookingForm("book-guests"), helper.options(List.range(1, maxNrOfGuests + 1).map(_.toString)), '_label -> Messages("event.book.nr-of-guests.label"))
+                @b3.textarea(eventBookingForm("book-comment"), '_label -> Messages("event.book.comment.label"))
+                @b3.submit('class -> "btn btn-lg btn-orange") {
+                    <span class="glyphicon glyphicon-book"></span> @Messages("event.book.submit")
+                }
+            }
+            </div>
+        </div>
+    }
+
+    @if(memberUser.isDefined && (isThisMyEvent && !customUtils.Helpers.isUserAdmin(memberUser.get))){
+        <div class="well well-hdc">
+            @Messages("event.book.booking-my-own-event")
+        </div>
+    }else{
+        @views.html.event.notLoggedIn()
+    }
+
+</div>

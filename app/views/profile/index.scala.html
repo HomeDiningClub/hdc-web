@@ -1,5 +1,4 @@
 @(userProfile: models.UserProfile,
-        tabMenu: TabMenu,
         recipeBoxes: Option[List[RecipeBox]] = None,
         eventBoxes: Option[List[EventBox]] = None,
         myReviewBoxes: Option[List[ReviewBox]] = None,
@@ -19,364 +18,140 @@
 @import play.twirl.api.Html
 
 @pageScripts = {
-    <script>
-    /* Opens the selected tab */
-    $(document).ready(function(){
-        var url = document.location.toString();
-        if (url.match('#')){
-            $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show');
-
-            /* Code to open a mail directly, not working properly */
-            //var msgId = url.split('#')[2].split("Some(")[1].substring(0, url.split('#')[2 ].split("Some(")[1 ].length -1);
-            //$('#mail_' + msgId).click();
-        }
-
-        /* Mark mail as read, also read more functionality */
-        $(".mail-inbox-row").click(function(){
-            var btnArray = this.id.split("mail_");
-            var mailRowId = "#mail_" + btnArray[1];
-            if($(mailRowId + " .unread").is(":visible")){
-                $.get( "/profile/mark?msgId=" + btnArray[1] + "&tid=" + new Date().toString(), function (data, status){
-                    $(mailRowId + " .read").show();
-                    $(mailRowId + " .unread").hide();
-                });
-            }
-        });
-
-        $("#rf").click(function(){
-            $.get("/profile/favorite/remove?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
-                $( "#af" ).show();
-                $( "#rf" ).hide();
-                alert('Favorit borttagen!');
-            });
-        });
-
-
-        $("#af").click(function(){
-            $.get("/profile/favorite/add?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
-                $( "#af" ).hide();
-                $( "#rf" ).show();
-                alert('Favorit tillagd!')
-            });
-        });
-
-
-
-        $.get("/profile/favorite/isFav?userCredentialObjectId=@userProfile.getOwner().objectId&tid=" + new Date().toString(),function(data,status){
-            if(data =="YES") {
-                $("#af").hide();
-                $( "#rf" ).show();
-            } else if(data == "NO") {
-                $("#af").show();
-                $("#rf").hide();
-
-            } else {
-                $("#af,#rf,#afrf-wrapper").hide();
-            }
-        });
-
-    });
-    </script>
+    <script src="@routes.Assets.at("js/app/profile-general.js")"></script>
+    <script src="@routes.Assets.at("js/app/profile-inbox.js")"></script>
+    <script src="@routes.Assets.at("js/app/profile-favorite.js")"></script>
 }
 
 @avatarUrl = @{if(userProfile.getAvatarImage != null){routes.ImageController.userThumb(userProfile.getAvatarImage.getStoreId).url}else{""} }
+@columnLayout = @{ if(eventBoxes.nonEmpty || recipeBoxes.nonEmpty || reviewBoxesAboutMe.nonEmpty || reviewBoxesAboutMyFood.nonEmpty || myReviewBoxes.nonEmpty || myRecipeReviewBoxes.nonEmpty || isThisMyProfile || userProfile.isUserHost) { "col-xs-12 col-sm-6" }else{ "col-xs-12" }}
 
 @main(title = Messages("profile.title", userProfile.profileLinkName), footerScripts = play.twirl.api.Html(pageScripts.toString), metaData = metaData) {
-    <div class="container host-container">
-        <div class="row">
-            <div class="col-xs-12 col-md-9">
-                @views.html.profile.profileHeader(userProfile.profileLinkName, userProfile.getOwner.firstName, avatarUrl, showLinkBack = false)
-                <div class="row">
-                    <div class="col-xs-12 col-md-6 big-margin-top">
-                        <section>
-                            <article>
-                                <h1 class="page-header hidden">@userProfile.profileLinkName</h1>
-                                @shared.grade(inputId = "host-grade", initialValue = userProfile.getOwner.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = userProfile.getOwner.getNrOfRatings)
-                                @if(!isThisMyProfile) {
-                                    @*RatingController.renderUserRateForm(userProfile.getOwner, routes.UserProfileController.viewProfileByName(userProfile.profileLinkName).url, currentUser)*@
-                                    @userRateForm
+    <div class="container profile-container">
+        @views.html.profile.profileHeader(userProfile.profileLinkName, userProfile.getOwner.firstName, avatarUrl, showLinkBack = false)
+
+        <div class="row row-no-padding">
+            <div class="col-xs-12 bg-color">
+                <div class="full-width-image-wrapper">
+                    @userProfile.getMainImage match {
+                        case image: models.files.ContentFile => {
+                            @shared.img(routes.ImageController.profileNormal(image.getStoreId).url, cssClass = "img-responsive full-width-image")
+                        }
+                        case null => {
+                            @shared.img("images/profile/profile-default-main-image.jpg", cssClass = "img-responsive full-width-image")
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-no-padding">
+            <div class="col-xs-12">
+                <nav>
+                    <ul class="nav nav-tabs nav-tabs-profile">
+                        <li class="active"><a data-toggle="tab" href="#home-tab" title="@Messages("profile.tabs.home.title")"><span class="glyphicon glyphicon-home"></span>&nbsp;@Messages("profile.tabs.home.name")</a></li>
+                        <li><a data-toggle="tab" href="#blog-tab" title="@Messages("profile.tabs.blog.title")"><span class="glyphicon glyphicon-pencil"></span>&nbsp;@Messages("profile.tabs.blog.name")</a></li>
+
+                        @if(isThisMyProfile) {
+                            <li><a data-toggle="tab" href="#inbox-tab" title="@Messages("profile.tabs.inbox.title")"><span class="glyphicon glyphicon-envelope"></span>&nbsp;@Messages("profile.tabs.inbox.name")</a></li>
+                            <li><a data-toggle="tab" href="#fav-tab" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
+                            <li><a data-toggle="tab" href="#stats-tab" title="@Messages("profile.tabs.stats.title")"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;@Messages("profile.tabs.stats.name")</a></li>
+                            <li><a href="@routes.UserProfileController.edit().url" title="@Messages("profile.tabs.edit-profile.title")"><span class="glyphicon glyphicon-wrench"></span>&nbsp;@Messages("profile.tabs.edit-profile.name")</a></li>
+                        }
+                    </ul>
+                </nav>
+
+            </div>
+        </div>
+
+        <div class="row row-with-padding bg-color">
+            <div class="col-xs-12">
+                <div class="tab-content">
+
+                    <!-- Home Tab -->
+                    <div class="tab-pane tab-hdc fade in active" id="home-tab">
+
+                        <div class="row">
+
+                            <div class="@columnLayout">
+                                @* Events *@
+                                @views.html.profile.eventBoxesList(eventBoxes, userProfile, isThisMyProfile)
+
+                                @* Old Request form *@
+                                @if(!isThisMyProfile && userProfile.isUserHost && eventBoxes.isEmpty) {
+                                    @requestForm
                                 }
 
-                                @* Member id hidden for now:
-                                <div class="memberid clearfix"><p><strong>@Messages("profile.memberid.text")</strong>&nbsp;@userProfile.getOwner.objectId</p></div>*@
+                                @* Recipes *@
+                                @views.html.profile.recipeBoxesList(recipeBoxes, userProfile, isThisMyProfile)
+
+                                @* Ratings *@
+                                @views.html.profile.reviewBoxesList(reviewBoxesAboutMe, reviewBoxesAboutMyFood, myReviewBoxes, reviewBoxesAboutMyFood, userProfile, isThisMyProfile)
+                            </div>
+                            <div class="@columnLayout">
+
+                                @* Title & Text *@
+                                <section>
+                                    <article>
+                                        <h1 class="hidden">@userProfile.profileLinkName</h1>
+                                        <h2>@if(userProfile.aboutMeHeadline.isEmpty){ @userProfile.profileLinkName } else { @userProfile.aboutMeHeadline }</h2>
+
+                                        @shared.grade(inputId = "host-grade", initialValue = userProfile.getOwner.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = userProfile.getOwner.getNrOfRatings)
+                                        @if(!isThisMyProfile) {
+                                            @userRateForm
+                                        }
+
+                                        <p id="result"></p>
+
+                                        <div class="breadtext">
+                                            @Html(userProfile.aboutMe)
+                                        </div>
+                                        @shared.flashmsg(flash)
+
+                                    </article>
+                                </section>
+
+                                @*  Profile Properties box *@
+                                @views.html.profile.profilePropertiesBox(tagList,userProfile)
 
                                 @*  Share / Like / Fav *@
                                 <div class="row">
                                     <div class="col-xs-12">
-                                        <div id="afrf-wrapper" class="btn-group-likes">
-                                            <a id="af" hidden="true" class="btn btn-default btn-favorite" title="@Messages("favorite.add.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.add.text")</a>
-                                            <a id="rf" hidden="true" class="btn btn-default btn-favorite btn-favorite-active" title="@Messages("favorite.remove.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.remove.text")</a>
-                                        </div>
-                                        @*LikeController.renderUserLikeForm(userProfile.getOwner, currentUser)*@
+                                        @views.html.profile.profileFavorite(userProfile)
                                         @userLikeForm
-                                        @shared.fbShare(url = shareUrl)
+                                        @shared.fbShare(shareUrl)
                                     </div>
                                 </div>
-                                <hr class="hr-orange hr-like">
 
-                                <h2>@userProfile.aboutMeHeadline</h2>
-
-                                <p id="result"></p>
-
-                                <div class="breadtext">
-                                    @Html(userProfile.aboutMe)
-                                </div>
-                                @shared.flashmsg(flash)
-                                @* Send request *@
-                                @if(!isThisMyProfile && userProfile.isUserHost) {
-                                    @*MessagesController.renderHostForm(userProfile.getOwner, currentUser)*@
-                                    @requestForm
-                                }
-                            </article>
-                        </section>
-                    </div>
-                    <div class="col-xs-12 col-md-6 big-margin-top">
-                        @userProfile.getMainImage match {
-                            case image: models.files.ContentFile => {
-                                <div id="host-main-carousel" data-ride="carousel" data-interval="4000" class="carousel slide host-image-gallery">
-                                        <!-- Slider carousel items -->
-                                    <div class="carousel-inner">
-                                        <div class="active crop-height item" data-slide-number="0">@shared.img(routes.ImageController.profileNormal(image.getStoreId).url, cssClass = "img-responsive")</div>
-                                    </div>
-                                    @*<!-- Carousel nav controls -->*@
-                                    @*<a class="carousel-control left hidden-md hidden-lg" href="#host-main-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>*@
-                                    @*<a class="carousel-control right hidden-md hidden-lg" href="#host-main-carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>*@
-                                </div>
-                                @*<!-- Thumbnails, don't show responsive -->*@
-                                @*<ul class="host-main-carousel-thumbs list-inline hidden-xs hidden-sm">*@
-                                @*<li class="col-md-3"><a id="carousel-selector-0" class="selected">@shared.img("images/host/image1.jpg", cssClass = "img-responsive")</a></li>*@
-                                @*<li class="col-md-3"><a id="carousel-selector-1">@shared.img("images/host/image2.jpg", cssClass = "img-responsive")</a></li>*@
-                                @*<li class="col-md-3"><a id="carousel-selector-2">@shared.img("images/host/image3.jpg", cssClass = "img-responsive")</a></li>*@
-                                @*<li class="col-md-3"><a id="carousel-selector-3">@shared.img("images/host/image4.jpg", cssClass = "img-responsive")</a></li>*@
-                                @*<li class="col-md-3"><a id="carousel-selector-4">@shared.img("images/host/image5.jpg", cssClass = "img-responsive")</a></li>*@
-                                @*</ul>*@
-                            }
-                            case _ => {
-                                <div class="host-image-gallery">
-                                    @shared.img("images/profile/profile-default-main-image.jpg", cssClass = "img-responsive")
-                                </div>
-                            }
-                        }
-
-                        <div class="panel panel-default panel-dropshadow big-margin-top">
-                            <div class="panel-body">
-                                @shared.tagList(tagList, userProfile.getOwner.firstName)
-                                <br><strong>@Messages("profile.firstname.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.getOwner.firstName)</span>
-                                <br><strong>@Messages("profile.city.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.city)</span>
-                                <br>@if(userProfile.getLocations.iterator().hasNext()){
-                                <strong>@Messages("profile.county.text")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.getLocations.iterator().next().county.name)</span>
-                                }
-                                <br><strong>@Messages("profile.payment.label")</strong>
-                                <span class="sentence-case">
-                                    @if(userProfile.payCash){ @Messages("profile.payment.cash") }
-                                    @if(userProfile.payBankCard){ @Messages("profile.payment.banktransfer") }
-                                    @if(userProfile.payIZettle){ @Messages("profile.payment.izettle") }
-                                    @if(userProfile.paySwish){ @Messages("profile.payment.Swish") }
-                                </span>
-                                <hr>
-                                <strong>@Messages("profile.options.moved-info.header")</strong>
-                                <br>@Html(Messages("profile.options.moved-info"))
-
-                                @{
-                                /*
-                                <br><strong>@Messages("profile.nr-of-guests.label")</strong> <span class="sentence-case">
-                                    @{userProfile.minNoOfGuest match {
-                                        case "" | null => { 1 }
-                                        case minGuests => { minGuests }
-                                    }}
-                                @Messages("profile.nr-of-guests.to")
-                                    @{userProfile.maxNoOfGuest match {
-                                        case "" | null => { 4 }
-                                        case maxGuests => { maxGuests }
-                                    }}
-                                    personer
-                                </span>
-                                */
-                                }
-
-                            </div>
-                        </div>
-
-                        @if(isThisMyProfile) {
-                            <div class="panel panel-default panel-dropshadow big-margin-top">
-                                <div class="panel-body">
-                                    <strong>@Messages("profile.visitors.header")</strong><br>
-                                    <table style="width:100%">
-                                        <tr>
-                                            <td>@Messages("profile.visitors.logged-in")</td>
-                                            <td align="right">
-                                            @{userProfile.getmemberVisited() match {
-                                                case  null => { 0 }
-                                                case _ => { userProfile.getmemberVisited().getSize }
-                                            }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>@Messages("profile.visitors.not-logged-in")</td>
-                                            <td align="right">
-                                            @{userProfile.getUnKnownVisited() match {
-                                                case  null => { 0 }
-                                                case _ => { userProfile.getUnKnownVisited().getSize }
-                                            }}
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-xs-12 col-md-12 big-margin-top">
-                        <nav>
-                            <ul class="nav nav-tabs nav-tabs-profile">
-                                <li class="active"><a data-toggle="tab" href="#@tabMenu.tab1" title="@Messages("profile.tabs.food.title")"><span class="glyphicon glyphicon-cutlery"></span>&nbsp;@Messages("profile.tabs.food.name")</a></li>
-                                @if(userProfile.isUserHost) {
-                                    <li><a data-toggle="tab" href="#@tabMenu.tab2" title="@Messages("profile.tabs.blog.title")"><span class="glyphicon glyphicon-pencil"></span>&nbsp;@Messages("profile.tabs.blog.name")</a></li>
-                                }
-                                <li><a data-toggle="tab" href="#@tabMenu.tab3" title="@Messages("profile.tabs.ratings.title")"><span class="glyphicon glyphicon-star"></span>&nbsp;@Messages("profile.tabs.ratings.name")</a></li>
-                                @if(isThisMyProfile) {
-                                    <li><a data-toggle="tab" href="#@tabMenu.tab4" title="@Messages("profile.tabs.inbox.title")"><span class="glyphicon glyphicon-envelope"></span>&nbsp;@Messages("profile.tabs.inbox.name")</a></li>
-                                    <li><a data-toggle="tab" href="#@tabMenu.tab5" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
-                                }
-                                <li><a data-toggle="tab" href="#@tabMenu.tab6" title="@Messages("profile.tabs.event.title")"><span class="glyphicon glyphicon-calendar"></span>&nbsp;@Messages("profile.tabs.event.name")</a></li>
-                            </ul>
-                        </nav>
-
-                        <div class="tab-content">
-                            <div class="tab-pane tab-hdc fade in active" id="@tabMenu.tab1">
-                                <div class="row">
-                                @if(isThisMyProfile) {
-                                    <div class="col-xs-12">
-                                        <div class="btn-group btn-edit-group">
-                                            <a href="@controllers.routes.RecipePageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.recipe.add")</a>
-                                        </div>
-                                    </div>
-                                }
-                                </div>
-                                @if(recipeBoxes.nonEmpty){
-                                    @recipe.recipeBox(userProfile.profileLinkName)
-                                }
-                            </div>
-                            @if(userProfile.isUserHost) {
-                                <div class="tab-pane tab-hdc fade" id="@tabMenu.tab2">
-                                    @if(isThisMyProfile) {
-                                        <div class="col-xs-12">
-                                            <div class="btn-group btn-edit-group">
-                                                <a href="@controllers.routes.BlogPostsPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.blog.add")</a>
-                                            </div>
-                                        </div>
-                                    }
-                                    @blog.blogBox(userProfile.profileLinkName)
-                                </div>
-                            }
-                            <div class="tab-pane tab-hdc fade" id="@tabMenu.tab3">
-                                @if(reviewBoxesAboutMe.nonEmpty){
-                                    <!-- Reviews about user -->
-                                    <div class="row">
-                                        <div class="col-xs-12">
-                                            <h3>
-                                            @if(isThisMyProfile) {
-                                                @Messages("profile.reviews.reviews.aboutme.header")
-                                            }else {
-                                                @Messages("profile.reviews.reviews.aboutme.username.header", userProfile.profileLinkName)
-                                            }
-                                            </h3>
-                                        </div>
-                                        @shared.reviewBox(reviewBoxesAboutMe.get)
-                                    </div>
-                                }
-                                @if(reviewBoxesAboutMyFood.nonEmpty){
-                                    <!-- Reviews about his recipes -->
-                                    <div class="row">
-                                        <div class="col-xs-12 big-margin-top">
-                                            <h3>
-                                                @if(isThisMyProfile) {
-                                                    @Messages("profile.reviews.reviews.aboutmyfood.header")
-                                                }else {
-                                                    @Messages("profile.reviews.reviews.aboutmyfood.username.header", userProfile.profileLinkName)
-                                                }
-                                            </h3>
-                                        </div>
-                                        @shared.reviewBox(reviewBoxesAboutMyFood.get)
-                                    </div>
-                                }
-
-                                @if((myReviewBoxes.nonEmpty || myRecipeReviewBoxes.nonEmpty) && isThisMyProfile) {
-                                    <hr class="hr-orange big-margin-top">
-                                }
-                                @if(myReviewBoxes.nonEmpty && isThisMyProfile){
-                                    <!-- Reviews by me -->
-                                    <div class="row big-margin-top">
-                                        <div class="col-xs-12"><h3>@Messages("profile.reviews.myreviews.user.header")</h3></div>
-                                        @shared.reviewBox(myReviewBoxes.get)
-                                    </div>
-                                }
-                                @if(myRecipeReviewBoxes.nonEmpty && isThisMyProfile){
-                                    <!-- Food-Reviews by me -->
-                                    <div class="row big-margin-top">
-                                        <div class="col-xs-12"><h3>@Messages("profile.reviews.myreviews.food.header")</h3></div>
-                                        @shared.reviewBox(myRecipeReviewBoxes.get)
-                                    </div>
-                                }
-
-                            </div>
-                            <div class="tab-pane tab-hdc fade" id="@tabMenu.tab4">
-                                @if(isThisMyProfile && userMessages.nonEmpty) {
-
-                                    <table class="table inbox-table">
-                                        <thead>
-                                            <tr>
-                                                <th>@Messages("mails.inbox.header.read")</th>
-                                                <th>@Messages("mails.inbox.header.from")</th>
-                                                <th>@Messages("mails.inbox.header.message")</th>
-                                                <th>@Messages("mails.inbox.header.date")</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @views.html.host.listMessages(userMessages,currentUser)
-                                            @*for(msg <- userMessages.get) {
-                                                @MessagesController.renderMessage(msg, currentUser)(request)
-                                            }*@
-                                        </tbody>
-                                    </table>
-
-                                }
-                            </div>
-                            @if(isThisMyProfile) {
-                            <div class="tab-pane tab-hdc fade" id="@tabMenu.tab5">
-                                @favorites
-                                @*FavoritesController.renderFavorites(userProfile)*@
-                            </div>
-                            }
-
-                            <div class="tab-pane tab-hdc fade" id="@tabMenu.tab6">
-                                <div class="row">
-                                @if(isThisMyProfile) {
-                                    <div class="col-xs-12">
-                                        <div class="btn-group btn-edit-group">
-                                            <a href="@controllers.routes.EventPageController.add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.event.add")</a>
-                                        </div>
-                                    </div>
-                                }
-                                </div>
-                                @if(eventBoxes.nonEmpty) {
-                                    @views.html.event.eventBox(userProfile.profileLinkName)
-                                }
 
                             </div>
                         </div>
 
                     </div>
-                </div>
-            </div>
 
-            <!-- Banner -->
-            <div class="col-xs-12 col-md-3 col-banner">
-                @shared.banner()
+
+
+                    <!-- Blog Tab -->
+                    <div class="tab-pane tab-hdc fade" id="blog-tab">@views.html.profile.blogPostList(userProfile, isThisMyProfile)</div>
+
+
+                    <!-- Inbox Tab -->
+                    <div class="tab-pane tab-hdc fade" id="inbox-tab">@views.html.profile.mailInbox(userMessages, currentUser, isThisMyProfile)</div>
+
+
+                    <!-- Favorites Tab -->
+                    @if(isThisMyProfile) {
+                        <div class="tab-pane tab-hdc fade" id="fav-tab">
+                        @favorites
+                        </div>
+                    }
+
+                    <!-- Stats Tab -->
+                    <div class="tab-pane tab-hdc fade" id="stats-tab"> @views.html.profile.visitorsBox(userProfile, isThisMyProfile)</div>
+
+                </div>
             </div>
         </div>
+
     </div>
 }

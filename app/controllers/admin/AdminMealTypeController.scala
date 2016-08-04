@@ -18,15 +18,11 @@ import customUtils.authorization.WithRole
 import enums.RoleEnums
 import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
-import models.formdata.MealTypeForm
+import models.formdata.EventPropertyForm
 
 class AdminMealTypeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                          val mealTypeService: MealTypeService,
                                          val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
-/*
-  @Autowired
-  private var mealTypeService: MealTypeService = _
-*/
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
@@ -39,7 +35,7 @@ class AdminMealTypeController @Inject() (override implicit val env: SecureSocial
       "id" -> optional(text),
       "name" -> nonEmptyText(minLength = 1, maxLength = 255),
       "order" -> number(min = 0, max = 999, strict = false)
-    )(MealTypeForm.apply)(MealTypeForm.unapply)
+    )(EventPropertyForm.apply)(EventPropertyForm.unapply)
   )
 
   def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
@@ -47,7 +43,7 @@ class AdminMealTypeController @Inject() (override implicit val env: SecureSocial
   }
 
   def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
-    Ok(views.html.admin.event.mealtype.add(mealForm.fill(MealTypeForm.apply(None,"",0))))
+    Ok(views.html.admin.event.mealtype.add(mealForm.fill(EventPropertyForm.apply(None,"",0))))
   }
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
@@ -87,7 +83,7 @@ class AdminMealTypeController @Inject() (override implicit val env: SecureSocial
       case None =>
         Ok(views.html.admin.event.mealtype.index())
       case Some(item) =>
-        val form = MealTypeForm.apply(
+        val form = EventPropertyForm.apply(
           Some(item.objectId.toString),
           item.name,
           item.order

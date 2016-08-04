@@ -19,10 +19,21 @@ public class BookedEventDate extends AbstractEntity {
     // Actual values
     private LocalDateTime bookingDateTime;
     private Boolean approvedByHost;
+    private Integer nrOfGuests;
+    private String comment;
 
     // Tracking for when event was changed
     private LocalDateTime bookedAtDateTime;
     private LocalDateTime approvalAtDateTime;
+
+
+    public Integer getNrOfGuests(){
+        return this.nrOfGuests;
+    }
+
+    public void setNrOfGuests(Integer nrOfGuestsToBeBooked){
+        this.nrOfGuests = nrOfGuestsToBeBooked;
+    }
 
     public Boolean getApprovedByHost(){
         return this.approvedByHost;
@@ -38,21 +49,30 @@ public class BookedEventDate extends AbstractEntity {
         this.approvalAtDateTime = Helpers.getCurrentLocalDateTime();
     }
 
+    public String getComment(){
+        return this.comment;
+    }
+
+    public void setComment(String comment){
+        this.comment = comment;
+    }
+
     public LocalDateTime getBookingDateTime(){
         return this.bookingDateTime;
     }
 
-    public LocalDateTime setBookingDateTime(LocalDateTime date){
-        this.bookingDateTime = date;
+    public void setBookingDateTime(EventDate eventDateToBook){
+        this.bookingDateTime = eventDateToBook.getEventDateTime();
         this.bookedAtDateTime = Helpers.getCurrentLocalDateTime();
-        return this.bookingDateTime;
     }
 
-    public BookedEventDate(UserProfile userProfile, EventDate eventDate, LocalDateTime date) {
-        this.userProfile = userProfile;
-        this.eventDate = eventDate;
-        this.bookingDateTime = date;
-        this.approvedByHost = false;
+    public BookedEventDate(UserProfile userBooking, Integer nrOfGuestsToBeBooked, EventDate eventDateToBook, String comment) {
+        this.setComment(comment);
+        this.userProfile = userBooking;
+        this.eventDate = eventDateToBook;
+        this.setNrOfGuests(nrOfGuestsToBeBooked);
+        this.setBookingDateTime(eventDateToBook);
+        this.setApprovedByHost();
     }
 
     private BookedEventDate() {

@@ -67,6 +67,8 @@ GET         /profile/view/:profileName/event/:eventName          @controllers.Ev
 GET         /event/eventlist.json                                @controllers.EventPageController.viewEventByNameAndProfilePageJSON(profileName: String ?= "", page: Int ?= 0)
 GET         /event/add                                           @controllers.EventPageController.add
 POST        /event/add                                           @controllers.EventPageController.addSubmit
+POST        /event/addBooking                                    @controllers.EventPageController.addBookingSubmit
+POST        /event/addDateSuggestion                             @controllers.EventPageController.addDateSuggestionSubmit
 GET         /event/edit/:objectId                                @controllers.EventPageController.edit(objectId: java.util.UUID)
 GET         /event/delete/:objectId                              @controllers.EventPageController.delete(objectId: java.util.UUID)
 GET         /event/getPrice.json                                 @controllers.EventPageController.getEventPriceJSON(eventUUID: java.util.UUID ?= null, nrOfGuests: Int ?= 1)
@@ -124,6 +126,7 @@ GET         /dynassets/recipe/normal/*file                       @controllers.Im
 GET         /dynassets/event/thumb/*file                         @controllers.ImageController.eventThumb(file)
 GET         /dynassets/event/box/*file                           @controllers.ImageController.eventBox(file)
 GET         /dynassets/event/normal/*file                        @controllers.ImageController.eventNormal(file)
+GET         /dynassets/event/imggal/*file                        @controllers.ImageController.eventImageGallery(file)
 GET         /dynassets/profile/thumb/*file                       @controllers.ImageController.profileThumb(file)
 GET         /dynassets/profile/box/*file                         @controllers.ImageController.profileBox(file)
 GET         /dynassets/profile/normal/*file                      @controllers.ImageController.profileNormal(file)
@@ -198,6 +201,14 @@ GET         /admin/mealtype/add                                  @controllers.ad
 POST        /admin/mealtype/add                                  @controllers.admin.AdminMealTypeController.addSubmit
 GET         /admin/mealtype/edit/:objectId                       @controllers.admin.AdminMealTypeController.edit(objectId: java.util.UUID)
 GET         /admin/mealtype/delete/:objectId                     @controllers.admin.AdminMealTypeController.delete(objectId: java.util.UUID)
+
+# ADMIN - AlcoholServing
+GET         /admin/alcoholserving                                @controllers.admin.AdminAlcoholServingController.editIndex
+GET         /admin/alcoholserving/listall                        @controllers.admin.AdminAlcoholServingController.listAll
+GET         /admin/alcoholserving/add                            @controllers.admin.AdminAlcoholServingController.add
+POST        /admin/alcoholserving/add                            @controllers.admin.AdminAlcoholServingController.addSubmit
+GET         /admin/alcoholserving/edit/:objectId                 @controllers.admin.AdminAlcoholServingController.edit(objectId: java.util.UUID)
+GET         /admin/alcoholserving/delete/:objectId               @controllers.admin.AdminAlcoholServingController.delete(objectId: java.util.UUID)
 
 # ADMIN - Release & Batch
 GET         /admin/release                                       @controllers.admin.AdminReleaseController.editIndex

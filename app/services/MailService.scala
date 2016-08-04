@@ -31,10 +31,7 @@ class MailService @Inject() (mailer: MailerClient,
 
   def createAndSendMailNoReply(subject: String, message: String, recipient: EmailAndName, from: EmailAndName): Email = {
 
-    val noReplyMessage: EmailAndName = EmailAndName(
-      name = Messages("main.title"),
-      email = Messages("mail.text.no.reply")
-    )
+
 
     val email = createMail(
       subject = subject,
@@ -42,7 +39,7 @@ class MailService @Inject() (mailer: MailerClient,
       message = message,
       bcc = None,
       from = from,
-      replyTo = noReplyMessage
+      replyTo = getDefaultAnonSender
     )
     sendMail(email)
     email
@@ -50,6 +47,13 @@ class MailService @Inject() (mailer: MailerClient,
 
   def sendMail(email:Email): String = {
     mailer.send(email)
+  }
+
+  def getDefaultAnonSender: EmailAndName = {
+    EmailAndName(
+      name = Messages("main.title"),
+      email = Messages("mail.text.no.reply")
+    )
   }
 
   private def buildRecipientsList(recipients: List[EmailAndName]): Seq[String] = {

@@ -97,26 +97,26 @@ class HeaderController @Inject() (override implicit val env: SecureSocialRuntime
     }
   }
 
-  private def getQuickLinkList(currentUser: Option[UserCredential])(implicit request: RequestHeader): Seq[(String, String, String, String, String)] = {
+  private def getQuickLinkList(currentUser: Option[UserCredential])(implicit request: RequestHeader): Seq[(String, String, String, String, String, String)] = {
 
     currentUser match {
       case Some(user) => {
-        val menu = collection.mutable.Buffer[(String,String,String,String,String)](
-            (Messages("header.link.host-profile"), Messages("header.link.host-profile"), controllers.routes.UserProfileController.viewProfileByLoggedInUser().url, "", ""),
-            (Messages("header.link.host-profile-edit"), Messages("header.link.host-profile-edit"), controllers.routes.UserProfileController.edit().url, "", ""),
-            (Messages("header.link.inbox"), Messages("header.link.inbox"), controllers.routes.UserProfileController.viewProfileByLoggedInUser().url + "#inbox-tab", "", "") //Removed until we fetch nr of messages: "<span class=\"badge\">0</span>")
+        val menu = collection.mutable.Buffer[(String,String,String,String,String,String)](
+            (Messages("header.link.host-profile"), Messages("header.link.host-profile"), controllers.routes.UserProfileController.viewProfileByLoggedInUser().url, "", "", "<span class=\"glyphicon glyphicon-home\"></span>&nbsp;"),
+            (Messages("header.link.host-profile-edit"), Messages("header.link.host-profile-edit"), controllers.routes.UserProfileController.edit().url, "", "", "<span class=\"glyphicon glyphicon-wrench\"></span>&nbsp;"),
+            (Messages("header.link.inbox"), Messages("header.link.inbox"), controllers.routes.UserProfileController.viewProfileByLoggedInUser().url + "#inbox-tab", "", "", "<span class=\"glyphicon glyphicon-envelope\"></span>&nbsp;") //Removed until we fetch nr of messages: "<span class=\"badge\">0</span>")
           )
 
         if (Helpers.isUserAdmin(currentUser))
-          menu.append((Messages("header.link.admin"), Messages("header.link.admin"), controllers.admin.routes.AdminController.index().url, "", ""))
+          menu.append((Messages("header.link.admin"), Messages("header.link.admin"), controllers.admin.routes.AdminController.index().url, "", "", "<span class=\"glyphicon glyphicon-cog\"></span>&nbsp;"))
 
-        menu.append((Messages("header.link.logout"), Messages("header.link.logout"), "/auth/logout", "", ""))
+        menu.append((Messages("header.link.logout"), Messages("header.link.logout"), "/auth/logout", "", "", "<span class=\"glyphicon glyphicon-log-out\"></span>&nbsp;"))
         menu.toSeq
       }
       case None => {
-        Seq[(String,String,String,String,String)](
-            (Messages("header.link.become-member"), Messages("header.link.become-member"), env.routes.startSignUpUrl, "hidden-xs", ""),
-            (Messages("header.link.login"), Messages("header.link.login"), env.routes.loginPageUrl, "", "")
+        Seq[(String,String,String,String,String,String)](
+            (Messages("header.link.become-member"), Messages("header.link.become-member"), env.routes.startSignUpUrl, "hidden-xs", "", ""),
+            (Messages("header.link.login"), Messages("header.link.login"), env.routes.loginPageUrl, "", "", "")
           )
       }
     }
