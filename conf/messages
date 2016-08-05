@@ -358,6 +358,8 @@ profile.tabs.event.name=Bjudningar
 profile.tabs.event.title=Bjudningar
 profile.tabs.ratings.name=Omdömen
 profile.tabs.ratings.title=Omdömen
+profile.tabs.bookings.title=Bokningar
+profile.tabs.bookings.name=Bokningar
 profile.tabs.inbox.name=Inbox
 profile.tabs.inbox.title=Inbox
 profile.tabs.favourites.name=Favoriter
@@ -368,6 +370,7 @@ profile.tabs.edit-profile.name=Redigera
 profile.tabs.edit-profile.title=Redigera dina profilinställningar
 profile.button.blog.add=Skapa nytt inlägg
 
+profile.bookings.no-entries=Du har inga bokningar.
 profile.blog.no-entries={0} har inte adderat några inlägg i sin blogg än.
 profile.blog.tab.body.non-admin=Här kommer alla värdar att kunna skriva och blogga om sin mat och sina intressen.
 profile.firstname.label=Namn:

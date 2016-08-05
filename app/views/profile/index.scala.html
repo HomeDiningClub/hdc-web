@@ -1,6 +1,8 @@
 @(userProfile: models.UserProfile,
         recipeBoxes: Option[List[RecipeBox]] = None,
         eventBoxes: Option[List[EventBox]] = None,
+        bookingsMadeByMe: Option[List[EventBookingSuccess]] = None,
+        bookingsMadeToMyEvents: Option[List[EventBookingSuccess]] = None,
         myReviewBoxes: Option[List[ReviewBox]] = None,
         myRecipeReviewBoxes: Option[List[ReviewBox]] = None,
         reviewBoxesAboutMyFood: Option[List[ReviewBox]] = None,
@@ -53,6 +55,7 @@
                         <li><a data-toggle="tab" href="#blog-tab" title="@Messages("profile.tabs.blog.title")"><span class="glyphicon glyphicon-pencil"></span>&nbsp;@Messages("profile.tabs.blog.name")</a></li>
 
                         @if(isThisMyProfile) {
+                            <li><a data-toggle="tab" href="#bookings-tab" title="@Messages("profile.tabs.bookings.title")"><span class="glyphicon glyphicon-book"></span>&nbsp;@Messages("profile.tabs.bookings.name")</a></li>
                             <li><a data-toggle="tab" href="#inbox-tab" title="@Messages("profile.tabs.inbox.title")"><span class="glyphicon glyphicon-envelope"></span>&nbsp;@Messages("profile.tabs.inbox.name")</a></li>
                             <li><a data-toggle="tab" href="#fav-tab" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
                             <li><a data-toggle="tab" href="#stats-tab" title="@Messages("profile.tabs.stats.title")"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;@Messages("profile.tabs.stats.name")</a></li>
@@ -134,6 +137,8 @@
                     <!-- Blog Tab -->
                     <div class="tab-pane tab-hdc fade" id="blog-tab">@views.html.profile.blogPostList(userProfile, isThisMyProfile)</div>
 
+                    <!-- Bookings Tab -->
+                    <div class="tab-pane tab-hdc fade" id="bookings-tab">@views.html.profile.myBookingsList(bookingsMadeToMyEvents, bookingsMadeByMe, isThisMyProfile)</div>
 
                     <!-- Inbox Tab -->
                     <div class="tab-pane tab-hdc fade" id="inbox-tab">@views.html.profile.mailInbox(userMessages, currentUser, isThisMyProfile)</div>

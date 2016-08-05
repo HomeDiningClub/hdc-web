@@ -14,17 +14,17 @@
 
                 @b3.static(Messages("event.book.chosen.date")) {
                     <span id="booking-chosen-date"></span>
-                }(inlineFC)
+                }(inlineFC, messages)
                 @b3.static(Messages("event.book.chosen.time")) {
                     <span id="booking-chosen-time"></span>
-                }(inlineFC)
+                }(inlineFC, messages)
                 @b3.static(Messages("event.book.chosen.total-cost"), '_class -> "animated") {
                     <span class="currency">@Messages("event.price.currency")</span>
                     <span id="booking-total-cost" data-price-route="@{
                         routes.EventPageController.getEventPriceJSON()
                     }"></span>
                     <span class="end">@Messages("event.price.currency.end")</span>
-                }(inlineFC)
+                }(inlineFC, messages)
 
                 @helper.inputHidden(eventBookingForm("eventId"), 'class -> "book-event-uuid")
                 @helper.inputHidden(eventBookingForm("book-eventDateId"), 'class -> "book-eventdate-uuid")

@@ -1,0 +1,11 @@
+@(list: Option[List[EventBookingSuccess]])(implicit messages: Messages)
+
+@if(list.nonEmpty) {
+  <ul>
+    @for(b <- list.get){
+      <li>
+        @views.html.event.bookingSuccessDetails(b)
+      </li>
+    }
+  </ul>
+}

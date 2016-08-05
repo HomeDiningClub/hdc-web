@@ -20,7 +20,7 @@ class AlcoholServingService @Inject() (val template: Neo4jTemplate,
 
   def listAll(): Option[List[AlcoholServing]] = withTransaction(template){
     IteratorUtil.asCollection(alcoholServingRepository.findAll()).asScala.toList match {
-      case null => None
+      case null | Nil => None
       case items => Some(items.sortBy(x => x.order))
     }
   }

@@ -21,7 +21,7 @@ class MealTypeService @Inject() (val template: Neo4jTemplate,
 
   def listAll(): Option[List[MealType]] = withTransaction(template){
     IteratorUtil.asCollection(mealTypeRepository.findAll()).asScala.toList match {
-      case null => None
+      case null | Nil => None
       case items => Some(items.sortBy(m => m.order))
     }
   }

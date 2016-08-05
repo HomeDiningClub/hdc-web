@@ -80,6 +80,20 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+  def findAllBookedDatesInAllEventsForOwner(user: UserCredential): Option[List[BookedEventDate]] = withTransaction(template){
+    bookedEventDateRepository.findAllBookedDatesInAllEventsForOwner(user.getUserProfile.objectId.toString).asScala.toList match {
+      case null | Nil => None
+      case items => Some(items)
+    }
+  }
+
+  def findBookedDatesByEvent(event: Event): Option[List[BookedEventDate]] = withTransaction(template){
+    bookedEventDateRepository.findBookedDatesByEvent(event.objectId.toString).asScala.toList match {
+      case null | Nil => None
+      case items => Some(items)
+    }
+  }
+
   def findBookedDatesByUserAndEvent(user: UserCredential, event: Event): Option[List[BookedEventDate]] = withTransaction(template){
     bookedEventDateRepository.findBookedDatesByUserAndEvent(user.getUserProfile.objectId.toString, event.objectId.toString).asScala.toList match {
       case null | Nil => None
@@ -95,6 +109,15 @@ class EventService @Inject()(val template: Neo4jTemplate,
     eventRepository.findAll.iterator.asScala.toList match {
       case null => null
       case items => items
+    }
+  }
+
+  def getBookingsMadeToMyEvents(user: UserCredential): Option[List[EventBookingSuccess]] = {
+    this.findAllBookedDatesInAllEventsForOwner(user) match {
+      case None => None
+      case Some(items) => Some(items.map { booking =>
+        mapEventBookingToEventBookingSuccess(None, booking)
+      })
     }
   }
 
@@ -329,18 +352,30 @@ class EventService @Inject()(val template: Neo4jTemplate,
   }
 
   def addBookingAndSendEmail(currentUser: UserCredential, event: Event, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String]): EventBookingSuccess ={
-    val newBooking = this.addBooking(currentUser, eventDate, nrOfGuestsToBeBooked, comment)
+    val newBooking = this.addBooking(currentUser = currentUser, eventDate = eventDate, nrOfGuestsToBeBooked = nrOfGuestsToBeBooked, comment = comment)
+    val successValues: EventBookingSuccess = mapEventBookingToEventBookingSuccess(Some(currentUser), newBooking)
+
+    // Sending it to email
+    this.createBookingSuccessEmail(successValues)
+
+    successValues
+  }
+
+  private def mapEventBookingToEventBookingSuccess(currentUser: Option[UserCredential], booking: BookedEventDate): EventBookingSuccess = withTransaction(template){
+
+    // This might be slow
+    val event = template.fetch(booking.eventDate.getOwnerEvent)
 
     val successValues = EventBookingSuccess(
-      bookingNumber = newBooking.objectId,
+      bookingNumber = booking.objectId,
       eventName = event.getName,
-      eventLink = controllers.routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName,event.getLink).url,
+      eventLink = controllers.routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName, event.getLink).url,
       mealType = event.getMealType match {
         case null => None
         case mt => Some(mt.name)
       },
-      date = eventDate.getEventDateTime.toLocalDate,
-      time = eventDate.getEventDateTime.toLocalTime,
+      date = booking.eventDate.getEventDateTime.toLocalDate,
+      time = booking.eventDate.getEventDateTime.toLocalTime,
       locationAddress = event.getOwnerProfile.streetAddress,
       locationCity = event.getOwnerProfile.city,
       locationCounty = event.getOwnerProfile.getLocations.asScala.head.county.name,
@@ -349,14 +384,13 @@ class EventService @Inject()(val template: Neo4jTemplate,
         case "" => None
         case p => Some(p)
       },
-      nrOfGuests = nrOfGuestsToBeBooked,
-      totalCost = this.getEventPrice(event, nrOfGuestsToBeBooked),
-      email = currentUser.emailAddress
+      nrOfGuests = booking.getNrOfGuests,
+      totalCost = this.getEventPrice(event, booking.getNrOfGuests),
+      email = currentUser match {
+        case None => ""
+        case Some(user) => user.emailAddress
+      }
     )
-
-    // Sending it to email
-    this.createBookingSuccessEmail(successValues)
-
     successValues
   }
 
