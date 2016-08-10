@@ -23,6 +23,7 @@ import models.formdata.SearchStartPageForm
 
 class StartPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val userProfileService: UserProfileService,
+                                     val eventService: EventService,
                                      val tagWordService: TagWordService,
                                      val countyService: CountyService,
                                      val ratingService: RatingService,
@@ -45,6 +46,8 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
     val isHost = if(fHost == 1) true else false
 
     val startPageBoxes = getStartPageBoxes(fTag, fCounty, isHost, 8)
+    val startPageEventBoxes = getEventBoxes(fTag, fCounty, 8)
+
     val form = SearchStartPageForm.apply(
       fCounty match { case null | "" => None case item => Some(item)},
       fTag match { case null | "" => None case item => Some(item)},
@@ -63,20 +66,19 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
     ))
   }
 
+  private def getEventBoxes(boxFilterTag: String, boxFilterCounty: String, maxNr: Int = 8): Option[List[models.event.EventData]] = {
+
+    val fetchedTag: Option[TagWord] = verifySelectedTagWord(boxFilterTag)
+    val fetchedCounty: Option[County] = verifySelectedCounty(boxFilterCounty)
+
+    val eventBoxes: Option[List[models.event.EventData]] = eventService.getEventsFiltered(fetchedTag, fetchedCounty, None, maxNr)
+    eventBoxes
+  }
+
   private def getStartPageBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, maxNr: Int = 8): Option[List[StartPageBox]] = {
 
-    val fetchedTag: Option[TagWord] = boxFilterTag match {
-      case "" | null => None
-      case tagWord =>
-        tagWordService.findById(UUID.fromString(tagWord))
-
-    }
-
-    val fetchedCounty: Option[County] = boxFilterCounty match {
-      case "" | null => None
-      case county =>
-        countyService.findById(UUID.fromString(county))
-    }
+    val fetchedTag: Option[TagWord] = verifySelectedTagWord(boxFilterTag)
+    val fetchedCounty: Option[County] = verifySelectedCounty(boxFilterCounty)
 
     val startPageBoxes: Option[List[StartPageBox]] = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost).asInstanceOf[Option[List[UserProfile]]] match {
       case None => None
@@ -111,7 +113,22 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
   }
 
 
+  private def verifySelectedCounty(boxFilterCounty: String): Option[County] = {
+    boxFilterCounty match {
+      case "" | null => None
+      case county =>
+        countyService.findById(UUID.fromString(county))
+    }
+  }
 
+  private def verifySelectedTagWord(boxFilterTag: String): Option[TagWord] = {
+    boxFilterTag match {
+      case "" | null => None
+      case tagWord =>
+        tagWordService.findById(UUID.fromString(tagWord))
+
+    }
+  }
 }
 
 

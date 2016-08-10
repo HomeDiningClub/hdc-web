@@ -1,14 +1,12 @@
 package services
 
-import java.security.InvalidParameterException
 import java.time.{LocalTime, LocalDate, LocalDateTime}
-import javax.inject.{Singleton, Named, Inject}
+import javax.inject.Inject
 import models.files.ContentFile
-import org.springframework.beans.factory.annotation.Autowired
+import models.location.County
+import models.profile.TagWord
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.neo4j.support.Neo4jTemplate
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.libs.mailer.Email
 import traits.TransactionSupport
@@ -16,19 +14,17 @@ import scala.language.existentials
 import repositories._
 import models.{Event, UserProfile, UserCredential}
 import scala.collection.JavaConverters._
-import scala.List
 import java.util.UUID
 import models.viewmodels.{EventDateSuggestionSuccess, EmailAndName, EventBookingSuccess, EventBox}
 import controllers.routes
 import customUtils.Helpers
 import scala.collection.mutable.ListBuffer
-import models.event.{BookedEventDate, EventDate, MealType}
+import models.event.{EventData, BookedEventDate, EventDate}
 import play.api.data.Form
 import play.api.data.Forms._
-import scala.Some
 import enums.SortOrderEnums
 import enums.SortOrderEnums.SortOrderEnums
-import org.joda.time.DateTime
+import scala.collection.JavaConverters._
 import play.api.Logger
 import models.formdata._
 import customUtils.formhelpers.Formats._
@@ -536,6 +532,74 @@ class EventService @Inject()(val template: Neo4jTemplate,
       Some(returnBoxes)
   }
 
+
+  def getEventsFiltered(filterTag: Option[TagWord], filterCounty: Option[County], pageNo: Option[Integer] = None, nrPerPage: Int = 9) = withTransaction(template){
+
+    var params: scala.collection.mutable.Map[String,AnyRef] =  scala.collection.mutable.Map[String,AnyRef]()
+    //val params = MapUtil.map("tagWordId",objectId.toString)
+
+    /*
+    Without both:
+      MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`) OPTIONAL MATCH (c:`County`)<-[:`LOCATION_AT`]-(up) OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, c.name as CountyName
+
+    With County & Tag
+      MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (c:`County`)<-[:`LOCATION_AT`]-(up)-[:`TAGGED_ON`]->(tw:`TagWord`) WITH up,tw,c,uc,e OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, tw.tagName as TagName, c.name as CountyName
+
+    With County:
+      MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (c:`County`)<-[:`LOCATION_AT`]-(up) WITH up,c,uc,e OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, uc.userId as UserCredUserId, c.name as CountyName
+
+    With Tag
+      MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (up)-[:`TAGGED_ON`]->(tw:`TagWord`) WITH up,tw,uc,e OPTIONAL MATCH (c:`County`)<-[:`LOCATION_AT`]-(up) OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, tw.tagName as TagName, c.name as CountyName
+*/
+    // Setup base query
+    val queryMatchClause = "MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`)"
+    var queryMatchAdditions = ""
+      //" OPTIONAL MATCH (c:`County`)<-[:`LOCATION_AT`]-(up)-[:`TAGGED_ON`]->(tw:`TagWord`)" +
+    val queryOptMatchClause = " OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`)"
+    var queryWhereClause = ""
+    val queryReturnClause = " RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, uc.userId as UserCredUserId"
+
+    // Add filtering
+    if(filterTag.isDefined || filterCounty.isDefined){
+
+      if(filterTag.isDefined){
+        params += ("tagWordId" -> filterTag.get.objectId.toString)
+        queryMatchAdditions = ", (c:`County`)<-[:`LOCATION_AT`]-(up)-[:`TAGGED_ON`]->(tw:`TagWord`) WITH up,tw,c,uc,e"
+        queryWhereClause += " WHERE tw.objectId = {tagWordId}"
+      }
+
+      if(filterCounty.isDefined){
+        params += ("countyId" -> filterCounty.get.objectId.toString)
+
+        if(queryWhereClause.isEmpty){
+          queryWhereClause += " WHERE"
+        }else{
+          queryWhereClause += " AND"
+        }
+
+        queryWhereClause += " c.objectId = {countyId}"
+      }
+
+    }
+
+    // Apply pagination
+    if(pageNo.isDefined) {
+
+    }
+
+    // Do execution
+    Logger.debug("Running query: " + queryMatchClause + queryWhereClause + queryReturnClause)
+    Logger.debug("With params: " + params.foreach(p => p._1 + "-->" + p._2))
+
+    eventRepository.query(queryMatchClause + queryWhereClause + queryReturnClause, params.asJava).to(classOf[EventData]) match {
+      case null =>
+        None
+      case events =>
+        Some(events.asScala.toList)
+    }
+    //val queryRes = template.query(query, params).to(classOf[Node]).singleOrNull()
+
+  }
 
 
   def getListOwnedBy(user: UserCredential): Option[List[Event]] = withTransaction(template){
