@@ -7,6 +7,8 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala, SbtWeb)
 
 scalaVersion := "2.11.8"
 
+//ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
+
 resolvers ++= Seq(
   //Resolver.file("Local Ivy Repository", file(baseDirectory.value + "/local_ivy/repository/"))(Resolver.ivyStylePatterns),
   "Spring releases" at "http://repo.springsource.org/release",

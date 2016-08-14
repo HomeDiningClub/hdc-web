@@ -5,7 +5,8 @@ import javax.inject.Inject
 import models.files.ContentFile
 import models.location.County
 import models.profile.TagWord
-import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.{Page, PageRequest}
+import org.springframework.data.neo4j.conversion.ResultConverter
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.libs.mailer.Email
@@ -32,6 +33,7 @@ import customUtils.formhelpers.Formats._
 class EventService @Inject()(val template: Neo4jTemplate,
                              val eventRepository: EventRepository,
                              val eventDateRepository: EventDateRepository,
+                              val recipeRepository: RecipeRepository,
                              val bookedEventDateRepository: BookedEventDateRepository,
                              val mailService: MailService,
                              val messagesApi: MessagesApi) extends TransactionSupport with I18nSupport {
@@ -462,7 +464,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
     // With paging
     // 0 current page, 6 number of items for each page
 
-    val list = eventRepository.findEventsOnPage(user.objectId.toString, new PageRequest(pageNo, 6))
+    val list = eventRepository.findEvents(user.objectId.toString, new PageRequest(pageNo, 6))
     val iterator = list.iterator()
     var eventList : ListBuffer[EventBox] = new ListBuffer[EventBox]
     val location = user.getUserProfile.getLocations.asScala.headOption match {
@@ -532,73 +534,49 @@ class EventService @Inject()(val template: Neo4jTemplate,
       Some(returnBoxes)
   }
 
+  // Use .right.get to fetch Option[Page[EventData]]
+  // Use .left.get to fetch Option[List[EventData]]
+  // Or match case Left(item) => item
+  def getEventsFiltered(filterTag: Option[TagWord], filterCounty: Option[County], pageNo: Option[Integer] = None, nrPerPage: Int = 9): Either[Option[List[EventData]], Option[Page[EventData]]] = withTransaction(template) {
 
-  def getEventsFiltered(filterTag: Option[TagWord], filterCounty: Option[County], pageNo: Option[Integer] = None, nrPerPage: Int = 9) = withTransaction(template){
+    var returnList: List[EventData] = Nil
+    var returnPaged: Page[EventData] = null
 
-    var params: scala.collection.mutable.Map[String,AnyRef] =  scala.collection.mutable.Map[String,AnyRef]()
-    //val params = MapUtil.map("tagWordId",objectId.toString)
-
-    /*
-    Without both:
-      MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`) OPTIONAL MATCH (c:`County`)<-[:`LOCATION_AT`]-(up) OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, c.name as CountyName
-
-    With County & Tag
-      MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (c:`County`)<-[:`LOCATION_AT`]-(up)-[:`TAGGED_ON`]->(tw:`TagWord`) WITH up,tw,c,uc,e OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, tw.tagName as TagName, c.name as CountyName
-
-    With County:
-      MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (c:`County`)<-[:`LOCATION_AT`]-(up) WITH up,c,uc,e OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, uc.userId as UserCredUserId, c.name as CountyName
-
-    With Tag
-      MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (up)-[:`TAGGED_ON`]->(tw:`TagWord`) WITH up,tw,uc,e OPTIONAL MATCH (c:`County`)<-[:`LOCATION_AT`]-(up) OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, tw.tagName as TagName, c.name as CountyName
-*/
-    // Setup base query
-    val queryMatchClause = "MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`)"
-    var queryMatchAdditions = ""
-      //" OPTIONAL MATCH (c:`County`)<-[:`LOCATION_AT`]-(up)-[:`TAGGED_ON`]->(tw:`TagWord`)" +
-    val queryOptMatchClause = " OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`)"
-    var queryWhereClause = ""
-    val queryReturnClause = " RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, uc.userId as UserCredUserId"
-
-    // Add filtering
-    if(filterTag.isDefined || filterCounty.isDefined){
-
-      if(filterTag.isDefined){
-        params += ("tagWordId" -> filterTag.get.objectId.toString)
-        queryMatchAdditions = ", (c:`County`)<-[:`LOCATION_AT`]-(up)-[:`TAGGED_ON`]->(tw:`TagWord`) WITH up,tw,c,uc,e"
-        queryWhereClause += " WHERE tw.objectId = {tagWordId}"
-      }
-
-      if(filterCounty.isDefined){
-        params += ("countyId" -> filterCounty.get.objectId.toString)
-
-        if(queryWhereClause.isEmpty){
-          queryWhereClause += " WHERE"
-        }else{
-          queryWhereClause += " AND"
+    (filterTag, filterCounty) match {
+      case (Some(tw), Some(cnt)) =>
+        if (pageNo.isDefined) {
+          returnPaged = eventRepository.findPopularEventsWithCountyAndTagWord(cnt.objectId.toString, tw.objectId.toString, new PageRequest(pageNo.get, nrPerPage))
+        } else {
+          returnList = eventRepository.findPopularEventsWithCountyAndTagWord(cnt.objectId.toString, tw.objectId.toString).asScala.toList
         }
-
-        queryWhereClause += " c.objectId = {countyId}"
-      }
-
+      case (None, Some(cnt)) =>
+        if (pageNo.isDefined) {
+          returnPaged = eventRepository.findPopularEventsWithCounty(cnt.objectId.toString, new PageRequest(pageNo.get, nrPerPage))
+        } else {
+          returnList = eventRepository.findPopularEventsWithCounty(cnt.objectId.toString).asScala.toList
+        }
+      case (Some(tw), None) =>
+        if (pageNo.isDefined) {
+          returnPaged = eventRepository.findPopularEventsWithTagWord(tw.objectId.toString, new PageRequest(pageNo.get, nrPerPage))
+        } else {
+          returnList = eventRepository.findPopularEventsWithTagWord(tw.objectId.toString).asScala.toList
+        }
+      case (None, None) =>
+        if (pageNo.isDefined) {
+          returnPaged = eventRepository.findPopularEvents(new PageRequest(pageNo.get, nrPerPage))
+        } else {
+          returnList = eventRepository.findPopularEvents().asScala.toList
+        }
     }
 
-    // Apply pagination
-    if(pageNo.isDefined) {
+    //var temp = eventRepository.getPopularEvents().asScala.toList
+    //var temp2 = recipeRepository.findRecipes("00f0b94f-bf51-4888-97a5-0f1eee69fb08").asScala.toList
 
+    if (returnList != Nil) {
+      Left(Some(returnList))
+    } else {
+      Right(Option(returnPaged))
     }
-
-    // Do execution
-    Logger.debug("Running query: " + queryMatchClause + queryWhereClause + queryReturnClause)
-    Logger.debug("With params: " + params.foreach(p => p._1 + "-->" + p._2))
-
-    eventRepository.query(queryMatchClause + queryWhereClause + queryReturnClause, params.asJava).to(classOf[EventData]) match {
-      case null =>
-        None
-      case events =>
-        Some(events.asScala.toList)
-    }
-    //val queryRes = template.query(query, params).to(classOf[Node]).singleOrNull()
-
   }
 
 

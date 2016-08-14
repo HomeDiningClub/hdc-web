@@ -415,7 +415,6 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
   // Can return either:
   // Option[Page[UserProfile]]
   // Option[List[UserProfile]]
-  //@Transactional(readOnly = true)
   def getUserProfilesFiltered(filterTag: Option[TagWord], filterCounty: Option[County], filterIsHost: Boolean, pageNo: Option[Integer] = None, nrPerPage: Int = 9) = withTransaction(template){
 
     var returnList: List[UserProfile] = Nil

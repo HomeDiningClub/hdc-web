@@ -45,7 +45,7 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
 
     val isHost = if(fHost == 1) true else false
 
-    val startPageBoxes = getStartPageBoxes(fTag, fCounty, isHost, 8)
+    val startPageBoxes = getProfileBoxes(fTag, fCounty, isHost, 8)
     val startPageEventBoxes = getEventBoxes(fTag, fCounty, 8)
 
     val form = SearchStartPageForm.apply(
@@ -71,11 +71,11 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
     val fetchedTag: Option[TagWord] = verifySelectedTagWord(boxFilterTag)
     val fetchedCounty: Option[County] = verifySelectedCounty(boxFilterCounty)
 
-    val eventBoxes: Option[List[models.event.EventData]] = eventService.getEventsFiltered(fetchedTag, fetchedCounty, None, maxNr)
+    val eventBoxes: Option[List[models.event.EventData]] = eventService.getEventsFiltered(fetchedTag, fetchedCounty, None, maxNr).left.get
     eventBoxes
   }
 
-  private def getStartPageBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, maxNr: Int = 8): Option[List[StartPageBox]] = {
+  private def getProfileBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, maxNr: Int = 8): Option[List[StartPageBox]] = {
 
     val fetchedTag: Option[TagWord] = verifySelectedTagWord(boxFilterTag)
     val fetchedCounty: Option[County] = verifySelectedCounty(boxFilterCounty)

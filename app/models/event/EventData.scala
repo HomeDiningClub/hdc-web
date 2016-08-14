@@ -12,7 +12,7 @@ trait EventData {
   @ResultColumn("EventLinkName")
   def getLinkName() : String
 
-  @ResultColumn("Eventname")
+  @ResultColumn("EventName")
   def getName() : String
 
   @ResultColumn("EventPrice")
@@ -33,7 +33,10 @@ trait EventData {
   @ResultColumn("MainImage")
   def getMainImage() : util.List[String]
 
-  @ResultColumn("UserCredUserId")
-  def getUserId() : String
+  @ResultColumn("CountyName")
+  def getCountyName() : String
 
+  @ResultColumn("TagName")
+  def getTagName() : String
 }
+

@@ -9,6 +9,8 @@ import models.{UserProfile, UserCredential, Event}
 import java.util.UUID
 import java.util
 
+import org.springframework.data.repository.query.Param
+
 trait EventRepository extends GraphRepository[Event] {
 
   // Auto-mapped by Spring
@@ -18,11 +20,37 @@ trait EventRepository extends GraphRepository[Event] {
   @Query("MATCH (n:`Event`) RETURN COUNT(*)")
   def getCountOfAll(): Int
 
-  @Query("MATCH (uc {objectId:{0}})-[:IN_PROFILE]->(up:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (uc)-[:IN_PROFILE]->(up:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (r)-[:IMAGES]-(eventImages:`ContentFile`) optional match (r)-[g]-(ux:UserCredential) optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return r.name as EventName, r.preAmble as EventPreAmble, r.mainBody as EventMainBody, r.objectId as EventObjectId, COLLECT(eventImages.storeId) as EventImages, COLLECT(mainImage.storeId) as MainImage, r.price as EventPrice, up.profileLinkName as ProfileLinkName, r.eventLinkName as EventLinkName, uc.userId as UserCredUserId")
+
+  @Query("MATCH (uc {objectId:{0}})-[:IN_PROFILE]->(up:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (uc)-[:IN_PROFILE]->(up:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (r)-[:IMAGES]-(eventImages:`ContentFile`) optional match (r)-[g]-(ux:UserCredential) optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return r.name as EventName, r.preAmble as EventPreAmble, r.mainBody as EventMainBody, r.objectId as EventObjectId, COLLECT(eventImages.storeId) as EventImages, COLLECT(mainImage.storeId) as MainImage, r.price as EventPrice, up.profileLinkName as ProfileLinkName, r.eventLinkName as EventLinkName")
   def findEvents(userObjectId: String) : util.List[EventData]
 
-  @Query("MATCH (uc {objectId:{0}})-[:IN_PROFILE]->(up:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (uc)-[:IN_PROFILE]->(up:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (r)-[:IMAGES]-(eventImages:`ContentFile`) optional match (r)-[g]-(ux:UserCredential) optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return r.name as EventName, r.preAmble as EventPreAmble, r.mainBody as EventMainBody, r.objectId as EventObjectId, COLLECT(eventImages.storeId) as EventImages, COLLECT(mainImage.storeId) as MainImage, r.price as EventPrice, up.profileLinkName as ProfileLinkName, r.eventLinkName as EventLinkName, uc.userId as UserCredUserId")
-  def findEventsOnPage(userObjectId: String, pageable: Pageable) : Page[EventData]
+  @Query("MATCH (uc {objectId:{0}})-[:IN_PROFILE]->(up:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (uc)-[:IN_PROFILE]->(up:UserProfile)-[:HOSTS_EVENTS]-(r:Event) optional match (r)-[:IMAGES]-(eventImages:`ContentFile`) optional match (r)-[g]-(ux:UserCredential) optional match (r)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return r.name as EventName, r.preAmble as EventPreAmble, r.mainBody as EventMainBody, r.objectId as EventObjectId, COLLECT(eventImages.storeId) as EventImages, COLLECT(mainImage.storeId) as MainImage, r.price as EventPrice, up.profileLinkName as ProfileLinkName, r.eventLinkName as EventLinkName")
+  def findEvents(userObjectId: String, pageable: Pageable) : Page[EventData]
+
+  // Fetch events regardless of TagWord or County
+  @Query("MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`) OPTIONAL MATCH (c:`County`)<-[:`LOCATION_AT`]-(up) OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, c.name as CountyName, '' as TagName")
+  def findPopularEvents() : util.List[EventData]
+  @Query("MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`) OPTIONAL MATCH (c:`County`)<-[:`LOCATION_AT`]-(up) OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, c.name as CountyName, '' as TagName")
+  def findPopularEvents(pageable: Pageable) : Page[EventData]
+
+  // Fetch events that has TagWord defined
+  @Query("MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (up)-[:`TAGGED_ON`]->(tw:`TagWord`) WITH up,tw,uc,e OPTIONAL MATCH (c:`County`)<-[:`LOCATION_AT`]-(up) OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) WHERE tw.objectId = {tagWordId} RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, tw.tagName as TagName, c.name as CountyName")
+  def findPopularEventsWithTagWord(@Param("tagWordId") tagWordId: String) : util.List[EventData]
+  @Query("MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (up)-[:`TAGGED_ON`]->(tw:`TagWord`) WITH up,tw,uc,e OPTIONAL MATCH (c:`County`)<-[:`LOCATION_AT`]-(up) OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) WHERE tw.objectId = {tagWordId} RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, tw.tagName as TagName, c.name as CountyName")
+  def findPopularEventsWithTagWord(@Param("tagWordId") tagWordId: String, pageable: Pageable) : Page[EventData]
+
+  // Fetch events that has County defined
+  @Query("MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (c:`County`)<-[:`LOCATION_AT`]-(up) WITH up,c,uc,e OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) WHERE c.objectId = {countyId} RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, c.name as CountyName, '' as TagName")
+  def findPopularEventsWithCounty(@Param("countyId") countyId: String) : util.List[EventData]
+  @Query("MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (c:`County`)<-[:`LOCATION_AT`]-(up) WITH up,c,uc,e OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) WHERE c.objectId = {countyId} RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, c.name as CountyName, '' as TagName")
+  def findPopularEventsWithCounty(@Param("countyId") countyId: String, pageable: Pageable) : Page[EventData]
+
+  // Fetch events that has County and TagWord defined
+  @Query("MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (c:`County`)<-[:`LOCATION_AT`]-(up) WITH up,c,uc,e OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) WHERE c.objectId = {countyId} RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, c.name as CountyName, '' as TagName")
+  def findPopularEventsWithCountyAndTagWord(@Param("countyId") countyId: String, @Param("tagWordId") tagWordId: String) : util.List[EventData]
+  @Query("MATCH (uc:`UserCredential`)-[:`IN_PROFILE`]->(up:`UserProfile`)-[:`HOSTS_EVENTS`]-(e:`Event`), (c:`County`)<-[:`LOCATION_AT`]-(up) WITH up,c,uc,e OPTIONAL MATCH (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) WHERE c.objectId = {countyId} RETURN e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(mainImage.storeId) as MainImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, c.name as CountyName, '' as TagName")
+  def findPopularEventsWithCountyAndTagWord(@Param("countyId") countyId: String, @Param("tagWordId") tagWordId: String, pageable: Pageable) : Page[EventData]
+
 
   def findByeventLinkName(eventLinkName: String): Event
   def findByownerProfileProfileLinkNameAndEventLinkName(profileLinkName: String, eventLinkName: String): Event
