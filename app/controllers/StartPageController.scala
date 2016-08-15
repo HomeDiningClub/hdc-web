@@ -71,7 +71,10 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
     val fetchedTag: Option[TagWord] = verifySelectedTagWord(boxFilterTag)
     val fetchedCounty: Option[County] = verifySelectedCounty(boxFilterCounty)
 
-    val eventBoxes: Option[List[models.event.EventData]] = eventService.getEventsFiltered(fetchedTag, fetchedCounty, None, maxNr).left.get
+    val eventBoxes: Option[List[models.event.EventData]] = eventService.getEventsFiltered(fetchedTag, fetchedCounty, None, maxNr).left.get match {
+      case None => None
+      case Some(events) => eventService.mapEventDataToEventBox(events)
+    }
     eventBoxes
   }
 

@@ -88,7 +88,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
     val listOfEvents: Option[List[EventBox]] = userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) => {
-        eventService.getEventBoxesPage(profile.getOwner, page)
+        eventService.getEventBoxes(profile.getOwner, page)
       }
       case None => { None }
     }

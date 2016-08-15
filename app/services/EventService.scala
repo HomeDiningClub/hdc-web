@@ -453,36 +453,30 @@ class EventService @Inject()(val template: Neo4jTemplate,
     )
   }
 
+  def mapEventDataToEventBox(list: List[EventData]): Option[List[EventBox]] = {
 
-  def getEventBoxes(user: UserCredential): Option[List[EventBox]] = withTransaction(template){
-    // Without paging
-    this.getEventBoxesPage(user, 0)
+
   }
 
-  def getEventBoxesPage(user: UserCredential, pageNo: Integer): Option[List[EventBox]] = withTransaction(template){
-
-    // With paging
-    // 0 current page, 6 number of items for each page
-
-    val list = eventRepository.findEvents(user.objectId.toString, new PageRequest(pageNo, 6))
-    val iterator = list.iterator()
+  def mapEventDataToEventBox(list: Page[EventData]): Option[List[EventBox]] = {
     var eventList : ListBuffer[EventBox] = new ListBuffer[EventBox]
-    val location = user.getUserProfile.getLocations.asScala.headOption match {
-      case None => None
-      case Some(countyTag) => Some(countyTag.county.name)
-    }
-    while(iterator.hasNext) {
 
-      val obj = iterator.next()
+    for(obj <- list.asScala){
 
       // Rating
-//      val v = obj.getRating() match {
-//        case null => "0.0"
-//        case _ => obj.getRating()
-//      }
+      //      val v = obj.getRating() match {
+      //        case null => "0.0"
+      //        case _ => obj.getRating()
+      //      }
 
       // Convert string to double, round to Int and convert to Int
-//      val ratingValue : Int = v.toDouble.round.toInt
+      //      val ratingValue : Int = v.toDouble.round.toInt
+
+      // County
+      val location = obj.getCountyName() match {
+        case null => None
+        case countyName => Some(countyName)
+      }
 
       // Link
       val linkToEvent = (obj.getprofileLinkName(), obj.getLinkName()) match {
@@ -502,14 +496,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
         linkToEvent,
         obj.getName(),
         obj.getpreAmble() match {
-        case "" | null =>
-          var retBody = Helpers.removeHtmlTags(obj.getMainBody())
+          case "" | null =>
+            var retBody = Helpers.removeHtmlTags(obj.getMainBody())
 
-          if (retBody.length > 125)
-            retBody = retBody.substring(0, 125) + "..."
+            if (retBody.length > 125)
+              retBody = retBody.substring(0, 125) + "..."
 
-          Some(retBody)
-        case content => Some(content)
+            Some(retBody)
+          case content => Some(content)
         },
         mainImage,
         obj.getPrice() match {
@@ -517,7 +511,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
           case p => p
         },
         location,
-//        ratingValue,
+        //ratingValue,
         list.getTotalElements,
         list.hasNext,
         list.hasPrevious,
@@ -532,6 +526,18 @@ class EventService @Inject()(val template: Neo4jTemplate,
       None
     else
       Some(returnBoxes)
+
+  }
+
+  def getEventBoxes(user: UserCredential): Option[List[EventBox]] = withTransaction(template){
+    // Without paging
+    this.getEventBoxes(user, 0)
+  }
+
+  def getEventBoxes(user: UserCredential, pageNo: Integer): Option[List[EventBox]] = withTransaction(template){
+    // With paging - 0 current page, 6 number of items for each page
+    val pagedListJava = eventRepository.findEvents(user.objectId.toString, new PageRequest(pageNo, 6))
+    mapEventDataToEventBox(pagedListJava)
   }
 
   // Use .right.get to fetch Option[Page[EventData]]
