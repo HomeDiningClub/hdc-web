@@ -3,7 +3,7 @@ package models.viewmodels
 import java.util.UUID
 
 // Used on the Start page, collects profile information and user information
-case class StartPageBox (
+case class ProfileBox (
     objectId: Option[UUID],
     linkToProfile: String,
     fullName: String,

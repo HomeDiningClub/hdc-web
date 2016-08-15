@@ -1,24 +1,24 @@
-@(boxes: List[models.viewmodels.StartPageBox] = Nil)(implicit messages: Messages)
+@(boxes: List[models.viewmodels.EventBox] = Nil)(implicit messages: Messages)
 
-@if(!boxes.isEmpty) {
-    @for(box: models.viewmodels.StartPageBox <- boxes){
+@if(boxes.nonEmpty) {
+    @for(box: models.viewmodels.EventBox <- boxes){
 
         <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-0">
-            <a href="@box.linkToProfile">
+            <a href="@box.linkToEvent">
                 @defining( if(box.mainImage.isDefined){ "style=\"background-image: url('" + box.mainImage.get + "');background-size:100%;\"" } else { "" } ) { mainImage: String =>
                 <div class="thumbnail panel-startpage hover-green-dropshadow" @Html(mainImage)>
-                    @if(box.isHost){<div class="host-level-icon" data-toggle="tooltip" data-placement="right" title="@Messages("level.host.description", box.fullName)"><span class="icon"></span></div>}
                     <div class="body">
                         @shared.hostImageCircle(box.userImage.getOrElse(""),cssClassWrapper = "white-border drop-shadow")
-                        <h2>@box.fullName</h2>
+                        <h2>@box.name</h2>
                         <hr>
                         @if(box.location.nonEmpty) {
                             <p class="location">@Html(Messages("startpage.boxes.location", box.location.get))</p>
                         }else {
-                        <p><br></p>
+                            <p><br></p>
                         }
-                        @shared.grade(inputId = "host-grade", initialValue = box.userRating, disabled = true, size = "xxs")
-                        @*<div class="host-level-icon level-guest01" data-toggle="tooltip" data-placement="right" title="@Messages("level.guest.description")"><span>@Messages("level.guest.header")</span></div>*@
+                        <p>@box.preAmble</p>
+                        <p>@box.price</p>
+                        @*shared.grade(inputId = "host-grade", initialValue = box.userRating, disabled = true, size = "xxs")*@
                     </div>
                 </div>
                 }

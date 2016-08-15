@@ -453,15 +453,11 @@ class EventService @Inject()(val template: Neo4jTemplate,
     )
   }
 
-  def mapEventDataToEventBox(list: List[EventData]): Option[List[EventBox]] = {
-
-
-  }
 
   def mapEventDataToEventBox(list: Page[EventData]): Option[List[EventBox]] = {
     var eventList : ListBuffer[EventBox] = new ListBuffer[EventBox]
 
-    for(obj <- list.asScala){
+    for(evtData <- list.asScala){
 
       // Rating
       //      val v = obj.getRating() match {
@@ -473,31 +469,37 @@ class EventService @Inject()(val template: Neo4jTemplate,
       //      val ratingValue : Int = v.toDouble.round.toInt
 
       // County
-      val location = obj.getCountyName() match {
+      val location = evtData.getCountyName() match {
         case null => None
         case countyName => Some(countyName)
       }
 
       // Link
-      val linkToEvent = (obj.getprofileLinkName(), obj.getLinkName()) match {
+      val linkToEvent = (evtData.getprofileLinkName(), evtData.getLinkName()) match {
         case (null|null) | ("","") => "#"
         case (profLink,evtLink) => routes.EventPageController.viewEventByNameAndProfile(profLink, evtLink).url
       }
 
       // Image
-      var mainImage = Some("/assets/images/event/event-box-default.png")
-      if(obj.getMainImage().iterator().hasNext){
-        mainImage = Some(routes.ImageController.eventBox(obj.getMainImage().iterator().next()).url)
+      var mainImage: Option[String] = Some("/assets/images/event/event-box-default.png")
+      if(evtData.getMainImage().asScala.nonEmpty){
+        mainImage = Some(routes.ImageController.eventBox(evtData.getMainImage().asScala.head).url)
+      }
+
+      // User image
+      var userImage: Option[String] = None
+      if(evtData.getUserImage().asScala.nonEmpty){
+        userImage = Some(routes.ImageController.userThumb(evtData.getUserImage().asScala.head).url)
       }
 
       // Build return-list
       var event = EventBox(
-        Some(UUID.fromString(obj.getobjectId())),
+        Some(UUID.fromString(evtData.getobjectId())),
         linkToEvent,
-        obj.getName(),
-        obj.getpreAmble() match {
+        evtData.getName(),
+        evtData.getpreAmble() match {
           case "" | null =>
-            var retBody = Helpers.removeHtmlTags(obj.getMainBody())
+            var retBody = Helpers.removeHtmlTags(evtData.getMainBody())
 
             if (retBody.length > 125)
               retBody = retBody.substring(0, 125) + "..."
@@ -506,7 +508,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
           case content => Some(content)
         },
         mainImage,
-        obj.getPrice() match {
+        userImage,
+        evtData.getPrice() match {
           case null => 0
           case p => p
         },

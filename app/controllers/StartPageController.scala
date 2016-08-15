@@ -2,12 +2,14 @@ package controllers
 
 import javax.inject.{Named, Inject}
 
+import models.event.EventData
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Controller
 import play.api.data._
 import play.api.data.Forms._
-import models.viewmodels.StartPageBox
+import models.viewmodels.{EventBox, ProfileBox}
 import org.springframework.beans.factory.annotation.Autowired
 import securesocial.core.SecureSocial
 import services._
@@ -45,8 +47,8 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
 
     val isHost = if(fHost == 1) true else false
 
-    val startPageBoxes = getProfileBoxes(fTag, fCounty, isHost, 8)
-    val startPageEventBoxes = getEventBoxes(fTag, fCounty, 8)
+    val profileBoxes = getProfileBoxes(fTag, fCounty, isHost, 8)
+    val eventBoxes = getEventBoxes(fTag, fCounty, 8)
 
     val form = SearchStartPageForm.apply(
       fCounty match { case null | "" => None case item => Some(item)},
@@ -59,35 +61,36 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
       optionsFoodAreas = tagWordService.getFoodAreas,
       optionsLocationAreas = countyService.getCounties,
       optionsIsHost = if(isHost) Some(true) else Some(false),
-      startPageBoxes = startPageBoxes,
+      eventBoxes = eventBoxes,
+      profileBoxes = profileBoxes,
       reviewBoxes = ratingService.getUserReviewBoxesStartPage(4), //TODO: Fix reviewBoxes speed
       asideNews = contentService.getAsideNewsItems,
       currentUser = request.user
     ))
   }
 
-  private def getEventBoxes(boxFilterTag: String, boxFilterCounty: String, maxNr: Int = 8): Option[List[models.event.EventData]] = {
+  private def getEventBoxes(boxFilterTag: String, boxFilterCounty: String, maxNr: Int = 8): Option[List[EventBox]] = {
 
     val fetchedTag: Option[TagWord] = verifySelectedTagWord(boxFilterTag)
     val fetchedCounty: Option[County] = verifySelectedCounty(boxFilterCounty)
 
-    val eventBoxes: Option[List[models.event.EventData]] = eventService.getEventsFiltered(fetchedTag, fetchedCounty, None, maxNr).left.get match {
+    val eventBoxes: Option[List[EventBox]] = eventService.getEventsFiltered(fetchedTag, fetchedCounty, Some(1), maxNr).right.get match {
       case None => None
       case Some(events) => eventService.mapEventDataToEventBox(events)
     }
     eventBoxes
   }
 
-  private def getProfileBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, maxNr: Int = 8): Option[List[StartPageBox]] = {
+  private def getProfileBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, maxNr: Int = 8): Option[List[ProfileBox]] = {
 
     val fetchedTag: Option[TagWord] = verifySelectedTagWord(boxFilterTag)
     val fetchedCounty: Option[County] = verifySelectedCounty(boxFilterCounty)
 
-    val startPageBoxes: Option[List[StartPageBox]] = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost).asInstanceOf[Option[List[UserProfile]]] match {
+    val profBoxes: Option[List[ProfileBox]] = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost).asInstanceOf[Option[List[UserProfile]]] match {
       case None => None
       case Some(profile) => Some(profile.filter(prof => prof.getMainImage != null).take(maxNr).map {
         userProfile: UserProfile =>
-          StartPageBox(
+          ProfileBox(
             objectId = Some(userProfile.objectId),
             linkToProfile = userProfile.profileLinkName match {
               case null => ""
@@ -112,7 +115,7 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
           )
       })
     }
-    startPageBoxes
+    profBoxes
   }
 
 

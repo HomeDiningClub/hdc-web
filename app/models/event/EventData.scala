@@ -38,5 +38,8 @@ trait EventData {
 
   @ResultColumn("TagName")
   def getTagName() : String
+
+  @ResultColumn("UserImage")
+  def getUserImage() : util.List[String]
 }
 

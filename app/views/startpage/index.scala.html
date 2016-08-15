@@ -2,7 +2,8 @@
         optionsFoodAreas: Option[Seq[(String,String)]],
         optionsLocationAreas: Option[Seq[(String,String)]] = None,
         optionsIsHost: Option[Boolean] = None,
-        startPageBoxes: Option[List[models.viewmodels.StartPageBox]],
+        eventBoxes: Option[List[models.viewmodels.EventBox]],
+        profileBoxes: Option[List[models.viewmodels.ProfileBox]],
         reviewBoxes: Option[List[models.viewmodels.ReviewBox]],
         asideNews: Option[List[models.content.ContentPage]],
         currentUser: Option[UserCredential])(implicit request: RequestHeader, messages: Messages)
@@ -105,10 +106,21 @@
                         }
                     </div>
                 </div>
-                <!-- Boxes -->
+
+                <!-- Event boxes -->
                 <div class="row">
-                    @if(!startPageBoxes.isEmpty){
-                        @startpage.startpageBox(startPageBoxes.get)
+                    @if(eventBoxes.isDefined){
+                        @startpage.eventBox(eventBoxes.get)
+                    }else{
+                        <div class="col-xs-12 text-center">@play.twirl.api.Html(Messages("startpage.boxes.not-found", routes.StartPageController.index().url))</div>
+                    }
+                    <div class="col-xs-12 text-center"><a class="btn btn-primary btn-lg btn-big-padding btn-cta" role="button" href="@routes.BrowsePageController.index()">@Messages("startpage.main.browse.link.text")</a></div>
+                </div>
+
+                <!-- Profile boxes -->
+                <div class="row">
+                    @if(profileBoxes.isDefined){
+                        @startpage.profileBox(profileBoxes.get)
                     }else{
                         <div class="col-xs-12 text-center">@play.twirl.api.Html(Messages("startpage.boxes.not-found", routes.StartPageController.index().url))</div>
                     }

@@ -512,10 +512,10 @@ event.price.currency=SEK
 event.price.currency.end=:-
 event.price.front.header=Pris
 event.price.front.description=/per person
-event.price.back.header=Inklud.
+event.price.back.header=Ingår?
 event.price.back.list.text-01=Allt enligt beskrivning
 event.price.back.list.text-02=Inga gömda avgifter
-event.price.back.list.text-03=5% går till HDC
+event.price.back.list.text-03=Du betalar hos värden
 event.price.back.list.text-04=Boka och njut!
 
 event.list.spaces-left=Platser kvar
