@@ -54,7 +54,13 @@ class HeaderController @Inject() (override implicit val env: SecureSocialRuntime
       val defMenuItem05 = MenuItem(
         name = Messages("header.main-menu.link.members-browse.text"),
         title = Messages("header.main-menu.link.members-browse.title"),
-        url = controllers.routes.BrowsePageController.index().url
+        url = controllers.routes.BrowsePageController.browseProfiles().url
+      )
+
+      val defMenuItem06 = MenuItem(
+        name = Messages("header.main-menu.link.events-browse.text"),
+        title = Messages("header.main-menu.link.events-browse.title"),
+        url = controllers.routes.BrowsePageController.browseEvents().url
       )
 
       // Define main items
@@ -76,6 +82,7 @@ class HeaderController @Inject() (override implicit val env: SecureSocialRuntime
         retMenuItemsListBuffer.appendAll(menuItemsList.get)
 
       retMenuItemsListBuffer.prepend(defMenuItem05)
+      retMenuItemsListBuffer.prepend(defMenuItem06)
       retMenuItemsListBuffer.prepend(defMenuItem01)
       retMenuItemsListBuffer.append(defMenuItem03)
       retMenuItemsListBuffer.append(defMenuItem04)

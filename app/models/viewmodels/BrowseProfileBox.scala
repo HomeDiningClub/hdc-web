@@ -3,7 +3,7 @@ package models.viewmodels
 import java.util.UUID
 import play.api.libs.json._
 
-case class BrowseBox (
+case class BrowseProfileBox (
     objectId: Option[UUID],
     linkToProfile: String,
     fullName: String,
@@ -19,11 +19,11 @@ case class BrowseBox (
     //totalPages: Int
 )
 
-object BrowseBox {
+object BrowseProfileBox {
 
-  implicit object BrowseBoxJSONFormat extends Format[BrowseBox] {
+  implicit object BrowseBoxJSONFormat extends Format[BrowseProfileBox] {
 
-    def writes(jsonObject: BrowseBox): JsValue = {
+    def writes(jsonObject: BrowseProfileBox): JsValue = {
       val jsonCaseSeq = Seq(
         "objectId"      -> JsString(jsonObject.objectId.getOrElse("").toString),
         "linkToProfile" -> JsString(jsonObject.linkToProfile),
@@ -41,8 +41,8 @@ object BrowseBox {
       JsObject(jsonCaseSeq)
     }
 
-    def reads(json: JsValue): JsResult[BrowseBox] = {
-      JsSuccess(BrowseBox(None, "", "", None, None, None, None, 0, false))
+    def reads(json: JsValue): JsResult[BrowseProfileBox] = {
+      JsSuccess(BrowseProfileBox(None, "", "", None, None, None, None, 0, false))
     }
 
   }

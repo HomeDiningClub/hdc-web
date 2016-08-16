@@ -1,0 +1,34 @@
+@(searchForm: Form[models.formdata.SearchFilterForm],
+        optionsFoodAreas: Option[Seq[(String,String)]],
+        optionsLocationAreas: Option[Seq[(String,String)]] = None,
+        optionsIsHost: Option[Boolean] = None
+        )(implicit request: RequestHeader, messages: Messages)
+
+@main(Messages("browse.profiles.title")) {
+    <div class="container maincontent-container">
+        <div class="row margin-top">
+            <!-- Filtering push -->
+            <div class="col-xs-12 col-sm-12 form-filter animated fadeIn">
+            @helper.form(action=routes.BrowsePageController.browseProfiles(), 'class -> "form-horizontal") {
+                <div class="form-group">
+                    @* @helper.inputText(searchForm("freeText"), '_label -> Messages("filterform.freetext")) *@
+                    @if(optionsFoodAreas.nonEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fTag"), optionsFoodAreas.get, '_label -> Messages("filterform.foodarea"), 'class -> "form-control") </div>}
+                    @if(optionsLocationAreas.nonEmpty){ <div class="col-xs-12 col-sm-4"> @helper.select(searchForm("fCounty"), optionsLocationAreas.get, '_label -> Messages("filterform.area"), 'class -> "form-control") </div> }
+                    @if(optionsIsHost.nonEmpty){ <div class="col-xs-12 col-sm-1"> @helper.checkbox(searchForm("fHost"), '_label -> Messages("filterform.is-host"), '_help -> "", '_showErrors -> false, 'class -> "") </div> }
+                    <div class="col-xs-12 col-sm-2 form-actions"><button class="btn btn-primary pull-right btn-filter" type="submit">@Messages("filterform.submit")</button></div>
+                </div>
+            }
+            </div>
+        </div>
+
+        <!-- Boxes -->
+        @defining(
+            if(searchForm("fHost").value.isDefined && searchForm("fHost").value.get.contains(searchForm("fHost").value.get)) {
+                1
+            }else{
+                0
+            }) { isHostValue: Int =>
+                @browse.browseProfileList(searchForm("fTag").value, searchForm("fCounty").value, isHostValue, 0)
+        }
+    </div>
+}

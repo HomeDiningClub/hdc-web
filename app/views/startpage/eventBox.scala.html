@@ -16,8 +16,10 @@
                         }else {
                             <p><br></p>
                         }
-                        <p>@box.preAmble</p>
-                        <p>@box.price</p>
+                        <div class="price-wrapper">
+                            <span class="price">@box.price@Messages("event.price.currency.end")</span>
+                            <span class="price-info">@Messages("event.price.front.description")</span>
+                        </div>
                         @*shared.grade(inputId = "host-grade", initialValue = box.userRating, disabled = true, size = "xxs")*@
                     </div>
                 </div>

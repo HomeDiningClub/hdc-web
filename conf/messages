@@ -25,6 +25,8 @@ header.main-menu.link.instagram.text=Instagram
 header.main-menu.link.instagram.title=Bli hungrig över våra bilder på Instagram
 header.main-menu.link.members-browse.text=Medlemmar
 header.main-menu.link.members-browse.title=Sök bland våra Medlemmar
+header.main-menu.link.events-browse.text=Bjudningar
+header.main-menu.link.events-browse.title=Sök bland våra Bjudningar
 
 header.link.host-profile-header={0}
 header.link.host-profile=Gå till min sida
@@ -103,8 +105,9 @@ startpage.main.cta.text=Bli medlem idag!
 startpage.main.cta.link.text=Registrera dig
 
 startpage.main.browse.link.text=Se fler medlemmar
+startpage.main.browse-event.link.text=Se fler bjudningar
 
-startpage.boxes.not-found=Kunde inte hitta några profiler som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
+startpage.boxes.not-found=Kunde inte hitta något som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
 startpage.boxes.location=<em>Finns i {0}</em>
 
 startpage.reviews.users.header=Omdömen om värdar
@@ -146,8 +149,9 @@ wizard.pager.prev=Föreg.
 wizard.pager.next=Nästa
 
 # Browse members page
-browse.title=Bläddra medlemmar
-browse.boxes.not-found=Kunde inte hitta några profiler som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
+browse.profiles.title=Bläddra medlemmar
+browse.events.title=Bläddra medlemmar
+browse.boxes.not-found=Kunde inte hitta något som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
 browse.boxes.location=<em>Finns i {0}</em>
 
 
@@ -383,7 +387,7 @@ profile.groupsize.max=Maximalt antal gäster
 profile.form.unacceptedcontent=Profilen innehåller felaktig värden:
 profile.payment.label=Betalning:
 profile.options.moved-info.header=Vart är resten av mina uppgifter?
-profile.options.moved-info=Dina profiluppgifter har tagits bort och flyttats till <strong>Bjudningar</strong>, så du kan bestämma dessa per event istället. Bra, eller hur?
+profile.options.moved-info=Dina profiluppgifter har tagits bort och flyttats till <strong>Bjudningar</strong>.
 profile.options.childFfriendly.label=Barnvänligt
 profile.options.handicapFriendly.label=Handikappvänligt
 profile.options.havePets.label=Husdjur finns?

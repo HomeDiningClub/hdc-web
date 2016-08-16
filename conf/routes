@@ -13,8 +13,10 @@ GET         /header/mainmenu.ajax                                @controllers.He
 GET         /header/quicklinks.ajax                              @controllers.HeaderController.quickLinks
 
 # Browse page
-GET         /browse                                              @controllers.BrowsePageController.index(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0)
-GET         /browse.json                                         @controllers.BrowsePageController.getBrowseBoxesPagedJSON(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0, page: Int ?= 0)
+GET         /browse/event                                        @controllers.BrowsePageController.browseEvents(fTag: String ?= "", fCounty: String ?= "")
+GET         /browse/event.json                                   @controllers.BrowsePageController.getBrowseEventBoxesPagedJSON(fTag: String ?= "", fCounty: String ?= "", page: Int ?= 0)
+GET         /browse/profile                                      @controllers.BrowsePageController.browseProfiles(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0)
+GET         /browse/profile.json                                 @controllers.BrowsePageController.getBrowseProfileBoxesPagedJSON(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0, page: Int ?= 0)
 
 # Content pages
 GET         /content/:contentName                                @controllers.ContentPageController.viewContentByName(contentName: String)
