@@ -33,7 +33,7 @@ $(document).ready(function(){
         l = l + "<h2>" + value.name + "</h2>";
         l = l + "<div class='location'>" + value.location + "</div>";
         l = l + "<div class='preamble'>" + value.preAmble + "</div>";
-        l = l + "<button class='btn btn-lg btn-orange btn-booking'><span class='glyphicon glyphicon-book'></span>&nbsp;" + '@Messages("event.button.select")' + "</button>";
+        l = l + "<button class='btn btn-lg btn-orange btn-booking'>" + '@Messages("event.button.select")' + "&nbsp;<span class='glyphicon glyphicon-ok'></span></button>";
         l = l + "</div>";
 
         l = l + "</div>";
@@ -52,10 +52,10 @@ $(document).ready(function(){
 <div id="event-list"></div>
 <div id="pagination-event" class="row pagination-hdc">
     <div class="col-xs-6 col-sm-5">
-        <button class="btn btn-default pull-right result-next"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;@Messages("button.previous")</button>
+        <button class="btn btn-default pull-right result-prev"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;@Messages("button.previous")</button>
     </div>
     <div class="col-xs-2 hidden-xs text-center results-total"></div>
     <div class="col-xs-6 col-sm-5">
-        <button class="btn btn-default pull-left result-prev">@Messages("button.next") &nbsp; <span class="glyphicon glyphicon-arrow-right"></span></button>
+        <button class="btn btn-default pull-left result-next">@Messages("button.next") &nbsp; <span class="glyphicon glyphicon-arrow-right"></span></button>
     </div>
 </div>

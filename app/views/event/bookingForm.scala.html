@@ -31,7 +31,7 @@
                 @b3.select(eventBookingForm("book-guests"), helper.options(List.range(1, maxNrOfGuests + 1).map(_.toString)), '_label -> Messages("event.book.nr-of-guests.label"))
                 @b3.textarea(eventBookingForm("book-comment"), '_label -> Messages("event.book.comment.label"))
                 @b3.submit('class -> "btn btn-lg btn-orange") {
-                    <span class="glyphicon glyphicon-book"></span> @Messages("event.book.submit")
+                    @Messages("event.book.submit")&nbsp;<span class="glyphicon glyphicon-ok"></span>
                 }
             }
             </div>

@@ -48,14 +48,14 @@
         </div>
 
         <div class="row row-no-padding">
-            <div class="col-xs-12">
+            <div class="col-xs-12 no-min-height">
                 <nav>
                     <ul class="nav nav-tabs nav-tabs-profile">
                         <li class="active"><a data-toggle="tab" href="#home-tab" title="@Messages("profile.tabs.home.title")"><span class="glyphicon glyphicon-home"></span>&nbsp;@Messages("profile.tabs.home.name")</a></li>
                         <li><a data-toggle="tab" href="#blog-tab" title="@Messages("profile.tabs.blog.title")"><span class="glyphicon glyphicon-pencil"></span>&nbsp;@Messages("profile.tabs.blog.name")</a></li>
 
                         @if(isThisMyProfile) {
-                            <li><a data-toggle="tab" href="#bookings-tab" title="@Messages("profile.tabs.bookings.title")"><span class="glyphicon glyphicon-book"></span>&nbsp;@Messages("profile.tabs.bookings.name")</a></li>
+                            <li><a data-toggle="tab" href="#bookings-tab" title="@Messages("profile.tabs.bookings.title")"><span class="glyphicon glyphicon-tasks"></span>&nbsp;@Messages("profile.tabs.bookings.name")</a></li>
                             <li><a data-toggle="tab" href="#inbox-tab" title="@Messages("profile.tabs.inbox.title")"><span class="glyphicon glyphicon-envelope"></span>&nbsp;@Messages("profile.tabs.inbox.name")</a></li>
                             <li><a data-toggle="tab" href="#fav-tab" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
                             <li><a data-toggle="tab" href="#stats-tab" title="@Messages("profile.tabs.stats.title")"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;@Messages("profile.tabs.stats.name")</a></li>
@@ -69,7 +69,7 @@
 
         <div class="row row-with-padding bg-color">
             <div class="col-xs-12">
-                <div class="tab-content">
+                <div class="tab-content margin-bottom">
 
                     <!-- Home Tab -->
                     <div class="tab-pane tab-hdc fade in active" id="home-tab">
