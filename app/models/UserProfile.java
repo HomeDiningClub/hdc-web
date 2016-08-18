@@ -368,6 +368,8 @@ public class UserProfile extends AuditEntity implements IEditable {
     public Iterable<TaggedLocationUserProfile> getLocations() { return userLocationProfileTag; }
 
 
+    public Iterable<BookedEventDate> getBookedEventDates() { return bookedEventDates; }
+
     @Fetch
     public Iterable<BlogPost> getBlogPosts() { return blogPosts; }
 

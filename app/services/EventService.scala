@@ -119,6 +119,15 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+  def getBookingsMadeByMe(user: UserCredential): Option[List[EventBookingSuccess]] = withTransaction(template){
+    template.fetch(user.getUserProfile.getBookedEventDates).asScala.toList match {
+      case Nil => None
+      case items => Some(items.map { booking =>
+        mapEventBookingToEventBookingSuccess(None, booking)
+      })
+    }
+  }
+
   def getSortedEventImages(event: Event): Option[List[ContentFile]] = {
     event.getEventImages.asScala match {
       case Nil => None

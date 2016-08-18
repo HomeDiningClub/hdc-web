@@ -17,7 +17,9 @@
                 <h1><span class="glyphicon glyphicon-ok text-green"></span> @Messages("event.book.success.header")</h1>
                 <p>@Html(Messages("event.book.success.body", eventBookingSuccess.email))</p>
 
-                @views.html.event.bookingSuccessDetails(eventBookingSuccess)
+                <div class="big-margin-top">
+                    @views.html.event.bookingSuccessDetails(eventBookingSuccess)
+                </div>
 
                 <div class="row">
                     <div class="col-xs-12">

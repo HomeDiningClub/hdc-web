@@ -375,6 +375,8 @@ profile.tabs.edit-profile.title=Redigera dina profilinställningar
 profile.button.blog.add=Skapa nytt inlägg
 
 profile.bookings.no-entries=Du har inga bokningar.
+profile.bookings.bookings-to-my-events.header=Gästers bokningar
+profile.bookings.bookings-made-by-me.header=Mina bokningar
 profile.blog.no-entries={0} har inte adderat några inlägg i sin blogg än.
 profile.blog.tab.body.non-admin=Här kommer alla värdar att kunna skriva och blogga om sin mat och sina intressen.
 profile.firstname.label=Namn:

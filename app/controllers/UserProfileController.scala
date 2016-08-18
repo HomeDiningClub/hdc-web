@@ -189,7 +189,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         val myProfile = isThisMyProfile(profile)
         val recipeBoxes = recipeService.getRecipeBoxes(profileOwner)
         val eventBoxes = eventService.getEventBoxes(profileOwner)
-        val bookingsMadeByMe = if (myProfile) eventService.getBookingsMadeToMyEvents(profileOwner) else None // TODO: Fetch bookings done by me
+        val bookingsMadeByMe = if (myProfile) eventService.getBookingsMadeByMe(profileOwner) else None
         val bookingsMadeToMyEvents = if (myProfile) eventService.getBookingsMadeToMyEvents(profileOwner) else None
         val myReviewBoxes = if (myProfile) ratingService.getMyUserReviews(profileOwner) else None
         val myRecipeReviewBoxes = if (myProfile) ratingService.getMyUserReviewsAboutFood(profileOwner) else None

@@ -1,11 +1,18 @@
-@(list: Option[List[EventBookingSuccess]])(implicit messages: Messages)
+@(id: String, list: Option[List[EventBookingSuccess]])(implicit messages: Messages)
 
-@if(list.nonEmpty) {
-  <ul>
-    @for(b <- list.get){
-      <li>
-        @views.html.event.bookingSuccessDetails(b)
-      </li>
+    @if(list.nonEmpty) {
+        <div class="panel-group margin-top" id="@id" role="tablist" aria-multiselectable="true">
+        @for((b, i) <- list.get.zipWithIndex) {
+            <div class="panel panel-default">
+                <a class="booking-panel-title-link" role="button" data-toggle="collapse" data-parent="#@id" href="#@id-@i-item" aria-expanded="true" aria-controls="@id-@i-item">
+                    <div class="panel-heading" role="tab" id="@id-@i-head">
+                        <h4 class="panel-title booking-panel-title"><span class="glyphicon glyphicon-calendar green-icon"></span>&nbsp;@b.date @b.time (@b.eventName)</h4>
+                    </div>
+                </a>
+                <div id="@id-@i-item" class="panel-collapse collapse" role="tabpanel" aria-labelledby="@id-@i-head">
+                    @views.html.event.bookingSuccessDetails(b)
+                </div>
+            </div>
+        }
+        </div>
     }
-  </ul>
-}

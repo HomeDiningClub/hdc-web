@@ -1,23 +1,27 @@
 @(bookingsMadeToMyEvents: Option[List[EventBookingSuccess]], bookingsMadeByMe: Option[List[EventBookingSuccess]], isThisMyProfile: Boolean)(implicit messages: Messages)
 @if(isThisMyProfile) {
 
-    @if(bookingsMadeToMyEvents.nonEmpty) {
-        <div class="col-xs-12 col-sm-6">
-        @views.html.event.bookingList(bookingsMadeToMyEvents)
-        </div>
-    } else {
-        <div class="well well-hdc">
-        @Messages("profile.bookings.no-entries")
-        </div>
-    }
+    <div class="col-xs-12 col-sm-6">
+        <h2>@Messages("profile.bookings.bookings-made-by-me.header")</h2>
+        @if(bookingsMadeByMe.nonEmpty) {
+            @views.html.event.bookingList("my-bookings", bookingsMadeByMe)
+        } else {
+            <div class="well well-hdc">
+            @Messages("profile.bookings.no-entries")
+            </div>
+        }
+    </div>
 
-    @if(bookingsMadeByMe.nonEmpty) {
-        <div class="col-xs-12 col-sm-6">
-        @views.html.event.bookingList(bookingsMadeByMe)
-        </div>
-    } else {
-        <div class="well well-hdc">
-        @Messages("profile.bookings.no-entries")
-        </div>
-    }
+    <div class="col-xs-12 col-sm-6">
+        <h2>@Messages("profile.bookings.bookings-to-my-events.header")</h2>
+        @if(bookingsMadeToMyEvents.nonEmpty) {
+                @views.html.event.bookingList("bookings-to-my-events", bookingsMadeToMyEvents)
+        } else {
+            <div class="well well-hdc">
+                @Messages("profile.bookings.no-entries")
+            </div>
+        }
+    </div>
+
+
 }
