@@ -98,8 +98,8 @@
        $dateClone.addClass("margin-top");
        $dateClone.find(".eventdate-guid").attr("value","");
        $dateClone.find(".guestsbooked").attr("value","0");
-       $dateClone.find("input[type=date]").attr("value","").datetimepicker(event.data.datePickerOptions);
-       $dateClone.find("input[type=time]").attr("value","").datetimepicker(event.data.timePickerOptions);
+       $dateClone.find("input[type=date]").attr("value","").removeAttr("disabled").datetimepicker(event.data.datePickerOptions);
+       $dateClone.find("input[type=time]").attr("value","").removeAttr("disabled").datetimepicker(event.data.timePickerOptions);
        $dateClone.find(".remove-button").removeClass("hidden").on("click", removeDate);
        $dateContainer.append($dateClone);
        event.data.stepsForm.validate().resetForm();
@@ -229,7 +229,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="event-guest-info margin-bottom">
+                                        <div class="event-guest-info well well-sm well-hdc margin-bottom">
                                             @if(customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0){
                                                 <strong>@Messages("event.edit.add.date-time.header.booked-guests")</strong>
                                                 @Messages("event.edit.add.date-time.booked-guests-label", eventDatesField("guestsbooked").value.getOrElse(0).toString)<br>

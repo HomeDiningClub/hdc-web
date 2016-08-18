@@ -482,7 +482,7 @@ event.edit.add.date-time.remove-date=Ta bort
 event.edit.add.date-time.remove-date.guests-booked=Du kan inte ta bort en tid där gäster redan har bokat
 event.edit.add.date-time.header.date=Välj tidpunkt för din bjudning
 event.edit.add.date-time.header.booked-guests=Du har redan bokade gäster på denna tid
-event.edit.add.date-time.booked-guests-label=Antal gäster bokade: {0}
+event.edit.add.date-time.booked-guests-label=(gäster bokade: {0})
 event.edit.add.date-time.booked-guests-info=När du har redan har bokade gäster kan du inte ta bort eller ändra din tid.
 
 event.edit.add.main-image=Huvudsaklig bild för din bjudning
