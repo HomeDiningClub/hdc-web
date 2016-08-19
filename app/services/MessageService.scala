@@ -21,18 +21,8 @@ import scala.collection.JavaConverters._
 class MessageService @Inject()(val template: Neo4jTemplate,
                                val userCredentialRepository: UserCredentialRepository,
                                val messageRepository: MessageRepository) extends TransactionSupport {
-/*
-  @Autowired
-  private var template: Neo4jTemplate = _
 
-  @Autowired
-  private var userCredentialRepository: UserCredentialRepository = _
 
-  @Autowired
-  private var messageRepository: MessageRepository = _
-*/
-
-  //@Transactional(readOnly = false)
   def createRequest(user: UserCredential, host: UserCredential, date: Date, time: Date, numberOfGuests: Int, request: String, phone: Option[String]): Message = withTransaction(template){
 
     var msg: Message = new Message
@@ -45,9 +35,9 @@ class MessageService @Inject()(val template: Neo4jTemplate,
     msg
   }
 
-  //@Transactional(readOnly = false)
   def createResponse(user: UserCredential, guest: UserCredential, message: Message, response: String, phone: String): Message = withTransaction(template){
-    // message variabel är orginal meddelandet som man svarar på
+
+    // "message" variable is the message that you are responding to
     var msg: Message = new Message
     msg.createMessage(message.date, message.time, message.numberOfGuests, response, user, guest, user.firstName, guest.firstName, RelationshipTypesScala.REPLY.Constant, phone)
 
@@ -61,7 +51,6 @@ class MessageService @Inject()(val template: Neo4jTemplate,
     msg
   }
 
-  //@Transactional(readOnly = true)
   def findAllMessagesForUser(user: UserCredential): Option[List[Message]] = withTransaction(template){
     messageRepository.findAllMessagesForUser(user.objectId).asScala.toList match {
       case Nil => None
@@ -70,7 +59,6 @@ class MessageService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = true)
   def findOutgoingMessagesForUser(user: UserCredential): Option[List[Message]] = withTransaction(template){
     messageRepository.findOutgoingMessagesForUser(user.objectId).asScala.toList match {
       case Nil => None
@@ -79,7 +67,6 @@ class MessageService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = true)
   def findIncomingMessagesForUser(user: UserCredential): Option[List[Message]] = withTransaction(template){
     messageRepository.findIncomingMessagesForUser(user.objectId).asScala.toList match {
       case Nil => None
@@ -88,7 +75,6 @@ class MessageService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = true)
   def findById(id: UUID): Option[Message] = withTransaction(template){
     messageRepository.findByobjectId(id) match {
       case null => None
@@ -96,18 +82,15 @@ class MessageService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
   def saveMessage(newItem: Message): Message = withTransaction(template){
     val newResult = messageRepository.save(newItem)
     newResult
   }
 
-  //@Transactional(readOnly = true)
   def fetchMessage(message: Message): Message = withTransaction(template){
     template.fetch(message)
   }
 
-  //@Transactional(readOnly = false)
   def saveUserCredentials(newItem: UserCredential): UserCredential = withTransaction(template){
     val newResult = userCredentialRepository.save(newItem)
     newResult

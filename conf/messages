@@ -570,8 +570,17 @@ event.book.success.print=Skriv ut
 event.book.success.back=Tillbaka
 event.book.add.already-booked=Du kan inte boka samma event mer än 1 gång.
 event.book.add.too-many-bookings=Kan inte slutföra bokningen, för många gäster på detta datum.
-event.book.success.email.subject=Bokning genomförd {0}
-event.book.success.email.body=Din bokning är slutförd, betalning genomförs hos värden.
+event.book.success.to-guest.email.subject=Bokning genomförd {0}
+event.book.success.to-guest.email.body.part01=Din bokning är slutförd, betalning genomförs hos värden. Värden har fått dina kontaktuppgifter och tar kontakt vid eventuella ändringar.
+event.book.success.to-guest.email.body.part02=Vi på Home dining club hoppas att er kväll blir lyckad!
+event.book.success.to-host.email.subject=En bokning är genomförd på bjudning: {0}
+event.book.success.to-host.email.body.part01=En bokning är slutförd. Se detaljer om bokningen vid fliken {0}. <br>Ett meddelande finns också i din {1}, om du behöver kontakta din gäst.
+event.book.success.to-host.email.body.link.bookings=bokningar
+event.book.success.to-host.email.body.link.inbox=inbox
+event.book.success.to-host.email.body.part02=Vi på Home dining club hoppas att er kväll blir lyckad!
+event.book.success.to-host.inbox.body.part01=Du har fått en bokning på din bjudning: {0}
+event.book.success.to-host.inbox.body.part02=Kommentar ifrån bokaren:<br> {0}
+event.book.success.to-host.inbox.body.part03=Se mer detaljer under fliken "Bokningar".
 
 event.suggest.date=Datum
 event.suggest.time=Klockan
@@ -592,7 +601,9 @@ event.suggest.success.nr-of-guests=Antal gäster
 event.suggest.success.print=Skriv ut förslag
 event.suggest.success.back=Tillbaka
 event.suggest.email.subject=Du har ett förslag till bokning!
-event.suggest.email.body=En gäst på HDC har föreslagit att boka ett datum för bjudning: {0}
+event.suggest.email.body.part01=En gäst på HDC har föreslagit ett datum för din bjudning: {0}
+event.suggest.email.body.part02=För att svara på förfrågan, logga in och svara via din {0}, skapa ett passande datum för dina gäster och informera dem om att de kan boka denna tid.
+event.suggest.email.body.part02.link=Inkorg
 
 # Blog
 blog.title={0} - {1} - Home dining club - Blogg

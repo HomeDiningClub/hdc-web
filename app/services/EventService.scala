@@ -10,6 +10,8 @@ import org.springframework.data.neo4j.conversion.ResultConverter
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.libs.mailer.Email
+import play.api.mvc.RequestHeader
+import play.twirl.api.Html
 import traits.TransactionSupport
 import scala.language.existentials
 import repositories._
@@ -33,8 +35,9 @@ import customUtils.formhelpers.Formats._
 class EventService @Inject()(val template: Neo4jTemplate,
                              val eventRepository: EventRepository,
                              val eventDateRepository: EventDateRepository,
-                              val recipeRepository: RecipeRepository,
+                             val recipeRepository: RecipeRepository,
                              val bookedEventDateRepository: BookedEventDateRepository,
+                             val messageService: MessageService,
                              val mailService: MailService,
                              val messagesApi: MessagesApi) extends TransactionSupport with I18nSupport {
 
@@ -110,20 +113,20 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  def getBookingsMadeToMyEvents(user: UserCredential): Option[List[EventBookingSuccess]] = {
+  def getBookingsMadeToMyEvents(user: UserCredential, baseUrl: String): Option[List[EventBookingSuccess]] = {
     this.findAllBookedDatesInAllEventsForOwner(user) match {
       case None => None
       case Some(items) => Some(items.map { booking =>
-        mapEventBookingToEventBookingSuccess(None, booking)
+        mapEventBookingToEventBookingSuccess(None, booking, baseUrl)
       })
     }
   }
 
-  def getBookingsMadeByMe(user: UserCredential): Option[List[EventBookingSuccess]] = withTransaction(template){
+  def getBookingsMadeByMe(user: UserCredential, baseUrl: String): Option[List[EventBookingSuccess]] = withTransaction(template){
     template.fetch(user.getUserProfile.getBookedEventDates).asScala.toList match {
       case Nil => None
       case items => Some(items.map { booking =>
-        mapEventBookingToEventBookingSuccess(None, booking)
+        mapEventBookingToEventBookingSuccess(None, booking, baseUrl)
       })
     }
   }
@@ -334,23 +337,29 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  def addSuggestion(currentUser: UserCredential, event: Event, suggDate: LocalDate, suggTime: LocalTime, nrOfGuestsToBeBooked: Integer, comment: Option[String]): EventDateSuggestionSuccess = withTransaction(template){
+  def addSuggestionAndSendEmail(userSendingSuggestion: UserCredential, event: Event, suggDate: LocalDate, suggTime: LocalTime, nrOfGuestsToBeBooked: Integer, comment: Option[String], baseUrl: String): EventDateSuggestionSuccess = withTransaction(template){
     //val selectedDate = Helpers.buildDateFromDateAndTime(suggDate, suggTime)
 
     val successValues = EventDateSuggestionSuccess(
       eventName = event.getName,
-      eventLink = event.getLink,
+      eventLink = baseUrl + routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName, event.getLink).url,
       date = suggDate,
       time = suggTime,
       nrOfGuests = nrOfGuestsToBeBooked,
       comment = comment,
       hostEmail = event.getOwnerProfile.getOwner.emailAddress,
-      guestEmail = currentUser.emailAddress
+      host = event.getOwnerProfile.getOwner,
+      guestEmail = userSendingSuggestion.emailAddress
     )
 
-    this.createSuggestionEmail(successValues)
+    // Send a message to Hosts-inbox
+    this.sendSuggestionMessageToHostInbox(userSendingSuggestion, event, suggDate, suggTime, nrOfGuestsToBeBooked, comment)
+
+    // Extra mail to host
+    this.sendSuggestionSuccessEmailToHost(successValues, baseUrl)
     successValues
   }
+
 
   def addBooking(currentUser: UserCredential, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String]): BookedEventDate = withTransaction(template){
     val newBooking: BookedEventDate = new BookedEventDate(currentUser.getUserProfile,nrOfGuestsToBeBooked,eventDate, comment.getOrElse(""))
@@ -358,17 +367,55 @@ class EventService @Inject()(val template: Neo4jTemplate,
     newBooking
   }
 
-  def addBookingAndSendEmail(currentUser: UserCredential, event: Event, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String]): EventBookingSuccess ={
+  def addBookingAndSendEmail(currentUser: UserCredential, event: Event, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String], baseUrl: String): EventBookingSuccess ={
     val newBooking = this.addBooking(currentUser = currentUser, eventDate = eventDate, nrOfGuestsToBeBooked = nrOfGuestsToBeBooked, comment = comment)
-    val successValues: EventBookingSuccess = mapEventBookingToEventBookingSuccess(Some(currentUser), newBooking)
+    val successValues: EventBookingSuccess = mapEventBookingToEventBookingSuccess(Some(currentUser), newBooking, baseUrl)
 
-    // Sending it to email
-    this.createBookingSuccessEmail(successValues)
+    // Send a message to Hosts-inbox
+    this.sendBookingSuccessMessageToHostInbox(currentUser, event, eventDate, nrOfGuestsToBeBooked, comment, successValues)
+
+    // Sending Host a notice email
+    this.sendBookingSuccessEmailToHost(successValues, baseUrl)
+
+    // Sending Guest a copy to email
+    this.sendBookingSuccessEmailToGuest(successValues)
 
     successValues
   }
 
-  private def mapEventBookingToEventBookingSuccess(currentUser: Option[UserCredential], booking: BookedEventDate): EventBookingSuccess = withTransaction(template){
+  private def sendBookingSuccessMessageToHostInbox(currentUser: UserCredential, event: Event, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String], successValues: EventBookingSuccess) {
+    messageService.createRequest(
+      user = currentUser,
+      host = event.getOwnerProfile.getOwner,
+      date = Helpers.castLocalDateToDate(eventDate.getEventDateTime.toLocalDate),
+      time = Helpers.castLocalTimeToDate(eventDate.getEventDateTime.toLocalTime),
+      numberOfGuests = nrOfGuestsToBeBooked,
+      request = Html(Messages("event.book.success.to-host.inbox.body.part01", successValues.eventName) +
+        "<br><br>" +
+        Messages("event.book.success.to-host.inbox.body.part02", comment.getOrElse("")) +
+        "<br><br>" +
+        Messages("event.book.success.to-host.inbox.body.part03")).toString(),
+      phone = currentUser.getPhone match {
+        case null | "" => None
+        case p => Some(p)
+      })
+  }
+
+  private def sendSuggestionMessageToHostInbox(userSendingSuggestion: UserCredential, event: Event, suggDate: LocalDate, suggTime: LocalTime, nrOfGuestsToBeBooked: Integer, comment: Option[String]) {
+    messageService.createRequest(
+      user = userSendingSuggestion,
+      host = event.getOwnerProfile.getOwner,
+      date = Helpers.castLocalDateToDate(suggDate),
+      time = Helpers.castLocalTimeToDate(suggTime),
+      numberOfGuests = nrOfGuestsToBeBooked,
+      request = comment.getOrElse(""),
+      phone = userSendingSuggestion.getPhone match {
+        case null | "" => None
+        case p => Some(p)
+      })
+  }
+
+  private def mapEventBookingToEventBookingSuccess(currentUser: Option[UserCredential], booking: BookedEventDate, baseUrl: String): EventBookingSuccess = withTransaction(template){
 
     // This might be slow
     val event = template.fetch(booking.eventDate.getOwnerEvent)
@@ -376,7 +423,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
     val successValues = EventBookingSuccess(
       bookingNumber = booking.objectId,
       eventName = event.getName,
-      eventLink = controllers.routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName, event.getLink).url,
+      eventLink = baseUrl + routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName, event.getLink).url,
+      host = event.getOwnerProfile.getOwner,
       mealType = event.getMealType match {
         case null => None
         case mt => Some(mt.name)
@@ -444,24 +492,59 @@ class EventService @Inject()(val template: Neo4jTemplate,
     this.save(event)
   }
 
-  def createBookingSuccessEmail(successValues: EventBookingSuccess): Email = {
+  def sendBookingSuccessEmailToGuest(successValues: EventBookingSuccess): Email = {
+
+    // To guest
+    val msgBody = Html(Messages("event.book.success.to-guest.email.body.part01") +
+      "<br><br>" +
+      views.html.event.bookingSuccessDetails(successValues).toString() +
+      "<br><br>" +
+      Messages("event.book.success.to-guest.email.body.part02")).toString()
+
     mailService.createAndSendMailNoReply(
-      subject =  Messages("event.book.success.email.subject", successValues.eventName),
-      message = Messages("event.book.success.email.body") + views.html.event.bookingSuccessDetails(successValues).toString(),
+      subject =  Messages("event.book.success.to-guest.email.subject", successValues.eventName),
+      message = msgBody,
       recipient = EmailAndName(successValues.email,successValues.email),
       from = mailService.getDefaultAnonSender
     )
+
   }
 
-  def createSuggestionEmail(successValues: EventDateSuggestionSuccess): Email = {
+  def sendBookingSuccessEmailToHost(successValues: EventBookingSuccess, baseUrl: String): Email = {
+
+    // To Host
+    val path = routes.UserProfileController.viewProfileByName(successValues.host.getUserProfile.profileLinkName).url
+    val linkToBookings = "<a href='" + (baseUrl + path) + "#bookings-tab'>" + Messages("event.book.success.to-host.email.body.link.bookings") + "</a>"
+    val linkToInbox = "<a href='" + (baseUrl + path) + "#inbox-tab'>" + Messages("event.book.success.to-host.email.body.link.inbox") + "</a>"
+    val msgBody = Html(Messages("event.book.success.to-host.email.body.part01", linkToBookings, linkToInbox)
+      + "<br><br>" +
+      views.html.event.bookingSuccessDetails(successValues).toString()
+      + "<br><br>" + Messages("event.book.success.to-host.email.body.part02")).toString
+
+    mailService.createAndSendMailNoReply(
+      subject =  Messages("event.book.success.to-host.email.subject", successValues.eventName),
+      message = msgBody,
+      recipient = EmailAndName(successValues.host.emailAddress,successValues.host.emailAddress),
+      from = mailService.getDefaultAnonSender
+    )
+
+  }
+
+  def sendSuggestionSuccessEmailToHost(successValues: EventDateSuggestionSuccess, baseUrl: String): Email = {
+
+    // To host
+    val path = routes.UserProfileController.viewProfileByName(successValues.host.getUserProfile.profileLinkName).url
+    val msgBody = Messages("event.suggest.email.body.part01", successValues.eventName) +
+      views.html.event.suggestionSuccessDetails(successValues).toString() +
+      Messages("event.suggest.email.body.part02", "<a href='" + (baseUrl + path) + "#inbox-tab'>" + Messages("event.suggest.email.body.part02.link") + "</a>")
+
     mailService.createAndSendMailNoReply(
       subject =  Messages("event.suggest.email.subject"),
-      message = Messages("event.suggest.email.body", successValues.eventName) + views.html.event.suggestionSuccessDetails(successValues).toString(),
+      message = msgBody,
       recipient = EmailAndName(successValues.hostEmail,successValues.hostEmail),
       from = mailService.getDefaultAnonSender
     )
   }
-
 
   def mapEventDataToEventBox(list: Page[EventData]): Option[List[EventBox]] = {
     var eventList : ListBuffer[EventBox] = new ListBuffer[EventBox]

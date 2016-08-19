@@ -3,11 +3,13 @@ package models.viewmodels
 import java.time.{LocalTime, LocalDate}
 import java.util.UUID
 
+import models.UserCredential
 import models.event.MealType
 
 case class EventBookingSuccess(bookingNumber: UUID,
                                 eventName: String,
                                 eventLink: String,
+                                host: UserCredential,
                                 mealType: Option[String],
                                 date: LocalDate,
                                 time: LocalTime,

@@ -1,6 +1,7 @@
 package customUtils
 
 import java.text.SimpleDateFormat
+import java.time.{LocalTime, LocalDate, ZoneId, LocalDateTime}
 import java.time.format.DateTimeFormatter
 import java.util.{UUID, Date}
 import javax.inject.{Named, Inject}
@@ -167,6 +168,21 @@ object Helpers {
     dateTime.format(DateTimeFormatter.ofPattern(pattern))
   }
 
+  def castLocalDateToDate(localDate: LocalDate): Date = {
+    Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant)
+  }
+
+  def castLocalTimeToDate(localTime: LocalTime): Date = {
+    Date.from(localTime.atDate(LocalDate.of(1900,1,1)).atZone(ZoneId.systemDefault()).toInstant)
+  }
+
+  def castLocalDateTimeToDate(localDateTime: LocalDateTime): Date = {
+    Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant)
+  }
+
+  def castDateToLocalDateTime(date: Date): LocalDateTime = {
+    LocalDateTime.ofInstant(date.toInstant, ZoneId.systemDefault())
+  }
 
   def limitLength(input: String, limitLength: Int): String = {
     if(input == null)

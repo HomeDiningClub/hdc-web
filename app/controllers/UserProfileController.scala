@@ -189,8 +189,8 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         val myProfile = isThisMyProfile(profile)
         val recipeBoxes = recipeService.getRecipeBoxes(profileOwner)
         val eventBoxes = eventService.getEventBoxes(profileOwner)
-        val bookingsMadeByMe = if (myProfile) eventService.getBookingsMadeByMe(profileOwner) else None
-        val bookingsMadeToMyEvents = if (myProfile) eventService.getBookingsMadeToMyEvents(profileOwner) else None
+        val bookingsMadeByMe = if (myProfile) eventService.getBookingsMadeByMe(profileOwner, this.getBaseUrl) else None
+        val bookingsMadeToMyEvents = if (myProfile) eventService.getBookingsMadeToMyEvents(profileOwner, this.getBaseUrl) else None
         val myReviewBoxes = if (myProfile) ratingService.getMyUserReviews(profileOwner) else None
         val myRecipeReviewBoxes = if (myProfile) ratingService.getMyUserReviewsAboutFood(profileOwner) else None
         val reviewBoxesAboutMyFood = ratingService.getUserReviewsAboutMyFood(profileOwner)
@@ -251,7 +251,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
       }
 
       if (viewer.isEmpty) {
-        Logger.debug("Log access to userprofile : " + profile.getOwner.getFullName + "viewer: " + "Annonymouse viewer")
+        Logger.debug("Log access to userprofile : " + profile.getOwner.getFullName + "viewer: " + "Anonymouse viewer")
       }
       else {
         Logger.debug("Log access to userprofile : " + profile.getOwner.getFullName + "viewer : " + viewer.get.profileLinkName)
@@ -986,6 +986,10 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
         Redirect(routes.UserProfileController.edit()).flashing(FlashMsgConstants.Success -> Messages("profile.create.saved-successfully"))
       })
+  }
+
+  private def getBaseUrl()(implicit request: RequestHeader): String = {
+    routes.StartPageController.index().absoluteURL(secure = false).dropRight(1)
   }
 
 }

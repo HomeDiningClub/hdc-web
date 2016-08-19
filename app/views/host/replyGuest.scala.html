@@ -33,7 +33,7 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>@hostReplyForm.get.request</td>
+                                                <td>@Html(hostReplyForm.get.request.getOrElse(""))</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -69,7 +69,7 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>@hostReplyForm.get.request.getOrElse("")</td>
+                                                <td>@Html(hostReplyForm.get.request.getOrElse(""))</td>
                                             </tr>
                                         </tbody>
                                     </table>

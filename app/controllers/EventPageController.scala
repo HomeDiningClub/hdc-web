@@ -381,7 +381,10 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                 case null => None
                 case mainImg => Some(mainImg.objectId.toString)
               },
-              price = item.getPrice.intValue(),
+              price = item.getPrice match {
+                case null => 0
+                case p => p.intValue()
+              },
               images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
               eventDates = eventService.convertToEventFormDates(eventService.filterEventDatesValidForEditing(eventService.getSortedEventDates(item))),
               minNoOfGuest = item.getMinNrOfGuests,
@@ -432,7 +435,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       contentData => {
         eventService.findById(contentData.suggestEventId) match {
           case Some(event) => {
-            val successValues = eventService.addSuggestion(currentUser, event, contentData.date, contentData.time, contentData.guests, contentData.comment)
+            val successValues = eventService.addSuggestionAndSendEmail(currentUser, event, contentData.date, contentData.time, contentData.guests, contentData.comment, getBaseUrl)
             val successMessage = Messages("event.suggest.add.success")
             Ok(views.html.event.suggestionSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
           }
@@ -474,7 +477,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                     if (eventService.doesEventDateHasSpaceForNewBooking(event, eventDate, contentData.guests)) {
 
                       // Adding booking
-                      val successValues = eventService.addBookingAndSendEmail(currentUser,event,eventDate,contentData.guests,contentData.comment)
+                      val successValues = eventService.addBookingAndSendEmail(currentUser,event,eventDate,contentData.guests,contentData.comment, this.getBaseUrl)
 
                       // Returning
                       Logger.debug("Successful booking performed eventDateId: " + eventDate.objectId)
@@ -659,6 +662,10 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(ownerProfileName,eventLinkName)).flashing(FlashMsgConstants.Error -> errorMessage)
     }
 
+  }
+
+  private def getBaseUrl()(implicit request: RequestHeader): String = {
+    routes.StartPageController.index().absoluteURL(secure = false).dropRight(1)
   }
 
 }

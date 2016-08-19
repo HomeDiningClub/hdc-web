@@ -15,6 +15,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.{RequestHeader, Controller}
+import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.{NodeEntityService, MailService, MessageService, UserCredentialService}

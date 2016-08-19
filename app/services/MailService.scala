@@ -3,6 +3,7 @@ package services
 import javax.inject.{Named, Inject}
 import models.viewmodels.{EmailAndName}
 import org.springframework.stereotype.Service
+import play.api.Logger
 import play.api.i18n.{MessagesApi, I18nSupport, Messages}
 import play.api.libs.mailer.MailerClient
 import play.api.libs.mailer._
