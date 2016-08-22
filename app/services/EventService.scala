@@ -116,7 +116,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
   def getBookingsMadeToMyEvents(user: UserCredential, baseUrl: String): Option[List[EventBookingSuccess]] = {
     this.findAllBookedDatesInAllEventsForOwner(user) match {
       case None => None
-      case Some(items) => Some(items.map { booking =>
+      case Some(items) => Some(items.sortBy(date => date.eventDate.getEventDateTime).reverse.map { booking =>
         mapEventBookingToEventBookingSuccess(None, booking, baseUrl)
       })
     }
@@ -125,7 +125,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
   def getBookingsMadeByMe(user: UserCredential, baseUrl: String): Option[List[EventBookingSuccess]] = withTransaction(template){
     template.fetch(user.getUserProfile.getBookedEventDates).asScala.toList match {
       case Nil => None
-      case items => Some(items.map { booking =>
+      case items => Some(items.sortBy(date => date.eventDate.getEventDateTime).reverse.map { booking =>
         mapEventBookingToEventBookingSuccess(None, booking, baseUrl)
       })
     }
