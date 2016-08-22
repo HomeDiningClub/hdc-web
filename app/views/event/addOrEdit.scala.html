@@ -229,13 +229,14 @@
                                             </div>
                                         </div>
 
-                                        <div class="event-guest-info well well-sm well-hdc margin-bottom">
-                                            @if(customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0){
-                                                <strong>@Messages("event.edit.add.date-time.header.booked-guests")</strong>
-                                                @Messages("event.edit.add.date-time.booked-guests-label", eventDatesField("guestsbooked").value.getOrElse(0).toString)<br>
-                                                @Messages("event.edit.add.date-time.booked-guests-info")
-                                            }
-                                        </div>
+                                        @if(customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0){
+                                            <div class="event-guest-info well well-sm well-hdc margin-bottom">
+                                                    <strong>@Messages("event.edit.add.date-time.header.booked-guests")</strong>
+                                                    @Messages("event.edit.add.date-time.booked-guests-label", eventDatesField("guestsbooked").value.getOrElse(0).toString)<br>
+                                                    @Messages("event.edit.add.date-time.booked-guests-info")
+                                            </div>
+                                        }
+
                                     }
                                 </div>
                             </div>
