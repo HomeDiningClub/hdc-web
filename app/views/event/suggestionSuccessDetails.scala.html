@@ -25,4 +25,12 @@
             <div class="col-md-9">@eventDateSuggestionSuccess.nrOfGuests.toString</div>
         </div>
     </li>
+    @if(eventDateSuggestionSuccess.guestComment.isDefined) {
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-md-3"><span class="glyphicon glyphicon-comment"></span> @Messages("event.suggest.success.comment")</div>
+                <div class="col-md-9">@eventDateSuggestionSuccess.guestComment.get</div>
+            </div>
+        </li>
+    }
 </ul>

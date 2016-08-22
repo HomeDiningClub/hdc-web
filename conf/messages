@@ -551,6 +551,7 @@ event.prop.smoking-allowed.false=Ej tillåten
 event.prop.alcohol-servings=Alkohol / dryck
 event.prop.meal-type=Måltidstyp
 event.prop.phone=Telefon
+event.prop.comment=Kommentar ifrån gästen
 
 event.book.heading=Slutför bokning
 event.book.booking-my-own-event=Du kan inte boka din egna bjudning
@@ -598,6 +599,7 @@ event.suggest.success.event-name=Bjudning
 event.suggest.success.chosen.date=Föreslaget datum
 event.suggest.success.chosen.time=Föreslagen tid
 event.suggest.success.nr-of-guests=Antal gäster
+event.suggest.success.comment=Gästens kommentar
 event.suggest.success.print=Skriv ut förslag
 event.suggest.success.back=Tillbaka
 event.suggest.email.subject=Du har ett förslag till bokning!

@@ -52,6 +52,14 @@
             </div>
         </div>
     </li>
+    @if(eventBookingSuccess.guestComment.isDefined){
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-md-3"><span class="glyphicon glyphicon-comment"></span> @Messages("event.prop.comment")</div>
+                <div class="col-md-9">@eventBookingSuccess.guestComment.get</div>
+            </div>
+        </li>
+    }
     <li class="list-group-item">
         <div class="row">
             <div class="col-md-3"><strong>@Messages("event.book.chosen.total-cost")</strong></div>

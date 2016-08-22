@@ -9,9 +9,9 @@ case class EventDateSuggestionSuccess(eventName: String,
                                         date: LocalDate,
                                         time: LocalTime,
                                         nrOfGuests: Int,
-                                        comment: Option[String],
                                         hostEmail: String,
                                         host: UserCredential,
+                                        guestComment: Option[String],
                                         guestEmail: String) {
 
 }

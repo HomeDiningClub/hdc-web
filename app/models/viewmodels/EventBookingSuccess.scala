@@ -19,6 +19,7 @@ case class EventBookingSuccess(bookingNumber: UUID,
                                 locationCounty: String,
                                 phoneNumberToHost: Option[String],
                                 nrOfGuests: Int,
+                                guestComment: Option[String],
                                 totalCost: Int,
                                 email: String) {
 

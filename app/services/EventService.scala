@@ -346,10 +346,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
       date = suggDate,
       time = suggTime,
       nrOfGuests = nrOfGuestsToBeBooked,
-      comment = comment,
       hostEmail = event.getOwnerProfile.getOwner.emailAddress,
       host = event.getOwnerProfile.getOwner,
-      guestEmail = userSendingSuggestion.emailAddress
+      guestEmail = userSendingSuggestion.emailAddress,
+      guestComment = comment
     )
 
     // Send a message to Hosts-inbox
@@ -440,6 +440,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
         case p => Some(p)
       },
       nrOfGuests = booking.getNrOfGuests,
+      guestComment = Option(booking.getComment),
       totalCost = this.getEventPrice(event, booking.getNrOfGuests),
       email = currentUser match {
         case None => ""
