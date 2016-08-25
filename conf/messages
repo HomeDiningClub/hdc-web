@@ -314,7 +314,7 @@ profile.create.form.zipCode=Postnummer
 profile.create.form.zipCode.help=Postnummer
 profile.create.form.city=Stad
 profile.create.form.city.help=Kommun eller stad
-profile.create.form.phoneNumber=Telefonnummer (aldrig synligt)
+profile.create.form.phoneNumber=Telefonnummer (endast synlig för bokade gäster)
 profile.create.form.phoneNumber.help=Mobilnummer eller telefonnummer
 
 profile.create.form.personnummer=Personnummer (aldrig synligt)
@@ -550,7 +550,7 @@ event.prop.smoking-allowed.true=Rökning tillåten, på anvisad plats
 event.prop.smoking-allowed.false=Ej tillåten
 event.prop.alcohol-servings=Alkohol / dryck
 event.prop.meal-type=Måltidstyp
-event.prop.phone=Telefon
+event.prop.phone=Värdens telefonnumer
 event.prop.comment=Kommentar ifrån gästen
 
 event.book.heading=Slutför bokning
@@ -574,8 +574,8 @@ event.book.add.too-many-bookings=Kan inte slutföra bokningen, för många gäst
 event.book.success.to-guest.email.subject=Bokning genomförd {0}
 event.book.success.to-guest.email.body.part01=Din bokning är slutförd, betalning genomförs hos värden. Värden har fått dina kontaktuppgifter och tar kontakt vid eventuella ändringar.
 event.book.success.to-guest.email.body.part02=Vi på Home dining club hoppas att er kväll blir lyckad!
-event.book.success.to-host.email.subject=En bokning är genomförd på bjudning: {0}
-event.book.success.to-host.email.body.part01=En bokning är slutförd. Se detaljer om bokningen vid fliken {0}. <br>Ett meddelande finns också i din {1}, om du behöver kontakta din gäst.
+event.book.success.to-host.email.subject=Du har fått en bokning! Bjudning: {0}
+event.book.success.to-host.email.body.part01=En gäst har precis bokat en av dina bjudningar. Se detaljer om bokningen på din profilsida under fliken {0}. <br>Ett meddelande finns också i din {1}, om du behöver kontakta din gäst.
 event.book.success.to-host.email.body.link.bookings=bokningar
 event.book.success.to-host.email.body.link.inbox=inbox
 event.book.success.to-host.email.body.part02=Vi på Home dining club hoppas att er kväll blir lyckad!
@@ -830,7 +830,7 @@ admin.meal-type.list.name=Namn
 admin.meal-type.list.order=Ordning
 admin.meal-type.list.action=Funktioner
 
-admin.alcohol-serving.index.header=Måltidstyper
+admin.alcohol-serving.index.header=Servering av alkohol
 admin.alcohol-serving.add.header=Lägg till / Redigera
 admin.alcohol-serving.add.name=Namn
 admin.alcohol-serving.add.name.validation=(Tvingande, max längd 255)

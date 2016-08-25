@@ -46,30 +46,6 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
                                        implicit val nodeEntityService: NodeEntityService,
                                        val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
-
-
-  /*
-  // Form
-  val userProfileForm: play.api.data.Form[models.formdata.UserProfileForm] = play.api.data.Form(
-    mapping(
-      "userName" -> text,
-      "emailAddress" -> email,
-      "firstName" -> text,
-      "lastName" -> text,
-      "aboutme" -> text,
-      // "quality" -> list(boolean),
-      "county" -> text,
-      "streetAddress" -> text,
-      "zipCode" -> text,
-      "city" -> text,
-      "phoneNumber" -> text,
-      "idno" -> longNumber
-    )(models.formdata.UserProfileForm.apply)(models.formdata.UserProfileForm.unapply)
-  )
-*/
-
-  // text.verifying("Inte ett unikt användarnamn", txt=>isNew(txt))
-
   // Forms
   val AnvandareForm = Form(
     mapping(
@@ -185,7 +161,6 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) =>
         val profileOwner = profile.getOwner
-
         val myProfile = isThisMyProfile(profile)
         val recipeBoxes = recipeService.getRecipeBoxes(profileOwner)
         val eventBoxes = eventService.getEventBoxes(profileOwner)
@@ -196,7 +171,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         val reviewBoxesAboutMyFood = ratingService.getUserReviewsAboutMyFood(profileOwner)
         val reviewBoxesAboutMe = ratingService.getUserReviewsAboutMe(profileOwner)
         val tags = tagWordService.findByProfileAndGroup(profile, "profile")
-        val messages = if (myProfile) buildMessageList(profileOwner) else None
+        val messages = if (myProfile) buildMessageList(profileOwner) else None // TODO: This is slow, improve performance
         val metaData = buildMetaData(profile, request)
         val shareUrl = createShareUrl(profile)
         val userRateForm = ratingController.renderUserRateForm(profileOwner, routes.UserProfileController.viewProfileByName(profile.profileLinkName).url, request.user)
@@ -237,7 +212,6 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
         Logger.debug(errMess)
-        //NotFound(views.html.error.notfound(refUrl = request.path)(request, request2Messages))
         NotFound(views.html.error.notfound(refUrl = request.path))
     }
   }

@@ -9,22 +9,24 @@ import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 @RelationshipEntity(type = "BOOKED_EVENT_DATE")
 public class BookedEventDate extends AbstractEntity {
 
-    @Fetch @StartNode   public UserProfile userProfile;
+    @StartNode   public UserProfile userProfile;
     @Fetch @EndNode     public EventDate     eventDate;
 
     // Actual values
-    private LocalDateTime bookingDateTime;
+    private Date bookingDateTime;
     private Boolean approvedByHost;
     private Integer nrOfGuests;
     private String comment;
 
     // Tracking for when event was changed
-    private LocalDateTime bookedAtDateTime;
-    private LocalDateTime approvalAtDateTime;
+    private Date bookedAtDateTime;
+    private Date approvalAtDateTime; // Not used yet, but stored
 
 
     public Integer getNrOfGuests(){
@@ -41,12 +43,12 @@ public class BookedEventDate extends AbstractEntity {
 
     public void setApprovedByHost(){
         this.approvedByHost = true;
-        this.approvalAtDateTime = Helpers.getCurrentLocalDateTime();
+        this.approvalAtDateTime = castToDate(Helpers.getCurrentLocalDateTime());
     }
 
     public void setNotApprovedByHost(){
         this.approvedByHost = false;
-        this.approvalAtDateTime = Helpers.getCurrentLocalDateTime();
+        this.approvalAtDateTime = castToDate(Helpers.getCurrentLocalDateTime());
     }
 
     public String getComment(){
@@ -58,12 +60,17 @@ public class BookedEventDate extends AbstractEntity {
     }
 
     public LocalDateTime getBookingDateTime(){
-        return this.bookingDateTime;
+        return castToLocalDateTime(this.bookingDateTime);
     }
 
+    public LocalDateTime getBookedAtDateTime(){
+        return castToLocalDateTime(this.bookedAtDateTime);
+    }
+
+
     public void setBookingDateTime(EventDate eventDateToBook){
-        this.bookingDateTime = eventDateToBook.getEventDateTime();
-        this.bookedAtDateTime = Helpers.getCurrentLocalDateTime();
+        this.bookingDateTime = castToDate(eventDateToBook.getEventDateTime());
+        this.bookedAtDateTime = castToDate(Helpers.getCurrentLocalDateTime());
     }
 
     public BookedEventDate(UserProfile userBooking, Integer nrOfGuestsToBeBooked, EventDate eventDateToBook, String comment) {
@@ -77,5 +84,13 @@ public class BookedEventDate extends AbstractEntity {
 
     private BookedEventDate() {
 
+    }
+
+    private Date castToDate(LocalDateTime localDateTime){
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    private LocalDateTime castToLocalDateTime(Date date){
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 }

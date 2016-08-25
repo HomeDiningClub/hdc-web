@@ -4,6 +4,7 @@ import models.Event;
 import models.base.AuditEntity;
 import models.modelconstants.RelationshipTypesJava;
 import org.neo4j.graphdb.Direction;
+import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.annotation.RelatedToVia;
@@ -77,6 +78,7 @@ public class EventDate extends AuditEntity {
     public void setEventDateTime(LocalDateTime date){
         this.eventDateTime = castToDate(date);
     }
+
     public LocalDateTime getEventDateTime(){
         return castToLocalDateTime(this.eventDateTime);
     }

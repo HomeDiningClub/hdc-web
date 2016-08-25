@@ -9,7 +9,7 @@ import models.event.MealType
 case class EventBookingSuccess(bookingNumber: UUID,
                                 eventName: String,
                                 eventLink: String,
-                                host: UserCredential,
+                                hostLink: String,
                                 mealType: Option[String],
                                 date: LocalDate,
                                 time: LocalTime,
@@ -21,6 +21,7 @@ case class EventBookingSuccess(bookingNumber: UUID,
                                 nrOfGuests: Int,
                                 guestComment: Option[String],
                                 totalCost: Int,
-                                email: String) {
+                                guestEmail: String,
+                                hostEmail: String) {
 
 }

@@ -15,7 +15,7 @@
         <div class="col-xs-12">
             <div class="jumbotron">
                 <h1><span class="glyphicon glyphicon-ok text-green"></span> @Messages("event.book.success.header")</h1>
-                <p>@Html(Messages("event.book.success.body", eventBookingSuccess.email))</p>
+                <p>@Html(Messages("event.book.success.body", eventBookingSuccess.guestEmail))</p>
 
                 <div class="big-margin-top">
                     @views.html.event.bookingSuccessDetails(eventBookingSuccess)
