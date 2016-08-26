@@ -2265,6 +2265,7 @@ h3.aside-title {
   padding:15px 5px 7px 10px;
   z-index:50;
   min-height:115px;
+  overflow:hidden;
 }
 .panel-startpage h2
 {
@@ -2273,9 +2274,16 @@ h3.aside-title {
   font-weight:bold;
   color:@hdc-dark-gray;
 }
-.panel-startpage .price-wrapper,
+.panel-startpage .price-wrapper
 {
+  display: inline-block;
+  margin-top:15px;
   text-align: right;
+  float:right;
+}
+.panel-startpage .btn-booking {
+  margin-top:10px;
+  margin-bottom:0px;
 }
 .panel-startpage .price-info
 {

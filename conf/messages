@@ -511,7 +511,7 @@ event.edit.delete.abort=Avbryt
 event.button.edit=Redigera händelse
 event.more-images.header=Bilder
 
-event.button.select=Välj
+event.button.select=Boka
 event.button.book=Boka
 event.button.select-date=Kl. {0}
 event.price.currency=SEK

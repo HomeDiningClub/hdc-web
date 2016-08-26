@@ -15,10 +15,16 @@
                         }else {
                             <p><br></p>
                         }
-                        <div class="price-wrapper">
-                            <span class="price">@box.price@Messages("event.price.currency.end")</span>
-                            <span class="price-info">@Messages("event.price.front.description")</span>
+                        <div class="col-xs-6 no-gutter">
+                            <button class="btn btn-lg btn-orange btn-booking">@Messages("event.button.select")&nbsp;<span class="glyphicon glyphicon-ok"></span></button>
                         </div>
+                        <div class="col-xs-6 no-gutter">
+                            <div class="price-wrapper">
+                                <span class="price">@box.price@Messages("event.price.currency.end")</span>
+                                <span class="price-info">@Messages("event.price.front.description")</span>
+                            </div>
+                        </div>
+                        @*shared.grade(inputId = "host-grade", initialValue = box.userRating, disabled = true, size = "xxs")*@
                     </div>
                 </div>
                 }
