@@ -7,6 +7,8 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala, SbtWeb)
 
 scalaVersion := "2.11.8"
 
+logLevel := Level.Error // Change this if you need to debug library dependencies problems
+
 //ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 
 resolvers ++= Seq(
