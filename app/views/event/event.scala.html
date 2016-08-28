@@ -64,6 +64,7 @@
             <div class="col-xs-12 col-md-8 bg-color">
                 @if(!flash.isEmpty) {
                     <div class="col-xs-12 margin-top">@shared.flashmsg(flash)</div>
+                    <div class="col-xs-12">@shared.listFormErrors(eventBookingForm, Some(eventDateSuggestionForm))</div>
                 }
 
                 @if(!event.getPreAmble.isEmpty || !event.getMainBody.isEmpty || !event.getName.isEmpty) {

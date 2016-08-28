@@ -428,9 +428,41 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
     evtDateSuggestionForm.bindFromRequest.fold(
       errors => {
-        val errorMsg = Messages("event.suggest.add.error")
-        Logger.debug(errorMsg)
-        BadRequest(errorMsg)
+        request.body.dataParts.get("suggestEventId") match {
+          case Some(eId) => {
+            eventService.findById(UUID.fromString(eId.head)) match {
+              case Some(event) => {
+                var collectedErrors: String = ""
+                for((err,i) <- errors.errors.zipWithIndex){
+                  if(err.message.equals("error.date")) {
+                    collectedErrors += Messages("event.suggestion.add.date.validation")
+                  }
+                  if(err.message.equals("error.time")) {
+                    collectedErrors += Messages("event.suggestion.add.time.validation")
+                  }
+
+                  if(i < errors.errors.length){
+                    collectedErrors += ", "
+                  }
+                }
+
+                val errorMsg = Messages("event.suggest.add.failure.missing-params", collectedErrors)
+                Logger.debug(errorMsg)
+                Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName,event.getLink)).flashing(FlashMsgConstants.Error -> errorMsg)
+              }
+                case _ => {
+                  val errorMsg = "Cannot return to event, not a valid eventUUID"
+                  Logger.debug(errorMsg)
+                  NotFound(errorMsg)
+                }
+            }
+
+          }
+          case _ =>
+            val errorMsg = Messages("event.suggest.add.error")
+            Logger.debug(errorMsg)
+            BadRequest(errorMsg)
+        }
       },
       contentData => {
         eventService.findById(contentData.suggestEventId) match {
@@ -455,9 +487,38 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
     evtBookingForm.bindFromRequest.fold(
       errors => {
-        val errorMsg = Messages("event.book.add.error")
-        Logger.debug(errorMsg)
-        BadRequest(errorMsg)
+        request.body.dataParts.get("eventId") match {
+          case Some(eId) => {
+
+            eventService.findById(UUID.fromString(eId.head)) match {
+              case Some(event) => {
+
+                var collectedErrors: String = ""
+                for ((err, i) <- errors.errors.zipWithIndex) {
+                  collectedErrors += err.message
+                  if (i < errors.errors.length) {
+                    collectedErrors += ", "
+                  }
+                }
+
+                val errorMsg = Messages("event.book.add.failure.missing-params", collectedErrors)
+                Logger.debug(errorMsg)
+                Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName, event.getLink)).flashing(FlashMsgConstants.Error -> errorMsg)
+              }
+              case _ => {
+                val errorMsg = "Cannot return to event, not a valid eventUUID"
+                Logger.debug(errorMsg)
+                NotFound(errorMsg)
+              }
+            }
+
+          }
+          case _ => {
+            val errorMsg = Messages("event.book.add.error")
+            Logger.debug(errorMsg)
+            BadRequest(errorMsg)
+          }
+        }
       },
       contentData => {
         eventService.findById(contentData.eventId) match {

@@ -247,8 +247,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
     Form(
       mapping(
         "suggestEventId" -> uuid,
-        "suggest-date" -> of[java.time.LocalDate],
-        "suggest-time" -> of[java.time.LocalTime],
+        "suggest-date" -> of[java.time.LocalDate].verifying(Messages("event.suggestion.add.date.validation"), d => d.isInstanceOf[java.time.LocalDate]),
+        "suggest-time" -> of[java.time.LocalTime].verifying(Messages("event.suggestion.add.time.validation"), d => d.isInstanceOf[java.time.LocalTime]),
         "suggest-guests" -> number(min = 1, max = 9),
         "suggest-comment" -> optional(text)
       )(EventDateSuggestionForm.apply)(EventDateSuggestionForm.unapply)
@@ -270,10 +270,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  def isUserBookedToEventDate(eventDate: EventDate, user: UserCredential): Boolean = {
+  def isUserBookedToEventDate(eventDate: EventDate, user: UserCredential): Boolean = withTransaction(template){
     val bookings = eventDate.getBookings.asScala
     if (bookings.nonEmpty) {
-      bookings.exists(x => x.userProfile.getOwner.objectId.equals(user.objectId))
+      bookings.exists(x => template.fetch(x.userProfile).getOwner.objectId.equals(user.objectId))
     } else {
       false
     }
