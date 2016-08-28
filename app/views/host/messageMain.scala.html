@@ -12,10 +12,10 @@
     <td>@user.profiles.iterator().next().profileLinkName</td>
     <td>
         @if(message.request != null) {
-            @if(message.request.length > 60) {
-                @message.request.substring(0, 60)...
+            @if(customUtils.Helpers.removeHtmlTags(message.request).length > 60) {
+                @customUtils.Helpers.removeHtmlTags(message.request).substring(0, 60)...
             } else {
-                @message.request
+                @customUtils.Helpers.removeHtmlTags(message.request)
             }
         }
     </td>

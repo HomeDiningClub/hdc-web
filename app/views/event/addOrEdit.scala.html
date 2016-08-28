@@ -95,7 +95,7 @@
         oldHTML = oldHTML.replace(/value\=\"._\"/gi, "value=\"\"");
         return oldHTML.replace(/0/gi, nrOfDates);
        });
-       $dateClone.addClass("margin-top");
+       //$dateClone.addClass("margin-top");
        $dateClone.find(".eventdate-guid").attr("value","");
        $dateClone.find(".guestsbooked").attr("value","0");
        $dateClone.find("input[type=date]").attr("value","").removeAttr("disabled").datetimepicker(event.data.datePickerOptions);
@@ -173,7 +173,8 @@
                         </div>
 
                         <div class="step">
-                            @b3.text(eventForm("price"), '_label -> Messages("event.edit.add.price"), '_error -> Messages("event.edit.add.price.validation"))(inlineFC, messages)
+                            @b3.text(eventForm("price"), '_label -> Messages("event.edit.add.price"),
+                                '_help -> Messages("event.edit.add.price.validation"))(inlineFC, messages)
                             <div class="margin-top">@Html(Messages("event.edit.add.price.help-text"))</div>
                         </div>
 
@@ -197,7 +198,7 @@
                                             @b3.inputWrapped("date",
                                                 eventDatesField("date"),
                                                 'class -> "date-input",
-                                                'disabled -> (customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0),
+                                                'readonly -> (customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0),
                                                 'placeholder -> Messages("event.edit.add.date.validation.format"),
                                                 '_hiddenLabel -> Messages("event.edit.add.date"),
                                                 '_class -> "date") { input =>
@@ -211,7 +212,7 @@
                                             @b3.inputWrapped("time",
                                                 eventDatesField("time"),
                                                 'class -> "time-input",
-                                                'disabled -> (customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0),
+                                                'readonly -> (customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0),
                                                 'placeholder -> Messages("event.edit.add.time.validation.format"),
                                                 '_hiddenLabel -> Messages("event.edit.add.time"),
                                                 '_class -> "time") { input =>
