@@ -442,7 +442,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
   private def mapEventBookingToEventBookingSuccess(booking: BookedEventDateData, baseUrl: String): EventBookingSuccess = {
 
-    val bookedDate = customUtils.Helpers.castDateToLocalDateTime(booking.getBookingDateTime())
+    val bookedDate = customUtils.Helpers.castDateToLocalDateTime(booking.getBookingDateTime() match {
+      case null => new java.util.Date()
+      case bDate => bDate
+    })
 
     val successValues = EventBookingSuccess(
       bookingNumber = UUID.fromString(booking.getBookingObjectId()),
