@@ -371,6 +371,9 @@ class EventService @Inject()(val template: Neo4jTemplate,
       guestComment = comment
     )
 
+    // Sending Guest a notice email
+    this.sendSuggestionSuccessEmailToGuest(successValues, baseUrl)
+
     // Send a message to Hosts-inbox
     this.sendSuggestionMessageToHostInbox(userSendingSuggestion, event, suggDate, suggTime, nrOfGuestsToBeBooked, comment)
 
@@ -610,6 +613,23 @@ class EventService @Inject()(val template: Neo4jTemplate,
       from = mailService.getDefaultAnonSender
     )
   }
+
+  def sendSuggestionSuccessEmailToGuest(successValues: EventDateSuggestionSuccess, baseUrl: String): Email = {
+
+    // To Guest
+    val path = routes.UserProfileController.viewProfileByName(successValues.host.getUserProfile.profileLinkName).url
+    val msgBody = Messages("event.suggest.success.header") + " - " + Messages("event.suggest.success.sub-header") + "<br><br>"
+        Messages("event.suggest.success.body") +
+        views.html.event.suggestionSuccessDetails(successValues).toString()
+
+    mailService.createAndSendMailNoReply(
+      subject =  Messages("event.suggest.add.success"),
+      message = msgBody,
+      recipient = EmailAndName(successValues.guestEmail,successValues.hostEmail),
+      from = mailService.getDefaultAnonSender
+    )
+  }
+
 
   def mapEventDataToEventBox(list: Page[EventData]): Option[List[EventBox]] = {
     var eventList : ListBuffer[EventBox] = new ListBuffer[EventBox]

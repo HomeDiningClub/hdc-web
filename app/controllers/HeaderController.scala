@@ -111,7 +111,8 @@ class HeaderController @Inject() (override implicit val env: SecureSocialRuntime
         val menu = collection.mutable.Buffer[(String,String,String,String,String,String)](
             (Messages("header.link.host-profile"), Messages("header.link.host-profile"), controllers.routes.UserProfileController.viewProfileByLoggedInUser().url, "", "", "<span class=\"glyphicon glyphicon-home\"></span>&nbsp;"),
             (Messages("header.link.host-profile-edit"), Messages("header.link.host-profile-edit"), controllers.routes.UserProfileController.edit().url, "", "", "<span class=\"glyphicon glyphicon-wrench\"></span>&nbsp;"),
-            (Messages("header.link.inbox"), Messages("header.link.inbox"), controllers.routes.UserProfileController.viewProfileByLoggedInUser().url + "#inbox-tab", "", "", "<span class=\"glyphicon glyphicon-envelope\"></span>&nbsp;") //Removed until we fetch nr of messages: "<span class=\"badge\">0</span>")
+            (Messages("header.link.inbox"), Messages("header.link.inbox"), controllers.routes.UserProfileController.viewProfileByLoggedInUser().url + "#inbox-tab", "", "", "<span class=\"glyphicon glyphicon-envelope\"></span>&nbsp;"), //Removed until we fetch nr of messages: "<span class=\"badge\">0</span>")
+            (Messages("header.link.bookings"), Messages("header.link.bookings"), controllers.routes.UserProfileController.viewProfileByLoggedInUser().url + "#bookings-tab", "", "", "<span class=\"glyphicon glyphicon-tasks\"></span>&nbsp;")
           )
 
         if (Helpers.isUserAdmin(currentUser))

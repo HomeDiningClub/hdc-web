@@ -95,11 +95,11 @@
         oldHTML = oldHTML.replace(/value\=\"._\"/gi, "value=\"\"");
         return oldHTML.replace(/0/gi, nrOfDates);
        });
-       //$dateClone.addClass("margin-top");
+
        $dateClone.find(".eventdate-guid").attr("value","");
        $dateClone.find(".guestsbooked").attr("value","0");
-       $dateClone.find("input[type=date]").attr("value","").removeAttr("disabled").datetimepicker(event.data.datePickerOptions);
-       $dateClone.find("input[type=time]").attr("value","").removeAttr("disabled").datetimepicker(event.data.timePickerOptions);
+       $dateClone.find("input[type=date]").attr("value","").removeAttr("readonly").datetimepicker(event.data.datePickerOptions);
+       $dateClone.find("input[type=time]").attr("value","").removeAttr("readonly").datetimepicker(event.data.timePickerOptions);
        $dateClone.find(".remove-button").removeClass("hidden").on("click", removeDate);
        $dateContainer.append($dateClone);
        event.data.stepsForm.validate().resetForm();
@@ -173,8 +173,7 @@
                         </div>
 
                         <div class="step">
-                            @b3.text(eventForm("price"), '_label -> Messages("event.edit.add.price"),
-                                '_help -> Messages("event.edit.add.price.validation"))(inlineFC, messages)
+                            @b3.text(eventForm("price"), '_label -> Messages("event.edit.add.price"), '_help -> Messages("event.edit.add.price.validation"))(inlineFC, messages)
                             <div class="margin-top">@Html(Messages("event.edit.add.price.help-text"))</div>
                         </div>
 

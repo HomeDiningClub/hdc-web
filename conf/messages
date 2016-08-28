@@ -32,6 +32,7 @@ header.link.host-profile-header={0}
 header.link.host-profile=Gå till min sida
 header.link.host-profile-edit=Redigera profil
 header.link.inbox=Inkorg
+header.link.bookings=Bokningar
 header.link.become-member=Bli medlem
 header.link.login=Logga in
 header.link.admin=Admin-mode
