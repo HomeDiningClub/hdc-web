@@ -144,10 +144,18 @@ startpage.wizard.tab.step3.header=Steg 3
 startpage.wizard.tab.step4.header=Steg 4
 startpage.wizard.tab.step5.header=Steg 5
 
+# Lists startpage
+profile.profile-list.header=Medlemmar
+event.event-list.header=Bjudningar
+
+# Wizard startpage
 wizard.pager.first=Första
 wizard.pager.last=Sista
 wizard.pager.prev=Föreg.
 wizard.pager.next=Nästa
+
+# News box startpage
+news.header=Nyheter
 
 # Browse members page
 browse.profiles.title=Bläddra medlemmar

@@ -1,0 +1,18 @@
+@(asideNews: Option[List[models.content.ContentPage]])
+
+@if(asideNews.nonEmpty) {
+  <aside>
+  @for(content <- asideNews.get){
+    <!-- Content -->
+    <div class="panel panel-dropshadow panel-default panel-startpage-aside hidden-xs">
+      <div class="panel-body">
+        @if(content.title.nonEmpty) {
+          <h2 class="aside-title">@content.title</h2>
+        }
+        @play.twirl.api.Html(content.preamble)
+        @play.twirl.api.Html(content.mainBody)
+      </div>
+    </div>
+  }
+  </aside>
+}

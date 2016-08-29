@@ -1,0 +1,20 @@
+@(searchForm: Form[models.formdata.SearchStartPageForm],
+        optionsFoodAreas: Option[Seq[(String,String)]],
+        optionsLocationAreas: Option[Seq[(String,String)]] = None,
+        optionsIsHost: Option[Boolean] = None)(implicit messages: Messages)
+
+<!-- Filtering push -->
+<h2 class="page-header"><span class="glyphicon glyphicon-user"></span>&nbsp;@Messages("profile.profile-list.header")</h2>
+<div class="row">
+  <div class="col-xs-12 form-filter">
+    @helper.form(action=routes.StartPageController.index(), 'class -> "form-horizontal"){
+      <div class="form-group">
+        @* @helper.inputText(searchForm("freeText"), '_label -> Messages("filterform.freetext")) *@
+        @if(optionsFoodAreas.nonEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fTag"), optionsFoodAreas.get, '_label -> Messages("filterform.foodarea"), 'class -> "form-control") </div>}
+        @if(optionsLocationAreas.nonEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fCounty"), optionsLocationAreas.get, '_label -> Messages("filterform.area"), 'class -> "form-control") </div> }
+        @if(optionsIsHost.nonEmpty){ <div class="col-xs-12 col-sm-2"> @helper.checkbox(searchForm("fHost"), '_label -> Messages("filterform.is-host"), '_help -> "", '_showErrors -> false, 'class -> "") </div> }
+        <div class="col-xs-12 no-margin-top"><button class="btn btn-primary no-margin-top" type="submit">@Messages("filterform.submit")</button></div>
+      </div>
+    }
+  </div>
+</div>

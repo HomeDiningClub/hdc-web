@@ -1,0 +1,16 @@
+@(searchForm: Form[models.formdata.SearchStartPageForm],
+        optionsFoodAreas: Option[Seq[(String,String)]],
+        optionsLocationAreas: Option[Seq[(String,String)]] = None)(implicit messages: Messages)
+
+<div class="row">
+    <!-- Filtering push -->
+  <div class="col-xs-12 form-filter animated fadeIn">
+  @helper.form(action=routes.StartPageController.index(), 'class -> "form-horizontal"){
+    <div class="form-group">
+      @if(optionsFoodAreas.nonEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fTag"), optionsFoodAreas.get, '_label -> Messages("filterform.foodarea"), 'class -> "form-control") </div>}
+      @if(optionsLocationAreas.nonEmpty){ <div class="col-xs-12 col-sm-5"> @helper.select(searchForm("fCounty"), optionsLocationAreas.get, '_label -> Messages("filterform.area"), 'class -> "form-control") </div> }
+      <div class="col-xs-12 col-sm-2 no-margin-top"><button class="btn btn-primary btn-filter-event" type="submit">@Messages("filterform.submit")</button></div>
+    </div>
+  }
+  </div>
+</div>

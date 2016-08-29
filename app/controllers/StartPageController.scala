@@ -47,8 +47,8 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
 
     val isHost = if(fHost == 1) true else false
 
-    val profileBoxes = getProfileBoxes(fTag, fCounty, isHost, 8)
-    val eventBoxes = getEventBoxes(fTag, fCounty, 8)
+    val profileBoxes = getProfileBoxes(fTag, fCounty, isHost, 6)
+    val eventBoxes = getEventBoxes(fTag, fCounty, 6)
 
     val form = SearchStartPageForm.apply(
       fCounty match { case null | "" => None case item => Some(item)},
@@ -65,6 +65,7 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
       profileBoxes = profileBoxes,
       reviewBoxes = ratingService.getUserReviewBoxesStartPage(4), //TODO: Fix reviewBoxes speed
       asideNews = contentService.getAsideNewsItems,
+      news = contentService.getNewsItems,
       currentUser = request.user
     ))
   }

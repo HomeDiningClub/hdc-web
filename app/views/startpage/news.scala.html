@@ -1,0 +1,17 @@
+@(news: Option[List[models.content.ContentPage]])(implicit messages: Messages)
+
+@if(news.nonEmpty) {
+<h2 class="page-header"><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;@Messages("news.header")</h2>
+
+  <div class="row">
+    @for(content <- news.get){
+        <div class="col-xs-12 col-lg-6 col-news">
+            @if(content.title.nonEmpty) {
+              <h3>@content.title</h3>
+            }
+            @play.twirl.api.Html(content.preamble)
+            @play.twirl.api.Html(content.mainBody)
+        </div>
+    }
+  </div>
+}

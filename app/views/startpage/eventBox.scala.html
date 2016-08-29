@@ -3,7 +3,7 @@
 @if(boxes.nonEmpty) {
     @for(box: models.viewmodels.EventBox <- boxes){
 
-        <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-0">
+        <div class="col-xs-12 col-sm-6 col-md-4">
             <a href="@box.linkToEvent">
                 @defining( if(box.mainImage.isDefined){ "style=\"background-image: url('" + box.mainImage.get + "');background-size:100%;\"" } else { "" } ) { mainImage: String =>
                 <div class="thumbnail panel-startpage hover-green-dropshadow" @Html(mainImage)>

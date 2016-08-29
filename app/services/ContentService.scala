@@ -53,9 +53,15 @@ class ContentService @Inject()(val template: Neo4jTemplate,
 
 
 
-  //@Transactional(readOnly = true)
   def getAsideNewsItems: Option[List[ContentPage]] = withTransaction(template){
     contentPageRepository.findByContentCategoriesAndContentState(ContentCategoryEnums.ASIDE_STARTPAGE.toString,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
+      case null | Nil => None
+      case items => Some(items.sortBy(i => i.name))
+    }
+  }
+
+  def getNewsItems: Option[List[ContentPage]] = withTransaction(template){
+    contentPageRepository.findByContentCategoriesAndContentState(ContentCategoryEnums.NEWS.toString,ContentStateEnums.PUBLISHED.toString).asScala.toList match {
       case null | Nil => None
       case items => Some(items.sortBy(i => i.name))
     }

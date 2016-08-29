@@ -1,0 +1,11 @@
+@(currentUser: Option[UserCredential])(implicit messages: Messages)
+<!-- Video -->
+<div class="row">
+  <div class="col-xs-12">
+    <h1 class="startpage-head text-center hidden">@Messages("startpage.main-content.header")</h1>
+    @play.twirl.api.Html(Messages("startpage.main-content.body"))
+    <div class="startpage-video">
+      <iframe src="//player.vimeo.com/video/97540915?title=0&amp;byline=0&amp;portrait=0&amp;color=6fc2b5&amp;autoplay=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+    </div>
+  </div>
+</div>

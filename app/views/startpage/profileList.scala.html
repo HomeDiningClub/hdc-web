@@ -1,0 +1,10 @@
+@(profileBoxes: Option[List[models.viewmodels.ProfileBox]])(implicit messages: Messages)
+<!-- Profile boxes -->
+<div class="row">
+  @if(profileBoxes.isDefined){
+    @startpage.profileBox(profileBoxes.get)
+  }else{
+    <div class="col-xs-12 text-center">@play.twirl.api.Html(Messages("startpage.boxes.not-found", routes.StartPageController.index().url))</div>
+  }
+<div class="col-xs-12 text-center"><a class="btn btn-primary btn-lg btn-block btn-cta" role="button" href="@routes.BrowsePageController.browseProfiles()">@Messages("startpage.main.browse.link.text")</a></div>
+</div>

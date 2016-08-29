@@ -1,0 +1,10 @@
+@(eventBoxes: Option[List[models.viewmodels.EventBox]])(implicit messages: Messages)
+<!-- Event boxes -->
+<div class="row">
+  @if(eventBoxes.isDefined){
+    @startpage.eventBox(eventBoxes.get)
+  }else{
+    <div class="col-xs-12 text-center">@play.twirl.api.Html(Messages("startpage.boxes.not-found", routes.StartPageController.index().url))</div>
+  }
+<div class="col-xs-12 text-center"><a class="btn btn-primary btn-lg btn-block btn-cta" role="button" href="@routes.BrowsePageController.browseEvents()">@Messages("startpage.main.browse-event.link.text")</a></div>
+</div>
