@@ -8,8 +8,8 @@ import org.springframework.data.neo4j.repository.GraphRepository
 
 trait BookedEventDateRepository extends GraphRepository[BookedEventDate] {
 
-  @Query("MATCH (n:`BookedEventDate`{objectId:{0}}) RETURN n")
-  def findByobjectId(objectId: UUID): BookedEventDate
+  @Query("MATCH (a)-[booking:`BOOKED_EVENT_DATE`{objectId:{0}}]->(b) RETURN booking")
+  def findByobjectId(objectId: String): BookedEventDate
 
   @Query("MATCH (a)-[bookings:`BOOKED_EVENT_DATE`]->(b) RETURN bookings")
   def findAllBookedEventDates(): util.List[BookedEventDate]

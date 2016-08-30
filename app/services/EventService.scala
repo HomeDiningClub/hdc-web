@@ -389,7 +389,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
     newBooking
   }
 
-  def addBookingAndSendEmail(currentUser: UserCredential, event: Event, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String], baseUrl: String): EventBookingSuccess ={
+  def addBookingAndSendEmail(currentUser: UserCredential, event: Event, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String], baseUrl: String): EventBookingSuccess = {
     // Add the booking
     val newBooking = this.addBooking(currentUser = currentUser, eventDate = eventDate, nrOfGuestsToBeBooked = nrOfGuestsToBeBooked, comment = comment)
 
@@ -811,5 +811,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
     eventDateRepository.save(newContent)
   }
 
+  def save(newContent: BookedEventDate): BookedEventDate = withTransaction(template){
+    bookedEventDateRepository.save(newContent)
+  }
 
 }
