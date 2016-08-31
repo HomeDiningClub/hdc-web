@@ -19,7 +19,7 @@ resolvers ++= Seq(
   "Spring Snapshots" at "http://maven.springframework.org/snapshot", // spring-guice
   "Neo4j" at "http://m2.neo4j.org/content/repositories/releases/",
   "Rhinofly Internal Repository" at "http://maven-repository.rhinofly.net:8081/artifactory/libs-release-local",
-  "tuxburner.github.io" at "http://tuxburner.github.io/repo",
+  "tuxburner.github.io" at "http://tuxburner.github.io/repo", // Play neo4j plugin
   "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases", // play mailer
   Resolver.sonatypeRepo("releases"),
   Resolver.sonatypeRepo("snapshots"),
@@ -66,7 +66,7 @@ libraryDependencies ++= Seq(
   "commons-codec" % "commons-codec" % "1.9" withSources(),
   //"javax.enterprise" % "cdi-api" % "1.0-SP4",
   //"com.adrianhurt" %% "play-bootstrap3" % "0.4.4"
-  "com.adrianhurt" %% "play-bootstrap" % "1.1-P24-B3-SNAPSHOT" excludeAll(ExclusionRule(organization = "org.webjars", name="jquery"), ExclusionRule(organization = "org.webjars", name="bootstrap")) withSources()
+  "com.adrianhurt" %% "play-bootstrap" % "1.1-P24-B3" excludeAll(ExclusionRule(organization = "org.webjars", name="jquery"), ExclusionRule(organization = "org.webjars", name="bootstrap")) withSources()
   //"com.typesafe.play" %% "play-plugins-util" % "2.4.0",
   //"nl.rhinofly" %% "play-s3" % "3.3.4",
   //"se.digiplant" %% "play-scalr" % "1.1.2",
