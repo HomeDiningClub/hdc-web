@@ -3,7 +3,7 @@
 @if(boxes.nonEmpty) {
     @for(box: models.viewmodels.ProfileBox <- boxes){
 
-        <div class="col-xs-12 col-sm-12 col-md-6">
+        <div class="col-xs-12 col-sm-6">
             <a href="@box.linkToProfile">
                 @defining( if(box.mainImage.isDefined){ "style=\"background-image: url('" + box.mainImage.get + "');background-size:100%;\"" } else { "" } ) { mainImage: String =>
                 <div class="thumbnail panel-startpage hover-green-dropshadow" @Html(mainImage)>

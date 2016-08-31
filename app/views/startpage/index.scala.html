@@ -19,11 +19,11 @@
     <div class="container maincontent-container">
 
         <div class="row margin-top">
-            <div class="col-xs-12 col-md-7">
-                @startpage.video(currentUser)
-            </div>
             <div class="col-xs-12 col-md-5">
                 @startpage.asideNews(asideNews)
+            </div>
+            <div class="col-xs-12 col-md-7">
+            @startpage.video(currentUser)
             </div>
 
             @if(currentUser.isEmpty) {

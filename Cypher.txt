@@ -110,3 +110,8 @@ MATCH (n:`UserProfile`)
     SET n.payCache = NULL
     RETURN n
 --
+
+--
+Remove all old Events
+MATCH (n:Event) DETACH DELETE n
+--
