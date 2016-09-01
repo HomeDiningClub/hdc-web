@@ -2,6 +2,7 @@ $(document).ready(function(){
 
     // Init suggestion
     var dateSugForm = $("#date-suggestion-form");
+    var defaultSuggestedTimeIfNonSelected = "19:00:00";
     activateDateSuggestionButtons();
 
 
@@ -21,7 +22,9 @@ $(document).ready(function(){
             format: "LT"
         };
         dateSugForm.find(".date input[type=date]").datetimepicker(datePickerOptions);
-        dateSugForm.find(".time input[type=time]").datetimepicker(timePickerOptions);
+        var sugTimeInput = dateSugForm.find(".time input[type=time]");
+        sugTimeInput.datetimepicker(timePickerOptions);
+        addListenerForSettingDefaultTime(sugTimeInput, defaultSuggestedTimeIfNonSelected);
     }
 
 

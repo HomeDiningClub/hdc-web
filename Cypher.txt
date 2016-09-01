@@ -113,5 +113,5 @@ MATCH (n:`UserProfile`)
 
 --
 Remove all old Events
-MATCH (n:Event) DETACH DELETE n
+    MATCH (n:Event) DETACH DELETE n
 --

@@ -13,9 +13,11 @@
     b3.inline.fieldConstructor
 }
 @script = {
+    <script src="@routes.Assets.at("js/app/event-helpers.js")"></script>
     <script>
     $(document).ready(function(){
         var form = $(".form-multistep");
+        var defaultTimeIfNonSelected = "19:00:00";
 
         var formValRules = {
             ignore:":not(:visible)",
@@ -75,7 +77,8 @@
         $(".date input[type=date]").datetimepicker(datePickerOptions);
         $(".time input[type=time]").datetimepicker(timePickerOptions);
         $(".remove-button").on("click", removeDate);
-        $(".add-more-dates").on("click", {datePickerOptions: datePickerOptions, timePickerOptions: timePickerOptions, stepsForm: form }, cloneDate);
+        $(".add-more-dates").on("click", {datePickerOptions: datePickerOptions, timePickerOptions: timePickerOptions, stepsForm: form, defaultTime: defaultTimeIfNonSelected }, cloneDate);
+        addListenerForSettingDefaultTime(".time input[type=time][value='']", defaultTimeIfNonSelected);
 
         @if(activateMultipleStepsForm) {
             initMultiForm(form, formValRules);
@@ -85,7 +88,7 @@
         activateValidation(form, formValRules, dateRules, timeRules);
     });
 
-    function cloneDate(event, datePickerOptions, timePickerOptions, stepsForm){
+    function cloneDate(event, datePickerOptions, timePickerOptions, stepsForm, defaultTime){
        var $dateContainer = $("#date-container");
        var $dateClone = $dateContainer.children().first().clone();
        var nrOfDates = $dateContainer.children().length;
@@ -96,23 +99,22 @@
         return oldHTML.replace(/0/gi, nrOfDates);
        });
 
-       $dateClone.find(".eventdate-guid").attr("value","");
-       $dateClone.find(".guestsbooked").attr("value","0");
-       $dateClone.find("input[type=date]").attr("value","").removeAttr("readonly").datetimepicker(event.data.datePickerOptions);
-       $dateClone.find("input[type=time]").attr("value","").removeAttr("readonly").datetimepicker(event.data.timePickerOptions);
-       $dateClone.find(".remove-button").removeClass("hidden").on("click", removeDate);
-       $dateContainer.append($dateClone);
-       event.data.stepsForm.validate().resetForm();
-       /*
-       $dateContainer.find(".date-input").each(function() {
-            $(this).rules("remove").rules("add", dateRules);
-       });
-       */
+        $dateClone.find(".eventdate-guid").attr("value","");
+        $dateClone.find(".guestsbooked").attr("value","0");
+        $dateClone.find("input[type=date]").attr("value","").removeAttr("readonly").datetimepicker(event.data.datePickerOptions);
+        var timeClone = $dateClone.find("input[type=time]");
+        timeClone.attr("value","").removeAttr("readonly").datetimepicker(event.data.timePickerOptions);
+        addListenerForSettingDefaultTime(timeClone, event.data.defaultTime);
+        $dateClone.find(".remove-button").removeClass("hidden").on("click", removeDate);
+        $dateContainer.append($dateClone);
+        event.data.stepsForm.validate().resetForm();
+
     }
+
+
 
     function removeDate(){
         var $parent = $(this).closest(".date-row");
-        // TODO add check for if people has booked
         if($parent.find(".guestsbooked").attr("value") > 0){
             alert("@Messages("event.edit.add.date-time.remove-date.guests-booked")");
         }else{
