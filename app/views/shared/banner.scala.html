@@ -1,10 +1,13 @@
 @(imgPath: String = "images/banners/HDC_reklampuff_1.png",
         linkPath: String = "/content/partners",
         alt: String = "",
-        title: String = "Våra Partners är viktiga för oss och vi söker alltid fler som vill samarbeta med oss på HomeDiningClub.")(implicit messages: Messages)
+        title: String = "Våra Partners är viktiga för oss och vi söker alltid fler som vill samarbeta med oss på HomeDiningClub.",
+        showBannerHeader: Boolean = true)(implicit messages: Messages)
 
 <div class="banner">
-    <div class="banner-header">@Messages("banner.header")</div>
+    @if(showBannerHeader) {
+        <div class="banner-header">@Messages("banner.header")</div>
+    }
     <ul>
         <li><a href="http://matochvanner.se/prenumerera" title="Prenumerera på Mat och vänner" target="_blank" onclick="ga('send', 'event', 'banner', 'click', 'matochvanner.se/prenumerera')">@shared.img("images/banners/banner-mat-vanner-01.gif", cssClass = "banner-dropshadow")</a></li>
         <li><a href="@linkPath" title="@title" target="" onclick="ga('send', 'event', 'banner', 'click', 'hdc-banner')">@shared.img(imgPath.stripPrefix("/"), cssClass = "banner-dropshadow")</a></li>

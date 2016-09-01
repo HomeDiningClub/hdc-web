@@ -18,7 +18,7 @@
 
 @main(Messages("recipe.title", recipe.getName), metaData = metaData) {
 
-    <div class="container host-container">
+    <div class="container maincontent-container">
         <div class="row">
             <div class="col-xs-12 col-md-9">
                 @views.html.profile.profileHeader(recipe.getOwnerProfile.profileLinkName, recipe.getOwnerProfile.getOwner.firstName, avatarUrl, showLinkBack = true)
