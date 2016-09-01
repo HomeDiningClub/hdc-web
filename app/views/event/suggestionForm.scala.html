@@ -2,7 +2,7 @@
 @implicitFieldConstructor = @{ b3.vertical.fieldConstructor }
 
 <div id="date-suggestion-form" class="margin-top event-cta-form hidden">
-    @if(memberUser.isDefined && (!isThisMyEvent || customUtils.Helpers.isUserAdmin(memberUser.get))) {
+    @if(memberUser.isDefined && !isThisMyEvent) {
         <div class="panel panel-green panel-date-suggestion-form">
             <div class="panel-heading">@Messages("event.suggest.heading")</div>
             <div class="panel-body">
@@ -44,7 +44,15 @@
                 }
             </div>
         </div>
+
     }else{
-        @views.html.event.notLoggedIn()
+
+        @if(memberUser.isDefined && isThisMyEvent){
+            <div class="well well-hdc">
+            @Messages("event.suggest.suggest-my-own-event")
+            </div>
+        }else{
+            @views.html.event.notLoggedIn()
+        }
     }
 </div>

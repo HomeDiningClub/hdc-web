@@ -2,7 +2,9 @@
 @if(isThisMyProfile) {
 
     <div class="col-xs-12 col-sm-6">
-        <h2>@Messages("profile.bookings.bookings-made-by-me.header")</h2>
+        <h2>@Messages("profile.bookings.bookings-made-by-me.header")<br>
+            <small>@Messages("profile.bookings.bookings-made-by-me.sub-header")</small>
+        </h2>
         @if(bookingsMadeByMe.nonEmpty) {
             @views.html.event.bookingList("my-bookings", bookingsMadeByMe)
         } else {
@@ -13,7 +15,9 @@
     </div>
 
     <div class="col-xs-12 col-sm-6">
-        <h2>@Messages("profile.bookings.bookings-to-my-events.header")</h2>
+        <h2>@Messages("profile.bookings.bookings-to-my-events.header")<br>
+            <small>@Messages("profile.bookings.bookings-to-my-events.sub-header")</small>
+        </h2>
         @if(bookingsMadeToMyEvents.nonEmpty) {
                 @views.html.event.bookingList("bookings-to-my-events", bookingsMadeToMyEvents)
         } else {

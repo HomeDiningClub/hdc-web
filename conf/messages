@@ -385,7 +385,9 @@ profile.button.blog.add=Skapa nytt inlägg
 
 profile.bookings.no-entries=Du har inga bokningar.
 profile.bookings.bookings-to-my-events.header=Gästers bokningar
+profile.bookings.bookings-to-my-events.sub-header=Bokningar genomförda av gäster till mina bjudningar
 profile.bookings.bookings-made-by-me.header=Mina bokningar
+profile.bookings.bookings-made-by-me.sub-header=Bokningar genomförda av mig till andras bjudningar
 profile.blog.no-entries={0} har inte adderat några inlägg i sin blogg än.
 profile.blog.tab.body.non-admin=Här kommer alla värdar att kunna skriva och blogga om sin mat och sina intressen.
 profile.firstname.label=Namn:
@@ -517,7 +519,7 @@ event.edit.delete.title=Varning
 event.edit.delete.confirm=Du kan inte ångra denna åtgärd, är du säker att du vill ta bort?
 event.edit.delete.ok=Ta bort!
 event.edit.delete.abort=Avbryt
-event.button.edit=Redigera händelse
+event.button.edit=Redigera bjudning
 event.more-images.header=Bilder
 
 event.button.select=Boka
@@ -563,7 +565,7 @@ event.prop.phone=Värdens telefonnumer
 event.prop.comment=Kommentar ifrån gästen
 
 event.book.heading=Slutför bokning
-event.book.booking-my-own-event=Du kan inte boka din egna bjudning
+event.book.booking-my-own-event=Du kan inte boka din egen bjudning
 event.book.chosen.date=Bokat datum
 event.book.chosen.time=Klockan
 event.book.chosen.total-cost=Totalkostnad
@@ -579,20 +581,24 @@ event.book.success.meal-type=Måltidstyp
 event.book.success.payment-info=Betalas hos värden via ett av tillgängliga betalningssätt
 event.book.success.print=Skriv ut
 event.book.success.back=Tillbaka
-event.book.add.already-booked=Du kan inte boka samma bjudning mer än 1 gång.
+event.book.add.already-booked=Du är redan bokad på denna bjudning, om du vill ändra din bokning, kontakta värden genom att skicka meddelande till värden via din inbox.
 event.book.add.user-booking-his-own-event=Du kan inte boka din egen bjudning
 event.book.add.too-many-bookings=Kan inte slutföra bokningen, för många gäster på detta datum.
-event.book.success.to-guest.email.subject=Bokning genomförd {0}
-event.book.success.to-guest.email.body.part01=Din bokning är slutförd, betalning genomförs hos värden. Värden har fått dina kontaktuppgifter och tar kontakt vid eventuella ändringar.
+event.book.success.to-guest.email.subject=Bokning genomförd: {0}
+event.book.success.to-guest.email.body.part01=Din bokning är slutförd, betalning genomförs hos värden. Värden har fått dina kontaktuppgifter och tar kontakt vid eventuella ändringar. Om du behöver kontakta värden eller har frågor har också ett meddelande skickat till din HDC inbox, där du kan kontakta värden enkelt.
 event.book.success.to-guest.email.body.part02=Vi på Home dining club hoppas att er kväll blir lyckad!
 event.book.success.to-host.email.subject=Du har fått en bokning! Bjudning: {0}
 event.book.success.to-host.email.body.part01=En gäst har precis bokat en av dina bjudningar. Se detaljer om bokningen på din profilsida under fliken {0}. <br>Ett meddelande finns också i din {1}, om du behöver kontakta din gäst.
 event.book.success.to-host.email.body.link.bookings=bokningar
 event.book.success.to-host.email.body.link.inbox=inbox
 event.book.success.to-host.email.body.part02=Vi på Home dining club hoppas att er kväll blir lyckad!
-event.book.success.to-host.inbox.body.part01=Du har fått en bokning på din bjudning: {0}
-event.book.success.to-host.inbox.body.part02=Kommentar ifrån bokaren:<br> {0}
-event.book.success.to-host.inbox.body.part03=Se mer detaljer under fliken "Bokningar".
+event.book.success.to-host.inbox.body.part01=Bokning registrerad: {0}
+event.book.success.to-host.inbox.body.part02=Detaljerna finns även under fliken "Bokningar".
+event.book.success.to-guest.inbox.body.part01=Bokning genomförd: {0}
+event.book.success.to-guest.inbox.body.part02=Detta är ett automatiskt meddelande ifrån värden, för att kontakta värden för frågor kring bokningen, svara på detta meddelande.
+event.book.success.to-guest.inbox.body.part03=Detaljerna om bokningen, finns även under fliken "Bokningar".
+
+
 
 event.suggest.date=Datum
 event.suggest.time=Klockan
@@ -605,10 +611,12 @@ event.suggest.add.error=Någonting gick fel, du kan inte föreslå ett datum.
 event.suggest.add.failure.missing-params=Kan inte föreslå ett datum, inte alla värden är ifyllda: {0}
 event.suggestion.add.date.validation=Datum
 event.suggestion.add.time.validation=Klockslag
+event.suggest.suggest-my-own-event=Du kan inte skicka ett förslag till dig själv.
 event.suggest.add.success=Önskemålet skickat!
 event.suggest.success.header=Skickat till värden!
 event.suggest.success.sub-header=Vad händer nu?
 event.suggest.success.body=Förfrågan har skickats till värden som skapar en plats åt dig, eller kontaktar dig med ett alternativt datum, när datumet är tillgänglig går enkelt in och slutför din bokning som vanligt.
+event.suggest.success.body-extra-info-for-inbox=Du kan kontakta värden direkt med fler frågor genom att svara på detta meddelande.
 event.suggest.success.event-name=Bjudning
 event.suggest.success.chosen.date=Föreslaget datum
 event.suggest.success.chosen.time=Föreslagen tid
@@ -620,6 +628,10 @@ event.suggest.email.subject=Du har ett förslag till bokning!
 event.suggest.email.body.part01=En gäst på HDC har föreslagit ett datum för din bjudning: {0}
 event.suggest.email.body.part02=För att svara på förfrågan, logga in och svara via din {0}, skapa ett passande datum för dina gäster och informera dem om att de kan boka denna tid.
 event.suggest.email.body.part02.link=Inkorg
+event.suggest.inbox.body.part01=Föreslag på datum: {0}
+event.suggest.inbox.body.part02=Skapa ett passande datum för dina gäster på din bjudning och informera dem om att de kan boka denna tid.
+
+
 
 # Blog
 blog.title={0} - {1} - Home dining club - Blogg

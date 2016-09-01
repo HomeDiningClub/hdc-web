@@ -6,7 +6,7 @@
 }
 
 <div id="booking-form" class="margin-top event-cta-form hidden">
-    @if(memberUser.isDefined && (!isThisMyEvent || customUtils.Helpers.isUserAdmin(memberUser.get))) {
+    @if(memberUser.isDefined && !isThisMyEvent) {
         <div class="panel panel-orange panel-booking-form">
             <div class="panel-heading">@Messages("event.book.heading")</div>
             <div class="panel-body">
@@ -38,7 +38,7 @@
         </div>
     }
 
-    @if(memberUser.isDefined && (isThisMyEvent && !customUtils.Helpers.isUserAdmin(memberUser.get))){
+    @if(memberUser.isDefined && isThisMyEvent){
         <div class="well well-hdc">
             @Messages("event.book.booking-my-own-event")
         </div>

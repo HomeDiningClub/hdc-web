@@ -37,6 +37,7 @@ import scala.collection.JavaConverters._
 import play.api.Logger
 import models.formdata._
 import customUtils.formhelpers.Formats._
+import models.message.Message
 
 class EventService @Inject()(val template: Neo4jTemplate,
                              val eventRepository: EventRepository,
@@ -356,6 +357,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+
+
   def addSuggestionAndSendEmail(userSendingSuggestion: UserCredential, event: Event, suggDate: LocalDate, suggTime: LocalTime, nrOfGuestsToBeBooked: Integer, comment: Option[String], baseUrl: String): EventDateSuggestionSuccess = withTransaction(template){
     //val selectedDate = Helpers.buildDateFromDateAndTime(suggDate, suggTime)
 
@@ -375,13 +378,15 @@ class EventService @Inject()(val template: Neo4jTemplate,
     this.sendSuggestionSuccessEmailToGuest(successValues, baseUrl)
 
     // Send a message to Hosts-inbox
-    this.sendSuggestionMessageToHostInbox(userSendingSuggestion, event, suggDate, suggTime, nrOfGuestsToBeBooked, comment)
+    val message = this.sendSuggestionMessageToHostInbox(userSendingSuggestion, event, suggDate, suggTime, nrOfGuestsToBeBooked, successValues)
+
+    // Send a message to Guest-inbox
+    this.sendSuggestionMessageToGuestInbox(userSendingSuggestion, event, successValues, message)
 
     // Extra mail to host
     this.sendSuggestionSuccessEmailToHost(successValues, baseUrl)
     successValues
   }
-
 
   def addBooking(currentUser: UserCredential, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String]): BookedEventDate = withTransaction(template){
     val newBooking: BookedEventDate = new BookedEventDate(currentUser.getUserProfile,nrOfGuestsToBeBooked,eventDate, comment.getOrElse(""))
@@ -400,7 +405,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
     val successValues: EventBookingSuccess = mapEventBookingToEventBookingSuccess(newBookingData, baseUrl)
 
     // Send a message to Hosts-inbox
-    this.sendBookingSuccessMessageToHostInbox(currentUser, event, eventDate, nrOfGuestsToBeBooked, comment, successValues)
+    val message = this.sendBookingSuccessMessageToHostInbox(currentUser, event, eventDate, nrOfGuestsToBeBooked, comment, successValues)
+
+    // Send a message to Guest-inbox
+    this.sendBookingSuccessMessageToGuestInbox(currentUser, event, message, successValues)
 
     // Sending Host a notice email
     this.sendBookingSuccessEmailToHost(successValues, baseUrl)
@@ -411,111 +419,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
     successValues
   }
 
-  private def sendBookingSuccessMessageToHostInbox(currentUser: UserCredential, event: Event, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String], successValues: EventBookingSuccess) {
-    messageService.createRequest(
-      user = currentUser,
-      host = event.getOwnerProfile.getOwner,
-      date = Helpers.castLocalDateToDate(eventDate.getEventDateTime.toLocalDate),
-      time = Helpers.castLocalTimeToDate(eventDate.getEventDateTime.toLocalTime),
-      numberOfGuests = nrOfGuestsToBeBooked,
-      request = Html(Messages("event.book.success.to-host.inbox.body.part01", successValues.eventName) +
-        "<br><br>" +
-        Messages("event.book.success.to-host.inbox.body.part02", comment.getOrElse("")) +
-        "<br><br>" +
-        Messages("event.book.success.to-host.inbox.body.part03")).toString(),
-      phone = currentUser.getPhone match {
-        case null | "" => None
-        case p => Some(p)
-      })
-  }
-
-  private def sendSuggestionMessageToHostInbox(userSendingSuggestion: UserCredential, event: Event, suggDate: LocalDate, suggTime: LocalTime, nrOfGuestsToBeBooked: Integer, comment: Option[String]) {
-    messageService.createRequest(
-      user = userSendingSuggestion,
-      host = event.getOwnerProfile.getOwner,
-      date = Helpers.castLocalDateToDate(suggDate),
-      time = Helpers.castLocalTimeToDate(suggTime),
-      numberOfGuests = nrOfGuestsToBeBooked,
-      request = comment.getOrElse(""),
-      phone = userSendingSuggestion.getPhone match {
-        case null | "" => None
-        case p => Some(p)
-      })
-  }
-
-  private def mapEventBookingToEventBookingSuccess(booking: BookedEventDateData, baseUrl: String): EventBookingSuccess = {
-
-    val bookedDate = customUtils.Helpers.castDateToLocalDateTime(booking.getBookingDateTime() match {
-      case null => new java.util.Date()
-      case bDate => bDate
-    })
-
-    val successValues = EventBookingSuccess(
-      bookingNumber = UUID.fromString(booking.getBookingObjectId()),
-      eventName = booking.getEventName(),
-      eventLink = baseUrl + routes.EventPageController.viewEventByNameAndProfile(booking.getProfileLinkName(), booking.getEventLinkName()).url,
-      hostLink = baseUrl + routes.UserProfileController.viewProfileByName(booking.getProfileLinkName()).url,
-      mealType = booking.getEventMealType() match {
-        case null | "" => None
-        case mt => Some(mt)
-      },
-      date = bookedDate.toLocalDate,
-      time = bookedDate.toLocalTime,
-      locationAddress = booking.getAddressToHost(),
-      locationCity = booking.getCityToHost(),
-      locationCounty = booking.getCountyToHost(),
-      locationZipCode = booking.getZipCodeToHost(),
-      phoneNumberToHost = booking.getPhoneNumberToHost() match {
-        case null | "" => None
-        case p => Some(p)
-      },
-      nrOfGuests = booking.getBookingNrOfGuests(),
-      guestComment =  booking.getBookingGuestComment() match {
-        case null | "" => None
-        case c => Some(c)
-      },
-      totalCost = this.calculatePrice(booking.getEventPricePerPerson(), booking.getBookingNrOfGuests()),
-      guestEmail = booking.getEmailToGuest(),
-      hostEmail = booking.getEmailToHost()
-    )
-    successValues
-  }
-
-  /*
-  private def mapEventBookingToEventBookingSuccess(currentUser: Option[UserCredential], booking: BookedEventDate, baseUrl: String): EventBookingSuccess = withTransaction(template){
-
-    val event = template.fetch(booking.eventDate.getOwnerEvent)
-
-    val successValues = EventBookingSuccess(
-      bookingNumber = booking.objectId,
-      eventName = event.getName,
-      eventLink = baseUrl + routes.EventPageController.viewEventByNameAndProfile(event.getOwnerProfile.profileLinkName, event.getLink).url,
-      host = event.getOwnerProfile.getOwner,
-      mealType = event.getMealType match {
-        case null => None
-        case mt => Some(mt.name)
-      },
-      date = booking.eventDate.getEventDateTime.toLocalDate,
-      time = booking.eventDate.getEventDateTime.toLocalTime,
-      locationAddress = event.getOwnerProfile.streetAddress,
-      locationCity = event.getOwnerProfile.city,
-      locationCounty = event.getOwnerProfile.getLocations.asScala.head.county.name,
-      locationZipCode = event.getOwnerProfile.zipCode,
-      phoneNumberToHost = event.getOwnerProfile.phoneNumber match {
-        case "" => None
-        case p => Some(p)
-      },
-      nrOfGuests = booking.getNrOfGuests,
-      guestComment = Option(booking.getComment),
-      totalCost = this.getEventPrice(event, booking.getNrOfGuests),
-      email = currentUser match {
-        case None => ""
-        case Some(user) => user.emailAddress
-      }
-    )
-    successValues
-  }
-*/
 
   def updateOrCreateEventDates(contentData: EventForm, event: Event) {
     if(contentData.eventDates.nonEmpty){
@@ -548,8 +451,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-
-
   def updateOldEventDate(formDate: EventDateForm, storedDate: EventDate) {
     storedDate.setEventDateTime(Helpers.buildDateFromDateAndTime(formDate.date, formDate.time))
   }
@@ -560,25 +461,98 @@ class EventService @Inject()(val template: Neo4jTemplate,
     this.save(event)
   }
 
-  def sendBookingSuccessEmailToGuest(successValues: EventBookingSuccess): Email = {
+
+
+  //region Sending messages
+  private def sendBookingSuccessMessageToHostInbox(currentUser: UserCredential, event: Event, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String], successValues: EventBookingSuccess): Message = {
+    val body = Html(Messages("event.book.success.to-host.inbox.body.part01", successValues.eventName) +
+      " <br>" +
+      views.html.event.bookingSuccessDetails(successValues) +
+      Messages("event.book.success.to-host.inbox.body.part02")).toString()
+
+    messageService.createRequest(
+      user = currentUser,
+      host = event.getOwnerProfile.getOwner,
+      date = Helpers.castLocalDateToDate(eventDate.getEventDateTime.toLocalDate),
+      time = Helpers.castLocalTimeToDate(eventDate.getEventDateTime.toLocalTime),
+      numberOfGuests = nrOfGuestsToBeBooked,
+      request = body,
+      phone = currentUser.getPhone match {
+        case null | "" => None
+        case p => Some(p)
+      })
+  }
+
+  private def sendBookingSuccessMessageToGuestInbox(userSendingBooking: UserCredential, event: Event, message: Message, successValues: EventBookingSuccess) {
+    val body = Html(Messages("event.book.success.to-guest.inbox.body.part01", successValues.eventName) +
+      " <br>" +
+      Messages("event.book.success.to-guest.inbox.body.part02") +
+      "<br><br>" +
+      views.html.event.bookingSuccessDetails(successValues) +
+      Messages("event.book.success.to-guest.inbox.body.part03")).toString()
+
+    messageService.createResponse(
+      user = event.getOwnerProfile.getOwner,
+      guest = userSendingBooking,
+      message = message,
+      response = body,
+      phone = successValues.phoneNumberToHost match {
+        case None => ""
+        case Some(p) => p
+      })
+  }
+
+  private def sendSuggestionMessageToHostInbox(userSendingSuggestion: UserCredential, event: Event, suggDate: LocalDate, suggTime: LocalTime, nrOfGuestsToBeBooked: Integer, suggestionSuccess: EventDateSuggestionSuccess): Message = {
+    val body = Html(Messages("event.suggest.inbox.body.part01", suggestionSuccess.eventName) +
+      views.html.event.suggestionSuccessDetails(suggestionSuccess) +
+      Messages("event.suggest.inbox.body.part02")).toString()
+
+    messageService.createRequest(
+      user = userSendingSuggestion,
+      host = event.getOwnerProfile.getOwner,
+      date = Helpers.castLocalDateToDate(suggDate),
+      time = Helpers.castLocalTimeToDate(suggTime),
+      numberOfGuests = nrOfGuestsToBeBooked,
+      request = body,
+      phone = userSendingSuggestion.getPhone match {
+        case null | "" => None
+        case p => Some(p)
+      })
+  }
+
+  private def sendSuggestionMessageToGuestInbox(userSendingSuggestion: UserCredential, event: Event, suggestionSuccess: EventDateSuggestionSuccess, message: Message) {
+    val body = Html(Messages("event.suggest.success.body") +
+      views.html.event.suggestionSuccessDetails(suggestionSuccess) +
+      Messages("event.suggest.success.body-extra-info-for-inbox")).toString()
+
+    messageService.createResponse(
+      user = event.getOwnerProfile.getOwner,
+      guest = userSendingSuggestion,
+      message = message,
+      response = body,
+      phone = event.getOwnerProfile.getOwner.getPhone match {
+        case null | "" => ""
+        case p => p
+      })
+  }
+
+  private def sendBookingSuccessEmailToGuest(successValues: EventBookingSuccess): Email = {
 
     // To guest
-    val msgBody = Html(Messages("event.book.success.to-guest.email.body.part01") +
-      "<br><br>" +
-      views.html.event.bookingSuccessDetails(successValues).toString() +
-      "<br><br>" +
+    val body = Html(Messages("event.book.success.to-guest.email.body.part01") +
+      views.html.event.bookingSuccessDetails(successValues) +
       Messages("event.book.success.to-guest.email.body.part02")).toString()
 
     mailService.createAndSendMailNoReply(
       subject =  Messages("event.book.success.to-guest.email.subject", successValues.eventName),
-      message = msgBody,
+      message = body,
       recipient = EmailAndName(successValues.guestEmail,successValues.guestEmail),
       from = mailService.getDefaultAnonSender
     )
 
   }
 
-  def sendBookingSuccessEmailToHost(successValues: EventBookingSuccess, baseUrl: String): Email = {
+  private def sendBookingSuccessEmailToHost(successValues: EventBookingSuccess, baseUrl: String): Email = {
 
     // To Host
     val pathToHostProfile = baseUrl + successValues.hostLink
@@ -598,7 +572,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
   }
 
-  def sendSuggestionSuccessEmailToHost(successValues: EventDateSuggestionSuccess, baseUrl: String): Email = {
+  private def sendSuggestionSuccessEmailToHost(successValues: EventDateSuggestionSuccess, baseUrl: String): Email = {
 
     // To host
     val path = routes.UserProfileController.viewProfileByName(successValues.host.getUserProfile.profileLinkName).url
@@ -614,7 +588,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
     )
   }
 
-  def sendSuggestionSuccessEmailToGuest(successValues: EventDateSuggestionSuccess, baseUrl: String): Email = {
+  private def sendSuggestionSuccessEmailToGuest(successValues: EventDateSuggestionSuccess, baseUrl: String): Email = {
 
     // To Guest
     val path = routes.UserProfileController.viewProfileByName(successValues.host.getUserProfile.profileLinkName).url
@@ -629,8 +603,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
       from = mailService.getDefaultAnonSender
     )
   }
+  //endregion
 
 
+  //region Mappings
   def mapEventDataToEventBox(list: Page[EventData]): Option[List[EventBox]] = {
     var eventList : ListBuffer[EventBox] = new ListBuffer[EventBox]
 
@@ -709,6 +685,45 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
   }
 
+  private def mapEventBookingToEventBookingSuccess(booking: BookedEventDateData, baseUrl: String): EventBookingSuccess = {
+
+    val bookedDate = customUtils.Helpers.castDateToLocalDateTime(booking.getBookingDateTime() match {
+      case null => new java.util.Date()
+      case bDate => bDate
+    })
+
+    val successValues = EventBookingSuccess(
+      bookingNumber = UUID.fromString(booking.getBookingObjectId()),
+      eventName = booking.getEventName(),
+      eventLink = baseUrl + routes.EventPageController.viewEventByNameAndProfile(booking.getProfileLinkName(), booking.getEventLinkName()).url,
+      hostLink = baseUrl + routes.UserProfileController.viewProfileByName(booking.getProfileLinkName()).url,
+      mealType = booking.getEventMealType() match {
+        case null | "" => None
+        case mt => Some(mt)
+      },
+      date = bookedDate.toLocalDate,
+      time = bookedDate.toLocalTime,
+      locationAddress = booking.getAddressToHost(),
+      locationCity = booking.getCityToHost(),
+      locationCounty = booking.getCountyToHost(),
+      locationZipCode = booking.getZipCodeToHost(),
+      phoneNumberToHost = booking.getPhoneNumberToHost() match {
+        case null | "" => None
+        case p => Some(p)
+      },
+      nrOfGuests = booking.getBookingNrOfGuests(),
+      guestComment =  booking.getBookingGuestComment() match {
+        case null | "" => None
+        case c => Some(c)
+      },
+      totalCost = this.calculatePrice(booking.getEventPricePerPerson(), booking.getBookingNrOfGuests()),
+      guestEmail = booking.getEmailToGuest(),
+      hostEmail = booking.getEmailToHost()
+    )
+    successValues
+  }
+  //endregion
+
   def getEventBoxes(user: UserCredential): Option[List[EventBox]] = withTransaction(template){
     // Without paging
     this.getEventBoxes(user, 0)
@@ -765,7 +780,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-
   def getListOwnedBy(user: UserCredential): Option[List[Event]] = withTransaction(template){
     eventRepository.findByownerProfileOwner(user).iterator.asScala.toList match {
       case null => None
@@ -780,6 +794,16 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+
+
+  //region  Fetching
+  def fetchEvent(event: Event): Event = withTransaction(template){
+    template.fetch(event)
+  }
+  //endregion
+
+
+  //region Saving & Deleting
   def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false
@@ -794,15 +818,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  // Fetching
-  def fetchEvent(event: Event): Event = withTransaction(template){
-    template.fetch(event)
-  }
-
-  private def deleteAll() = withTransaction(template){
-    eventRepository.deleteAll()
-  }
-
   def save(newContent: Event): Event = withTransaction(template){
     eventRepository.save(newContent)
   }
@@ -814,5 +829,6 @@ class EventService @Inject()(val template: Neo4jTemplate,
   def save(newContent: BookedEventDate): BookedEventDate = withTransaction(template){
     bookedEventDateRepository.save(newContent)
   }
+  //endregion
 
 }
