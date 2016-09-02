@@ -1,35 +1,37 @@
 package controllers
 
-import java.time.{LocalDateTime, LocalDate}
-import javax.inject.{Named, Inject}
+import java.time.{LocalDate, LocalDateTime}
+import javax.inject.{Inject, Named}
 
-import models.event.{BookedEventDate, MealType, AlcoholServing}
+import models.event.{AlcoholServing, BookedEventDate, MealType}
 import models.files.ContentFile
-import models.jsonmodels.{EventBoxJSON}
+import models.jsonmodels.EventBoxJSON
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.data.Form
-import play.api.libs.json.{Json, JsValue}
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.mailer.Email
 import play.api.mvc._
-import models.{UserCredential, Event}
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import models.{Event, UserCredential}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
-import securesocial.core.SecureSocial.{SecuredRequest, RequestWithUser}
+import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
 import services._
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
-import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
+
+import customUtils.authorization.{WithRole, WithRoleAndOwnerOfObject}
 
 import scala.Some
 import models.viewmodels._
 import customUtils.Helpers
-import play.api.Logger
+import play.api.{Environment, Logger}
+
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
-import models.formdata.{EventDateSuggestionForm, EventOptionsForm, EventBookingForm, EventForm}
+import models.formdata.{EventBookingForm, EventDateSuggestionForm, EventForm, EventOptionsForm}
 
 class EventPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val likeController: LikeController,
@@ -39,7 +41,8 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                                      val userProfileService: UserProfileService,
                                      val fileService: ContentFileService,
                                      implicit val nodeEntityService: NodeEntityService,
-                                     val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
+                                     val messagesApi: MessagesApi,
+                                     val environment: Environment) extends Controller with SecureSocial with I18nSupport {
 
 
   def viewEventByNameAndProfile(profileName: String, eventName: String) = UserAwareAction() { implicit request =>

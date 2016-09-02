@@ -1,16 +1,18 @@
 package controllers
 
 import javax.inject.Inject
+
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{RequestHeader, Controller}
+import play.api.mvc.{Controller, RequestHeader}
 import securesocial.core.SecureSocial
-import services.{ContentService}
-import play.api.Logger
+import services.ContentService
+import play.api.{Environment, Logger}
 import customUtils.security.SecureSocialRuntimeEnvironment
 
 class ContentPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                        val contentService: ContentService,
-                                       val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
+                                       val messagesApi: MessagesApi,
+                                       val environment: Environment) extends Controller with SecureSocial with I18nSupport {
 
   /*
   @Autowired

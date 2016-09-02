@@ -1,32 +1,35 @@
 package controllers
 
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 import models.files.ContentFile
 import models.jsonmodels.RecipeBoxJSON
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.libs.json.{Json, JsValue}
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import models.{UserCredential, Recipe}
+import models.{Recipe, UserCredential}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
-import services.{NodeEntityService, UserProfileService, ContentFileService, RecipeService}
+import services.{ContentFileService, NodeEntityService, RecipeService, UserProfileService}
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
-import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
+
+import customUtils.authorization.{WithRole, WithRoleAndOwnerOfObject}
 
 import scala.Some
-import models.viewmodels.{MetaData, EditRecipeExtraValues, RecipeBox}
+import models.viewmodels.{EditRecipeExtraValues, MetaData, RecipeBox}
 import customUtils.Helpers
-import play.api.Logger
+import play.api.{Environment, Logger}
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 import customUtils.security.SecureSocialRuntimeEnvironment
+
 import scala.collection.JavaConverters._
 import models.formdata.RecipeForm
 
@@ -37,7 +40,8 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
                                       val userProfileService: UserProfileService,
                                       val fileService: ContentFileService,
                                       implicit val nodeEntityService: NodeEntityService,
-                                      val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
+                                      val messagesApi: MessagesApi,
+                                      val environment: Environment) extends Controller with SecureSocial with I18nSupport {
 /*
   @Autowired
   private var recipeService: RecipeService = _

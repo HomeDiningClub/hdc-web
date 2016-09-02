@@ -1,18 +1,19 @@
 package controllers
 
 import java.util
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 import models.profile.TaggedFavoritesToUserProfile
-import models.{formdata, UserCredential, UserProfile}
+import models.{UserCredential, UserProfile, formdata}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.Logger
+import play.api.{Environment, Logger}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{RequestHeader, Controller}
+import play.api.mvc.{Controller, RequestHeader}
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import services.{NodeEntityService, UserProfileService}
+
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.FavoriteForm
@@ -22,7 +23,8 @@ import scala.collection.mutable.ListBuffer
 class FavoritesController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val messagesApi: MessagesApi,
                                      implicit val nodeEntityService: NodeEntityService,
-                                     val userProfileService: UserProfileService) extends Controller with SecureSocial with I18nSupport {
+                                     val userProfileService: UserProfileService,
+                                     val environment: Environment) extends Controller with SecureSocial with I18nSupport {
 /*
   // Services
   @Autowired

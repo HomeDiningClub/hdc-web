@@ -1,25 +1,26 @@
 package controllers
 
 import java.util.UUID
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 import customUtils.Helpers
 import models.event.EventData
-import models.{UserProfile}
+import models.UserProfile
 import models.location.County
 import models.profile.TagWord
-import models.viewmodels.{BrowseProfileBox, BrowseEventBox}
+import models.viewmodels.{BrowseEventBox, BrowseProfileBox}
 import org.springframework.data.domain.Page
 import play.api.data.Forms._
 import play.api.data._
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Controller
 import securesocial.core.SecureSocial
-
 import services._
+
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.SearchFilterForm
+import play.api.Environment
 
 class BrowsePageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                       val userProfileService: UserProfileService,
@@ -27,7 +28,8 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
                                       val tagWordService : TagWordService,
                                       val countyService: CountyService,
                                       val ratingService: RatingService,
-                                      val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
+                                      val messagesApi: MessagesApi,
+                                      val environment: Environment) extends Controller with SecureSocial with I18nSupport {
 
   // Search form
   val searchForm = Form(

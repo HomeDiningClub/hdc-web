@@ -1,25 +1,28 @@
 package controllers
 
 import models.files.ContentFile
-import models.jsonmodels.{BlogPostBoxJSON}
-import play.api.libs.json.{Json, JsValue}
+import models.jsonmodels.BlogPostBoxJSON
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import models.{BlogPost, UserCredential}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import constants.FlashMsgConstants
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
-import services.{NodeEntityService, UserProfileService, ContentFileService, BlogPostsService}
-import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
+import services.{BlogPostsService, ContentFileService, NodeEntityService, UserProfileService}
+import enums.{ContentStateEnums, FileTypeEnums, RoleEnums}
 import java.util.UUID
-import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
+
+import customUtils.authorization.{WithRole, WithRoleAndOwnerOfObject}
 import models.viewmodels._
 import customUtils.Helpers
-import play.api.Logger
+import play.api.{Environment, Logger}
+
 import scala.collection.JavaConverters._
-import javax.inject.{Inject}
+import javax.inject.Inject
+
 import scala.collection.mutable.ListBuffer
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.BlogPostsForm
@@ -29,7 +32,8 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
                                          val userProfileService: UserProfileService,
                                          val fileService: ContentFileService,
                                          implicit val nodeEntityService: NodeEntityService,
-                                         val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
+                                         val messagesApi: MessagesApi,
+                                         val environment: Environment) extends Controller with SecureSocial with I18nSupport {
 
   /*
   @Autowired

@@ -14,7 +14,8 @@ class ErrorController @Inject() (val messagesApi: MessagesApi,
                                env: Environment,
                                config: Configuration,
                                sourceMapper: OptionalSourceMapper,
-                               router: Provider[Router]) extends DefaultHttpErrorHandler(env, config, sourceMapper, router) with I18nSupport {
+                               router: Provider[Router],
+                                 val environment: Environment) extends DefaultHttpErrorHandler(env, config, sourceMapper, router) with I18nSupport {
 
   override def onProdServerError(request: RequestHeader, exception: UsefulException) = {
     implicit val req = request

@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject._
 
-import play.api.Logger
+import play.api.{Environment, Logger}
 import play.api.http.HttpErrorHandler
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.RequestHeader
@@ -14,7 +14,8 @@ import play.api.mvc.Results._
  * This is an alternative to ErrorController, if we show too much information in production
  * Activate by changing in application.config: play.http.errorHandler = "controllers.ErrorProdController"
  */
-class ErrorProdController @Inject()(val messagesApi: MessagesApi) extends HttpErrorHandler with I18nSupport {
+class ErrorProdController @Inject()(val messagesApi: MessagesApi,
+                                    val environment: Environment) extends HttpErrorHandler with I18nSupport {
 
 
   // 4xx
