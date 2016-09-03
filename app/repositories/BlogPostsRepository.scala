@@ -13,7 +13,7 @@ trait BlogPostsRepository extends GraphRepository[BlogPost]
 
   // Auto-mapped by Spring
   @Query("MATCH (n:`BlogPost`) WHERE n.objectId={0} RETURN n")
-  def findByobjectId(objectId: UUID): BlogPost
+  def findByobjectId(objectId: String): BlogPost
 
   @Query("MATCH (n:`BlogPost`) RETURN COUNT(*)")
   def getCountOfAll(): Int

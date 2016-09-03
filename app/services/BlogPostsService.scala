@@ -27,29 +27,19 @@ import models.formdata.BlogPostsForm
 class BlogPostsService @Inject() (val template: Neo4jTemplate,
                                   val blogPostsRepository: BlogPostsRepository) extends TransactionSupport {
 
-  /*
-  @Autowired
-  private var template: Neo4jTemplate = _
 
-  @Autowired
-  private var blogPostsRepository: BlogPostsRepository = _
-*/
-
-  //@Transactional(readOnly = true)
   def findById(objectId: UUID): Option[BlogPost] = withTransaction(template) {
-    blogPostsRepository.findByobjectId(objectId) match {
+    blogPostsRepository.findByobjectId(objectId.toString) match {
       case null => None
       case item => Some(item)
     }
   }
 
-  //@Transactional(readOnly = true)
   def getCountOfAll: Int = withTransaction(template) {
     blogPostsRepository.getCountOfAll()
   }
 
 
-  //@Transactional(readOnly = true)
   def getListOfAll: List[BlogPost] = withTransaction(template) {
     blogPostsRepository.findAll.iterator.asScala.toList match {
       case null => null
@@ -59,7 +49,6 @@ class BlogPostsService @Inject() (val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
   def add(newContent: BlogPost): BlogPost = withTransaction(template){
     val newContentResult = blogPostsRepository.save(newContent)
     newContentResult

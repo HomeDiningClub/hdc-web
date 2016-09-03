@@ -398,9 +398,8 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
 
     blogPosting match {
       case None =>
-        val errorMsg = "Wrong ID, cannot edit, Page cannot be found."
+        val errorMsg = "Wrong ID, cannot view, Page cannot be found."
         Logger.debug(errorMsg)
-        print("error ..... ")
         NotFound(errorMsg)
       case Some(item) =>
         Ok(views.html.blog.view(blogPost = item, metaData = buildMetaData(item,request), isThisMyBlogPost = isThisMyBlogPost(item)))
