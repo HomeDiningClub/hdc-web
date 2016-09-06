@@ -1,37 +1,35 @@
 package controllers
 
-import java.time.{LocalDate, LocalDateTime}
-import javax.inject.{Inject, Named}
+import java.time.{LocalDateTime, LocalDate}
+import javax.inject.{Named, Inject}
 
-import models.event.{AlcoholServing, BookedEventDate, MealType}
+import models.event.{BookedEventDate, MealType, AlcoholServing}
 import models.files.ContentFile
-import models.jsonmodels.EventBoxJSON
+import models.jsonmodels.{EventBoxJSON}
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.data.Form
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Json, JsValue}
 import play.api.libs.mailer.Email
 import play.api.mvc._
-import models.{Event, UserCredential}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import models.{UserCredential, Event}
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
-import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
+import securesocial.core.SecureSocial.{SecuredRequest, RequestWithUser}
 import services._
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
-
-import customUtils.authorization.{WithRole, WithRoleAndOwnerOfObject}
+import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
 
 import scala.Some
 import models.viewmodels._
 import customUtils.Helpers
-import play.api.{Environment, Logger}
-
+import play.api.Logger
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
-import models.formdata.{EventBookingForm, EventDateSuggestionForm, EventForm, EventOptionsForm}
+import models.formdata.{EventDateSuggestionForm, EventOptionsForm, EventBookingForm, EventForm}
 
 class EventPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val likeController: LikeController,
@@ -41,8 +39,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                                      val userProfileService: UserProfileService,
                                      val fileService: ContentFileService,
                                      implicit val nodeEntityService: NodeEntityService,
-                                     val messagesApi: MessagesApi,
-                                     val environment: Environment) extends Controller with SecureSocial with I18nSupport {
+                                     val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
 
   def viewEventByNameAndProfile(profileName: String, eventName: String) = UserAwareAction() { implicit request =>
@@ -472,7 +469,8 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
           case Some(event) => {
             val successValues = eventService.addSuggestionAndSendEmail(currentUser, event, contentData.date, contentData.time, contentData.guests, contentData.comment, getBaseUrl)
             val successMessage = Messages("event.suggest.add.success")
-            Ok(views.html.event.suggestionSuccess(event,successValues)).flashing(FlashMsgConstants.Success -> successMessage)
+            Logger.debug(successMessage)
+            Ok(views.html.event.suggestionSuccess(event,successValues))
           }
           case _ => {
             val errorMsg = "Cannot suggest date to event, no valid eventUUID"

@@ -12,6 +12,8 @@
                         eventDateSuggestionForm("suggest-date"),
                         'class -> "date-input",
                         'placeholder -> Messages("event.edit.add.date.validation.format"),
+                        Symbol("data-validation-txt") -> Messages("event.edit.add.date.validation.format-error"),
+                        Symbol("data-validation-req-txt") -> Messages("event.edit.add.date.validation.required"),
                         '_label -> Messages("event.suggest.date"),
                         '_class -> "date") { input =>
                         <div class="input-group">
@@ -25,6 +27,7 @@
                         eventDateSuggestionForm("suggest-time"),
                         'class -> "time-input",
                         'placeholder -> Messages("event.edit.add.time.validation.format"),
+                        Symbol("data-validation-txt") -> Messages("event.edit.add.time.validation.format-error"),
                         '_label -> Messages("event.suggest.time"),
                         '_class -> "time") { input =>
                         <div class="input-group">
@@ -36,11 +39,16 @@
                     }
 
                     @b3.select(eventDateSuggestionForm("suggest-guests"), helper.options(List.range(1, maxNrOfGuests + 1).map(_.toString)), '_label -> Messages("event.book.nr-of-guests.label"))
-                    @b3.textarea(eventDateSuggestionForm("suggest-comment"), 'value -> Messages("event.suggest.comment.text"), 'class -> "comment-field", '_label -> Messages("event.suggest.comment.label"))
+                    @b3.textarea(eventDateSuggestionForm("suggest-comment"),
+                        'value -> Messages("event.suggest.comment.text"),
+                        'class -> "comment-field",
+                        '_label -> Messages("event.suggest.comment.label"),
+                        Symbol("data-validation-req-txt") -> Messages("event.edit.add.comment.validation.required")
+                    )
 
                     @helper.inputHidden(eventDateSuggestionForm("suggestEventId"), 'class -> "suggest-event-uuid")
                     <strong>@Messages("event.suggest.submit.help")</strong>
-                    @b3.submit('class -> "btn btn-lg btn-orange"){ <span class="glyphicon glyphicon-calendar"></span> @Messages("event.suggest.submit") }
+                    @b3.submit('class -> "btn btn-lg btn-orange", Symbol("data-send-txt") -> Messages("event.suggest.submitting")){ <span class="glyphicon glyphicon-calendar"></span> @Messages("event.suggest.submit") }
                 }
             </div>
         </div>

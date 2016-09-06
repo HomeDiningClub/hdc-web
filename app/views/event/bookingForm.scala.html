@@ -30,7 +30,7 @@
                 @helper.inputHidden(eventBookingForm("book-eventDateId"), 'class -> "book-eventdate-uuid")
                 @b3.select(eventBookingForm("book-guests"), helper.options(List.range(1, maxNrOfGuests + 1).map(_.toString)), '_label -> Messages("event.book.nr-of-guests.label"))
                 @b3.textarea(eventBookingForm("book-comment"), '_label -> Messages("event.book.comment.label"))
-                @b3.submit('class -> "btn btn-lg btn-orange") {
+                @b3.submit('class -> "btn btn-lg btn-orange", Symbol("data-send-txt") -> Messages("event.book.submitting")) {
                     @Messages("event.book.submit")&nbsp;<span class="glyphicon glyphicon-ok"></span>
                 }
             }

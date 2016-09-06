@@ -5,6 +5,7 @@ $(document).ready(function(){
     var costDiv = $("#booking-total-cost");
     activateGuestSelector();
     activateDateSelector();
+    setupBookingSubmitButton();
 
     function activateDateSelector(){
         var $datePicker = $("#event-date-list-picker");
@@ -24,8 +25,6 @@ $(document).ready(function(){
                 $.each(data, function(key, val) {
                     availableDates.push(val);
                 });
-
-                //var availableDates = ["2016-05-17","2016-05-16","2016-05-30","2016-05-25"];
 
                 var datePickerOptions = {
                     locale: "sv",
@@ -76,6 +75,14 @@ $(document).ready(function(){
 
             $(".event-cta-form:visible").not(dateBookForm).addClass("hidden");
             dateBookForm.toggleClass("hidden");
+        });
+    }
+
+    function setupBookingSubmitButton(){
+        dateBookForm.find("button[type=submit]").click(function(e){
+            $(this).prop("disabled", true);
+            $(this).text($(this).data("send-txt"));
+            $(this).parents("form").submit();
         });
     }
 
