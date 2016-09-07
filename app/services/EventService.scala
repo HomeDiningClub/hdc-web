@@ -361,6 +361,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
   def addSuggestionAndSendEmail(userSendingSuggestion: UserCredential, event: Event, suggDate: LocalDate, suggTime: LocalTime, nrOfGuestsToBeBooked: Integer, comment: Option[String], baseUrl: String): EventDateSuggestionSuccess = withTransaction(template){
     //val selectedDate = Helpers.buildDateFromDateAndTime(suggDate, suggTime)
+    val guestUserProfileLinkName = userSendingSuggestion.getUserProfile.profileLinkName
 
     val successValues = EventDateSuggestionSuccess(
       eventName = event.getName,
@@ -371,7 +372,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
       hostEmail = event.getOwnerProfile.getOwner.emailAddress,
       host = event.getOwnerProfile.getOwner,
       guestEmail = userSendingSuggestion.emailAddress,
-      guestComment = comment
+      guestComment = comment,
+      guestFullName = userSendingSuggestion.getFullName,
+      guestProfileName = guestUserProfileLinkName,
+      guestProfileLink = baseUrl + routes.UserProfileController.viewProfileByName(guestUserProfileLinkName).url,
+      guestPhone = userSendingSuggestion.getUserProfile.phoneNumber match {
+        case "" | null => None
+        case p => Some(p)
+      }
     )
 
     // Sending Guest a notice email
@@ -695,8 +703,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
     val successValues = EventBookingSuccess(
       bookingNumber = UUID.fromString(booking.getBookingObjectId()),
       eventName = booking.getEventName(),
-      eventLink = baseUrl + routes.EventPageController.viewEventByNameAndProfile(booking.getProfileLinkName(), booking.getEventLinkName()).url,
-      hostLink = baseUrl + routes.UserProfileController.viewProfileByName(booking.getProfileLinkName()).url,
+      eventLink = baseUrl + routes.EventPageController.viewEventByNameAndProfile(booking.getHostProfileLinkName(), booking.getEventLinkName()).url,
+      hostLink = baseUrl + routes.UserProfileController.viewProfileByName(booking.getHostProfileLinkName()).url,
       mealType = booking.getEventMealType() match {
         case null | "" => None
         case mt => Some(mt)
@@ -718,7 +726,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
       },
       totalCost = this.calculatePrice(booking.getEventPricePerPerson(), booking.getBookingNrOfGuests()),
       guestEmail = booking.getEmailToGuest(),
-      hostEmail = booking.getEmailToHost()
+      hostEmail = booking.getEmailToHost(),
+      guestFullName = booking.getGuestFirstName() + " " + booking.getGuestLastName(),
+      guestProfileName = booking.getHostProfileLinkName(),
+      guestProfileLink = baseUrl + routes.UserProfileController.viewProfileByName(booking.getGuestProfileLinkName()).url,
+      guestPhone = booking.getGuestPhone() match {
+        case null | "" => None
+        case p => Some(p)
+      }
     )
     successValues
   }

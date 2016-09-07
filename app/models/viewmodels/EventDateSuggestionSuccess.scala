@@ -12,6 +12,10 @@ case class EventDateSuggestionSuccess(eventName: String,
                                         hostEmail: String,
                                         host: UserCredential,
                                         guestComment: Option[String],
-                                        guestEmail: String) {
+                                        guestEmail: String,
+                                        guestFullName: String,
+                                        guestProfileName: String,
+                                        guestProfileLink: String,
+                                        guestPhone: Option[String]) {
 
 }

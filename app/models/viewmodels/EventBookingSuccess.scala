@@ -22,6 +22,10 @@ case class EventBookingSuccess(bookingNumber: UUID,
                                 guestComment: Option[String],
                                 totalCost: Int,
                                 guestEmail: String,
-                                hostEmail: String) {
+                                hostEmail: String,
+                                guestFullName: String,
+                                guestProfileName: String,
+                                guestProfileLink: String,
+                                guestPhone: Option[String]) {
 
 }

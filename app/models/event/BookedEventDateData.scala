@@ -43,7 +43,7 @@ trait BookedEventDateData {
 
   // UserProfile
   @ResultColumn("ProfileLinkName")
-  def getProfileLinkName() : String
+  def getHostProfileLinkName() : String
 
   @ResultColumn("AddressToHost")
   def getAddressToHost() : String
@@ -63,6 +63,17 @@ trait BookedEventDateData {
   @ResultColumn("EmailToHost")
   def getEmailToHost() : String
 
+  @ResultColumn("GuestFirstName")
+  def getGuestFirstName() : String
+
+  @ResultColumn("GuestLastName")
+  def getGuestLastName() : String
+
+  @ResultColumn("GuestProfileLinkName")
+  def getGuestProfileLinkName() : String
+
+  @ResultColumn("GuestPhone")
+  def getGuestPhone() : String
 
 }
 

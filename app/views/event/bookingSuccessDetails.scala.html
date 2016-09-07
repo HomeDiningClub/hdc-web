@@ -29,6 +29,17 @@
     </li>
     <li class="list-group-item">
         <div class="row">
+            <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.book.guest.label")</div>
+            <div class="col-md-9">
+                <strong>@eventBookingSuccess.guestFullName</strong><br>
+                <a href="@eventBookingSuccess.guestProfileLink">@eventBookingSuccess.guestProfileName</a><br>
+                @Messages("event.book.guest-email.label", eventBookingSuccess.guestEmail)<br>
+                @if(eventBookingSuccess.guestPhone.isDefined) { @Messages("event.book.guest-phone.label", eventBookingSuccess.guestPhone.get)<br> }
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
             <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.book.nr-of-guests.label")</div>
             <div class="col-md-9">@eventBookingSuccess.nrOfGuests.toString</div>
         </div>

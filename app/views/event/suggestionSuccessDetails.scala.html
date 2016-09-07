@@ -21,6 +21,17 @@
     </li>
     <li class="list-group-item">
         <div class="row">
+            <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.suggest.guest.label")</div>
+            <div class="col-md-9">
+                <strong>@eventDateSuggestionSuccess.guestFullName</strong><br>
+                <a href="@eventDateSuggestionSuccess.guestProfileLink">@eventDateSuggestionSuccess.guestProfileName</a><br>
+                @Messages("event.suggest.guest-email.label", eventDateSuggestionSuccess.guestEmail)<br>
+                @if(eventDateSuggestionSuccess.guestPhone.isDefined) { @Messages("event.suggest.guest-phone.label", eventDateSuggestionSuccess.guestPhone.get)<br> }
+            </div>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
             <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.suggest.success.nr-of-guests")</div>
             <div class="col-md-9">@eventDateSuggestionSuccess.nrOfGuests.toString</div>
         </div>
