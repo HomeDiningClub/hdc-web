@@ -22,20 +22,19 @@
     <body>
         <div id="wrap">
             <div class="container">
-                    <ul class="nav nav-pills">
-                        <li><a class="text-orange" href="@controllers.admin.routes.AdminController.index()">@Messages("admin.menu.title")</a></li>
-                        <li><a href="@controllers.admin.routes.AdminContentController.listAll()"><span class="glyphicon glyphicon-file"></span>&nbsp;@Messages("admin.menu.pages")</a></li>
-                        <li><a href="@controllers.admin.routes.AdminRecipeController.listAll()"><span class="glyphicon glyphicon-cutlery"></span>&nbsp;@Messages("admin.menu.recipe")</a></li>
-                        <li><a href="@controllers.admin.routes.AdminEventController.editIndex()"><span class="glyphicon glyphicon-calendar"></span>&nbsp;@Messages("admin.menu.event")</a></li>
-                        <li><a href="@controllers.admin.routes.AdminCountyController.listAll()"><span class="glyphicon glyphicon-map-marker"></span>&nbsp;@Messages("admin.menu.county")</a></li>
-                        <li><a href="@controllers.admin.routes.AdminTagWordController.listAll()"><span class="glyphicon glyphicon-tags"></span>&nbsp;@Messages("admin.menu.tagword")</a></li>
-                        <li><a href="@controllers.admin.routes.AdminUserCredentialController.listAll()"><span class="glyphicon glyphicon-user"></span>&nbsp;@Messages("admin.menu.users")</a></li>
-                        <li><a href="@controllers.admin.routes.AdminUserRoleController.editIndex()"><span class="glyphicon glyphicon-lock"></span>&nbsp;@Messages("admin.menu.roles")</a></li>
-                        <li><a href="@controllers.admin.routes.AdminFileController.editIndex()"><span class="glyphicon glyphicon-picture"></span>&nbsp;@Messages("admin.menu.files")</a></li>
-                        <li><a href="@controllers.admin.routes.AdminReleaseController.editIndex()"><span class="glyphicon glyphicon-transfer"></span>&nbsp;@Messages("admin.menu.release")</a></li>
-                        <li><a href="@routes.StartPageController.index()"><span class="glyphicon glyphicon-globe"></span>&nbsp;@Messages("admin.menu.backtosite")</a></li>
-                    </ul>
-                </div>
+                <ul class="nav nav-pills">
+                    <li><a class="text-orange" href="@controllers.admin.routes.AdminController.index()">@Messages("admin.menu.title")</a></li>
+                    <li><a href="@controllers.admin.routes.AdminContentController.listAll()"><span class="glyphicon glyphicon-file"></span>&nbsp;@Messages("admin.menu.pages")</a></li>
+                    <li><a href="@controllers.admin.routes.AdminRecipeController.listAll()"><span class="glyphicon glyphicon-cutlery"></span>&nbsp;@Messages("admin.menu.recipe")</a></li>
+                    <li><a href="@controllers.admin.routes.AdminEventController.editIndex()"><span class="glyphicon glyphicon-calendar"></span>&nbsp;@Messages("admin.menu.event")</a></li>
+                    <li><a href="@controllers.admin.routes.AdminCountyController.listAll()"><span class="glyphicon glyphicon-map-marker"></span>&nbsp;@Messages("admin.menu.county")</a></li>
+                    <li><a href="@controllers.admin.routes.AdminTagWordController.listAll()"><span class="glyphicon glyphicon-tags"></span>&nbsp;@Messages("admin.menu.tagword")</a></li>
+                    <li><a href="@controllers.admin.routes.AdminUserCredentialController.listAll()"><span class="glyphicon glyphicon-user"></span>&nbsp;@Messages("admin.menu.users")</a></li>
+                    <li><a href="@controllers.admin.routes.AdminUserRoleController.editIndex()"><span class="glyphicon glyphicon-lock"></span>&nbsp;@Messages("admin.menu.roles")</a></li>
+                    <li><a href="@controllers.admin.routes.AdminFileController.editIndex()"><span class="glyphicon glyphicon-picture"></span>&nbsp;@Messages("admin.menu.files")</a></li>
+                    <li><a href="@controllers.admin.routes.AdminReleaseController.editIndex()"><span class="glyphicon glyphicon-transfer"></span>&nbsp;@Messages("admin.menu.release")</a></li>
+                    <li><a href="@routes.StartPageController.index()"><span class="glyphicon glyphicon-globe"></span>&nbsp;@Messages("admin.menu.backtosite")</a></li>
+                </ul>
             </div>
             <div class="container">
                 @shared.flashmsg(flash)
