@@ -112,6 +112,7 @@ includeFilter in (Assets, LessKeys.less) := "*.less"
 
 LessKeys.compress in Assets := true
 
+
 // Don't reload app when editing public static resources
 watchSources := (watchSources.value
   --- baseDirectory.value / "app/assets" ** "*"
@@ -121,7 +122,8 @@ watchSources := (watchSources.value
 //sourcePositionMappers := Nil
 
 // This is for adding extra features
-//pipelineStages := Seq(rjs, digest, gzip)
+pipelineStages := Seq(digest, gzip)
+//pipelineStages in Assets := Seq(digest, gzip) // To test locally
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.

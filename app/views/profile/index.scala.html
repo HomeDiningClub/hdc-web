@@ -20,9 +20,9 @@
 @import play.twirl.api.Html
 
 @pageScripts = {
-    <script src="@routes.Assets.at("js/app/profile-general.js")"></script>
-    <script src="@routes.Assets.at("js/app/profile-inbox.js")"></script>
-    <script src="@routes.Assets.at("js/app/profile-favorite.js")"></script>
+    <script src="@routes.Assets.versioned("js/app/profile-general.js")"></script>
+    <script src="@routes.Assets.versioned("js/app/profile-inbox.js")"></script>
+    <script src="@routes.Assets.versioned("js/app/profile-favorite.js")"></script>
 }
 
 @avatarUrl = @{if(userProfile.getAvatarImage != null){routes.ImageController.userThumb(userProfile.getAvatarImage.getStoreId).url}else{""} }

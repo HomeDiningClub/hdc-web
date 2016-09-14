@@ -6,7 +6,7 @@
     if(path.toLowerCase.startsWith("http") || path.toLowerCase.contains("dynassets/")) {
         path
     } else {
-        routes.Assets.at(path.stripPrefix("/"))
+        routes.Assets.versioned(path.stripPrefix("/"))
     }
 }
 

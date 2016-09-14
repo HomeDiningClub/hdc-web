@@ -11,7 +11,7 @@
             @if( provider.authMethod == OAuth1 || provider.authMethod == OAuth2 ) {
                 <div class="col-xs-12 col-md-10 col-md-offset-1 login-form">
                 @defining("securesocial/images/providers/%s.png".format(provider.id)) { imageUrl: String =>
-                    <a href="@env.routes.authenticationUrl(provider.id)"> <img src="@controllers.routes.Assets.at(imageUrl)"/></a>
+                    <a href="@env.routes.authenticationUrl(provider.id)"> <img src="@controllers.routes.Assets.versioned(imageUrl)"/></a>
                 }
                 </div>
             }

@@ -18,12 +18,12 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         @header.meta(metaData)
-        <script src="@routes.Assets.at("js/libs/jquery.1.11.1.min.js")"></script>
-        <script src="@routes.Assets.at("js/libs/jquery-validation-1.14.0/distribution/jquery.validate.min.js")"></script>
-        <link rel="stylesheet" href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")" />
-        <link rel="stylesheet" href="@routes.Assets.at("js/libs/bootstrap-datetimepicker-4.17.37/build/css/bootstrap-datetimepicker.min.css")" />
-        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.min.css")">
-        <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")">
+        <script src="@routes.Assets.versioned("js/libs/jquery.1.11.1.min.js")"></script>
+        <script src="@routes.Assets.versioned("js/libs/jquery-validation-1.14.0/distribution/jquery.validate.min.js")"></script>
+        <link rel="stylesheet" href="@routes.Assets.versioned("bootstrap/css/bootstrap.min.css")" />
+        <link rel="stylesheet" href="@routes.Assets.versioned("js/libs/bootstrap-datetimepicker-4.17.37/build/css/bootstrap-datetimepicker.min.css")" />
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.min.css")">
+        <link rel="shortcut icon" href="@routes.Assets.versioned("images/favicon.ico")">
         @headerCss
     </head>
     <body>
@@ -39,22 +39,22 @@
         @footerHtml
 
         @*TODO - Bundle *@
-        <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")"></script>
-        <script src="@routes.Assets.at("tinymce/tinymce.min.js")"></script>
-        <script src="@routes.Assets.at("js/libs/jquery.gray.min.js")"></script>
-        <script src="@routes.Assets.at("js/libs/jquery.collapser.2.0.min.js")"></script>
-        <script src="@routes.Assets.at("js/libs/star-rating.2.0.0.min.js")"></script>
-        <script src="@routes.Assets.at("js/libs/bootbox.4.3.0.min.js")"></script>
+        <script src="@routes.Assets.versioned("bootstrap/js/bootstrap.min.js")"></script>
+        <script src="@routes.Assets.versioned("tinymce/tinymce.min.js")"></script>
+        <script src="@routes.Assets.versioned("js/libs/jquery.gray.min.js")"></script>
+        <script src="@routes.Assets.versioned("js/libs/jquery.collapser.2.0.min.js")"></script>
+        <script src="@routes.Assets.versioned("js/libs/star-rating.2.0.0.min.js")"></script>
+        <script src="@routes.Assets.versioned("js/libs/bootbox.4.3.0.min.js")"></script>
 
-        <script src="@routes.Assets.at("js/libs/moment-2.10.6/min/moment-with-locales.min.js")"></script>
-        <script src="@routes.Assets.at("js/libs/bootstrap-datetimepicker-4.17.37/build/js/bootstrap-datetimepicker.min.js")"></script>
+        <script src="@routes.Assets.versioned("js/libs/moment-2.10.6/min/moment-with-locales.min.js")"></script>
+        <script src="@routes.Assets.versioned("js/libs/bootstrap-datetimepicker-4.17.37/build/js/bootstrap-datetimepicker.min.js")"></script>
         @views.html.file.fileScripts()
-        <script src="@routes.Assets.at("js/site.js")"></script>
-        <script src="@routes.Assets.at("js/app/ga.js")"></script>
-        <script src="@routes.Assets.at("js/app/tinymce-init.js")"></script>
-        <script src="@routes.Assets.at("js/app/confirm-alerts.js")"></script>
-        <script src="@routes.Assets.at("js/app/json-requests.js")"></script>
-        <script src="@routes.Assets.at("js/app/multi-form.js")"></script>
+        <script src="@routes.Assets.versioned("js/site.js")"></script>
+        <script src="@routes.Assets.versioned("js/app/ga.js")"></script>
+        <script src="@routes.Assets.versioned("js/app/tinymce-init.js")"></script>
+        <script src="@routes.Assets.versioned("js/app/confirm-alerts.js")"></script>
+        <script src="@routes.Assets.versioned("js/app/json-requests.js")"></script>
+        <script src="@routes.Assets.versioned("js/app/multi-form.js")"></script>
         @footerScripts
     </body>
 </html>

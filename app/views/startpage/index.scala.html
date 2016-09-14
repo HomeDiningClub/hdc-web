@@ -10,8 +10,8 @@
         currentUser: Option[UserCredential])(implicit request: RequestHeader, messages: Messages)
 
 @scripts = {
-    <script src="@routes.Assets.at("js/libs/twitter-bootstrap-wizard-1.0.0/jquery.bootstrap.wizard.min.js")"></script>
-    <script src="@routes.Assets.at("js/app/startpage.js")"></script>
+    <script src="@routes.Assets.versioned("js/libs/twitter-bootstrap-wizard-1.0.0/jquery.bootstrap.wizard.min.js")"></script>
+    <script src="@routes.Assets.versioned("js/app/startpage.js")"></script>
 }
 
 @main(Messages("startpage.title"), footerScripts = scripts.asInstanceOf[play.twirl.api.Html]) {
