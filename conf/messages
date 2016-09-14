@@ -159,7 +159,7 @@ news.header=Nyheter
 
 # Browse members page
 browse.profiles.title=Bläddra medlemmar
-browse.events.title=Bläddra medlemmar
+browse.events.title=Bläddra bjudningar
 browse.boxes.not-found=Kunde inte hitta något som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
 browse.boxes.location=<em>Finns i {0}</em>
 
