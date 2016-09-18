@@ -65,7 +65,7 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
       optionsIsHost = if(isHost) Some(true) else Some(false),
       eventBoxes = eventBoxes,
       profileBoxes = profileBoxes,
-      reviewBoxes = ratingService.getUserReviewBoxesStartPage(4), //TODO: Fix reviewBoxes speed
+      reviewBoxes = ratingService.getUserReviewBoxesStartPage(4),
       asideNews = contentService.getAsideNewsItems,
       news = contentService.getNewsItems,
       currentUser = request.user

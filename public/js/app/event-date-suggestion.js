@@ -6,6 +6,37 @@ $(document).ready(function(){
     activateDateSuggestionButtons();
     validateSuggestionForm(dateSugFormWrapper);
 
+
+    function addValidationToSuggestionForm(){
+        var formValRules = {
+            ignore:":not(:visible)",
+            rules: {
+                date: {
+                    required: true,
+                    minlength: 6,
+                    maxlength: 60
+                },
+                body: {
+                    required: true
+                },
+                price: {
+                    required: true,
+                    number: true,
+                    min: 0,
+                    max: 9999
+                }
+            },
+            messages: {
+                name: '@{Messages("event.edit.add.name.validation")}',
+                body: {
+                    required: '@{Messages("event.edit.add.body.validation")}'
+                },
+                price: '@{Messages("event.edit.add.price.validation")}'
+            }
+        };
+
+    }
+
     function activateDateSelector(){
 
         var datePickerOptions = getDatePickerOptions();
