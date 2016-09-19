@@ -2,10 +2,11 @@ package controllers
 
 import java.util
 import java.util.{Date, UUID}
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
+
 import constants.FlashMsgConstants
 import enums.RoleEnums
-import models.formdata.{TagCheckboxForm, UserProfileOptionsForm, UserProfileDataForm}
+import models.formdata.{TagCheckboxForm, TagListForm, UserProfileDataForm, UserProfileOptionsForm}
 import models.modelconstants.UserLevelScala
 import models.profile.TagWord
 import models.viewmodels._
@@ -14,13 +15,14 @@ import org.joda.time.DateTime
 import play.api._
 import play.api.data.Forms._
 import play.api.data._
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc._
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
 import services._
 import customUtils.Helpers
 import customUtils.authorization.WithRole
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import customUtils.ViewedByMemberUtil
@@ -47,49 +49,64 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
                                        val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   // Forms
-  val AnvandareForm = Form(
+  val UserProfileValuesForms = Form(
     mapping(
-      "name" -> nonEmptyText,
+      "name" -> text.verifying(Messages("profile.create.form.profilename.validation.required"), f => f.trim != ""),
       "name2" -> text,
       "aboutmeheadline" -> text,
       "aboutme" -> text,
-      "county" -> text,
-      "streetAddress" -> text,
-      "zipCode" -> text,
-      "city" -> text,
-      "phoneNumber" -> text,
+      "county" -> text.verifying(Messages("profile.create.form.county.validation.required"), f => f.trim != ""),
+      "streetAddress" -> text.verifying(Messages("profile.create.form.streetAddress.validation.required"), f => f.trim != ""),
+      "zipCode" -> text.verifying(Messages("profile.create.form.zipCode.validation.required"), f => f.trim != ""),
+      "city" -> text.verifying(Messages("profile.create.form.city.validation.required"), f => f.trim != ""),
+      "phoneNumber" -> text.verifying(Messages("profile.create.form.phoneNumber.validation.required"), f => f.trim != ""),
       "personnummer" -> text.verifying(Messages("profile.personalidentitynumber.unique"), { g => isCorrectIdentificationNumber(g)} ),
       "acceptTerms" -> boolean.verifying(Messages("profile.approve.memberterms"), h => h),
       "mainimage" -> optional(text),
       "avatarimage" -> optional(text),
-      "firstName" -> nonEmptyText,
-      "lastName" -> nonEmptyText,
-      "emailAddress" -> nonEmptyText,
-      "emailAddress2" -> text
+      "firstName" -> text.verifying(Messages("profile.create.form.firstName.validation.required"), f => f.trim != ""),
+      "lastName" -> text.verifying(Messages("profile.create.form.lastName.validation.required"), f => f.trim != ""),
+      "emailAddress" -> text.verifying(Messages("profile.create.form.emailAddress.validation.required"), f => f.trim != ""),
+      "emailAddress2" -> text,
+      "options" -> mapping(
+        "payCash" -> boolean,
+        "paySwish" -> boolean,
+        "payBankCard" -> boolean,
+        "payIZettle" -> boolean,
+        "wantsToBeHost" -> boolean
+      )(UserProfileOptionsForm.apply)(UserProfileOptionsForm.unapply)
     )(UserProfileDataForm.apply)(UserProfileDataForm.unapply)
       verifying(Messages("profile.create.form.emailAddress.uniq"), e => isUniqueEmailAddress(e.emailAddress, e.emailAddress2))
       verifying(Messages("profile.control.unique"), f => isUniqueProfileName(f.name, f.name2))
+      verifying(Messages("profile.control.host.must-have-paymentoption"), f => hasSelectedPaymentOption(f.options.wantsToBeHost, f.options.payCash, f.options.paySwish, f.options.payBankCard, f.options.payIZettle))
   )
 
-  val OptionsForm = Form(
+  val TagsForm = Form(
     mapping(
-      "payCash" -> boolean,
-      "paySwish" -> boolean,
-      "payBankCard" -> boolean,
-      "payIZettle" -> boolean,
-      "wantsToBeHost" -> boolean,
       "tagList" -> optional(list[TagCheckboxForm]{
         mapping(
-        "value" -> text
+          "value" -> text
         )(TagCheckboxForm.apply)(TagCheckboxForm.unapply)
       })
-    )(UserProfileOptionsForm.apply)(UserProfileOptionsForm.unapply))
-
+    )(TagListForm.apply) (TagListForm.unapply)
+  )
 
   private def isCorrectIdentificationNumber(id: String): Boolean = {
-    if (id.length < 1) return true
+    if (id.length < 1) return false
     if (id.matches("[1-2][0-9]{11}")) return true
     if (id.matches("[0-9]{6}[-][0-9]{4}")) return true
+    false
+  }
+
+  // Method checks if user wants to be host, then atleast one payment option has to be selected
+  private def hasSelectedPaymentOption(wantsToBeHost: Boolean, payCash: Boolean, paySwish: Boolean, payBankCard: Boolean, payIZettle: Boolean): Boolean = {
+    if(!wantsToBeHost){
+      return true
+    }else{
+      if(payCash || payBankCard || paySwish || payIZettle){
+        return true
+      }
+    }
     false
   }
 
@@ -455,9 +472,12 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
       case image => Some(image.objectId.toString)
     }
 
+    val newTagForm = TagsForm.fill(TagListForm(
+      remapListWithTagWordsToForm(userProfOldSavedTags)
+    ))
 
     // Fill forms with stored values
-    val newForm = AnvandareForm.fill(UserProfileDataForm(
+    val newForm = UserProfileValuesForms.fillAndValidate(UserProfileDataForm(
       userProfile.profileLinkName,
       userProfile.profileLinkName,
       userProfile.aboutMeHeadline,
@@ -474,24 +494,24 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
       userProfile.getOwner.firstName,
       userProfile.getOwner.lastName,
       userProfile.getOwner.emailAddress,
-      userProfile.getOwner.emailAddress
+      userProfile.getOwner.emailAddress,
+      UserProfileOptionsForm(
+        userProfile.payCash,
+        userProfile.paySwish,
+        userProfile.payBankCard,
+        userProfile.payIZettle,
+        isUserHost
+      )
     ))
 
-    val newOptForm = OptionsForm.fill(UserProfileOptionsForm(
-      userProfile.payCash,
-      userProfile.paySwish,
-      userProfile.payBankCard,
-      userProfile.payIZettle,
-      isUserHost,
-      remapListWithTagWordsToForm(userProfOldSavedTags)
-    ))
+
 
     // Other values not fit to be in form-classes
     val extraValues = setExtraValues(userProfile)
 
     Ok(views.html.profile.editProfile(
       newForm,
-      newOptForm,
+      newTagForm,
       sortedTagList,
       optionsLocationAreas = countyService.getCounties,
       extraValues = extraValues,
@@ -516,24 +536,6 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     }
   }
 
-  /*
-  private def buildSortedTagListForForm(userProfile: UserProfile): List[TagCheckboxForm] = {
-    // Fetch all tags & mark previously selected
-    val allTags = tagWordService.listByGroupOption("profile")
-    val userSelectedTags = userProfile.getTags.asScala
-    val tagList = new mutable.HashSet[TagCheckboxForm]()
-
-    if (allTags.isDefined) {
-      for ((theTag, i) <- allTags.get.zipWithIndex) {
-        val isSelected = userSelectedTags.exists(x => x.tagWord.tagId == theTag.tagId)
-        tagList.add(TagCheckboxForm(theTag.tagName, theTag.objectId.toString, isSelected))
-      }
-    }
-
-    // Sort & List
-    tagList.toList.sortBy(tw => tw.name)
-  }
-*/
 
   private def setExtraValues(userProfile: UserProfile): EditProfileExtraValues = {
     // Other values not fit to be in form-classes
@@ -569,57 +571,6 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
     outString
   }
-
-/*
-  /** ******************************************************
-    * Show intrests
-    * @return
-    */
-
-  def showTags = SecuredAction { implicit request =>
-
-    // Fetch UserProfile from UserCredentials that is fetch by SocialSocial
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.iterator().next()
-
-    // Pre selected
-    val typ = new Types
-    var userTags = theUser.getTags
-
-    if (userTags != null) {
-      var itterTags = userTags.iterator
-
-      while (itterTags.hasNext) {
-        typ.addVald(itterTags.next().tagWord.tagName)
-      }
-    }
-
-    // Fetch all tags
-    var d = tagWordService.listByGroupOption("profile")
-    var l: Long = 0
-    var tagList: mutable.HashSet[Type] = new mutable.HashSet[Type]()
-    if (d.isDefined) {
-      for (theTag <- d.get) {
-        var newType: Type = new Type(l, theTag.tagName, theTag.tagName, "quality[" + l + "]")
-        l = l + 1
-
-        tagList.add(newType)
-      }
-    }
-
-    // Sort & List
-    val retTagList = tagList.toList.sortBy(tw => tw.name)
-
-
-    // File with stored values
-    val tData: TagsData = new TagsData(
-      List("adam", "bertil")
-    )
-
-    val nyForm = tagForm.fill(tData)
-
-    Ok(views.html.profile.tags(tagForm, retTagList, typ))
-  }
-*/
 
   // add favorite
   def addFavorite(userCredentialObjectId: String) = SecuredAction() { implicit request: SecuredRequest[AnyContent,UserCredential] =>
@@ -707,85 +658,16 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     Ok(views.html.profile.addAsFavorite(request.user.getUserProfile))
   }
 
-/*
-  /**
-   * Save chaged tages
-   * @return
-   */
-  def saveTags = SecuredAction { implicit request =>
-
-    var map: Map[String, String] = Map()
-
-
-    tagForm.bindFromRequest.fold(
-      errors => {
-        if (errors.hasErrors) {
-          Ok("Tags kunde inte sparas")
-        }
-      },
-      reqUserProfile => {
-        // test
-
-        for (d <- reqUserProfile.quality) {
-          map += (d -> d)
-
-        }
-
-
-      })
-
-    var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
-    var d = tagWordService.listByGroupOption("profile")
-    userProfileService.updateUserProfileTags(theUser, d, map)
-
-    Redirect(routes.UserProfileController.showTags())
-  }
-*/
-
-  /*
-  def convYesToTrueElseToFalse(arg: String): Boolean = arg match {
-    case "" => false
-    case "JA" => true
-    case "YES" => true
-    case "Yes" => true
-    case "Ja" => true
-    case _ => false
-  }
-
-
-  def convOptionStringToString(arg: Option[String]): String = arg match {
-    case Some(arg) => arg
-    case _ => ""
-  }
-
-
-  def convBooleanTOYesOrNo(arg: Boolean): String = arg match {
-    case true => "JA"
-    case false => "NEJ"
-  }
-*/
 
   /** **************************************************************************************************
     Save UserProfile
     * **************************************************************************************************/
   def editSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-    // My UserProfile
     var userCredential = request.user
     var userProfile = userCredential.getUserProfile
 
     var allTagsSelectedInForm: Option[List[TagCheckboxForm]] = None
-    //var tagsToSave: List[TagWord] = Nil
-
-    /*
-    var aboutMeHeadlineText: String = ""
-    var aboutMeText: String = ""
-    var profileLinkName: String = ""
-    var zipCode: String = ""
-    var streetAddress: String = ""
-    var city: String = ""
-    var phoneNumber: String = ""
-    */
     var countyId: String = ""
     var acceptTerms: Boolean = false
     var payBankCard: Boolean = false
@@ -796,33 +678,19 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     var emailAddress: String = ""
 
     // Fetch opt-form values
-    val optForm = OptionsForm.bindFromRequest.fold(
+    val tagListForm = TagsForm.bindFromRequest.fold(
       error => {
-        Logger.error("Error cannot read OptionsForms")
+        Logger.error("Error cannot read TagsForms")
         error
       },
       formValues => {
-        payCash = formValues.payCash
-        payBankCard = formValues.payBankCard
-        payIZettle = formValues.payIZettle
-        paySwish = formValues.paySwish
-
-        wantsToBeHost = formValues.wantsToBeHost
         allTagsSelectedInForm = formValues.tagList
-
-        OptionsForm.fill(UserProfileOptionsForm(
-          payCash,
-          paySwish,
-          payBankCard,
-          payIZettle,
-          wantsToBeHost,
-          allTagsSelectedInForm)
-        )
+        TagsForm.fill(TagListForm(allTagsSelectedInForm))
       }
     )
 
     // Fetch main-form values
-    AnvandareForm.bindFromRequest.fold(
+    UserProfileValuesForms.bindFromRequest.fold(
       errors => {
 
         // Fetch all tags
@@ -833,7 +701,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
         BadRequest(views.html.profile.editProfile(
           profileDataForm = errors,
-          profileOptsForm = optForm,
+          tagListForm = tagListForm,
           listOfTags = sortedTagList,
           extraValues = extraValues,
           optionsLocationAreas = countyService.getCounties,
@@ -841,6 +709,12 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
       },
       formValues => {
         emailAddress = formValues.emailAddress
+
+        payCash = formValues.options.payCash
+        payBankCard = formValues.options.payBankCard
+        payIZettle = formValues.options.payIZettle
+        paySwish = formValues.options.paySwish
+        wantsToBeHost = formValues.options.wantsToBeHost
 
         // The users are always guests
         if (!userProfile.getRole.contains(UserLevelScala.GUEST.Constant)) {

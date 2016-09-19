@@ -111,6 +111,7 @@ scalacOptions ++= Seq(
 includeFilter in (Assets, LessKeys.less) := "*.less"
 
 LessKeys.compress in Assets := true
+//LessKeys.compress := true
 
 
 // Don't reload app when editing public static resources

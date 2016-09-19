@@ -285,13 +285,16 @@ profile.create.tabs.media.name=Media
 profile.create.tabs.media.title=Media
 
 profile.create.form.profilename=Profilnamn
-profile.create.form.profilename.required=obligatoriskt
+profile.create.form.profilename.required=(Obligatoriskt)
+profile.create.form.profilename.validation.required=Profilnamn måste anges
 profile.create.form.profilename.help=Detta namn kommer att användas för att identifiera din profilsida. Denna måste vara unik. Vi kommer ta bort ÅÄÖ, punkter, / eller andra tecken förutom bindestreck.<br><br><strong>Exempel:</strong><br>linda-larsson<br>henriksrestaurang<br>den-goda-maten
 profile.create.form.aboutmeheadline=Rubrik om dig och din mat
 profile.create.form.aboutmeheadline.help=
 profile.create.form.aboutme=Beskriv dig själv och din mat
 profile.create.form.aboutme.help=En beskrivning av dig som är synlig på din profil
-profile.create.form.area=Län
+profile.create.form.county=Län
+profile.create.form.county.help=(Obligatoriskt)
+profile.create.form.county.validation.required=Län måste anges
 profile.create.form.tagwords=Vad för typ av mat beskriver din matlagning bäst?
 profile.create.form.avatar-image=Fotografi på dig själv
 profile.create.form.avatar-image-btn=Välj ett porträtt
@@ -303,31 +306,39 @@ profile.create.form.main-image-preview=Förhandsgranskning
 
 ## gatuadress -road address
 profile.create.form.streetAddress=Gatuadress
-profile.create.form.streetAddress.help=Gatuadress måste inte anges
+profile.create.form.streetAddress.help=(Obligatoriskt)
+profile.create.form.streetAddress.validation.required=Gatuadress måste anges
 
 ## förnamn - firstname
 profile.create.form.firstName=Förnamn
-profile.create.form.firstName.help=Förnamn måste anges
+profile.create.form.firstName.help=(Obligatoriskt)
+profile.create.form.firstName.validation.required=Förnamn måste anges
 
 ## efternamn - lastname
 profile.create.form.lastName=Efternamn
-profile.create.form.lastName.help=Efternamn måste anges
+profile.create.form.lastName.help=(Obligatoriskt)
+profile.create.form.lastName.validation.required=Förnamn måste anges
 
 ## email-address
 profile.create.form.emailAddress=E-post
-profile.create.form.emailAddress.help=E-post måste anges och vara korrekt
-profile.create.form.emailAddress.required=E-post måste vara korrekt och unik, vid byte av e-postadress blir du utloggad
+profile.create.form.emailAddress.help=(Obligatoriskt, vid byte av e-postadress blir du utloggad)
 profile.create.form.emailAddress.uniq=E-post är inte korrekt angivet
+profile.create.form.emailAddress.validation.required=E-post måste anges och vara i korrekt format
 
 profile.create.form.zipCode=Postnummer
-profile.create.form.zipCode.help=Postnummer
-profile.create.form.city=Stad
-profile.create.form.city.help=Kommun eller stad
-profile.create.form.phoneNumber=Telefonnummer (endast synlig för bokade gäster)
-profile.create.form.phoneNumber.help=Mobilnummer eller telefonnummer
+profile.create.form.zipCode.help=(Obligatoriskt, format: XXXXX)
+profile.create.form.zipCode.validation.required=Postnummer måste anges
+profile.create.form.city=Stad/kommun
+profile.create.form.city.help=(Obligatoriskt, ex: Stockholm)
+profile.create.form.city.validation.required=Stad måste anges
+profile.create.form.phoneNumber=Telefonnummer
+profile.create.form.phoneNumber.help=(Obligatoriskt, endast synlig för bokade gäster)
+profile.create.form.phoneNumber.validation.required=Telefonnummer måste anges
 
 profile.create.form.personnummer=Personnummer (aldrig synligt)
-profile.create.form.personnummer.help=Format: ÅÅÅÅMMDDNNNN
+profile.create.form.personnummer.help=(Obligatoriskt, format: ÅÅÅÅMMDDNNNN)
+profile.create.form.personnummer.extra-info.header=Varför måste jag ange mitt personnummer?
+profile.create.form.personnummer.extra-info.body=Ditt personnummer behöver vi som en trygghet för värdar och gäster om det skulle uppstå eventuella klagomål. Ditt personnummer används aldrig vid bokningar, eller är aldrig synligt på webbsidan för någon annan än admministratörer hos Home Dining Club.
 
 profile.create.form.host-label=Värdskap
 profile.create.form.host-text=Jag vill vara värd
@@ -393,11 +404,12 @@ profile.blog.tab.body.non-admin=Här kommer alla värdar att kunna skriva och bl
 profile.firstname.label=Namn:
 profile.city.label=Stad:
 profile.control.unique=Profilnamn måste vara unikt
-profile.personalidentitynumber.unique=Personnummer måste vara i korrekt format: ÅÅÅÅMMDDNNNN
+profile.control.host.must-have-paymentoption=Om du vill vara värd, måste du välja minst ett betalningssätt
+profile.personalidentitynumber.unique=Personnummer måste vara angiven och i korrekt format.
 profile.approve.memberterms=Du måste acceptera vilkoren för att bli medlem
 profile.groupsize.min=Minst antal gäster i gruppen
 profile.groupsize.max=Maximalt antal gäster
-profile.form.unacceptedcontent=Profilen innehåller felaktig värden:
+profile.form.unacceptedcontent=Din profil behöver kompletteras med några värden:
 profile.payment.label=Betalning:
 profile.options.moved-info.header=Vart är resten av mina uppgifter?
 profile.options.moved-info=Dina profiluppgifter har tagits bort och flyttats till <strong>Bjudningar</strong>.

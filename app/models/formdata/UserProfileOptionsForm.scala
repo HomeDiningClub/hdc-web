@@ -5,8 +5,7 @@ case class UserProfileOptionsForm(
                                    paySwish: Boolean,
                                    payBankCard: Boolean,
                                    payIZettle: Boolean,
-                                   wantsToBeHost: Boolean,
-                                   tagList: Option[List[TagCheckboxForm]]
+                                   wantsToBeHost: Boolean
                                    )
 
 

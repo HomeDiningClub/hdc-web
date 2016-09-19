@@ -1,5 +1,5 @@
 @(profileDataForm: Form[UserProfileDataForm],
-        profileOptsForm: Form[UserProfileOptionsForm],
+        tagListForm: Form[TagListForm],
         listOfTags: Option[List[models.profile.TagWord]],
         optionsLocationAreas: Option[Seq[(String, String)]] = None,
         editingProfile: Option[UserProfile] = None,
@@ -17,43 +17,7 @@
 }
 
 @scrollIntoView = {
-    <script>
-    var form = $('form');
-    var navbar = $('.header-navbar');
-
-    // listen for `invalid` events on all form inputs
-    form.find(':input').on('invalid', function (event) {
-        var input = $(this);
-
-        // the first invalid element in the form
-        var first = form.find(':invalid').first();
-
-        // only handle if this is the first invalid input
-        if (input[0] === first[0]) {
-
-            // Mark the closest tab
-            var id = $(this).parents(".tab-pane").attr("id");
-            $(".nav.nav-tabs li a[href=#" + id + "]").trigger('click').closest('li').addClass('tab-has-error');
-
-            // height of the nav bar plus some padding
-            var navbarHeight = navbar.height() + 50;
-
-            // the position to scroll to (accounting for the navbar)
-            var elementOffset = input.offset().top - navbarHeight;
-
-            // the current scroll position (accounting for the navbar)
-            var pageOffset = window.pageYOffset - navbarHeight;
-
-            // don't scroll if the element is already in view
-            if (elementOffset > pageOffset && elementOffset < pageOffset + window.innerHeight) {
-                return true
-            }
-
-            // note: avoid using animate, as it prevents the validation message displaying correctly
-            $('html,body').scrollTop(elementOffset)
-        }
-    })
-    </script>
+    <script src="@routes.Assets.versioned("js/app/edit-profile.js")"></script>
 }
 
 @main(Messages("profile.create.title"), footerHtml = file.modalImages.render(messages), footerScripts = scrollIntoView) {
@@ -68,7 +32,7 @@
                 <p>@Messages("profile.create.text")</p>
 
                 @shared.flashmsg(flash)
-                @shared.listFormErrors(profileDataForm, Some(profileOptsForm))
+                @shared.listFormErrors(profileDataForm)
 
             </div>
         </div>
@@ -161,7 +125,8 @@
                     <div class="col-xs-12">
                         <h3 class="lead">@Messages("profile.create.header.food")</h3>
 
-                            <!-- Tags -->
+
+                        <!-- Tags -->
                         <div class="form-group">
                             <label class="control-label col-md-4">@Messages("profile.create.header.food-label")</label>
 
@@ -170,7 +135,7 @@
                                     @for((t: models.profile.TagWord, index) <- listOfTags.get.zipWithIndex) {
                                         @defining(index % 9 == 0 && index > 0) { colBreak: Boolean =>
                                             @if(colBreak) { @Html("</div><div class='col-xs-12 col-md-2'>") }
-                                            @defining(if(profileOptsForm.get.tagList.nonEmpty && profileOptsForm.get.tagList.get.exists(b => b.value == t.objectId.toString)) {"checked"} else {""}) { selectedValue: String =>
+                                            @defining(if(tagListForm.get.tagList.nonEmpty && tagListForm.get.tagList.get.exists(b => b.value == t.objectId.toString)) {"checked"} else {""}) { selectedValue: String =>
                                                 @defining("tagList["+index+"]") { tagNumber: String =>
                                                     <input type="checkbox" id="@(tagNumber + ".value")" name='@(tagNumber + ".value")' value="@t.objectId" @selectedValue> &nbsp; <label for="@(tagNumber + ".value")" class="notbold">@t.tagName</label><br>
                                                 }
@@ -207,7 +172,7 @@
                         @b3.text(profileDataForm("emailAddress"),
                             'id -> "emailAddress",
                             '_label -> Messages("profile.create.form.emailAddress"),
-                            '_help -> Messages("profile.create.form.emailAddress.required")
+                            '_help -> Messages("profile.create.form.emailAddress.help")
                         )
 
 
@@ -239,7 +204,8 @@
                         @if(optionsLocationAreas.isDefined) {
                             @b3.select(profileDataForm("county"),
                                 optionsLocationAreas.get,
-                                '_label -> Messages("profile.create.form.area"),
+                                '_label -> Messages("profile.create.form.county"),
+                                '_help -> Messages("profile.create.form.county.help"),
                                 'value -> profileDataForm("county").value
                             )
                         }
@@ -255,6 +221,12 @@
                             '_label -> Messages("profile.create.form.personnummer"),
                             '_help -> Messages("profile.create.form.personnummer.help")
                         )
+                        <div class="row">
+                            <div class="col-md-offset-4 col-md-6">
+                                <strong>@Messages("profile.create.form.personnummer.extra-info.header")</strong>
+                                <p>@Messages("profile.create.form.personnummer.extra-info.body")</p>
+                            </div>
+                        </div>
 
                         <label class="control-label col-md-4">@Messages("hdc.securesocial.login.newPassword-label")</label>
                         <div class="col-md-4">
@@ -267,29 +239,29 @@
                     <div class="col-xs-12">
                         <h3 class="lead">@Messages("profile.create.header.host")</h3>
                         <!-- Choice of Guest and host -->
-                        @b3.checkbox(profileOptsForm("wantsToBeHost"),
-                            'id -> "wantsToBeHost",
+                        @b3.checkbox(profileDataForm("options.wantsToBeHost"),
+                            'id -> "options.wantsToBeHost",
                             '_text -> Messages("profile.create.form.host-text"),
                             '_label -> Messages("profile.create.form.host-label")
                         )
                         <hr>
 
                         <!-- Payment options -->
-                        @b3.checkbox(profileOptsForm("payCash"),
-                            'id -> "payCash",
+                        @b3.checkbox(profileDataForm("options.payCash"),
+                            'id -> "options.payCash",
                             '_text -> Messages("profile.payment.cash"),
                             '_label -> Messages("profile.create.form.host.payment.header")
                         )
-                        @b3.checkbox(profileOptsForm("paySwish"),
-                            'id -> "paySwish",
+                        @b3.checkbox(profileDataForm("options.paySwish"),
+                            'id -> "options.paySwish",
                             '_text -> Messages("profile.payment.Swish")
                         )
-                        @b3.checkbox(profileOptsForm("payBankCard"),
-                            'id -> "payBankCard",
+                        @b3.checkbox(profileDataForm("options.payBankCard"),
+                            'id -> "options.payBankCard",
                             '_text -> Messages("profile.payment.banktransfer")
                         )
-                        @b3.checkbox(profileOptsForm("payIZettle"),
-                            'id -> "payIZettle",
+                        @b3.checkbox(profileDataForm("options.payIZettle"),
+                            'id -> "options.payIZettle",
                             '_text -> Messages("profile.payment.izettle")
                         )
 

@@ -17,5 +17,6 @@ case class UserProfileDataForm(
                                 firstName: String,
                                 lastName: String,
                                 emailAddress: String,
-                                emailAddress2: String
+                                emailAddress2: String,
+                                options: UserProfileOptionsForm
                                 )
