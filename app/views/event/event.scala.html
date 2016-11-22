@@ -30,10 +30,10 @@
                 <div class="full-width-image-wrapper">
                 @event.getMainImage match {
                     case null => {
-                        @shared.img("images/event/event-default-main-image.jpg", cssClass = "img-responsive full-width-image")
+                        @shared.img("images/event/event-default-main-image.jpg", cssClass = "full-width-image")
                     }
                     case image: models.files.ContentFile => {
-                        @shared.img(routes.ImageController.eventNormal(image.getStoreId).url, cssClass = "img-responsive full-width-image")
+                        @shared.img(routes.ImageController.eventNormal(image.getStoreId).url, cssClass = "full-width-image")
                     }
                 }
                 </div>

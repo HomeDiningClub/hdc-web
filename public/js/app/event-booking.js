@@ -8,8 +8,12 @@ $(document).ready(function(){
     setupBookingSubmitButton();
 
     function activateDateSelector(){
+        var $datePickerChoice = $("#event-date-list-choice");
         var $datePicker = $("#event-date-list-picker");
+        var $datePickerList = $("#event-date-list-picker-list");
         var $datePickerResults = $("#event-date-list-result");
+        var $btnShowDatePicker = $(".btn-show-datepicker");
+        var $btnShowDateList = $(".btn-show-datelist");
         var eventTimeRoute = $datePicker.data("get-time-route");
         var availableDatesRoute = $datePicker.data("get-all-available-dates-route");
         var datePar = "date";
@@ -20,12 +24,79 @@ $(document).ready(function(){
         $.getJSON(availableDatesRoute + '?' + eventUUIDPar + '=' + eventUUID, function(data) {
             var availableDates = [];
             if(data) {
+                // Hide or show the results-list
                 $datePickerResults.toggleClass("hidden");
 
+                // Store the selectable dates
                 $.each(data, function(key, val) {
-                    availableDates.push(val);
+                    var addThisDate = true;
+
+                    // Don't add duplicates dates (since times are fetched separately)
+                    if($.inArray(val, availableDates) > -1){
+                        addThisDate = false;
+                    }
+
+                    if(addThisDate){
+                        availableDates.push(val);
+                    }
                 });
 
+                // Common setup
+                function onClickShowDateList() {
+                    //$(this).prop("checked", true);
+                    $datePicker.hide();
+                    $datePickerResults.empty();
+                    $datePickerList.show();
+                    setDefaultDateForList();
+                }
+                function onClickShowDatePicker() {
+                    //$(this).prop("checked", true);
+                    $datePickerList.hide();
+                    $datePickerResults.empty();
+                    $datePicker.show();
+                    setDefaultDateForPicker();
+                }
+
+                function setDefaultDateForPicker(){
+                    $datePicker.data("DateTimePicker").date(null);
+                    $datePicker.data("DateTimePicker").date(availableDates[0]);
+                }
+                function setDefaultDateForList(){
+                    $datePickerList.find(".btn").first().focus().trigger("click");
+                }
+
+                function onClickDateEvent(e, t) {
+                    var selDate;
+                    if(e.date){
+                        selDate = e.date.format(dateFormat);
+                    }else if(t){
+                        selDate = t.text();
+                    }else{
+                        // No date selected, just a reset of the picker
+                        return false;
+                    }
+                    $datePickerResults.load(eventTimeRoute + '?' + eventUUIDPar + '=' + eventUUID + "&" + datePar + '=' + selDate, function(){
+                        $(this).removeClass("flipOutX").addClass("flipInX");
+                        dateBookForm.addClass("hidden");
+                        activateBookingButtons();
+                    });
+                }
+                $btnShowDateList.on("click", onClickShowDateList);
+                $btnShowDatePicker.on("click", onClickShowDatePicker);
+
+                // DateList setup
+                $.each(availableDates, function(key,val) {
+                    var btn = $('<button/>')
+                        .text(val)
+                        .addClass("btn btn-lg btn-orange-outline btn-block")
+                        .click(function (e) {
+                            var t = $(this);
+                            onClickDateEvent(e, t);
+                    });
+                    $datePickerList.append(btn);
+                });
+
+                // DatePicker setup
                 var datePickerOptions = {
                     locale: "sv",
                     minDate: "now",
@@ -34,16 +105,25 @@ $(document).ready(function(){
                     inline: true,
                     enabledDates: availableDates
                 };
+                // Attach event to dates in picket
+                $datePicker.datetimepicker(datePickerOptions).on("dp.change", function(e){onClickDateEvent(e)});
 
-                $datePicker.datetimepicker(datePickerOptions).on("dp.change", function(e){
-                    $datePickerResults.load(eventTimeRoute + '?' + eventUUIDPar + '=' + eventUUID + "&" + datePar + '=' + e.date.format(dateFormat), function(){
-                        $(this).removeClass("flipOutX").addClass("flipInX");
-                        dateBookForm.addClass("hidden");
-                        activateBookingButtons();
-                    });
-                });
+                if(availableDates.length > 2){
+                    // Move the switch
+                    $btnShowDatePicker.prop("checked", true);
+                    setDefaultDateForPicker();
+                    // Show the date-picker
+                    $datePicker.show();
+                }else{
+                    // Move the switch
+                    $btnShowDateList.prop("checked", true);
+                    setDefaultDateForList();
+                    // Show the date-picker-list
+                    $datePickerList.show();
+                }
 
-                $datePicker.slideDown();
+                // Show the date-choice-switcher
+                $datePickerChoice.toggleClass("hidden");
             }else{
                 //$("#event-date-list-suggest-date").hide().trigger("click");
                 $("#event-date-list-result-no-results, .suggest-date-btn-text-no-options").removeClass("hidden");

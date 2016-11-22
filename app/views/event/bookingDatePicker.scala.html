@@ -1,16 +1,32 @@
 @(event: models.Event, isThisMyEvent: Boolean)(implicit messages: Messages)
 
 <h3 class="event-date-list-header text-center">@Messages("event.choose-date.header")</h3>
+<div id="event-date-list-choice" class="hidden">
+    <section class="switch-container">
+        <div class="switch switch-green">
+            <input type="radio" id="switch-radio-picker" class="btn-show-datepicker switch-input" name="view" value="@Messages("event.choose-date.picker.date")" checked="checked">
+            <label for="switch-radio-picker" class="switch-label event-switch-label switch-label-off">@Messages("event.choose-date.picker.date")</label>
+
+            <input type="radio" id="switch-radio-list" class="btn-show-datelist switch-input" name="view" value="@Messages("event.choose-date.picker.list")">
+            <label for="switch-radio-list" class="switch-label event-switch-label switch-label-on">@Messages("event.choose-date.picker.list")</label>
+            <span class="switch-selection"></span>
+        </div>
+    </section>
+</div>
 <div class="row">
     <div class="col-xs-12 col-md-10 col-md-offset-1">
         <div id="event-date-list-picker"
             data-event-uuid="@event.objectId"
             data-get-all-available-dates-route="@{routes.EventPageController.getAllAvailableDatesJSON()}"
             data-get-time-route="@{routes.EventPageController.getEventTimesForDateAJAX()}"
-            class="inline-date-selector animated"
+            class="inline-date-selector animated flipInX"
             style="display: none"></div>
+        <div id="event-date-list-picker-list" class="animated flipInX" style="display: none">
+
+        </div>
     </div>
 </div>
+
 <div id="event-date-list-result" class="event-date-list-result hidden"></div>
 <div id="event-date-list-result-no-results" class="event-date-list-no-results hidden">
     <div class="row">

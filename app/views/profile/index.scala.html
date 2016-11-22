@@ -37,10 +37,10 @@
                 <div class="full-width-image-wrapper">
                     @userProfile.getMainImage match {
                         case image: models.files.ContentFile => {
-                            @shared.img(routes.ImageController.profileNormal(image.getStoreId).url, cssClass = "img-responsive full-width-image")
+                            @shared.img(routes.ImageController.profileNormal(image.getStoreId).url, cssClass = "full-width-image")
                         }
                         case null => {
-                            @shared.img("images/profile/profile-default-main-image.jpg", cssClass = "img-responsive full-width-image")
+                            @shared.img("images/profile/profile-default-main-image.jpg", cssClass = "full-width-image")
                         }
                     }
                 </div>

@@ -462,16 +462,17 @@ input[type="reset"]:hover
   color: @hdc-orange;
 }
 
-.btn-orange-bg {
+.btn-orange-outline {
+  background-color:@hdc-white;
+  border-color:@hdc-orange;
+  color: @hdc-black;
+}
+.btn-orange-outline:hover,
+.btn-orange-outline:focus {
   background-color:@hdc-orange;
   border-color:@hdc-orange;
-  color: #fff;
-}
-.btn-orange-bg:hover,
-.btn-orange-bg:focus {
-  background-color:@hdc-medium-light-orange;
-  border-color:@hdc-orange;
-  color: #fff;
+  color: @hdc-white;
+  font-weight: bold;
 }
 
 .btn-close {
@@ -793,6 +794,95 @@ input[type="reset"]:hover
   display: inline-block;
 }
 
+// Radio Switch
+.switch {
+  position: relative;
+  margin: 0px auto 20px auto;
+  height: 44px;
+  width: 100%;
+  background: @hdc-light-gray;
+  border-radius: 3px;
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.switch-label {
+  position: relative;
+  z-index: 2;
+  float: left;
+  width: 50%;
+  line-height: 43px;
+  color: @hdc-dark-gray;
+  text-align: center;
+  cursor: pointer;
+  font-weight:normal;
+}
+.switch-label:active {
+  font-weight: bold;
+}
+
+.switch-label-off {
+  padding-left: 2px;
+}
+
+.switch-label-on {
+  padding-right: 2px;
+}
+
+/*
+ * Note: using adjacent or general sibling selectors combined with
+ *       pseudo classes doesn't work in Safari 5.0 and Chrome 12.
+ *       See this article for more info and a potential fix:
+ *       http://css-tricks.com/webkit-sibling-bug/
+ */
+.switch-input {
+  display: none;
+}
+.switch-input:checked + .switch-label {
+  font-weight: bold;
+  color: rgba(255, 255, 255, 1);
+  text-shadow: 0 1px rgba(255, 255, 255, 0.25);
+  -webkit-transition: 0.15s ease-out;
+  -moz-transition: 0.15s ease-out;
+  -o-transition: 0.15s ease-out;
+  transition: 0.15s ease-out;
+}
+.switch-input:checked + .switch-label-on ~ .switch-selection {
+  left: 50%;
+  /* Note: left: 50% doesn't transition in WebKit */
+}
+
+.switch-selection {
+  display: block;
+  position: absolute;
+  z-index: 1;
+  top: 2px;
+  left: 2px;
+  width: 49.50%;
+  height: 40px;
+  background: #65bd63;
+  border-radius: 3px;
+  background-image: -webkit-linear-gradient(top, #9dd993, #65bd63);
+  background-image: -moz-linear-gradient(top, #9dd993, #65bd63);
+  background-image: -o-linear-gradient(top, #9dd993, #65bd63);
+  background-image: linear-gradient(to bottom, #9dd993, #65bd63);
+  -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 2px rgba(0, 0, 0, 0.2);
+  -webkit-transition: left 0.15s ease-out;
+  -moz-transition: left 0.15s ease-out;
+  -o-transition: left 0.15s ease-out;
+  transition: left 0.15s ease-out;
+}
+.switch-green .switch-selection {
+  background: @hdc-dark-green;
+  background-image: -webkit-linear-gradient(top, @hdc-green, @hdc-dark-green);
+  background-image: -moz-linear-gradient(top, @hdc-green, @hdc-dark-green);
+  background-image: -o-linear-gradient(top, @hdc-green, @hdc-dark-green);
+  background-image: linear-gradient(to bottom, @hdc-green, @hdc-dark-green);
+}
+// Switch end
+
+
 // Multiple step form
 .step {
   margin-bottom:20px;
@@ -811,7 +901,7 @@ input[type="reset"]:hover
   z-index:1;
 }
 .full-width-image {
-  width:100%;
+  /*width:100%;*/
   position: absolute;
   left: -1000%;
   right: -1000%;
@@ -819,7 +909,7 @@ input[type="reset"]:hover
   bottom: -1000%;
   margin: auto;
   min-height: 100%;
-  min-width: 100%;
+  /*min-width: 100%;*/
 }
 
 // Events
@@ -840,7 +930,6 @@ input[type="reset"]:hover
   max-height: 150px;
   min-height: 150px;
 }
-
 .event-date-list {
   overflow: hidden;
   margin:0;
@@ -896,6 +985,7 @@ input[type="reset"]:hover
   padding: 1em;
   background-color: @hdc-light-gray;
   margin-top:0px;
+  display:none;
 }
 .event-date-list-result {
   border-top: 1px solid @hdc-light-orange;

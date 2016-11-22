@@ -1,7 +1,7 @@
 @(eventDates: Option[List[models.event.EventDate]])(implicit messages: Messages)
 
 @if(eventDates.isDefined) {
-    <ul class="event-date-list list-unstyled">
+    <ul class="event-date-list list-unstyled animated bounceIn">
     @for(eventDate <- eventDates.get) {
         @defining(eventDate.getEventDateTime) { theDate =>
             <li>
@@ -13,12 +13,15 @@
                     </div>
                     <div class="col-xs-12 col-sm-5 spots-left">
                         <div class="row">
-                            <div class="col-xs-12"><strong>@Messages("event.list.spaces-left")</strong><br>@Messages("event.list.spaces-booked-out-of-spaces-left", eventDate.getSpacesLeft, eventDate.getMaxNrOfGuests)</div>
+                            <div class="col-xs-12">
+                                <strong>@Messages("event.list.timestamp")</strong>&nbsp;@customUtils.Helpers.formatDateGetTime(theDate)<br>
+                                <strong>@Messages("event.list.spaces-left")</strong>&nbsp;@Messages("event.list.spaces-booked-out-of-spaces-left", eventDate.getSpacesLeft, eventDate.getMaxNrOfGuests)
+                            </div>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-4">
                         <div class="select-date-wrap pull-right">
-                            <button class="btn btn-lg btn-orange select-date-button" @if(eventDate.getSpacesLeft == 0){disabled="disabled"} data-selected-time="@customUtils.Helpers.formatDate(theDate, "HH:mm")" data-selected-date="@customUtils.Helpers.formatDate(theDate, "yyyy-MM-dd")" data-selected-uuid="@eventDate.objectId">@Messages("event.button.select-date", customUtils.Helpers.formatDateGetTime(theDate))</button>
+                            <button class="btn btn-lg btn-orange select-date-button" @if(eventDate.getSpacesLeft == 0){disabled="disabled"} data-selected-time="@customUtils.Helpers.formatDate(theDate, "HH:mm")" data-selected-date="@customUtils.Helpers.formatDate(theDate, "yyyy-MM-dd")" data-selected-uuid="@eventDate.objectId">@Messages("event.button.select-date")</button>
                         </div>
                     </div>
                 </div>
