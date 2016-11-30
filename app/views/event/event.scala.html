@@ -17,14 +17,19 @@
     <script src="@routes.Assets.versioned("js/app/event-helpers.js")"></script>
     <script src="@routes.Assets.versioned("js/app/event-image-gallery.js")"></script>
 }
-@if(isUserHost) {
-    eventScripts += {
+@eventScriptsBooking = {
     <script src="@routes.Assets.versioned("js/app/event-booking.js")"></script>
     <script src="@routes.Assets.versioned("js/app/event-date-suggestion.js")"></script>
-    }
 }
 
-@main(Messages("event.title", event.getName), metaData = metaData, footerScripts = eventScripts) {
+@reqScripts = @{
+    Html(isUserHost match {
+        case true => eventScripts.toString() + eventScriptsBooking.toString()
+        case false => eventScripts.toString()
+    })
+}
+
+@main(Messages("event.title", event.getName), metaData = metaData, footerScripts = reqScripts) {
 
     <div class="container">
         @defining(if(event.getOwnerProfile.getAvatarImage != null){routes.ImageController.userThumb(event.getOwnerProfile.getAvatarImage.getStoreId).url}else{""}) { avatarUrl: String =>

@@ -703,7 +703,7 @@ file.done-message=<strong>Klar!</strong><br> Titta under fliken <strong><a href=
 
 image-chooser.title=Mediabibliotek
 image-chooser.abort=Avbryt
-image-chooser.save=Spara / Välj
+image-chooser.save=Välj
 image-chooser.max-items-part1=Du kan inte<br>välja mer än<br>
 image-chooser.max-items-part2=bild(er)
 image-chooser.no-images=Du har inga bilder, ladda upp några under fliken "Ladda upp".
