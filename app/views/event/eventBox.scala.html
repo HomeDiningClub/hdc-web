@@ -1,4 +1,4 @@
-@(profileName: String)(implicit messages: Messages)
+@(profileName: String, isUserHost: Boolean)(implicit messages: Messages)
 
 <script>
 $(document).ready(function(){
@@ -33,7 +33,9 @@ $(document).ready(function(){
         l = l + "<h2>" + value.name + "</h2>";
         l = l + "<div class='location'>" + value.location + "</div>";
         l = l + "<div class='preamble'>" + value.preAmble + "</div>";
-        l = l + "<button class='btn btn-lg btn-orange btn-booking'>" + '@Messages("event.button.select")' + "&nbsp;<span class='glyphicon glyphicon-ok'></span></button>";
+        @if(isUserHost){
+            l = l + "<button class='btn btn-lg btn-orange btn-booking'>" + '@Messages("event.button.select")' + "&nbsp;<span class='glyphicon glyphicon-ok'></span></button>";
+        }
         l = l + "</div>";
 
         l = l + "</div>";

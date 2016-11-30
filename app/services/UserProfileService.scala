@@ -7,20 +7,23 @@ import models.modelconstants.UserLevelScala
 import models._
 import org.neo4j.graphdb._
 import org.neo4j.helpers.collection.IteratorUtil
-import org.springframework.data.domain.{Sort, Page, PageRequest, Pageable}
+import org.springframework.data.domain.{Page, PageRequest, Pageable, Sort}
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import play.api.Logger
-import repositories.{TagWordRepository, ViewedByUnKnownRepository, UserProfileRepository, ViewedByMemberRepository}
+import repositories.{TagWordRepository, UserProfileRepository, ViewedByMemberRepository, ViewedByUnKnownRepository}
 import traits.TransactionSupport
+
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 import org.springframework.transaction.annotation.Transactional
 import org.neo4j.graphdb.index.Index
 import models.location.County
-import models.profile.{TaggedFavoritesToUserProfile, TagWord}
+import models.profile.{TagWord, TaggedFavoritesToUserProfile}
+
 import scala.collection.JavaConverters._
 import customUtils.ViewedByMemberUtil
+import models.formdata.UserProfileOptionsForm
 
 //@Service
 class UserProfileService @Inject()(val template: Neo4jTemplate,
@@ -196,6 +199,15 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
     saveUserProfile(theUser)
   }
 
+  def addPaymentOptionsToProfile(userProfile: UserProfile, paymentForm: UserProfileOptionsForm): UserProfile = withTransaction(template) {
+    userProfile.payBankCard = paymentForm.payBankCard
+    userProfile.payCash = paymentForm.payCash
+    userProfile.payIZettle = paymentForm.payIZettle
+    userProfile.paySwish = paymentForm.paySwish
+    val modUserProfile = userProfileRepository.save(userProfile)
+    modUserProfile
+  }
+
   //@Transactional(readOnly = false)
   def addRecipeToProfile(user: UserCredential, recipeToAdd: Recipe): UserProfile = withTransaction(template) {
     val userProfile = user.profiles.iterator().next()
@@ -216,9 +228,26 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
 
   //@Transactional(readOnly = false)
   def addEventToProfile(userProfile: UserProfile, eventToAdd: Event): UserProfile = withTransaction(template) {
-    userProfile.addEvent(eventToAdd)
+    // Before adding, make sure user is a host, otherwise add user as a host automatically
+    var modUserProfile = addUserAsHostIfNotAlready(userProfile)
+    modUserProfile.addEvent(eventToAdd)
+    modUserProfile = userProfileRepository.save(userProfile)
+    modUserProfile
   }
 
+  def addUserAsHostIfNotAlready(userProfile: UserProfile): UserProfile = {
+    if (!userProfile.getRole.contains(UserLevelScala.HOST.Constant)) {
+      userProfile.getRole.add(UserLevelScala.HOST.Constant)
+    }
+    userProfile
+  }
+
+  def removeUserAsHost(userProfile: UserProfile): UserProfile = {
+    if (userProfile.getRole.contains(UserLevelScala.HOST.Constant)) {
+      userProfile.getRole.remove(UserLevelScala.HOST.Constant)
+    }
+    userProfile
+  }
   //@Transactional(readOnly = false)
   def addBlogPostsToProfile(user: UserCredential, blogPostsToAdd: BlogPost): UserProfile = withTransaction(template) {
     val userProfile = user.profiles.iterator().next()

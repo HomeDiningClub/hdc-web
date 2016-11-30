@@ -271,6 +271,28 @@
                             </div>
                         </div>
 
+                        @* If user hasn't selected any payment options, make form available for choice *@
+                        @if(eventForm.get.userProfileOptionsForm.isDefined){
+                            <div class="step">
+                                @b3.checkbox(eventForm("userProfileOptionsForm.payCash"),
+                                    'id -> "userProfileOptionsForm.payCash",
+                                    '_text -> Messages("profile.payment.cash"),
+                                    '_label -> Messages("profile.create.form.host.payment.header")
+                                )
+                                @b3.checkbox(eventForm("userProfileOptionsForm.paySwish"),
+                                    'id -> "userProfileOptionsForm.paySwish",
+                                    '_text -> Messages("profile.payment.Swish")
+                                )
+                                @b3.checkbox(eventForm("userProfileOptionsForm.payBankCard"),
+                                    'id -> "userProfileOptionsForm.payBankCard",
+                                    '_text -> Messages("profile.payment.banktransfer")
+                                )
+                                @b3.checkbox(eventForm("userProfileOptionsForm.payIZettle"),
+                                    'id -> "userProfileOptionsForm.payIZettle",
+                                    '_text -> Messages("profile.payment.izettle")
+                                )
+                            </div>
+                        }
                         @helper.inputHidden(eventForm("id"))
                     </fieldset>
 

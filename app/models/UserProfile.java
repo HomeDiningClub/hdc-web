@@ -161,6 +161,13 @@ public class UserProfile extends AuditEntity implements IEditable {
             return  "";
     }
 
+    public boolean hasPaymentOptionSelected() {
+        if (payBankCard || payCash || payIZettle || paySwish)
+            return true;
+        else
+            return false;
+    }
+
     @Fetch
     public ContentFile getMainImage() {
         return this.mainImage;

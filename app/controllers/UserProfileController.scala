@@ -724,11 +724,9 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         // Add user to Host role
         wantsToBeHost match {
           case true =>
-            if (!userProfile.getRole.contains(UserLevelScala.HOST.Constant)) {
-              userProfile.getRole.add(UserLevelScala.HOST.Constant)
-            }
+            userProfile = userProfileService.addUserAsHostIfNotAlready(userProfile)
           case false => {
-            userProfile.getRole.remove(UserLevelScala.HOST.Constant)
+            userProfile = userProfileService.removeUserAsHost(userProfile)
           }
         }
 

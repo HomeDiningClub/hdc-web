@@ -1,5 +1,6 @@
-@(event: models.Event, isThisMyEvent: Boolean)(implicit messages: Messages)
+@(event: models.Event, isThisMyEvent: Boolean, isUserHost: Boolean)(implicit messages: Messages)
 
+@if(isUserHost){
 <h3 class="event-date-list-header text-center">@Messages("event.choose-date.header")</h3>
 <div id="event-date-list-choice" class="hidden">
     <section class="switch-container">
@@ -42,3 +43,4 @@
         }
     </div>
 </div>
+}

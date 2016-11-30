@@ -5,7 +5,7 @@
 }
 
 @if(eventBoxes.nonEmpty) {
-    @views.html.event.eventBox(userProfile.profileLinkName)
+    @views.html.event.eventBox(userProfile.profileLinkName, userProfile.isUserHost)
 }
 
 @if(isThisMyProfile) {

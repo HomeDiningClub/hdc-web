@@ -225,7 +225,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
           "smokingAllowed" -> boolean,
           "alcoholServing" -> optional(uuid),
           "mealType" -> optional(uuid)
-        )(EventOptionsForm.apply)(EventOptionsForm.unapply)
+        )(EventOptionsForm.apply)(EventOptionsForm.unapply),
+        "userProfileOptionsForm" -> optional(mapping(
+          "payCash" -> boolean,
+          "paySwish" -> boolean,
+          "payBankCard" -> boolean,
+          "payIZettle" -> boolean,
+          "wantsToBeHost" -> boolean
+        )(UserProfileOptionsForm.apply)(UserProfileOptionsForm.unapply))
       )(EventForm.apply)(EventForm.unapply)
         verifying(Messages("event.edit.add.min-nr-of-guests.validation"), t => isValidMinValue(t.minNoOfGuest, t.maxNoOfGuest))
         verifying(Messages("event.edit.add.max-nr-of-guests.validation"), t => isValidMaxValue(t.minNoOfGuest, t.maxNoOfGuest))

@@ -1,35 +1,37 @@
 package controllers
 
-import java.time.{LocalDateTime, LocalDate}
-import javax.inject.{Named, Inject}
+import java.time.{LocalDate, LocalDateTime}
+import javax.inject.{Inject, Named}
 
-import models.event.{BookedEventDate, MealType, AlcoholServing}
+import models.event.{AlcoholServing, BookedEventDate, MealType}
 import models.files.ContentFile
-import models.jsonmodels.{EventBoxJSON}
+import models.jsonmodels.EventBoxJSON
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.data.Form
-import play.api.libs.json.{Json, JsValue}
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.mailer.Email
 import play.api.mvc._
-import models.{UserCredential, Event}
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import models.{Event, UserCredential, UserProfile}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
-import securesocial.core.SecureSocial.{SecuredRequest, RequestWithUser}
+import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
 import services._
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
-import customUtils.authorization.{WithRoleAndOwnerOfObject, WithRole}
+
+import customUtils.authorization.{WithRole, WithRoleAndOwnerOfObject}
 
 import scala.Some
 import models.viewmodels._
 import customUtils.Helpers
 import play.api.Logger
+
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
-import models.formdata.{EventDateSuggestionForm, EventOptionsForm, EventBookingForm, EventForm}
+import models.formdata._
 
 class EventPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val likeController: LikeController,
@@ -57,6 +59,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
             eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
             shareUrl = createShareUrl(event),
             isThisMyEvent = isThisMyEvent(event),
+            isUserHost = event.getOwnerProfile.isUserHost,
             memberUser = request.user,
             eventLikeForm = getEventLikeForm(event)))
           case None =>
@@ -139,6 +142,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
           eventBoxes = eventService.getEventBoxes(event.getOwnerProfile.getOwner),
           shareUrl = createShareUrl(event),
           isThisMyEvent = isThisMyEvent(event),
+          isUserHost = event.getOwnerProfile.isUserHost,
           memberUser = request.user,
           eventLikeForm = getEventLikeForm(event)
         ))
@@ -319,7 +323,8 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
 
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
+  def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+    val currentUserProfile = request.user.getUserProfile
 
     val mealSeq = mealTypeService.getMealTypesAsSeq
     val mealDefault =  mealSeq match {
@@ -327,7 +332,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       case Some(x) => Some(UUID.fromString(x.head._1)) // 1 = Object id, 2 = Name
     }
 
-    var alcoSeq = alcoholServingService.getAlcoholServingsAsSeq
+    val alcoSeq = alcoholServingService.getAlcoholServingsAsSeq
     val alcoDefault =  alcoSeq match {
       case None => None
       case Some(x) => Some(UUID.fromString(x.head._1)) // 1 = Object id, 2 = Name
@@ -351,7 +356,8 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         smokingAllowed = false,
         alcoholServing = alcoDefault,
         mealType = mealDefault
-      )
+      ),
+      userProfileOptionsForm = hasPaymentOptionsCreateForm(currentUserProfile)
     )
 
     Ok(views.html.event.addOrEdit(
@@ -360,6 +366,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       optionsAlcoholServings = alcoSeq,
       optionsMealTypes = mealSeq))
   }
+
 
   def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val editingItem = eventService.findById(objectId)
@@ -402,7 +409,8 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                   case null => None
                   case mt => Some(mt.objectId)
                 }
-              )
+              ),
+              userProfileOptionsForm = hasPaymentOptionsCreateForm(item.getOwnerProfile)
             )
 
             Ok(views.html.event.addOrEdit(
@@ -702,8 +710,12 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         eventService.updateOrCreateEventDates(contentData, newRec.get)
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
+        // Save
         val savedItem = eventService.save(newRec.get)
-        val savedProfile = userProfileService.addEventToProfile(currentUser.getUserProfile, savedItem)
+        var savedProfile = userProfileService.addEventToProfile(currentUser.getUserProfile, savedItem)
+        if(contentData.userProfileOptionsForm.isDefined) {
+          savedProfile = userProfileService.addPaymentOptionsToProfile(savedProfile, contentData.userProfileOptionsForm.get)
+        }
         val successMessage = Messages("event.add.success", savedItem.getName)
         Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(currentUser.getUserProfile.profileLinkName,savedItem.getLink)).flashing(FlashMsgConstants.Success -> successMessage)
       }
@@ -739,4 +751,19 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
     routes.StartPageController.index().absoluteURL(secure = false).dropRight(1)
   }
 
+  private def hasPaymentOptionsCreateForm(currentUserProfile: UserProfile): Option[UserProfileOptionsForm] = {
+    val userProfOptsForm = currentUserProfile.hasPaymentOptionSelected match {
+      case true => None
+      case false => {
+        Some(UserProfileOptionsForm(
+          payBankCard = currentUserProfile.payBankCard,
+          payCash = currentUserProfile.payCash,
+          payIZettle = currentUserProfile.payIZettle,
+          paySwish = currentUserProfile.paySwish,
+          wantsToBeHost = true
+        ))
+      }
+    }
+    userProfOptsForm
+  }
 }

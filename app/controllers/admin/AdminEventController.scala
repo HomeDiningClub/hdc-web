@@ -130,7 +130,8 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
               case null => None
               case mt => Some(mt.objectId)
             }
-          )
+          ),
+          userProfileOptionsForm = None
         )
 
         // Get any images and sort them
