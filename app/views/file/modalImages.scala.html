@@ -203,6 +203,9 @@
             // Don't run if any old already exists
             if(!placeHolder.children('.overlay-functions').length){
                 var functionRow = $('<div class="overlay-functions text-center"/>');
+                var functionRowHead = $('<span class="overlay-functions-header">' +
+                        '@Messages("image-chooser.functions.header")'
+                        + '</span>');
 
                 // Edit mode
                 if(globalEditMode){
@@ -219,6 +222,7 @@
 
                 // Don't add functions if no functions selected
                 if(functionsAdded){
+                    functionRow.prepend(functionRowHead);
                     functionRow.hide().children('.btn-function').tooltip();
                     placeHolder.append(functionRow);
                     functionRow.slideDown(100);
@@ -230,7 +234,7 @@
             var $this = $(thisItem);
 
             var delButton = $('<button/>')
-                .addClass('btn btn-danger btn-circle btn-function btn-fn-del')
+                .addClass('btn btn-danger btn-function btn-fn-del')
                 .prop('disabled', false)
                 .data(file)
                 .prop('title', '@Messages("image-chooser.functions.delete")')
@@ -250,7 +254,7 @@
             var $this = $(thisItem);
 
             var markButton = $('<button/>')
-                .addClass('btn btn-orange btn-circle btn-function')
+                .addClass('btn btn-orange btn-function')
                 .prop('disabled', false)
                 .prop('data-toggle', 'tooltip')
                 .prop('data-placement', 'top')

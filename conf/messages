@@ -708,6 +708,7 @@ image-chooser.max-items-part1=Du kan inte<br>välja mer än<br>
 image-chooser.max-items-part2=bild(er)
 image-chooser.no-images=Du har inga bilder, ladda upp några under fliken "Ladda upp".
 
+image-chooser.functions.header=Funktioner:
 image-chooser.functions.mark=Markera / Välj
 image-chooser.functions.un-mark=Avmarkera
 image-chooser.functions.delete=Ta bort
