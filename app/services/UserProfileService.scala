@@ -228,11 +228,8 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
 
   //@Transactional(readOnly = false)
   def addEventToProfile(userProfile: UserProfile, eventToAdd: Event): UserProfile = withTransaction(template) {
-    // Before adding, make sure user is a host, otherwise add user as a host automatically
-    var modUserProfile = addUserAsHostIfNotAlready(userProfile)
-    modUserProfile.addEvent(eventToAdd)
-    modUserProfile = userProfileRepository.save(userProfile)
-    modUserProfile
+    val modUserProfile = userProfile.addEvent(eventToAdd)
+    userProfileRepository.save(modUserProfile)
   }
 
   def addUserAsHostIfNotAlready(userProfile: UserProfile): UserProfile = {

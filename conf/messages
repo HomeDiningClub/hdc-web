@@ -342,6 +342,7 @@ profile.create.form.personnummer.extra-info.body=Ditt personnummer behöver vi s
 
 profile.create.form.host-label=Värdskap
 profile.create.form.host-text=Jag vill vara värd
+profile.create.form.host-help-text=<strong>Observera</strong><br>Om du vill att gäster skall kunna boka dina Dines, måste du välja att vara värd.
 profile.create.form.host.childfriendly=Barnvänligt
 profile.create.form.host.handicapfriendly=Handikappvänligt
 profile.create.form.host.pets=Finns husdjur?
@@ -472,9 +473,9 @@ event.edit.add.header=Lägg till / Redigera Dine
 event.edit.add.name=Namn
 event.edit.add.name.validation=(Min 6, max 60 tecken)
 event.edit.add.name.help-text=<em><strong>Ett namn på din Dine, som beskriver din Dine t.ex.:</strong><br>Sommarfest: Svenska härligheter<br>Fransk middag<br>Brunch med skaldjurstvist<br></em>
-event.edit.add.price=Pris (per person)
+event.edit.add.price=Pris i kronor (SEK)(per person)
 event.edit.add.price.validation=(Min 0:-, max 9999:-)
-event.edit.add.price.help-text=<em><strong>Priser</strong><br>Vad blir kostnaden per kuvert/person?<br></em>
+event.edit.add.price.help-text=<em><strong>Priser</strong><br>Vad blir kostnaden i SEK per kuvert/person?<br></em>
 event.edit.add.min-nr-of-guests.label=Min. antal gäster
 event.edit.add.min-nr-of-guests.validation="Min. antal gäster" måste vara mindre eller lika med "Max antal gäster"
 event.edit.add.max-nr-of-guests.label=Max antal gäster
@@ -517,6 +518,8 @@ event.edit.add.main-image-btn=Välj bild
 event.edit.add.images=Fler bilder (max {0} st)
 event.edit.add.images-preview=Förhandsgranskning
 event.edit.add.images-btn=Välj fler bilder
+
+event.edit.add.profile-options.header=Gemensama profilinställingar för alla dina dines
 
 event.edit.prev=Föregående
 event.edit.next=Nästa

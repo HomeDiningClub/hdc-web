@@ -271,9 +271,24 @@
                             </div>
                         </div>
 
-                        @* If user hasn't selected any payment options, make form available for choice *@
+                        @* Make general setting available for choice *@
                         @if(eventForm.get.userProfileOptionsForm.isDefined){
                             <div class="step">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <h3>@Messages("event.edit.add.profile-options.header")</h3>
+                                    </div>
+                                </div>
+                                <hr>
+                                <!-- Choice of Guest and host -->
+                                @b3.checkbox(eventForm("userProfileOptionsForm.wantsToBeHost"),
+                                    'id -> "options.wantsToBeHost",
+                                    '_text -> Messages("profile.create.form.host-text"),
+                                    '_label -> Messages("profile.create.form.host-label")
+                                )
+                                @Html(Messages("profile.create.form.host-help-text"))
+                                <hr>
+
                                 @b3.checkbox(eventForm("userProfileOptionsForm.payCash"),
                                     'id -> "userProfileOptionsForm.payCash",
                                     '_text -> Messages("profile.payment.cash"),

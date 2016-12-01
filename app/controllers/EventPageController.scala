@@ -357,7 +357,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         alcoholServing = alcoDefault,
         mealType = mealDefault
       ),
-      userProfileOptionsForm = hasPaymentOptionsCreateForm(currentUserProfile)
+      userProfileOptionsForm = createMissingProfileSettingsForm(currentUserProfile)
     )
 
     Ok(views.html.event.addOrEdit(
@@ -410,7 +410,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                   case mt => Some(mt.objectId)
                 }
               ),
-              userProfileOptionsForm = hasPaymentOptionsCreateForm(item.getOwnerProfile)
+              userProfileOptionsForm = createMissingProfileSettingsForm(item.getOwnerProfile)
             )
 
             Ok(views.html.event.addOrEdit(
@@ -710,12 +710,19 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         eventService.updateOrCreateEventDates(contentData, newRec.get)
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
-        // Save
+        // Save event
         val savedItem = eventService.save(newRec.get)
         var savedProfile = userProfileService.addEventToProfile(currentUser.getUserProfile, savedItem)
+
+        // Update general profile settings
         if(contentData.userProfileOptionsForm.isDefined) {
+          savedProfile = contentData.userProfileOptionsForm.get.wantsToBeHost match {
+            case true => userProfileService.addUserAsHostIfNotAlready(savedProfile)
+            case false => userProfileService.removeUserAsHost(savedProfile)
+          }
           savedProfile = userProfileService.addPaymentOptionsToProfile(savedProfile, contentData.userProfileOptionsForm.get)
         }
+
         val successMessage = Messages("event.add.success", savedItem.getName)
         Redirect(controllers.routes.EventPageController.viewEventByNameAndProfile(currentUser.getUserProfile.profileLinkName,savedItem.getLink)).flashing(FlashMsgConstants.Success -> successMessage)
       }
@@ -751,16 +758,16 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
     routes.StartPageController.index().absoluteURL(secure = false).dropRight(1)
   }
 
-  private def hasPaymentOptionsCreateForm(currentUserProfile: UserProfile): Option[UserProfileOptionsForm] = {
-    val userProfOptsForm = currentUserProfile.hasPaymentOptionSelected match {
-      case true => None
-      case false => {
+  private def createMissingProfileSettingsForm(currentUserProfile: UserProfile): Option[UserProfileOptionsForm] = {
+    val userProfOptsForm = (currentUserProfile.hasPaymentOptionSelected, currentUserProfile.isUserHost) match {
+      case (true,true) => None
+      case _ => {
         Some(UserProfileOptionsForm(
           payBankCard = currentUserProfile.payBankCard,
           payCash = currentUserProfile.payCash,
           payIZettle = currentUserProfile.payIZettle,
           paySwish = currentUserProfile.paySwish,
-          wantsToBeHost = true
+          wantsToBeHost = currentUserProfile.isUserHost
         ))
       }
     }
