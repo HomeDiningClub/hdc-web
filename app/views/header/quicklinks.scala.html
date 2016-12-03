@@ -1,9 +1,17 @@
-@(quickLinkTitle: String = "", quickLinkItems: Seq[(String, String, String, String, String, String)])(implicit messages: Messages)
+@(quickLinkTitle: String = "", userAvatarImage: Option[String], quickLinkItems: Seq[(String, String, String, String, String, String)])(implicit messages: Messages)
 <div class="quicklinks">
   <ul class="nav nav-pills">
     @if(!quickLinkTitle.isEmpty){
       <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">@Html(quickLinkTitle) <span class="glyphicon glyphicon-user"></span> <span class="caret"></span></a>
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            @if(userAvatarImage.isDefined){
+                @shared.img(userAvatarImage.get, cssClass = "img-circle host-image-mini")
+            }else{
+                @shared.img("images/host/host-head-default-30x30.gif", cssClass = "img-circle host-image-mini")
+            }
+            @Html(quickLinkTitle)
+            <span class="caret"></span>
+        </a>
         <ul class="dropdown-menu pull-right">
         }
     @for(nav <- quickLinkItems) {

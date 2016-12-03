@@ -1838,6 +1838,14 @@ input[type="reset"]:hover
 .quicklinks .nav .open > a:focus {
   background-color: lighten(@hdc-green, 5%);
 }
+.quicklinks .nav > li > a.dropdown-toggle {
+  padding: 7px 15px 5px 15px;
+}
+.quicklinks .host-image-mini {
+  margin-right:5px;
+  border:1px solid white;
+  box-shadow: 1px 1px 1px rgba(0,0,0,.3)
+}
 // Header - Login form
 .header-login-form
 {
@@ -3198,6 +3206,12 @@ a.morelink {
   .quicklinks .nav > li > a
   {
     padding: 8px 5px;
+  }
+  .quicklinks .nav>li>a.dropdown-toggle {
+    padding: 8px 5px;
+  }
+  .quicklinks .host-image-mini {
+    margin:0;
   }
   .navbar-fixed-top
   {

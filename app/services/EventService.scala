@@ -38,6 +38,7 @@ import play.api.Logger
 import models.formdata._
 import customUtils.formhelpers.Formats._
 import models.message.Message
+import models.modelconstants.UserLevelScala
 
 class EventService @Inject()(val template: Neo4jTemplate,
                              val eventRepository: EventRepository,
@@ -768,27 +769,27 @@ class EventService @Inject()(val template: Neo4jTemplate,
     (filterTag, filterCounty) match {
       case (Some(tw), Some(cnt)) =>
         if (pageNo.isDefined) {
-          returnPaged = eventRepository.findPopularEventsWithCountyAndTagWord(cnt.objectId.toString, tw.objectId.toString, new PageRequest(pageNo.get, nrPerPage))
+          returnPaged = eventRepository.findPopularEventsWithCountyAndTagWord(cnt.objectId.toString, tw.objectId.toString, UserLevelScala.HOST.Constant, new PageRequest(pageNo.get, nrPerPage))
         } else {
-          returnList = eventRepository.findPopularEventsWithCountyAndTagWord(cnt.objectId.toString, tw.objectId.toString).asScala.toList
+          returnList = eventRepository.findPopularEventsWithCountyAndTagWord(cnt.objectId.toString, tw.objectId.toString, UserLevelScala.HOST.Constant).asScala.toList
         }
       case (None, Some(cnt)) =>
         if (pageNo.isDefined) {
-          returnPaged = eventRepository.findPopularEventsWithCounty(cnt.objectId.toString, new PageRequest(pageNo.get, nrPerPage))
+          returnPaged = eventRepository.findPopularEventsWithCounty(cnt.objectId.toString, UserLevelScala.HOST.Constant, new PageRequest(pageNo.get, nrPerPage))
         } else {
-          returnList = eventRepository.findPopularEventsWithCounty(cnt.objectId.toString).asScala.toList
+          returnList = eventRepository.findPopularEventsWithCounty(cnt.objectId.toString, UserLevelScala.HOST.Constant).asScala.toList
         }
       case (Some(tw), None) =>
         if (pageNo.isDefined) {
-          returnPaged = eventRepository.findPopularEventsWithTagWord(tw.objectId.toString, new PageRequest(pageNo.get, nrPerPage))
+          returnPaged = eventRepository.findPopularEventsWithTagWord(tw.objectId.toString, UserLevelScala.HOST.Constant, new PageRequest(pageNo.get, nrPerPage))
         } else {
-          returnList = eventRepository.findPopularEventsWithTagWord(tw.objectId.toString).asScala.toList
+          returnList = eventRepository.findPopularEventsWithTagWord(tw.objectId.toString, UserLevelScala.HOST.Constant).asScala.toList
         }
       case (None, None) =>
         if (pageNo.isDefined) {
-          returnPaged = eventRepository.findPopularEvents(new PageRequest(pageNo.get, nrPerPage))
+          returnPaged = eventRepository.findPopularEvents(UserLevelScala.HOST.Constant, new PageRequest(pageNo.get, nrPerPage))
         } else {
-          returnList = eventRepository.findPopularEvents().asScala.toList
+          returnList = eventRepository.findPopularEvents(UserLevelScala.HOST.Constant).asScala.toList
         }
     }
 

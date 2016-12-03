@@ -94,7 +94,7 @@ class HeaderController @Inject() (override implicit val env: SecureSocialRuntime
   }
 
   def quickLinks = UserAwareAction() { implicit request =>
-    Ok(views.html.header.quicklinks.render(getQuickLinkTitle(request.user), getQuickLinkList(request.user),request2Messages))
+    Ok(views.html.header.quicklinks.render(getQuickLinkTitle(request.user), getUserAvatarImage(request.user), getQuickLinkList(request.user),request2Messages))
   }
 
   private def getQuickLinkTitle(currentUser: Option[UserCredential]): String = {
@@ -103,6 +103,17 @@ class HeaderController @Inject() (override implicit val env: SecureSocialRuntime
       case None => ""
     }
   }
+
+  private def getUserAvatarImage(currentUser: Option[UserCredential]): Option[String] = {
+    currentUser match {
+      case Some(user) => user.getUserProfile.getAvatarImage match {
+        case null => None
+        case image => Some(routes.ImageController.userMini(image.getStoreId).url)
+      }
+      case None => None
+    }
+  }
+
 
   private def getQuickLinkList(currentUser: Option[UserCredential])(implicit request: RequestHeader): Seq[(String, String, String, String, String, String)] = {
 
