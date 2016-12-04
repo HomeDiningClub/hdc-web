@@ -29,6 +29,9 @@ import customUtils.ViewedByMemberUtil
 import customUtils.ViewedByUnKnownUtil
 import customUtils.security.SecureSocialRuntimeEnvironment
 
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
+
 class UserProfileController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                        val contentService: ContentService,
                                        val ratingController: RatingController,
@@ -174,27 +177,58 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
   def viewProfileByName(profileName: String) = UserAwareAction() { implicit request =>
 
+
     // Try getting the profile from name, if failure show 404
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) =>
+
         val profileOwner = profile.getOwner
         val myProfile = isThisMyProfile(profile)
-        val recipeBoxes = recipeService.getRecipeBoxes(profileOwner)
-        val eventBoxes = eventService.getEventBoxes(profileOwner)
-        val bookingsMadeByMe = if (myProfile) eventService.getBookingsMadeByMe(profileOwner, this.getBaseUrl) else None
-        val bookingsMadeToMyEvents = if (myProfile) eventService.getBookingsMadeToMyEvents(profileOwner, this.getBaseUrl) else None
-        val myReviewBoxes = if (myProfile) ratingService.getMyUserReviews(profileOwner) else None
-        val myRecipeReviewBoxes = if (myProfile) ratingService.getMyUserReviewsAboutFood(profileOwner) else None
-        val reviewBoxesAboutMyFood = ratingService.getUserReviewsAboutMyFood(profileOwner)
-        val reviewBoxesAboutMe = ratingService.getUserReviewsAboutMe(profileOwner)
-        val tags = tagWordService.findByProfileAndGroup(profile, "profile")
-        val messages = if (myProfile) buildMessageList(profileOwner) else None // TODO: This is slow, improve performance
-        val metaData = buildMetaData(profile, request)
-        val shareUrl = createShareUrl(profile)
-        val userRateForm = ratingController.renderUserRateForm(profileOwner, routes.UserProfileController.viewProfileByName(profile.profileLinkName).url, request.user)
-        val userLikeForm = likeController.renderUserLikeForm(profileOwner, request.user)
-        val requestForm = messagesController.renderHostForm(profileOwner, request.user)
-        val favorites = favoritesController.renderFavorites(profile)
+
+        val dataAsync = for {
+          messages <-
+            Future(
+              if (myProfile) {
+                val perf = customUtils.Helpers.startPerfLog()
+                val t = buildMessageList(profileOwner)
+                customUtils.Helpers.endPerfLog("messages", perf) // magnus@devitec - 7165
+                t
+            }else {
+                None
+              }
+            )// TODO: This is slow, improve performance
+          recipeBoxes <- Future(recipeService.getRecipeBoxes(profileOwner))
+          eventBoxes <- Future(eventService.getEventBoxes(profileOwner))
+          bookingsMadeByMe <- Future(if (myProfile) eventService.getBookingsMadeByMe(profileOwner, this.getBaseUrl) else None)
+          bookingsMadeToMyEvents <- Future(if (myProfile) eventService.getBookingsMadeToMyEvents(profileOwner, this.getBaseUrl) else None)
+          myReviewBoxes <- Future(if (myProfile) ratingService.getMyUserReviews(profileOwner) else None)
+          myRecipeReviewBoxes <- Future(if (myProfile) ratingService.getMyUserReviewsAboutFood(profileOwner) else None)
+          reviewBoxesAboutMyFood <- Future(ratingService.getUserReviewsAboutMyFood(profileOwner))
+          reviewBoxesAboutMe <- Future(ratingService.getUserReviewsAboutMe(profileOwner))
+          tags <- Future(tagWordService.findByProfileAndGroup(profile, "profile"))
+          metaData <- Future(buildMetaData(profile, request))
+          shareUrl <- Future(createShareUrl(profile))
+          userRateForm <- Future(ratingController.renderUserRateForm(profileOwner, routes.UserProfileController.viewProfileByName(profile.profileLinkName).url, request.user))
+          userLikeForm <- Future(likeController.renderUserLikeForm(profileOwner, request.user))
+          requestForm <- Future(messagesController.renderHostForm(profileOwner, request.user))
+          favorites <- Future(favoritesController.renderFavorites(profile))
+
+        } yield (recipeBoxes,
+          eventBoxes,
+          bookingsMadeByMe,
+          bookingsMadeToMyEvents,
+          myReviewBoxes,
+          myRecipeReviewBoxes,
+          reviewBoxesAboutMyFood,
+          reviewBoxesAboutMe,
+          tags,
+          messages,
+          metaData,
+          shareUrl,
+          userRateForm,
+          userLikeForm,
+          requestForm,
+          favorites)
 
         // Should the event be registered or not
         val doCountEvent: Boolean = true
@@ -204,27 +238,28 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
           doLogViewOfUserProfile(request, profile)
         }
 
+        val res = Await.result(dataAsync, Duration.Inf)
 
         Ok(views.html.profile.index(
           userProfile = profile,
-          recipeBoxes = recipeBoxes,
-          eventBoxes = eventBoxes,
-          bookingsMadeByMe = bookingsMadeByMe,
-          bookingsMadeToMyEvents = bookingsMadeToMyEvents,
-          myReviewBoxes = myReviewBoxes,
-          myRecipeReviewBoxes = myRecipeReviewBoxes,
-          reviewBoxesAboutMyFood = reviewBoxesAboutMyFood,
-          reviewBoxesAboutMe = reviewBoxesAboutMe,
-          userMessages = messages,
-          tagList = tags,
-          metaData = metaData,
-          shareUrl = shareUrl,
+          recipeBoxes = res._1,
+          eventBoxes = res._2,
+          bookingsMadeByMe = res._3,
+          bookingsMadeToMyEvents = res._4,
+          myReviewBoxes = res._5,
+          myRecipeReviewBoxes = res._6,
+          reviewBoxesAboutMyFood = res._7,
+          reviewBoxesAboutMe = res._8,
+          tagList = res._9,
+          userMessages = res._10,
+          metaData = res._11,
+          shareUrl = res._12,
           isThisMyProfile = myProfile,
           currentUser = request.user,
-          userRateForm = userRateForm,
-          userLikeForm = userLikeForm,
-          requestForm = requestForm,
-          favorites = favorites
+          userRateForm = res._13,
+          userLikeForm = res._14,
+          requestForm = res._15,
+          favorites = res._16
         ))
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName

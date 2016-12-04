@@ -1,16 +1,30 @@
 package controllers.test
 
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
-import play.api.Logger
+import play.api.{Environment, Logger}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import org.springframework.stereotype.{Controller => SpringController}
 import customUtils.security.SecureSocialRuntimeEnvironment
+import play.api.libs.ws.WS
 import securesocial.core.SecureSocial
 
+import scala.concurrent.Future
+import play.api.Play.current
+
 class PerformanceTestController @Inject() (implicit val env: SecureSocialRuntimeEnvironment,
-                                           val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport{
+                                           val messagesApi: MessagesApi,
+                                           val environment: Environment) extends Controller with SecureSocial with I18nSupport{
+
+  def testAsync = Action.async {
+    Future(Ok("ok"))
+  }
+
+  def asyncAction = Action.async { request =>
+    val futureJsUserArray = WS.url("http://www.json-generator.com/api/json/get/cfLxEnRoAy?indent=2").get()
+    futureJsUserArray.map{jsResponse => Ok(jsResponse.body).as("application/json")}
+  }
 
   def index = UserAwareAction { implicit request =>
 

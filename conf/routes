@@ -106,6 +106,8 @@ POST        /reply/guest                                         @controllers.Me
 #GET         /perftest                                           @controllers.test.PerformanceTestController.index
 GET         /test/grund                                          @controllers.test.SecureTestController.testAction
 GET         /test/grund2                                         @controllers.test.SecureTestController.testAction2(callingString : String)
+GET         /test/async                                          @controllers.test.PerformanceTestController.testAsync
+
 
 # Map static resources from the /public folder to the /assets URL path
 #GET         /assets/*file                                        controllers.Assets.at(path="/public", file)

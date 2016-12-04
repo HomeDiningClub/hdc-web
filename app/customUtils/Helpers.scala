@@ -51,6 +51,7 @@ object Helpers {
   }*/
 
   def startPerfLog(): Long = {
+    Logger.info("Starting perflog...")
     System.currentTimeMillis
   }
 
