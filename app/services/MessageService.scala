@@ -1,12 +1,12 @@
 package services
 
 import java.util
-import java.util.{UUID, Date, Set}
+import java.util.{Date, Set, UUID}
 import javax.inject.{Inject, Named}
 
-import models.message.{Message}
+import models.message.{Message, MessageData}
 import models.modelconstants.RelationshipTypesScala
-import models.{UserCredential}
+import models.UserCredential
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.annotation.Fetch
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import repositories.{MessageRepository, UserCredentialRepository}
 import traits.TransactionSupport
+
 import scala.collection.JavaConverters._
 
 //@Named
@@ -34,6 +35,15 @@ class MessageService @Inject()(val template: Neo4jTemplate,
 
     msg
   }
+
+
+  def createResponse(user: UserCredential, guest: UserCredential, messageObjectId: UUID, response: String, phone: String): Message = withTransaction(template){
+    this.findById(messageObjectId) match {
+      case None => null
+      case Some(message) => createResponse(user,guest,message,response,phone)
+    }
+  }
+
 
   def createResponse(user: UserCredential, guest: UserCredential, message: Message, response: String, phone: String): Message = withTransaction(template){
 
@@ -67,9 +77,10 @@ class MessageService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  def findIncomingMessagesForUser(user: UserCredential): Option[List[Message]] = withTransaction(template){
+  def findIncomingMessagesForUser(user: UserCredential): Option[List[MessageData]] = withTransaction(template){
     messageRepository.findIncomingMessagesForUser(user.objectId).asScala.toList match {
-      case Nil => None
+      case Nil =>
+        None
       case messages =>
         Some(messages)
     }

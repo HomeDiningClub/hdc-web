@@ -182,21 +182,12 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) =>
 
+        val perf = customUtils.Helpers.startPerfLog()
         val profileOwner = profile.getOwner
         val myProfile = isThisMyProfile(profile)
 
         val dataAsync = for {
-          messages <-
-            Future(
-              if (myProfile) {
-                val perf = customUtils.Helpers.startPerfLog()
-                val t = buildMessageList(profileOwner)
-                customUtils.Helpers.endPerfLog("messages", perf) // magnus@devitec - 7165
-                t
-            }else {
-                None
-              }
-            )// TODO: This is slow, improve performance
+          messages <- Future(if (myProfile) {buildMessageList(profileOwner) }else { None })
           recipeBoxes <- Future(recipeService.getRecipeBoxes(profileOwner))
           eventBoxes <- Future(eventService.getEventBoxes(profileOwner))
           bookingsMadeByMe <- Future(if (myProfile) eventService.getBookingsMadeByMe(profileOwner, this.getBaseUrl) else None)
@@ -239,6 +230,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         }
 
         val res = Await.result(dataAsync, Duration.Inf)
+        customUtils.Helpers.endPerfLog("Profile - Loading time: ", perf)
 
         Ok(views.html.profile.index(
           userProfile = profile,

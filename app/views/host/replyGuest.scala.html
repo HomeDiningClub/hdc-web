@@ -1,6 +1,6 @@
-@(hostReplyForm: Form[models.formdata.MessageForm], owner: models.UserCredential, msgId: String, message: models.message.Message, currentUser: Option[models.UserCredential])(implicit request: RequestHeader, messages: Messages)
+@(hostReplyForm: Form[models.formdata.MessageForm], ownerProfileLinkName: String, msgId: String, message: models.message.MessageData, currentUser: Option[models.UserCredential])(implicit request: RequestHeader, messages: Messages)
 
-@views.html.host.messageMain(owner, message, msgId) {
+@views.html.host.messageMain(ownerProfileLinkName, message, msgId) {
         @currentUser match {
             case None => {}
             case Some(cu) => {

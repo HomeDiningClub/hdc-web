@@ -1,28 +1,69 @@
 package models.message
 
 import java.util
+import java.util.Date
 
 import org.springframework.data.neo4j.annotation.{QueryResult, ResultColumn}
 
 @QueryResult
 trait MessageData {
 
-  @ResultColumn("owner.")
-  def getprofileLinkName() : String
+  // Owner (Sender of original message)
+  @ResultColumn("OwnerObjectId")
+  def getOwnerObjectId() : String
 
-  @ResultColumn("recipient")
-  def getEventImage() : util.List[String]
+  @ResultColumn("OwnerFirstName")
+  def getOwnerFirstName() : String
 
-  @ResultColumn("MainImage")
-  def getMainImage() : util.List[String]
+  @ResultColumn("OwnerLastName")
+  def getOwnerLastName() : String
 
-  @ResultColumn("CountyName")
-  def getCountyName() : String
+  @ResultColumn("OwnerProfileLinkName")
+  def getOwnerProfileLinkName() : String
 
-  @ResultColumn("TagName")
-  def getTagName() : String
 
-  @ResultColumn("UserImage")
-  def getUserImage() : util.List[String]
+  // Recipient
+  @ResultColumn("RecipientObjectId")
+  def getRecipientObjectId() : String
+
+  @ResultColumn("RecipientFirstName")
+  def getRecipientFirstName() : String
+
+  @ResultColumn("RecipientLastName")
+  def getRecipientLastName() : String
+
+  @ResultColumn("RecipientProfileLinkName")
+  def getRecipientProfileLinkName() : String
+
+
+
+  // Message
+  @ResultColumn("MessageObjectId")
+  def getMessageObjectId() : String
+
+  @ResultColumn("CreatedDate")
+  def getCreatedDate() : Date
+
+  @ResultColumn("RequestedDate")
+  def getRequestedDate() : Date
+
+  @ResultColumn("RequestedTime")
+  def getRequestedTime() : Date
+
+  @ResultColumn("PhoneNumber")
+  def getPhoneNumber() : String
+
+  @ResultColumn("NumberOfGuests")
+  def getNumberOfGuests() : Int
+
+  @ResultColumn("Request")
+  def getRequest() : String
+
+  @ResultColumn("MessageType")
+  def getMessageType() : String
+
+  @ResultColumn("Read")
+  def getRead() : Boolean
+
 }
 

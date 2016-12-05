@@ -1,25 +1,27 @@
 package controllers
 
 import java.text.SimpleDateFormat
-import java.util.{Calendar, UUID, Date}
-import javax.inject.{Named, Inject}
+import java.util.{Calendar, Date, UUID}
+import javax.inject.{Inject, Named}
+
 import constants.FlashMsgConstants
 import enums.RoleEnums
-import models.message.{Message}
-import models.{UserProfile, UserCredential}
-import models.viewmodels.{ReplyToGuestMessage, EmailAndName}
+import models.message.{Message, MessageData}
+import models.{UserCredential, UserProfile}
+import models.viewmodels.{EmailAndName, ReplyToGuestMessage}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
-import play.api.mvc.{RequestHeader, Controller}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.mvc.{Controller, RequestHeader}
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
-import services.{NodeEntityService, MailService, MessageService, UserCredentialService}
+import services.{MailService, MessageService, NodeEntityService, UserCredentialService}
 import customUtils.authorization.WithRole
+
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import play.api.mvc._
@@ -78,7 +80,7 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
     }
   }
 
-  def createListOfMessages(listOfMessages: Option[List[Message]], currentUser: UserCredential): Option[List[ReplyToGuestMessage]] = {
+  def createListOfMessages(listOfMessages: Option[List[MessageData]], currentUser: UserCredential): Option[List[ReplyToGuestMessage]] = {
     listOfMessages match {
       case Some(items) =>
         if(items.nonEmpty)
@@ -91,6 +93,35 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
     }
   }
 
+
+  def mapMessageAndFillReplyForm(msgToRender: MessageData, currentUser: UserCredential): Option[ReplyToGuestMessage] = {
+    if (currentUser.objectId.equals(UUID.fromString(msgToRender.getRecipientObjectId()))) {
+      val hostReply = MessageForm.apply(
+        msgToRender.getOwnerFirstName(),
+        msgToRender.getOwnerLastName(),
+        Option(msgToRender.getPhoneNumber()),
+        Option(msgToRender.getOwnerObjectId()),
+        Option(currentUser.objectId.toString),
+        msgToRender.getRequestedDate(),
+        msgToRender.getRequestedTime(),
+        msgToRender.getNumberOfGuests(),
+        Option(msgToRender.getRequest()),
+        Option(""),
+        Option(msgToRender.getMessageType()),
+        Option(msgToRender.getCreatedDate()),
+        Option(msgToRender.getMessageObjectId()),
+        msgToRender.getOwnerProfileLinkName())
+
+      Some(ReplyToGuestMessage(messageFormMapping.fill(hostReply),
+        msgToRender.getOwnerProfileLinkName(),
+        msgToRender.getMessageObjectId(),
+        msgToRender))
+    }else{
+      None
+    }
+  }
+
+/*
   def mapMessageAndFillReplyForm(messageToRender: Message, currentUser: UserCredential): Option[ReplyToGuestMessage] = {
     if (messageToRender.getRecipient != null && messageToRender.getRecipient.equals(currentUser)) {
       val hostReply = MessageForm.apply(messageToRender.getOwner().firstName,
@@ -115,7 +146,7 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
       None
     }
   }
-
+*/
   def replyToGuest = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     val currentUser = request.user
@@ -138,14 +169,14 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
               val msgItr = messageService.findIncomingMessagesForUser(currentUser)
 
               if(msgItr.nonEmpty){
-                for(msg: Message <- msgItr.get){
+                for(msg: MessageData <- msgItr.get){
                 //while (msgItr.hasNext) {
                   //var msg: Message = msgItr.next()
 
-                  if(msg.request.equals(content.request.getOrElse(""))) {
+                  if(msg.getRequest().equals(content.request.getOrElse(""))) {
 
                     // save here
-                    messageService.createResponse(currentUser, receiver, msg, content.response.getOrElse(""), msg.phone)
+                    messageService.createResponse(currentUser, receiver, UUID.fromString(msg.getMessageObjectId()), content.response.getOrElse(""), msg.getPhoneNumber())
 
                     val guest = EmailAndName(
                       name = receiver.firstName + " " + receiver.lastName,

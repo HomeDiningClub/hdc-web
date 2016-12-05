@@ -1,25 +1,25 @@
-@(user: models.UserCredential, message: models.message.Message, msgId: String)(content: play.twirl.api.Html)(implicit request: RequestHeader, messages: Messages)
+@(userProfileLinkName: String, message: models.message.MessageData, msgId: String)(content: play.twirl.api.Html)(implicit request: RequestHeader, messages: Messages)
 
 <tr id="mail_@msgId" class="mail-inbox-row collapsed" data-toggle="collapse" data-target="#respond_@msgId">
     <td>
-        <div class="unread" @if(message.read.equals(true)){ style="display: none"}>
+        <div class="unread" @if(message.getRead().equals(true)){ style="display: none"}>
             <span class="genericon genericon-mail"></span>
         </div>
-        <div class="read" @if(message.read.equals(false)){ style="display: none"}>
+        <div class="read" @if(message.getRead().equals(false)){ style="display: none"}>
             <span class="genericon genericon-checkmark"></span>
         </div>
     </td>
-    <td>@user.profiles.iterator().next().profileLinkName</td>
+    <td>@userProfileLinkName</td>
     <td>
-        @if(message.request != null) {
-            @if(customUtils.Helpers.removeHtmlTags(message.request).length > 60) {
-                @customUtils.Helpers.removeHtmlTags(message.request).substring(0, 60)...
+        @if(message.getRequest() != null) {
+            @if(customUtils.Helpers.removeHtmlTags(message.getRequest()).length > 60) {
+                @customUtils.Helpers.removeHtmlTags(message.getRequest()).substring(0, 60)...
             } else {
-                @customUtils.Helpers.removeHtmlTags(message.request)
+                @customUtils.Helpers.removeHtmlTags(message.getRequest())
             }
         }
     </td>
-    <td>@customUtils.Helpers.formatDate(message.getCreatedDate, "yyyy-MM-dd HH:mm")</td>
+    <td>@customUtils.Helpers.formatDate(message.getCreatedDate(), "yyyy-MM-dd HH:mm")</td>
 </tr>
 <tr id="respond_@msgId" class="respond-row collapse">
     <td colspan="6" class="mail-details">@content</td>
