@@ -102,7 +102,7 @@ class CountyService @Inject() (val template: Neo4jTemplate,
   }
 
 
-  //@Transactional(readOnly = false)
+
   def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false
@@ -113,14 +113,14 @@ class CountyService @Inject() (val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteAll(): Boolean = withTransaction(template){
     removeFromCache(cacheListKey)
     countyRepository.deleteAll
     true
   }
 
-  //@Transactional(readOnly = false)
+
   def add(newItem: County): County = withTransaction(template){
     removeFromCache(cacheListKey)
     countyRepository.save(newItem)

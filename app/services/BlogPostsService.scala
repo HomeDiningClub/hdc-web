@@ -22,8 +22,6 @@ import models.viewmodels.BlogPostItem
 import scala.collection.mutable.ListBuffer
 import models.formdata.BlogPostsForm
 
-//@Named
-//@Service
 class BlogPostsService @Inject() (val template: Neo4jTemplate,
                                   val blogPostsRepository: BlogPostsRepository) extends TransactionSupport {
 
@@ -62,44 +60,23 @@ class BlogPostsService @Inject() (val template: Neo4jTemplate,
 
 
 
-  //@Transactional(readOnly = true)
   def getBlogPostsBoxesPage(user: UserCredential, pageNo: Integer): Option[List[BlogPostItem]] = withTransaction(template){
 
-    val userObjectId = user.profiles.iterator().next().objectId.toString
-    println("ObjectId : " + userObjectId)
-    // var userObjectId2 = "3e6051cc-9dbd-4b4a-8148-81cc8797f74e"
-    // val list = blogPostsRepository.findAllUsersBlogPostsOnPage(userObjectId, new PageRequest(pageNo, 6))
-    // findAllUsersBlogPost
-    // val list = blogPostsRepository.findAllUsersBlogPost(userObjectId)
+    val userObjectId = user.getUserProfile.objectId.toString
     val list = blogPostsRepository.findAllUsersBlogPostsOnPage(userObjectId, new PageRequest(pageNo, 6))
-
-
-
     val iterator = list.iterator()
-    var antal : Int = 0
+    var count : Int = 0
     var blogPostList : ListBuffer[BlogPostItem] = new ListBuffer[BlogPostItem]
 
     while(iterator.hasNext()) {
-
-      println("rad x...")
-      antal = antal + 1
-
+      count = count + 1
       val obj = iterator.next()
 
-
       // Image
-
       var mainImage: Option[String] = None
       if(obj.getMainImage().iterator().hasNext()){
         mainImage = Some(routes.ImageController.blogNormal(obj.getMainImage().iterator().next()).url)
       }
-
-
-     // obj.getLastModDate(),
-     // obj.getDateCreated(),
-
-
-
 
       // Build return-list
       var blogPost = BlogPostItem(
@@ -113,21 +90,9 @@ class BlogPostsService @Inject() (val template: Neo4jTemplate,
         UUID.fromString(obj.getBlogPostObjectId()))
 
       blogPostList += blogPost
-
-      println("prev : " + list.hasPrevious())
-      println("next : " + list.hasNext())
-      println("created date: " + obj.getDateCreated())
-      println("mod date: " + obj.getLastModDate())
-
-      // PUBLISHED
-      println("mod date: " + obj.getState())
-      println("getTotalElements : " + list.getTotalElements)
-
     }
 
     val blogPosts: List[BlogPostItem] = blogPostList.toList
-
-    println("antal = " + antal)
 
     if(blogPosts.isEmpty)
       None
@@ -136,7 +101,7 @@ class BlogPostsService @Inject() (val template: Neo4jTemplate,
 
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false

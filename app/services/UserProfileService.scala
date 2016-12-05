@@ -19,7 +19,7 @@ import scala.language.implicitConversions
 import org.springframework.transaction.annotation.Transactional
 import org.neo4j.graphdb.index.Index
 import models.location.County
-import models.profile.{TagWord, TaggedFavoritesToUserProfile}
+import models.profile.{FavoriteData, TagWord, TaggedFavoritesToUserProfile}
 
 import scala.collection.JavaConverters._
 import customUtils.ViewedByMemberUtil
@@ -33,14 +33,14 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
                                    val viewedByUnKnownRepository: ViewedByUnKnownRepository) extends TransactionSupport {
 
   // save UnKnow user access to page
-  //@Transactional(readOnly = false)
+
   def saveUnKnownAccess(view: models.ViewedByUnKnown): models.ViewedByUnKnown = withTransaction(template) {
     var newView = viewedByUnKnownRepository.save(view)
     newView
   }
 
   // save member access to page
-  //@Transactional(readOnly = false)
+
   def saveMemberAccess(view: models.ViewedByMember): models.ViewedByMember = withTransaction(template) {
     var newView = viewedByMemberRepository.save(view)
     newView
@@ -48,7 +48,7 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
 
 
   // logged in user accessing profile page
-  //@Transactional(readOnly = false)
+
   def logProfileViewByObjectId(viewdByMember: ViewedByMember, viewerObjectId: String, pageOwnerObjectId: String) = withTransaction(template) {
     var util = new ViewedByMemberUtil()
     viewdByMember.viewedBy(viewerObjectId, util.getNowString) //@todo
@@ -56,7 +56,7 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
   }
 
   // UnKnow user access not logged in user
-  //@Transactional(readOnly = false)
+
   def logUnKnownProfileViewByObjectId(viewedByUnKnown: ViewedByUnKnown, ipAddress: String) = withTransaction(template) {
     var util = new ViewedByMemberUtil()
     viewedByUnKnown.viewedBy(ipAddress, util.getNowString)
@@ -93,7 +93,7 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  //@Transactional(readOnly = false)
+
   def saveUserProfile(userProfile: models.UserProfile): models.UserProfile = withTransaction(template) {
     Logger.info("Saving user profile id: " + userProfile.userIdentity)
     Logger.info("Saving provider id: " + userProfile.providerIdentity)
@@ -101,7 +101,7 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  //@Transactional(readOnly = false)
+
   def addFavorites(theUser: models.UserProfile, friendsUserCredential: models.UserCredential): models.UserProfile = withTransaction(template) {
 
     if (friendsUserCredential != None && friendsUserCredential != null) {
@@ -112,7 +112,7 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
     theUser
   }
 
-  //@Transactional(readOnly = false)
+
   def viewedBy(theUser: models.UserProfile, name: String): models.UserProfile = withTransaction(template) {
 
     var memberAccess = theUser.getmemberVisited(): models.ViewedByMember
@@ -123,7 +123,7 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
     theUser
   }
 
-  //@Transactional(readOnly = false)
+
   def removeFavorites(theUser: models.UserProfile, friendsUserCredential: models.UserCredential): models.UserProfile = withTransaction(template) {
 
     if (friendsUserCredential != None && friendsUserCredential != null) {
@@ -208,7 +208,7 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
     modUserProfile
   }
 
-  //@Transactional(readOnly = false)
+
   def addRecipeToProfile(user: UserCredential, recipeToAdd: Recipe): UserProfile = withTransaction(template) {
     val userProfile = user.profiles.iterator().next()
     var modUserProfile = this.addRecipeToProfile(userProfile, recipeToAdd)
@@ -216,17 +216,17 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
     modUserProfile
   }
 
-  //@Transactional(readOnly = false)
+
   def addRecipeToProfile(userProfile: UserProfile, recipeToAdd: Recipe): UserProfile = withTransaction(template) {
     userProfile.addRecipe(recipeToAdd)
   }
 
-  //@Transactional(readOnly = false)
+
   def addBlogPostsToProfile(userProfile: UserProfile, blogPostsToAdd: BlogPost): UserProfile = withTransaction(template) {
     userProfile.addBlogPosts(blogPostsToAdd)
   }
 
-  //@Transactional(readOnly = false)
+
   def addEventToProfile(userProfile: UserProfile, eventToAdd: Event): UserProfile = withTransaction(template) {
     val modUserProfile = userProfile.addEvent(eventToAdd)
     userProfileRepository.save(modUserProfile)
@@ -245,7 +245,7 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
     }
     userProfile
   }
-  //@Transactional(readOnly = false)
+
   def addBlogPostsToProfile(user: UserCredential, blogPostsToAdd: BlogPost): UserProfile = withTransaction(template) {
     val userProfile = user.profiles.iterator().next()
     var modUserProfile = this.addBlogPostsToProfile(userProfile, blogPostsToAdd)
@@ -330,49 +330,49 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
     listOfUserProfiles
   }
 
-  //@Transactional(readOnly = false)
+
   def removeAllLocationTags(userProfile: UserProfile): UserProfile = withTransaction(template) {
     userProfile.removeLocation()
     userProfile
   }
 
-  //@Transactional(readOnly = false)
+
   def removeAllProfileTags(userProfile: UserProfile): UserProfile = withTransaction(template) {
     userProfile.removeAllTags()
     userProfile
   }
 
-  //@Transactional(readOnly = false)
+
   def addProfileTag(userProfile: UserProfile, tag: TagWord): UserProfile = withTransaction(template) {
     userProfile.tag(tag)
     userProfile
   }
 
-  //@Transactional(readOnly = false)
+
   def addLocation(userProfile: UserProfile, county: County): UserProfile = withTransaction(template) {
     userProfile.locate(county)
     userProfile
   }
 
-  //@Transactional(readOnly = false)
+
   def setAndRemoveMainImage(userProfile: UserProfile, newImage: ContentFile): UserProfile = withTransaction(template) {
     userProfile.setAndRemoveMainImage(newImage)
     userProfile
   }
 
-  //@Transactional(readOnly = false)
+
   def setAndRemoveAvatarImage(userProfile: UserProfile, newImage: ContentFile): UserProfile = withTransaction(template) {
     userProfile.setAndRemoveAvatarImage(newImage)
     userProfile
   }
 
-  //@Transactional(readOnly = false)
+
   def setAndRemoveViewByMember(userProfile: UserProfile, viewedByMember: models.ViewedByMember): UserProfile = withTransaction(template) {
     userProfile.setViewedByMeber(viewedByMember)
     userProfile
   }
 
-  //@Transactional(readOnly = false)
+
   def setAndRemoveViewByUnKnown(userProfile: UserProfile, viewedByUnKnown: models.ViewedByUnKnown): UserProfile = withTransaction(template) {
     userProfile.setViewedByUnKnown(viewedByUnKnown)
     userProfile
@@ -510,10 +510,11 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-
-  //@Transactional(readOnly = true)
-  def getUserWhoFavoritesUser(userProfile: models.UserProfile): List[models.UserProfile] = withTransaction(template){
-    userProfileRepository.findFriendsToUser(userProfile.objectId).asScala.toList.filter(p => p.profileLinkName != null && p.profileLinkName.nonEmpty)
+  def getUserWhoFavoritesUser(userProfile: UserProfile): Option[List[FavoriteData]] = withTransaction(template){
+    userProfileRepository.findFriendsToUser(userProfile.objectId).asScala.toList match {
+      case Nil => None
+      case items => Some(items)
+    }
   }
 
 

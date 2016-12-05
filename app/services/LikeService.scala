@@ -127,7 +127,7 @@ class LikeService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  //@Transactional(readOnly = false)
+
   def likeUser(userLiking: UserCredential, userLikes: UserCredential, likeValue: Boolean, userLikeIP: String): UserCredentialLikeUserCredential = withTransaction(template){
     //val item: UserCredentialLikeUserCredential = template.createRelationshipBetween(userLiking, userLikes, classOf[UserCredentialLikeUserCredential], RelationshipTypesScala.LIKES_USER.Constant, false)
 
@@ -142,7 +142,7 @@ class LikeService @Inject()(val template: Neo4jTemplate,
     this.saveUserLike(item)
   }
 
-  //@Transactional(readOnly = false)
+
   def likeRecipe(userLiking: UserCredential, userLikes: Recipe, likeValue: Boolean, userLikeIP: String): UserCredentialLikeRecipe = withTransaction(template){
     //val item: UserCredentialLikeRecipe = template.createRelationshipBetween(userLiking, userLikes, classOf[UserCredentialLikeRecipe], RelationshipTypesScala.LIKES_RECIPE.Constant, false)
 
@@ -160,7 +160,7 @@ class LikeService @Inject()(val template: Neo4jTemplate,
 
 
 
-  //@Transactional(readOnly = false)
+
   def deleteUserCredentialLikeUserCredentialById(objectId: java.util.UUID): Boolean = withTransaction(template){
     this.findUserCredentialLikeUserCredentialById(objectId) match {
       case null =>
@@ -171,7 +171,7 @@ class LikeService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteUserCredentialLikeRecipeById(objectId: java.util.UUID): Boolean = withTransaction(template){
     this.findUserCredentialLikeRecipeById(objectId) match {
       case null =>
@@ -182,13 +182,13 @@ class LikeService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
+
   def saveUserLike(newItem: UserCredentialLikeUserCredential): UserCredentialLikeUserCredential = withTransaction(template){
     val newResult = likeUserCredentialRepository.save(newItem)
     newResult
   }
 
-  //@Transactional(readOnly = false)
+
   def saveRecipeLike(newItem: UserCredentialLikeRecipe): UserCredentialLikeRecipe = withTransaction(template){
     val newResult = likeRecipeRepository.save(newItem)
     newResult

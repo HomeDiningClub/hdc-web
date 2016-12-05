@@ -7,6 +7,7 @@ import java.util
 
 import models.rating.{RatesUserCredential, ReviewData}
 import org.springframework.data.domain.{Page, Pageable}
+import org.springframework.data.repository.query.Param
 
 trait RatingUserCredentialRepository extends GraphRepository[RatesUserCredential] {
 
@@ -15,6 +16,9 @@ trait RatingUserCredentialRepository extends GraphRepository[RatesUserCredential
 
   @Query("MATCH (a)-[ratings:`RATED_USER`]->(b) RETURN ratings")
   def findAllRatings(): util.List[RatesUserCredential]
+
+  @Query("MATCH (userC:`UserCredential`)-[rating:`RATED_USER`]->(ucIsRated:`UserCredential`) WHERE userC.objectId = {currentUserObjectId} AND ucIsRated.objectId = {hasRatedObjectId} RETURN rating")
+  def hasRatedThisBefore(@Param("currentUserObjectId") currentUserObjectId: String, @Param("hasRatedObjectId") hasRatedObjectId: String): RatesUserCredential
 
   @Query("MATCH (upIsRating:`UserProfile`)<-[:IN_PROFILE]-(ucIsRating:`UserCredential`)-[rating:`RATED_USER`]->(ucIsRated:`UserCredential`)-[:IN_PROFILE]->(upIsRated:`UserProfile`) OPTIONAL MATCH (upIsRating)-[:`AVATAR_IMAGE`]-(userImage:`ContentFile`) RETURN rating.objectId as ReviewObjectId, rating.ratingValue as RatingValue, rating.ratingComment as ReviewText, rating.lastModifiedDate as LastModifiedDate, upIsRating.profileLinkName as UserWhoIsRatingProfileLinkName, ucIsRating.firstName as UserWhoIsRatingFirstName, upIsRated.profileLinkName as RatedProfileLinkName, upIsRated.profileLinkName as LinkToRatedItem, COLLECT(userImage.storeId) as UserWhoIsRatingAvatarImage ORDER BY rating.lastModifiedDate DESC")
   def findAllRatingsData(): util.List[ReviewData]

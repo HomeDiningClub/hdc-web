@@ -88,7 +88,6 @@ class LikeController @Inject() (override implicit val env: SecureSocialRuntimeEn
   }
 
   def renderUserLikeForm(userToBeLiked: UserCredential, currentUser: Option[UserCredential])(implicit request: RequestHeader): Html = {
-
     currentUser match {
       case None =>
         views.html.like.hdcLike.render(likeForm, None, userToBeLiked.getNrOfLikes, None, request2Messages)

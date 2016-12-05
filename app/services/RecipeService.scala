@@ -210,7 +210,7 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false
@@ -231,12 +231,12 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  //@Transactional(readOnly = false)
+
   private def deleteAll() = withTransaction(template){
     recipeRepository.deleteAll()
   }
 
-  //@Transactional(readOnly = false)
+
   def add(newContent: Recipe): Recipe = withTransaction(template){
     val newContentResult = recipeRepository.save(newContent)
     newContentResult

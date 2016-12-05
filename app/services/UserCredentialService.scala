@@ -166,7 +166,7 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
       Some(listOfAll)
   }
 
-  //@Transactional(readOnly = false)
+
   def addUserProfile(user: UserCredential, profile: models.UserProfile): UserCredential = withTransaction(template){
     if(user.profiles.isEmpty) {
       user.profiles.add(profile)
@@ -174,7 +174,7 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
     user
   }
 
-  //@Transactional(readOnly = false)
+
   def addRole(user: UserCredential, role: RoleEnums): UserCredential = withTransaction(template){
 
     // Get the correct instance
@@ -204,7 +204,7 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
     savedUser
   }
 
-  //@Transactional(readOnly = false)
+
   def removeRole(user: UserCredential, role: RoleEnums): UserCredential = withTransaction(template){
 
     // Get the correct instance
@@ -226,7 +226,7 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
 
   // Save UserCredential used to save personnummer modified in the
   // UserCredentials.
-  //@Transactional(readOnly = false)
+
   def save(user: UserCredential): UserCredential = withTransaction(template){
     // Save
     val savedUser = userCredentialRepository.save(user)
@@ -234,13 +234,13 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  //@Transactional(readOnly = false)
+
   def add(newItem: UserCredential): UserCredential = withTransaction(template){
     val newResult = userCredentialRepository.save(newItem)
     newResult
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false

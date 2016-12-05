@@ -6,6 +6,8 @@ import models.{UserCredential, UserProfile}
 import org.springframework.data.neo4j.annotation.Query
 import java.util.UUID
 
+import models.profile.FavoriteData
+
 trait UserProfileRepository extends GraphRepository[UserProfile] {
 
   // Get all profiles matching both a tag and a county and is a host
@@ -59,8 +61,9 @@ trait UserProfileRepository extends GraphRepository[UserProfile] {
   def findAllProfiles(pageable: Pageable) : Page[UserProfile]
 
   // Get all who has me as favorite
-  @Query("MATCH (u:`UserProfile`)<-[:FAVORITE_USER]-(f:`UserProfile`) WHERE u.objectId={0} RETURN f")
-  def findFriendsToUser(userId: UUID) : java.util.List[UserProfile]
+  @Query("MATCH (user:`UserProfile`)<-[:FAVORITE_USER]-(friendUp:`UserProfile`)<-[:`IN_PROFILE`]-(friendUc:`UserCredential`) WHERE user.objectId={0} AND EXISTS(friendUp.profileLinkName) WITH user, friendUp, friendUc OPTIONAL MATCH (friendUp)-[:`AVATAR_IMAGE`]-(friendAi:`ContentFile`) RETURN friendUp.objectId AS UserProfileObjectId, friendUc.objectId AS UserCredentialObjectId, friendUc.firstName AS FirstName, friendUc.lastName AS LastName, friendUp.profileLinkName AS ProfileLinkName, friendUp.aboutMeHeadline AS AboutMeHeadline, COLLECT(friendAi.storeId) as AvatarImage")
+  def findFriendsToUser(userId: UUID) : java.util.List[FavoriteData]
+
 
   // Auto-mapped by spring
   def findByUserIdentityAndProviderIdentity(userIdentity: String, providerIdentity: String) :  UserProfile

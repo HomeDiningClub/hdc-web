@@ -215,57 +215,38 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
   def viewListOfBlogPosts(profileName: String, page: Int) = UserAwareAction { implicit request =>
 
     var t: Option[List[BlogPostItem]] = None
-    var antal : Int = 0
-    print("1 ok")
+    var count : Int = 0
 
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) => {
         try {
           t = blogPostsService.getBlogPostsBoxesPage(profile.getOwner, page)
-
         } catch {
           case  ex: Exception =>
             Logger.error("Could not get list of Recipe boxes: " + ex.getMessage)
         }
-
       }
       case None => {}
-
     }
 
-    print("2 ok, antal = " + t.size )
-
-
-
-
     try {
-      // loop ....
+      // Loop ....
       t match {
         case Some(t) => {
           for (e: BlogPostItem <- t) {
-            print("\nObjectId" + e.blogPostObjectId.toString)
-            print("\nTitle : " + e.title)
-            print("\ntext : " + e.text)
-            antal = antal + 1
-            //val link: String = controllers.routes.RecipePageController.viewRecipeByNameAndProfile(profileName, e.linkToRecipe).url
-
+            //Logger.info("ObjectId" + e.blogPostObjectId.toString)
+            //Logger.info("Title : " + e.title)
+            //Logger.info("text : " + e.text)
+            count = count + 1
           }
         }
         case None => {}
       }
-
-      // ...
-
     } catch {
       case ex: Exception =>
         Logger.error("Could not create JSON of list of Recipe boxes: " + ex.getMessage)
     }
-
-    print("3 ok")
-
-
-
-    Ok(profileName + ", antal=" + antal)
+    Ok(profileName + ", antal=" + count)
   }
 
 
@@ -274,23 +255,16 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
     var list: ListBuffer[BlogPostBoxJSON] = new ListBuffer[BlogPostBoxJSON]
     var t: Option[List[BlogPostItem]] = None
 
-
-    println("profileLinkName(IN) : " + profileName)
-
-
     userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) => {
         try {
-
           t = blogPostsService.getBlogPostsBoxesPage(profile.getOwner, page)
         } catch {
           case  ex: Exception =>
             Logger.error("Could not get list of Recipe boxes: " + ex.getMessage)
         }
-
       }
       case None => {}
-
     }
 
 
@@ -299,21 +273,13 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
       t match {
         case Some(t) => {
           for (e: BlogPostItem <- t) {
-            //val link: String = controllers.routes.RecipePageController.viewRecipeByNameAndProfile(profileName, e.linkToRecipe).url
-
-            var cd : String = Helpers.formatDateForDisplay(e.dateCreated)
-            var md : String = Helpers.formatDateForDisplay(e.dateChanged)
-
-            println("Mod date : " + md)
-
+            val cd : String = Helpers.formatDateForDisplay(e.dateCreated)
+            val md : String = Helpers.formatDateForDisplay(e.dateChanged)
             list += BlogPostBoxJSON(e.blogPostObjectId.toString, e.title, e.text, cd, md, e.mainImage.getOrElse(""), e.hasNext, e.hasPrevious, e.totalPages) // ? antal sidor
           }
         }
         case None => {}
       }
-
-      // ...
-
     } catch {
       case ex: Exception =>
         Logger.error("Could not create JSON of list of Recipe boxes: " + ex.getMessage)
@@ -323,9 +289,6 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
   }
 
   def convertBlogPostToJson(jsonCase: Seq[BlogPostBoxJSON]): JsValue = Json.toJson(jsonCase)
-
-
-  // edit
 
   private def buildMetaData(blogPost: BlogPost, request: RequestHeader): Option[MetaData] = {
     val domain = "//" + request.domain

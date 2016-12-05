@@ -24,7 +24,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
 
   val tagWordCacheKey = "tagWord."
 
-  //@Transactional(readOnly = false)
+
   def createTag(name: String, idName: String, order: String = "", tagGroupName : String = "" ): TagWord = withTransaction(template){
     var newTag: TagWord = new TagWord
     var resultTag : TagWord = new TagWord
@@ -81,7 +81,6 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
       Some(returnList)
   }
 
-  //@Transactional(readOnly = true)
   def findByProfileAndGroup(profile: UserProfile, groupName: String): Option[List[TagWord]] = withTransaction(template){
     profile.getTags.asScala.filter(tag => tag.tagWord.tagGroupName.equalsIgnoreCase(groupName)).toList match {
       case null | Nil => None
@@ -132,7 +131,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
     //tagWordRepository.findByGruoupName("profile").toList
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteById(objectId: UUID): Boolean = withTransaction(template) {
     this.findById(objectId) match {
       case None => false
@@ -143,7 +142,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteAll(): Boolean = withTransaction(template){
     tagWordRepository.findAll.asScala.toList.foreach{ item =>
       removeFromCache(item)
@@ -152,7 +151,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
     true
   }
 
-  //@Transactional(readOnly = false)
+
   def save(item: TagWord): TagWord = withTransaction(template){
     val result = tagWordRepository.save(item)
     removeFromCache(item)

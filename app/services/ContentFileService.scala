@@ -424,7 +424,7 @@ class ContentFileService @Inject() (val template: Neo4jTemplate,
   }
 
 
-  //@Transactional(readOnly = false)
+
   private def saveFile(file: ContentFile): ContentFile = withTransaction(template){
     file.getStoreId match {
       case null | "" =>
@@ -435,7 +435,7 @@ class ContentFileService @Inject() (val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
+
   private def deleteFileFromDB(file: ContentFile): Boolean = withTransaction(template){
     try {
       contentFileRepository.delete(file)

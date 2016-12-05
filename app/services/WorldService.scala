@@ -33,7 +33,7 @@ class WorldService @Inject()(val template: Neo4jTemplate,
     listOfWorlds
   }
 
-  //@Transactional(readOnly = false)
+
   def makeSomeWorldsAndRelations(): List[World] = withTransaction(template){
     var worlds : ListBuffer[World] = ListBuffer()
     worlds += createWorld("Mercury", 0)
@@ -61,17 +61,17 @@ class WorldService @Inject()(val template: Neo4jTemplate,
     myWorlds
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteWorld(worldToDelete: World) = withTransaction(template){
     worldRepository.delete(worldToDelete)
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteAllWorlds() = withTransaction(template) {
     worldRepository.deleteAll()
   }
 
-  //@Transactional(readOnly = false)
+
   def addRocketRouteTo(thisWorld: World, otherWorld: World) = withTransaction(template){
     if(otherWorld != null && thisWorld != null)
       thisWorld.reachableByRocket.add(otherWorld)
@@ -99,7 +99,7 @@ class WorldService @Inject()(val template: Neo4jTemplate,
     convertList.result()
   }
 
-  //@Transactional(readOnly = false)
+
   private def createWorld(name: String, moons: Int, spokenLanguages: String = ""): World = withTransaction(template){
     var newWorld: World = new World(name,moons)
 

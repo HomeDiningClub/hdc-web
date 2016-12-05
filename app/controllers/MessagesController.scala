@@ -219,7 +219,6 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
 
 
   def renderHostForm(hostingUser: UserCredential, currentUser: Option[UserCredential])(implicit request: RequestHeader) = {
-
     currentUser match {
       case None =>
         views.html.host.hostNotLoggedIn()

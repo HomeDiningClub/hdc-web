@@ -3,9 +3,8 @@ package controllers
 import java.util
 import javax.inject.{Inject, Named}
 
-import models.profile.TaggedFavoritesToUserProfile
+import models.profile.{FavoriteData, TaggedFavoritesToUserProfile}
 import models.{UserCredential, UserProfile, formdata}
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.{Environment, Logger}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -25,45 +24,34 @@ class FavoritesController @Inject() (override implicit val env: SecureSocialRunt
                                      implicit val nodeEntityService: NodeEntityService,
                                      val userProfileService: UserProfileService,
                                      val environment: Environment) extends Controller with SecureSocial with I18nSupport {
-/*
-  // Services
-  @Autowired
-  var userProfileService: UserProfileService = _
-*/
 
   // List favorites
   def renderFavorites(userProfile: UserProfile)(implicit request: RequestHeader): Html = {
-
     val listOfMyFavorites = userProfile.getFavorites.iterator()
-    val listOfUsersWhoFavorMe = userProfileService.getUserWhoFavoritesUser(userProfile).toIterator
-
+    val listOfUsersWhoFavorMe = userProfileService.getUserWhoFavoritesUser(userProfile)
     // Return partial view
     views.html.profile.showListOfFavorites.render(buildMyFavoritesList(listOfMyFavorites), buildFavorsMeList(listOfUsersWhoFavorMe), request2Messages)
   }
 
+  private def buildFavorsMeList(listOfUserFavorMe: Option[List[FavoriteData]]): List[FavoriteForm] = {
+    listOfUserFavorMe match {
+      case None => Nil
+      case Some(list) => list.map { fav =>
 
-  private def buildFavorsMeList(listOfUserFavorMe: Iterator[UserProfile]): List[FavoriteForm] = {
-    var favMe: ListBuffer[FavoriteForm] = ListBuffer[FavoriteForm]()
+        var avatarImage: Option[String] = None
+        if(fav.getAvatarImage().asScala.nonEmpty){
+          avatarImage = Some(routes.ImageController.userThumb(fav.getAvatarImage().asScala.head).url)
+        }
 
-    while (listOfUserFavorMe.hasNext) {
-      val cur = listOfUserFavorMe.next()
+        var preAmble = fav.getAboutMeHeadline()
+        if (preAmble.length > 50) {
+          preAmble = preAmble.substring(0, 50) + "..."
+        }
 
-      val userImage: Option[String] = cur.getAvatarImage match {
-        case null => None
-        case image =>
-          Some(routes.ImageController.userThumb(image.getStoreId).url)
+        // Add to return variable
+        formdata.FavoriteForm(fav.getProfileLinkName(), fav.getFirstName(), preAmble, avatarImage, fav.getUserProfileObjectId(), fav.getUserCredentialObjectId())
       }
-
-      var preAmble = cur.aboutMeHeadline
-      if (preAmble.length > 50) {
-        preAmble = preAmble.substring(0, 50) + "..."
-      }
-
-      // Add to return variable
-      favMe += formdata.FavoriteForm(cur.profileLinkName, cur.getOwner.firstName, preAmble, userImage, cur.objectId.toString, cur.getOwner.objectId.toString)
-      Logger.debug("ObjectId : " + cur.objectId + ", email : " + cur.getOwner.emailAddress + ", LinkName: " + cur.profileLinkName)
     }
-    favMe.toList
   }
 
   private def buildMyFavoritesList(listOfFavorites: util.Iterator[TaggedFavoritesToUserProfile]): List[FavoriteForm] = {
@@ -86,7 +74,6 @@ class FavoritesController @Inject() (override implicit val env: SecureSocialRunt
 
       // Add to return variable
       favorites += formdata.FavoriteForm(fav.profileLinkName, fav.getOwner.firstName, preAmble, userImage, fav.objectId.toString, fav.getOwner.objectId.toString)
-      Logger.debug("ObjectId : " + fav.objectId + ", email : " + fav.getOwner.emailAddress)
     }
     favorites.toList
   }

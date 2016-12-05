@@ -129,10 +129,11 @@ class RatingService @Inject()(val template: Neo4jTemplate,
 
 
   // Recipe
-  
   def hasUserRatedThisBefore(currentUser: UserCredential, hasRatedThisRecipe: Recipe): Option[RatesRecipe] = withTransaction(template){
-    // By using graphId we don't need to load all the relationships
-    template.fetch(currentUser.getHasRatedRecipes).asScala.find(rel => rel.userRates.graphId == hasRatedThisRecipe.graphId)
+    ratingRecipeRepository.hasRatedThisBefore(currentUserObjectId = currentUser.objectId.toString, hasRatedObjectId = hasRatedThisRecipe.objectId.toString) match {
+      case null => None
+      case rating => Some(rating)
+    }
   }
   
   def doesUserTryToRateHimself(currentUser: UserCredential, recipeToBeRated: Recipe): Boolean = withTransaction(template){
@@ -141,10 +142,11 @@ class RatingService @Inject()(val template: Neo4jTemplate,
 
 
   // UserCredential
-  
   def hasUserRatedThisBefore(currentUser: UserCredential, hasRatedThisUser: UserCredential): Option[RatesUserCredential] = withTransaction(template){
-    // By using graphId we don't need to load all the relationships
-    template.fetch(currentUser.getHasRatedUsers).asScala.find(rel => rel.userRates.graphId == hasRatedThisUser.graphId)
+    ratingUserCredentialRepository.hasRatedThisBefore(currentUserObjectId = currentUser.objectId.toString, hasRatedObjectId = hasRatedThisUser.objectId.toString) match {
+      case null => None
+      case rating => Some(rating)
+    }
   }
   
   def doesUserTryToRateHimself(currentUser: UserCredential, userToBeRated: UserCredential): Boolean = withTransaction(template){
@@ -280,7 +282,7 @@ class RatingService @Inject()(val template: Neo4jTemplate,
 
 
 
-  //@Transactional(readOnly = false)
+
   def rateUser(userRating: UserCredential, userRates: UserCredential, ratingValue: Int , ratingComment: String , userRaterIP: String ): RatesUserCredential = withTransaction(template){
     //val item: RatesUserCredential = template.createRelationshipBetween(userRating, userRates, classOf[RatesUserCredential], RelationshipTypesScala.RATED_USER.Constant, false)
 
@@ -296,7 +298,7 @@ class RatingService @Inject()(val template: Neo4jTemplate,
     this.saveUserRate(item)
   }
 
-  //@Transactional(readOnly = false)
+
   def rateRecipe(userRating: UserCredential, userRates: Recipe, ratingValue: Int , ratingComment: String , userRaterIP: String ): RatesRecipe = withTransaction(template){
     //val item: RatesRecipe = template.createRelationshipBetween(userRating, userRates, classOf[RatesRecipe], RelationshipTypesScala.RATED_RECIPE.Constant, false)
 
@@ -315,7 +317,7 @@ class RatingService @Inject()(val template: Neo4jTemplate,
 
 
 
-  //@Transactional(readOnly = false)
+
   def deleteUserRatingById(objectId: java.util.UUID): Boolean = withTransaction(template){
     this.findUserRatingById(objectId) match {
       case null =>
@@ -326,7 +328,7 @@ class RatingService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteRecipeRatingById(objectId: java.util.UUID): Boolean = withTransaction(template){
     this.findRecipeRatingById(objectId) match {
       case null =>
@@ -337,13 +339,13 @@ class RatingService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
+
   def saveUserRate(newItem: RatesUserCredential): RatesUserCredential = withTransaction(template){
     val newResult = ratingUserCredentialRepository.save(newItem)
     newResult
   }
 
-  //@Transactional(readOnly = false)
+
   def saveRecipeRate(newItem: RatesRecipe): RatesRecipe = withTransaction(template){
     val newResult = ratingRecipeRepository.save(newItem)
     newResult

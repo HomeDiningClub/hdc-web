@@ -8,6 +8,7 @@ import java.util
 
 import models.rating.{RatesRecipe, ReviewData}
 import models.{Recipe, UserCredential}
+import org.springframework.data.repository.query.Param
 
 trait RatingRecipeRepository extends GraphRepository[RatesRecipe] {
 
@@ -16,6 +17,9 @@ trait RatingRecipeRepository extends GraphRepository[RatesRecipe] {
 
   @Query("MATCH (a)-[ratings:`RATED_RECIPE`]->(b) RETURN ratings")
   def findAllRatings(): util.List[RatesRecipe]
+
+  @Query("MATCH (userC:`UserCredential`)-[rating:`RATED_RECIPE`]->(recipe:`Recipe`) WHERE userC.objectId = {currentUserObjectId} AND recipe.objectId = {hasRatedObjectId} RETURN rating")
+  def hasRatedThisBefore(@Param("currentUserObjectId") currentUserObjectId: String, @Param("hasRatedObjectId") hasRatedObjectId: String): RatesRecipe
 
   @Query("MATCH (userC:`UserCredential`)-[ratings:`RATED_RECIPE`]->(recipe:`Recipe`) WHERE userC.objectId = {0} RETURN ratings")
   def findByuserWhoIsRating(userWhoIsRating: UUID): util.List[RatesRecipe]

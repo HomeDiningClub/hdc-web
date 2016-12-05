@@ -103,10 +103,10 @@ POST        /reply/guest                                         @controllers.Me
 # Test
 #GET         /profile/loggain                                    @controllers.UserProfileController.login
 #GET         /worlds                                             @controllers.test.WorldController.index
-#GET         /perftest                                           @controllers.test.PerformanceTestController.index
-GET         /test/grund                                          @controllers.test.SecureTestController.testAction
-GET         /test/grund2                                         @controllers.test.SecureTestController.testAction2(callingString : String)
-GET         /test/async                                          @controllers.test.PerformanceTestController.testAsync
+GET         /perftest                                           @controllers.test.PerformanceTestController.index
+GET         /perftest2                                           @controllers.test.PerformanceTestController.index2
+#GET         /test/grund                                          @controllers.test.SecureTestController.testAction
+#GET         /test/grund2                                         @controllers.test.SecureTestController.testAction2(callingString : String)
 
 
 # Map static resources from the /public folder to the /assets URL path

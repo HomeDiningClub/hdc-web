@@ -184,8 +184,9 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
         val perf = customUtils.Helpers.startPerfLog()
         val profileOwner = profile.getOwner
-        val myProfile = isThisMyProfile(profile)
+        var myProfile = isThisMyProfile(profile)
 
+        myProfile = true
         val dataAsync = for {
           messages <- Future(if (myProfile) {buildMessageList(profileOwner) }else { None })
           recipeBoxes <- Future(recipeService.getRecipeBoxes(profileOwner))
@@ -230,7 +231,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         }
 
         val res = Await.result(dataAsync, Duration.Inf)
-        customUtils.Helpers.endPerfLog("Profile - Loading time: ", perf)
+        customUtils.Helpers.endPerfLog("Profile:(" + profile.profileLinkName + ") - Loading time: ", perf)
 
         Ok(views.html.profile.index(
           userProfile = profile,

@@ -228,13 +228,13 @@ class ContentService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
+
   def removeAllRelatedPages(contentPage: ContentPage): Boolean = withTransaction(template){
     contentPage.removeAllRelatedPages
     true
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteContentPageById(objectId: java.util.UUID): Boolean = withTransaction(template){
     this.findContentById(objectId) match {
       case None => false
@@ -244,12 +244,12 @@ class ContentService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = false)
+
   def deleteAllContentPages() = withTransaction(template){
     contentPageRepository.deleteAll()
   }
 
-  //@Transactional(readOnly = false)
+
   def addContentPage(newContent: ContentPage): ContentPage = withTransaction(template){
     val newContentResult = contentPageRepository.save(newContent)
     newContentResult
