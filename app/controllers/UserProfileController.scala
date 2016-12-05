@@ -186,7 +186,6 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         val profileOwner = profile.getOwner
         var myProfile = isThisMyProfile(profile)
 
-        myProfile = true
         val dataAsync = for {
           messages <- Future(if (myProfile) {buildMessageList(profileOwner) }else { None })
           recipeBoxes <- Future(recipeService.getRecipeBoxes(profileOwner))
