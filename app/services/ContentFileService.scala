@@ -88,12 +88,12 @@ class ContentFileService @Inject() (val template: Neo4jTemplate,
     results
   }
 
-  //@Transactional(readOnly = true)
+
   def getCountOfAll: Int = withTransaction(template){
     contentFileRepository.getCountOfAll()
   }
 
-  //@Transactional(readOnly = true)
+
   def getCountOfAllType(fileType: String): Int = withTransaction(template){
     contentFileRepository.getCountOfAllType(fileType)
   }

@@ -18,6 +18,9 @@ trait BlogPostsRepository extends GraphRepository[BlogPost]
   @Query("MATCH (n:`BlogPost`) RETURN COUNT(*)")
   def getCountOfAll(): Int
 
+  @Query("match (b:BlogPost)-[:HAS_BLOGPOSTS]-(p:UserProfile {objectId:{0}}) RETURN COUNT(*)")
+  def countBlogPostsForUser(userProfileObjectId: String) : Int
+
   @Query("match (b:BlogPost)-[:HAS_BLOGPOSTS]-(p:UserProfile {objectId:{0}}) return b.title, b.text, b.objectId, b.lastModifiedDate, b.createdDate, b.contentState")
   def findAllUsersBlogPost(userObjectId: String) : util.List[BlogPostsData]
 

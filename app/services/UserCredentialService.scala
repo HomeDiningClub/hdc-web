@@ -19,7 +19,7 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
                                       val userCredentialRepository: UserCredentialRepository,
                                       val userRoleRepository: UserRoleRepository) extends TransactionSupport {
 
-  //@Transactional(readOnly = true)
+
   def fetchUserCredential(user: UserCredential): UserCredential = withTransaction(template){
     template.fetch(user)
   }
@@ -132,7 +132,7 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  //@Transactional(readOnly = true)
+
   def findById(objectId: UUID): Option[UserCredential] = withTransaction(template){
     userCredentialRepository.findByobjectId(objectId) match {
       case null => None
@@ -143,7 +143,7 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
 
   // providerId = userpass
   // authMethod = userPassword
-  //@Transactional(readOnly = true)
+
   def findUserPasswordUserByEmail(emailAdress: String): Option[UserCredential] = withTransaction(template){
     userCredentialRepository.findByemailAddressAndProviderId(emailAdress, "userpass") match {
       case null => None
@@ -151,12 +151,12 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = true)
+
   def getCountOfAll: Int = withTransaction(template){
     userCredentialRepository.getCountOfAll()
   }
 
-  //@Transactional(readOnly = true)
+
   def getListOfAll: Option[List[UserCredential]] = withTransaction(template){
     val listOfAll: List[UserCredential] = userCredentialRepository.findAll().iterator.asScala.toList
 

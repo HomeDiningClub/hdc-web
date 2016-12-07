@@ -1,25 +1,26 @@
-@(userProfile: UserProfile, isThisMyProfile: Boolean)(implicit messages: Messages)
+@(visMemberCount: Option[Int], visUnknownCount: Option[Int], isThisMyProfile: Boolean)(implicit messages: Messages)
 @if(isThisMyProfile) {
   <div class="panel panel-default panel-dropshadow big-margin-top">
     <div class="panel-body">
       <strong>@Messages("profile.visitors.header")</strong><br>
-      <table style="width:100%">
+
+      <table>
         <tr>
           <td>@Messages("profile.visitors.logged-in")</td>
           <td align="right">
-          @{userProfile.getmemberVisited() match {
-            case  null => { 0 }
-            case _ => { userProfile.getmemberVisited().getSize }
+          @{visMemberCount match {
+            case None => { 0 }
+            case Some(c) => { c }
           }}
           </td>
         </tr>
         <tr>
           <td>@Messages("profile.visitors.not-logged-in")</td>
           <td align="right">
-          @{userProfile.getUnKnownVisited() match {
-            case  null => { 0 }
-            case _ => { userProfile.getUnKnownVisited().getSize }
-          }}
+            @{visUnknownCount match {
+              case None => { 0 }
+              case Some(c) => { c }
+            }}
           </td>
         </tr>
       </table>

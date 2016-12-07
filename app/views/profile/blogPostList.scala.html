@@ -1,4 +1,4 @@
-@(userProfile: UserProfile, isThisMyProfile: Boolean)(implicit messages: Messages)
+@(userProfile: UserProfile, blogPostsCount: Int, isThisMyProfile: Boolean)(implicit messages: Messages)
 @if(isThisMyProfile) {
   <div class="col-xs-12">
     <div class="btn-group btn-edit-group">
@@ -6,7 +6,7 @@
     </div>
   </div>
 }
-@if(userProfile.getBlogPosts.iterator().hasNext) {
+@if(blogPostsCount > 0) {
     @blog.blogBox(userProfile.profileLinkName)
 }else{
     <div class="well well-hdc">

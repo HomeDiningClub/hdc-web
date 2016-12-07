@@ -1,16 +1,20 @@
 package services
 
 import _root_.java.util.UUID
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
+
 import enums.RoleEnums.RoleEnums
-import models.{ViewedByUnKnown, UserCredential, UserProfile}
+import models.{UserCredential, UserProfile, ViewedByUnKnown}
 import org.neo4j.helpers.collection.IteratorUtil
 import play.api.Logger
 import securesocial.core.BasicProfile
 import securesocial.core.services.UserService
+
 import scala.collection.JavaConverters._
 import org.springframework.transaction.annotation.Transactional
 import enums.RoleEnums
+import org.springframework.data.neo4j.support.Neo4jTemplate
+
 import scala.concurrent.Future
 import securesocial.core.providers.MailToken
 
@@ -347,17 +351,21 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
     if(userExits) {
 
         // User is already stored in the database, when update
+
+
+      /* What is the purpose of this? Removing
         var itRoles = modUserCredential.roles.iterator()
         while(itRoles.hasNext) {
           var rol = itRoles.next()
         }
+        */
 
         val theProfile = modUserCredential.getUserProfile
         var saveProfile : Boolean = false
 
         Logger.info("# Viewed By Member ...")
 
-        if(theProfile.getmemberVisited() == null || theProfile.getmemberVisited() == None) {
+        if(userProfileService.getViewedByMember(theProfile).isEmpty) {
           Logger.info("Create ViewedByMember")
           val view: models.ViewedByMember = new models.ViewedByMember()
           Logger.info("ViewedByMember size: " + view.getSize)
@@ -367,7 +375,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
         }
 
         // At ViewedByUnKnown
-        if(theProfile.getUnKnownVisited() == null || theProfile.getUnKnownVisited == None) {
+        if(userProfileService.getViewedByUnKnown(theProfile).isEmpty) {
           Logger.info("Create ViewedByUnKnown")
           val view: models.ViewedByUnKnown = new ViewedByUnKnown()
           userProfileService.setAndRemoveViewByUnKnown(theProfile, view)
@@ -396,7 +404,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
      // personnummer is not given here
      // modUserCredential.personNummer            = userCredential.personNummer
 
-        var newUserCredential                   = saveUser(modUserCredential)
+        val newUserCredential                   = saveUser(modUserCredential)
 
       //customUtils.Helpers.endPerfLog("createOrUpdateUser - update", log)
         return newUserCredential
@@ -417,7 +425,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
 
       var storedUserProfile = userProfileService.saveUserProfile(userProfile)
       userCredentialService.addUserProfile(userCredential, storedUserProfile)
-      var newUserCredential = saveUser(userCredential)
+      val newUserCredential = saveUser(userCredential)
 
 
       //customUtils.Helpers.endPerfLog("createOrUpdateUser insert", log)
@@ -427,6 +435,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
 
   }
 
+  /* Not used, removing
   @Transactional(readOnly = false)
   def addRole(userCredential: UserCredential, role: RoleEnums): UserCredential = {
 
@@ -439,11 +448,14 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
     var modUserCredential: UserCredential = findByUserIdAndProviderId(userCredential.userId, userCredential.providerId)
 
     if(exitsUser._2 == true) {
+
       // User is already stored in the database, when update
+      /* Purpose of this? - Removing.
       var itRoles = modUserCredential.roles.iterator()
       while(itRoles.hasNext) {
         var rol = itRoles.next()
       }
+      */
 
       modUserCredential.oAuth1InfoToken         = userCredential.oAuth1InfoToken
       modUserCredential.oAuth1InfoSecret        = userCredential.oAuth1InfoSecret
@@ -461,7 +473,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
 
       userCredentialService.addRole(userCredential, role)
 
-      var newUserCredential                   = saveUser(modUserCredential)
+      val newUserCredential                   = saveUser(modUserCredential)
 
       //customUtils.Helpers.endPerfLog("addRole", log)
       return newUserCredential
@@ -469,14 +481,14 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
     } else {
       // Add default group
       userCredentialService.addRole(userCredential, role)
-      var newUserCredential = saveUser(userCredential)
+      val newUserCredential = saveUser(userCredential)
       //customUtils.Helpers.endPerfLog("addRole", log)
       return newUserCredential
     }
 
 
   }
-
+*/
 
 
   /**

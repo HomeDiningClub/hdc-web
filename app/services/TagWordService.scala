@@ -37,7 +37,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
     resultTag
   }
 
-  //@Transactional(readOnly = true)
+
   def listAll(): Option[List[TagWord]] = withTransaction(template){
     val listOfTags: Option[List[TagWord]] = IteratorUtil.asCollection(tagWordRepository.findAll()).asScala.toList match {
       case null => None
@@ -46,7 +46,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
     listOfTags
   }
 
-  //@Transactional(readOnly = true)
+
   def findById(objectId: UUID): Option[TagWord] = withTransaction(template){
     tagWordRepository.findByobjectId(objectId) match {
       case null => None
@@ -62,7 +62,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = true)
+
   def listByGroupOption(groupName: String): Option[List[TagWord]] = withTransaction(template){
 
     val returnList: List[TagWord] = Cache.getOrElse[List[TagWord]](tagWordCacheKey + groupName){
@@ -91,7 +91,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = true)
+
   def getFoodAreas: Option[Seq[(String,String)]] = withTransaction(template){
     val foodTags: Option[Seq[(String,String)]] = this.listByGroupOption("profile") match {
       case Some(listOfTags) =>
@@ -123,7 +123,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
 //    }
 //  }
 
-  //@Transactional(readOnly = true)
+
   def listByGroup2(groupName: String): List[TagWord] = withTransaction(template){
 
     tagWordRepository.findAllBySchemaPropertyValue("searchGroup", groupName).asScala.toList

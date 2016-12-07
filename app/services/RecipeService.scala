@@ -38,7 +38,7 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
 //  }
 
 
-  //@Transactional(readOnly = true)
+
   def findByownerProfileProfileLinkNameAndRecipeLinkName(profileLinkNane: String, recipeLinkName: String): Option[Recipe] = withTransaction(template){
     recipeRepository.findByownerProfileProfileLinkNameAndRecipeLinkName(profileLinkNane, recipeLinkName) match {
       case null => None
@@ -47,7 +47,7 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = true)
+
   def findByrecipeLinkName(recipeLinkName: String): Option[Recipe] = withTransaction(template){
 
     var returnObject: Option[Recipe] = None
@@ -66,7 +66,7 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
     returnObject
   }
 
-  //@Transactional(readOnly = true)
+
   def findById(objectId: UUID): Option[Recipe] = withTransaction(template){
     recipeRepository.findByobjectId(objectId) match {
       case null => None
@@ -74,13 +74,13 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = true)
+
   def getCountOfAll: Int = withTransaction(template){
     recipeRepository.getCountOfAll()
   }
 
 
-  //@Transactional(readOnly = true)
+
   def getListOfAll: List[Recipe] = withTransaction(template){
     recipeRepository.findAll.iterator.asScala.toList match {
       case null => null
@@ -117,13 +117,13 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
 
   def parseDouble(s: String) = try { Some(s.toDouble) } catch { case _ : Throwable => None }
 
-  //@Transactional(readOnly = true)
+
   def getRecipeBoxes(user: UserCredential): Option[List[RecipeBox]] = withTransaction(template){
     // Without paging
     this.getRecipeBoxesPage(user, 0)
   }
 
-  //@Transactional(readOnly = true)
+
   def getRecipeBoxesPage(user: UserCredential, pageNo: Integer): Option[List[RecipeBox]] = withTransaction(template){
 
     // With paging
@@ -194,7 +194,7 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
 
 
 
-  //@Transactional(readOnly = true)
+
   def getListOwnedBy(user: UserCredential): Option[List[Recipe]] = withTransaction(template){
     recipeRepository.findByownerProfileOwner(user).iterator.asScala.toList match {
       case null => None
@@ -202,7 +202,7 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  //@Transactional(readOnly = true)
+
   def getListOwnedBy(userProfile: UserProfile): Option[List[Recipe]] = withTransaction(template){
     recipeRepository.findByownerProfile(userProfile).iterator.asScala.toList match {
       case null => None
@@ -225,7 +225,7 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
   }
 
   // Fetching
-  //@Transactional(readOnly = true)
+
   def fetchRecipe(recipe: Recipe): Recipe = withTransaction(template){
     template.fetch(recipe)
   }

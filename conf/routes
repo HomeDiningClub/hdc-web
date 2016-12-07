@@ -6,7 +6,7 @@
 GET         /*path/                                              @controllers.RouteController.removeTrailingSlash(path: String)
 
 # Start page
-GET         /                                                    @controllers.StartPageController.index(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0)
+GET         /                                                    @controllers.StartPageController.index(fTag: String ?= "", fCounty: String ?= "", fHost: Boolean ?= false)
 
 # Header
 GET         /header/mainmenu.ajax                                @controllers.HeaderController.mainMenu
@@ -15,8 +15,8 @@ GET         /header/quicklinks.ajax                              @controllers.He
 # Browse page
 GET         /browse/event                                        @controllers.BrowsePageController.browseEvents(fTag: String ?= "", fCounty: String ?= "")
 GET         /browse/event.json                                   @controllers.BrowsePageController.getBrowseEventBoxesPagedJSON(fTag: String ?= "", fCounty: String ?= "", page: Int ?= 0)
-GET         /browse/profile                                      @controllers.BrowsePageController.browseProfiles(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0)
-GET         /browse/profile.json                                 @controllers.BrowsePageController.getBrowseProfileBoxesPagedJSON(fTag: String ?= "", fCounty: String ?= "", fHost: Int ?= 0, page: Int ?= 0)
+GET         /browse/profile                                      @controllers.BrowsePageController.browseProfiles(fTag: String ?= "", fCounty: String ?= "", fHost: Boolean ?= false)
+GET         /browse/profile.json                                 @controllers.BrowsePageController.getBrowseProfileBoxesPagedJSON(fTag: String ?= "", fCounty: String ?= "", fHost: Boolean ?= false, page: Int ?= 0)
 
 # Content pages
 GET         /content/:contentName                                @controllers.ContentPageController.viewContentByName(contentName: String)
@@ -45,7 +45,7 @@ GET         /profile/favorite/add                                @controllers.Us
 
 # Remove favorite to userProfile
 GET         /profile/favorite/remove                             @controllers.UserProfileController.removeFavorite(userCredentialObjectId : String)
-GET         /profile/favorite/isFav                              @controllers.UserProfileController.isFavoriteToMe(userCredentialObjectId : String)
+GET         /profile/favorite/isFav                              @controllers.UserProfileController.isFavouriteToMe(userCredentialObjectId : String)
 #GET         /profile/favorite/show                               @controllers.UserProfileController.listFavorites
 
 GET         /profile/mark                                        @controllers.MessagesController.markMessageAsRead(msgId: String)

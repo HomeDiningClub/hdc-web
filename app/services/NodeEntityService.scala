@@ -50,7 +50,7 @@ class NodeEntityService @Inject()(val template: Neo4jTemplate,
 //    }
   }
 
-  //@Transactional(readOnly = true)
+
   def isNodeEditableBy(anyItem: Node, userCred: UserCredential): Boolean = withTransaction(template){
     template.findOne(anyItem.getId,template.getStoredEntityType(anyItem).getType).asInstanceOf[IEditable].isEditableBy(userCred.objectId).asInstanceOf[Boolean]
   }

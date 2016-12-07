@@ -8,4 +8,7 @@ import java.util.UUID
 
 trait ViewedByMemberRepository extends GraphRepository[ViewedByMember] {
 
+  @Query("match (v:ViewedByMember)-[:IN_USER_VISITED]-(p:UserProfile {objectId:{0}}) RETURN length(v.userAccessLog)")
+  def countViewsByMember(userProfileObjectId: String) : Int
+
 }

@@ -1,22 +1,4 @@
-@(userProfile: models.UserProfile,
-        recipeBoxes: Option[List[RecipeBox]] = None,
-        eventBoxes: Option[List[EventBox]] = None,
-        bookingsMadeByMe: Option[List[EventBookingSuccess]] = None,
-        bookingsMadeToMyEvents: Option[List[EventBookingSuccess]] = None,
-        myReviewBoxes: Option[List[ReviewBox]] = None,
-        myRecipeReviewBoxes: Option[List[ReviewBox]] = None,
-        reviewBoxesAboutMyFood: Option[List[ReviewBox]] = None,
-        reviewBoxesAboutMe: Option[List[ReviewBox]] = None,
-        userMessages: Option[List[ReplyToGuestMessage]] = None,
-        tagList: Option[List[models.profile.TagWord]] = None,
-        metaData: Option[MetaData] = None,
-        shareUrl: String = "",
-        isThisMyProfile: Boolean = false,
-        currentUser: Option[models.UserCredential],
-        userRateForm: Html = Html(""),
-        userLikeForm: Html = Html(""),
-        requestForm: Html = Html(""),
-        favorites: Html = Html(""))(implicit request: RequestHeader, flash: Flash, messages: Messages)
+@(model: ProfilePageModel)(implicit request: RequestHeader, flash: Flash, messages: Messages)
 @import play.twirl.api.Html
 
 @pageScripts = {
@@ -25,17 +7,17 @@
     <script src="@routes.Assets.versioned("js/app/profile-favorite.js")"></script>
 }
 
-@avatarUrl = @{if(userProfile.getAvatarImage != null){routes.ImageController.userThumb(userProfile.getAvatarImage.getStoreId).url}else{""} }
-@columnLayout = @{ if(eventBoxes.nonEmpty || recipeBoxes.nonEmpty || reviewBoxesAboutMe.nonEmpty || reviewBoxesAboutMyFood.nonEmpty || myReviewBoxes.nonEmpty || myRecipeReviewBoxes.nonEmpty || isThisMyProfile || userProfile.isUserHost) { "col-xs-12 col-sm-6" }else{ "col-xs-12" }}
+@avatarUrl = @{if(model.userProfile.getAvatarImage != null){routes.ImageController.userThumb(model.userProfile.getAvatarImage.getStoreId).url}else{""} }
+@columnLayout = @{ if(model.eventBoxes.nonEmpty || model.recipeBoxes.nonEmpty || model.reviewBoxesAboutMe.nonEmpty || model.reviewBoxesAboutMyFood.nonEmpty || model.myReviewBoxes.nonEmpty || model.myRecipeReviewBoxes.nonEmpty || model.isThisMyProfile || model.userProfile.isUserHost) { "col-xs-12 col-sm-6" }else{ "col-xs-12" }}
 
-@main(title = Messages("profile.title", userProfile.profileLinkName), footerScripts = play.twirl.api.Html(pageScripts.toString), metaData = metaData) {
+@main(title = Messages("profile.title", model.userProfile.profileLinkName), footerScripts = play.twirl.api.Html(pageScripts.toString), metaData = model.metaData) {
     <div class="container profile-container">
-        @views.html.profile.profileHeader(userProfile.profileLinkName, userProfile.getOwner.firstName, avatarUrl, showLinkBack = false)
+        @views.html.profile.profileHeader(model.userProfile.profileLinkName, model.userProfile.getOwner.firstName, avatarUrl, showLinkBack = false)
 
         <div class="row row-no-padding">
             <div class="col-xs-12 bg-color">
                 <div class="full-width-image-wrapper">
-                    @userProfile.getMainImage match {
+                    @model.userProfile.getMainImage match {
                         case image: models.files.ContentFile => {
                             @shared.img(routes.ImageController.profileNormal(image.getStoreId).url, cssClass = "full-width-image")
                         }
@@ -52,9 +34,9 @@
                 <nav>
                     <ul class="nav nav-tabs nav-tabs-profile">
                         <li class="active"><a data-toggle="tab" href="#home-tab" title="@Messages("profile.tabs.home.title")"><span class="glyphicon glyphicon-home"></span>&nbsp;@Messages("profile.tabs.home.name")</a></li>
-                        <li><a data-toggle="tab" href="#blog-tab" title="@Messages("profile.tabs.blog.title")"><span class="glyphicon glyphicon-pencil"></span>&nbsp;@Messages("profile.tabs.blog.name")</a></li>
+                        <li><a data-toggle="tab" href="#blog-tab" title="@Messages("profile.tabs.blog.title")"><span class="glyphicon glyphicon-pencil"></span>&nbsp;@Messages("profile.tabs.blog.name") @if(model.blogPostsCount > 0) { (@model.blogPostsCount) }</a></li>
 
-                        @if(isThisMyProfile) {
+                        @if(model.isThisMyProfile) {
                             <li><a data-toggle="tab" href="#bookings-tab" title="@Messages("profile.tabs.bookings.title")"><span class="glyphicon glyphicon-tasks"></span>&nbsp;@Messages("profile.tabs.bookings.name")</a></li>
                             <li><a data-toggle="tab" href="#inbox-tab" title="@Messages("profile.tabs.inbox.title")"><span class="glyphicon glyphicon-envelope"></span>&nbsp;@Messages("profile.tabs.inbox.name")</a></li>
                             <li><a data-toggle="tab" href="#fav-tab" title="@Messages("profile.tabs.favourites.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;@Messages("profile.tabs.favourites.name")</a></li>
@@ -78,36 +60,36 @@
 
                             <div class="@columnLayout">
                                 @* Events *@
-                                @views.html.profile.eventBoxesList(eventBoxes, userProfile, isThisMyProfile)
+                                @views.html.profile.eventBoxesList(model.eventBoxes, model.userProfile, model.isThisMyProfile)
 
                                 @* Old Request form *@
-                                @if(!isThisMyProfile && userProfile.isUserHost && eventBoxes.isEmpty) {
-                                    @requestForm
+                                @if(!model.isThisMyProfile && model.userProfile.isUserHost && model.eventBoxes.isEmpty) {
+                                    @model.requestForm
                                 }
 
                                 @* Recipes *@
-                                @views.html.profile.recipeBoxesList(recipeBoxes, userProfile, isThisMyProfile)
+                                @views.html.profile.recipeBoxesList(model.recipeBoxes, model.userProfile, model.isThisMyProfile)
 
                                 @* Ratings *@
-                                @views.html.profile.reviewBoxesList(reviewBoxesAboutMe, reviewBoxesAboutMyFood, myReviewBoxes, reviewBoxesAboutMyFood, userProfile, isThisMyProfile)
+                                @views.html.profile.reviewBoxesList(model.reviewBoxesAboutMe, model.reviewBoxesAboutMyFood, model.myReviewBoxes, model.reviewBoxesAboutMyFood, model.userProfile, model.isThisMyProfile)
                             </div>
                             <div class="@columnLayout">
 
                                 @* Title & Text *@
                                 <section>
                                     <article>
-                                        <h1 class="hidden">@userProfile.profileLinkName</h1>
-                                        <h2>@if(userProfile.aboutMeHeadline.isEmpty){ @userProfile.profileLinkName } else { @userProfile.aboutMeHeadline }</h2>
+                                        <h1 class="hidden">@model.userProfile.profileLinkName</h1>
+                                        <h2>@if(model.userProfile.aboutMeHeadline.isEmpty){ @model.userProfile.profileLinkName } else { @model.userProfile.aboutMeHeadline }</h2>
 
-                                        @shared.grade(inputId = "host-grade", initialValue = userProfile.getOwner.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = userProfile.getOwner.getNrOfRatings)
-                                        @if(!isThisMyProfile) {
-                                            @userRateForm
+                                        @shared.grade(inputId = "host-grade", initialValue = model.userProfile.getOwner.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = model.userProfile.getOwner.getNrOfRatings)
+                                        @if(!model.isThisMyProfile) {
+                                            @model.userRateForm
                                         }
 
                                         <p id="result"></p>
 
                                         <div class="breadtext">
-                                            @Html(userProfile.aboutMe)
+                                            @Html(model.userProfile.aboutMe)
                                         </div>
                                         @shared.flashmsg(flash)
 
@@ -115,14 +97,14 @@
                                 </section>
 
                                 @*  Profile Properties box *@
-                                @views.html.profile.profilePropertiesBox(tagList,userProfile)
+                                @views.html.profile.profilePropertiesBox(model.tagList,model.userProfile)
 
                                 @*  Share / Like / Fav *@
                                 <div class="row">
                                     <div class="col-xs-12">
-                                        @views.html.profile.profileFavorite(userProfile)
-                                        @userLikeForm
-                                        @shared.fbShare(shareUrl)
+                                        @views.html.profile.profileFavorite(model.userProfile)
+                                        @model.userLikeForm
+                                        @shared.fbShare(model.shareUrl)
                                     </div>
                                 </div>
 
@@ -135,24 +117,24 @@
 
 
                     <!-- Blog Tab -->
-                    <div class="tab-pane tab-hdc fade" id="blog-tab">@views.html.profile.blogPostList(userProfile, isThisMyProfile)</div>
+                    <div class="tab-pane tab-hdc fade" id="blog-tab">@views.html.profile.blogPostList(model.userProfile, model.blogPostsCount, model.isThisMyProfile)</div>
 
                     <!-- Bookings Tab -->
-                    <div class="tab-pane tab-hdc fade" id="bookings-tab">@views.html.profile.myBookingsList(bookingsMadeToMyEvents, bookingsMadeByMe, isThisMyProfile)</div>
+                    <div class="tab-pane tab-hdc fade" id="bookings-tab">@views.html.profile.myBookingsList(model.bookingsMadeToMyEvents, model.bookingsMadeByMe, model.isThisMyProfile)</div>
 
                     <!-- Inbox Tab -->
-                    <div class="tab-pane tab-hdc fade" id="inbox-tab">@views.html.profile.mailInbox(userMessages, currentUser, isThisMyProfile)</div>
+                    <div class="tab-pane tab-hdc fade" id="inbox-tab">@views.html.profile.mailInbox(model.userMessages, model.currentUser, model.isThisMyProfile)</div>
 
 
                     <!-- Favorites Tab -->
-                    @if(isThisMyProfile) {
+                    @if(model.isThisMyProfile && model.favorites.isDefined) {
                         <div class="tab-pane tab-hdc fade" id="fav-tab">
-                        @favorites
+                        @model.favorites.get
                         </div>
                     }
 
                     <!-- Stats Tab -->
-                    <div class="tab-pane tab-hdc fade" id="stats-tab"> @views.html.profile.visitorsBox(userProfile, isThisMyProfile)</div>
+                    <div class="tab-pane tab-hdc fade" id="stats-tab"> @views.html.profile.visitorsBox(model.visMemberCount, model.visUnknownCount, model.isThisMyProfile)</div>
 
                 </div>
             </div>

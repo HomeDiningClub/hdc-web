@@ -14,6 +14,7 @@ import models.profile.TaggedUserProfile;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
+import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.data.neo4j.support.index.IndexType;
 import traits.IEditable;
 
@@ -47,6 +48,8 @@ public class UserProfile extends AuditEntity implements IEditable {
     public String zipCode            = "";
     public String city               = "";
     public String phoneNumber        = "";
+    public String aboutMe = "";
+    public String aboutMeHeadline = "";
 
     // Profile look up name
     @Indexed(unique = true, indexType = IndexType.LABEL)
@@ -66,7 +69,7 @@ public class UserProfile extends AuditEntity implements IEditable {
     private Set<TaggedLocationUserProfile> userLocationProfileTag;
 
     @RelatedToVia(type="FAVORITE_USER")
-    private Set<TaggedFavoritesToUserProfile>userFriendsProfileTag;
+    private Set<TaggedFavoritesToUserProfile> userFriendsProfileTag;
 
     @RelatedToVia(type = RelationshipTypesJava.BOOKED_EVENT_DATE.Constant, direction = Direction.OUTGOING)
     private Set<BookedEventDate> bookedEventDates;
@@ -96,24 +99,18 @@ public class UserProfile extends AuditEntity implements IEditable {
     @RelatedTo(type = RelationshipTypesJava.AVATAR_IMAGE.Constant, direction = Direction.OUTGOING)
     private ContentFile avatarImage;
 
-
-    @Fetch
     public ViewedByMember getmemberVisited() {
         return this.memberVisited;
     }
-
     public void setViewedByMeber(ViewedByMember viewed) {
         this.memberVisited = viewed;
     }
-
-    public void removeViewdByMember() {
+    public void removeViewedByMember() {
         if(this.memberVisited != null && this.memberVisited.objectId != null) {
             this.memberVisited = null;
         }
     }
 
-
-    @Fetch
     public ViewedByUnKnown getUnKnownVisited() {
         return this.unKnownVisited;
     }
@@ -122,7 +119,7 @@ public class UserProfile extends AuditEntity implements IEditable {
         this.unKnownVisited = viewed;
     }
 
-    public void removeViewdUnKnown() {
+    public void removeViewedByUnKnown() {
         if(this.unKnownVisited != null && this.unKnownVisited.objectId != null) {
             this.unKnownVisited = null;
         }
@@ -253,7 +250,7 @@ public class UserProfile extends AuditEntity implements IEditable {
        userFriendsProfileTag.add(taggedFavoritesToUserProfile);
 
         // check if it is not to many favorites when remove the oldest ...
-        if(userFriendsProfileTag.size() > 10) {
+        if(userFriendsProfileTag.size() > 30) {
 
         Iterator<TaggedFavoritesToUserProfile> itter = userFriendsProfileTag.iterator();
          TaggedFavoritesToUserProfile startTag = null;
@@ -369,34 +366,17 @@ public class UserProfile extends AuditEntity implements IEditable {
     @Fetch
     public UserCredential getOwner() { return owner; }
 
-    @Fetch
     public Iterable<Recipe> getRecipes() { return recipes; }
     public Iterable<TaggedUserProfile> getTags() { return userProfileTag; }
     public Iterable<TaggedLocationUserProfile> getLocations() { return userLocationProfileTag; }
-
-
     public Iterable<BookedEventDate> getBookedEventDates() { return bookedEventDates; }
-
-    @Fetch
     public Iterable<BlogPost> getBlogPosts() { return blogPosts; }
-
-
     public Set<TaggedFavoritesToUserProfile> getFavorites() { return userFriendsProfileTag;}
 
-   // public boolean isHost = false;
-    public String aboutMe = "";
-    public String aboutMeHeadline = "";
-
-    // food pictures
 
     public UserProfile() {
 
     }
 
-/*
-    public UserProfile(String userId, String providerId){
-        this.userId     = userId;
-        this.providerId = providerId;
-    }
-*/
+
 }

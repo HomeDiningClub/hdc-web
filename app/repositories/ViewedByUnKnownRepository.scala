@@ -8,4 +8,7 @@ import java.util.UUID
 
 trait ViewedByUnKnownRepository extends GraphRepository[ViewedByUnKnown] {
 
+  @Query("match (v:ViewedByUnKnown)-[:IN_OTHER_VISITED]-(p:UserProfile {objectId:{0}}) RETURN length(v.userAccessLog)")
+  def countViewsByUnknown(userProfileObjectId: String) : Int
+
 }

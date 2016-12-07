@@ -25,7 +25,6 @@ import scala.collection.JavaConverters._
 import customUtils.ViewedByMemberUtil
 import models.formdata.UserProfileOptionsForm
 
-//@Service
 class UserProfileService @Inject()(val template: Neo4jTemplate,
                                    val userProfileRepository: UserProfileRepository,
                                    val viewedByMemberRepository: ViewedByMemberRepository,
@@ -33,30 +32,24 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
                                    val viewedByUnKnownRepository: ViewedByUnKnownRepository) extends TransactionSupport {
 
   // save UnKnow user access to page
-
   def saveUnKnownAccess(view: models.ViewedByUnKnown): models.ViewedByUnKnown = withTransaction(template) {
-    var newView = viewedByUnKnownRepository.save(view)
-    newView
+    viewedByUnKnownRepository.save(view)
   }
 
   // save member access to page
-
   def saveMemberAccess(view: models.ViewedByMember): models.ViewedByMember = withTransaction(template) {
-    var newView = viewedByMemberRepository.save(view)
-    newView
+    viewedByMemberRepository.save(view)
   }
 
 
   // logged in user accessing profile page
-
   def logProfileViewByObjectId(viewdByMember: ViewedByMember, viewerObjectId: String, pageOwnerObjectId: String) = withTransaction(template) {
-    var util = new ViewedByMemberUtil()
+    val util = new ViewedByMemberUtil()
     viewdByMember.viewedBy(viewerObjectId, util.getNowString) //@todo
     saveMemberAccess(viewdByMember)
   }
 
   // UnKnow user access not logged in user
-
   def logUnKnownProfileViewByObjectId(viewedByUnKnown: ViewedByUnKnown, ipAddress: String) = withTransaction(template) {
     var util = new ViewedByMemberUtil()
     viewedByUnKnown.viewedBy(ipAddress, util.getNowString)
@@ -64,35 +57,31 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  // fetch number of viewers
-
-  // LoggedInUsers
-
-  // UnKnownUsers
-
-
-  //@todo not working, must implement a new metod on repository
-  //@Transactional(readOnly = true)
-  def findByViewByMemberAccess(objectId: String): Option[ViewedByMember] = withTransaction(template) {
-
-    var ob: Option[ViewedByMember] = None
-
-    var list = viewedByMemberRepository.findAll()
-
-
-    // @todo
-    /*
-    for(v: models.ViewdByMember <- list) {
-      if(v.objectId == objectId.toString) {
-       ob = Some(v)
-      }
-
+  // Fetch number of viewers
+  def getViewedByMember(userP: UserProfile): Option[ViewedByMember] = withTransaction(template) {
+    if(userP.getmemberVisited() != null){
+      Some(template.fetch(userP.getmemberVisited()))
+    }else {
+      None
     }
-    */
-    ob
   }
 
+  // Fetch number of viewers
+  def getViewedByUnKnown(userP: UserProfile): Option[ViewedByUnKnown] = withTransaction(template) {
+    if(userP.getUnKnownVisited != null){
+      Some(template.fetch(userP.getUnKnownVisited))
+    }else {
+      None
+    }
+  }
 
+  def countViewsByUnknown(userP: UserProfile): Int = {
+    viewedByUnKnownRepository.countViewsByUnknown(userP.objectId.toString)
+  }
+
+  def countViewsByMember(userP: UserProfile): Int = {
+    viewedByMemberRepository.countViewsByMember(userP.objectId.toString)
+  }
 
   def saveUserProfile(userProfile: models.UserProfile): models.UserProfile = withTransaction(template) {
     Logger.info("Saving user profile id: " + userProfile.userIdentity)
@@ -103,80 +92,59 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
 
 
   def addFavorites(theUser: models.UserProfile, friendsUserCredential: models.UserCredential): models.UserProfile = withTransaction(template) {
-
-    if (friendsUserCredential != None && friendsUserCredential != null) {
-      var fUserProfile: UserProfile = friendsUserCredential.profiles.asScala.head
+    if (friendsUserCredential != null) {
+      val fUserProfile: UserProfile = friendsUserCredential.getUserProfile
       theUser.addFavoriteUserProfile(fUserProfile)
     }
-
     theUser
   }
 
 
-  def viewedBy(theUser: models.UserProfile, name: String): models.UserProfile = withTransaction(template) {
+  def removeFavorites(userProfile: UserProfile, friendsUserProfile: UserProfile): UserProfile = withTransaction(template) {
 
-    var memberAccess = theUser.getmemberVisited(): models.ViewedByMember
-    var util = new ViewedByMemberUtil()
-    memberAccess.viewedBy(name, util.getNowString)
-    theUser.setViewedByMeber(memberAccess)
-
-    theUser
-  }
-
-
-  def removeFavorites(theUser: models.UserProfile, friendsUserCredential: models.UserCredential): models.UserProfile = withTransaction(template) {
-
-    if (friendsUserCredential != None && friendsUserCredential != null) {
-      var fUserProfile: UserProfile = friendsUserCredential.profiles.asScala.head
-
-      var jmfFriend = friendsUserCredential.objectId
-      var profileLink: Option[TaggedFavoritesToUserProfile] = None
-
-
-      var itter = theUser.getFavorites.iterator()
-      while (itter.hasNext) {
-        var tagProfile = itter.next()
-        if (tagProfile.favoritesUserProfile.getOwner.objectId == jmfFriend) {
-          profileLink = Some(tagProfile)
-        }
+    if (userProfile != null && friendsUserProfile != null) {
+      val favRelation = userProfileRepository.findFavRelationToMe(userProfile.objectId.toString, friendsUserProfile.objectId.toString) match {
+        case null => None
+        case relation => Some(relation)
       }
-
-      theUser.removeFavoriteUserProfile(profileLink.get)
+      if(favRelation.isDefined) {
+        userProfile.removeFavoriteUserProfile(favRelation.get)
+      }
     }
 
-    theUser
+    userProfile
   }
 
 
-  //@Transactional(readOnly = true)
-  def isFavoritesToMe(theUser: models.UserProfile, friendsUserCredential: models.UserCredential): Boolean = withTransaction(template) {
-
-    var isFriend: Boolean = false
+  def isFavouriteToMe(theUser: UserProfile, friendsUserCredential: UserCredential): Boolean = withTransaction(template) {
+    userProfileRepository.isFavouriteToMe(theUser.objectId.toString, friendsUserCredential.objectId.toString) match {
+      case 0 => false
+      case _ => true
+    }
+    /*
     var profileLink: Option[TaggedFavoritesToUserProfile] = None
 
-    if (friendsUserCredential != None && friendsUserCredential != null) {
-      var fUserProfile: UserProfile = friendsUserCredential.profiles.asScala.head
+    if (friendsUserCredential != null) {
+      val jmfFriend = friendsUserCredential.objectId
+      val itter = template.fetch(theUser.getFavorites).iterator()
 
-      var jmfFriend = friendsUserCredential.objectId
-
-
-
-      var itter = theUser.getFavorites.iterator()
       while (itter.hasNext) {
-        var tagProfile = itter.next()
+        val tagProfile = itter.next()
         if (tagProfile.favoritesUserProfile.getOwner.objectId.toString == jmfFriend.toString) {
           profileLink = Some(tagProfile)
         }
       }
 
     }
-    var isFavoriteTo = profileLink match {
+
+    val isFavoriteTo = profileLink match {
       case None => false
       case null => false
-      case profileLink => true
+      case someValue => true
     }
 
     isFavoriteTo
+    */
   }
 
   def updateUserProfileTags(theUser: UserProfile, tagsToAdd: List[TagWord]): UserProfile = withTransaction(template) {
@@ -260,10 +228,6 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
       returnObject = userProfileRepository.findByprofileLinkName(profileName) match {
         case null => None
         case profile =>
-          // Lazy fetching
-          //          if(fetchAll){
-          //            template.fetch(profile.getRecipes)
-          //          }
           Some(profile)
       }
     }
@@ -271,60 +235,14 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  def findByowner(userCred: UserCredential): Option[UserProfile] = withTransaction(template) {
+  def findByOwner(userCred: UserCredential): Option[UserProfile] = withTransaction(template) {
     userProfileRepository.findByowner(userCred) match {
       case null => None
       case profile =>
-        // Lazy fetching
-        //        if(fetchAll){
-        //          template.fetch(profile.getRecipes)
-        //        }
         Some(profile)
     }
   }
 
-  def findUserProfileByUserId(id: UserCredential): Option[UserProfile] = withTransaction(template) {
-    //    var key : String = id.identityId.userId + "_" + id.identityId.providerId
-    //    var up = UserProfileService.userProfileRepository.findByUserIdentityAndProviderIdentity(id.identityId.userId, id.identityId.providerId)
-
-    var lista = userProfileRepository.findAll().iterator()
-
-    while (lista.hasNext) {
-      var v = lista.next()
-      println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-      println("userId " + v.userIdentity + " provider id :" + v.providerIdentity)
-      println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-
-      if (v.userIdentity.equalsIgnoreCase(id.userId) && v.providerIdentity.equalsIgnoreCase(id.providerId)) {
-        println("OK")
-        return Some(v)
-      } else {
-        println("No match")
-      }
-    }
-    None
-  }
-
-
-  /*
-    @Transactional(readOnly = false)
-    def saveUserProfile(userProfile: models.UserProfile): models.UserProfile = {
-
-      println("ID: " + userProfile.objectId)
-      var modUserProfile = UserProfileService.userProfileRepository.save(userProfile)
-
-      modUserProfile
-    }
-  */
-  /*
-    @Transactional(readOnly = true)
-    def findByProfileLinkName(profileLinkName : String) : UserProfile = {
-      val userProfile : models.UserProfile = userProfileRepository.findByProfileLinkName(profileLinkName)
-      userProfile
-    }
-    */
-
-  //@Transactional(readOnly = true)
   def getAllUserProfiles: List[models.UserProfile] = withTransaction(template) {
     val listOfUserProfiles: List[models.UserProfile] = IteratorUtil.asCollection(userProfileRepository.findAll()).asScala.toList
     listOfUserProfiles
@@ -378,61 +296,7 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
     userProfile
   }
 
-  //@Transactional(readOnly = true)
-  def getUserProfile(userName: String) = withTransaction(template) {
 
-
-    print("getUserProfile : " + userName)
-
-    if (template == null) {
-      println("template is null ********************************")
-    } else {
-      println("template is not null*****************************")
-    }
-
-
-    var userProfileDataIndex: Index[Node] = template.getIndex(classOf[models.UserProfile], "userName")
-    //val node: Node = userProfileDataIndex.query("userName", userName).getSingle()
-
-    if (userProfileDataIndex == null) {
-      println("userProfileDataIndex is null ********************************")
-    } else {
-      println("userProfileDataIndex is not null*****************************")
-    }
-
-
-
-    var hits = userProfileDataIndex.query("userName", userName)
-    var nods = hits.iterator()
-    var id: Long = 0
-
-    println("...........................................")
-
-
-    if (nods.hasNext) {
-      id = nods.next().getId
-      println("Id: " + id)
-    }
-
-
-    var currNode: models.UserProfile = new models.UserProfile
-
-    // node != null
-    if (id != 0) {
-      currNode = userProfileRepository.findOne(id)
-    }
-
-    currNode
-  }
-
-
-  //  @Transactional(readOnly = false)
-  //  def updateUserProfile(userProfile: UserProfile, reqUserProfile: AnvandareForm): UserProfile = {
-  //    userProfileRepository.findAll().asScala.toList
-  //  }
-
-
-  //@Transactional(readOnly = true)
   def getAllUserProfile: List[models.UserProfile] = withTransaction(template){
     userProfileRepository.findAll().asScala.toList
   }
@@ -441,7 +305,7 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
   // Can return either:
   // Option[Page[UserProfile]]
   // Option[List[UserProfile]]
-  def getUserProfilesFiltered(filterTag: Option[TagWord], filterCounty: Option[County], filterIsHost: Boolean, pageNo: Option[Integer] = None, nrPerPage: Int = 9) = withTransaction(template){
+  def getUserProfilesFiltered(filterTag: Option[TagWord], filterCounty: Option[County], filterIsHost: Boolean, pageNo: Option[Integer] = None, nrPerPage: Int = 9): Either[Option[List[UserProfile]],Option[Page[UserProfile]]] = withTransaction(template){
 
     var returnList: List[UserProfile] = Nil
     var returnPaged: Page[UserProfile] = null
@@ -500,18 +364,23 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
         }
     }
 
-    // Return paged list, or normal list or just None
     if (returnList != Nil) {
-      Some(returnList)
-    } else if (returnPaged != null) {
-      Some(returnPaged)
+      Left(Some(returnList))
     } else {
-      None
+      Right(Option(returnPaged))
+    }
+
+  }
+
+  def getMyFavorites(userProfile: UserProfile): Option[List[FavoriteData]] = withTransaction(template){
+    userProfileRepository.findMyFriends(userProfile.objectId.toString).asScala.toList match {
+      case Nil => None
+      case items => Some(items)
     }
   }
 
   def getUserWhoFavoritesUser(userProfile: UserProfile): Option[List[FavoriteData]] = withTransaction(template){
-    userProfileRepository.findFriendsToUser(userProfile.objectId).asScala.toList match {
+    userProfileRepository.findFriendsToUser(userProfile.objectId.toString).asScala.toList match {
       case Nil => None
       case items => Some(items)
     }

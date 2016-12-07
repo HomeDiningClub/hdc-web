@@ -6,7 +6,7 @@ import models.{UserCredential, UserProfile}
 import org.springframework.data.neo4j.annotation.Query
 import java.util.UUID
 
-import models.profile.FavoriteData
+import models.profile.{FavoriteData, TaggedFavoritesToUserProfile}
 
 trait UserProfileRepository extends GraphRepository[UserProfile] {
 
@@ -61,8 +61,18 @@ trait UserProfileRepository extends GraphRepository[UserProfile] {
   def findAllProfiles(pageable: Pageable) : Page[UserProfile]
 
   // Get all who has me as favorite
-  @Query("MATCH (user:`UserProfile`)<-[:FAVORITE_USER]-(friendUp:`UserProfile`)<-[:`IN_PROFILE`]-(friendUc:`UserCredential`) WHERE user.objectId={0} AND EXISTS(friendUp.profileLinkName) WITH user, friendUp, friendUc OPTIONAL MATCH (friendUp)-[:`AVATAR_IMAGE`]-(friendAi:`ContentFile`) RETURN friendUp.objectId AS UserProfileObjectId, friendUc.objectId AS UserCredentialObjectId, friendUc.firstName AS FirstName, friendUc.lastName AS LastName, friendUp.profileLinkName AS ProfileLinkName, friendUp.aboutMeHeadline AS AboutMeHeadline, COLLECT(friendAi.storeId) as AvatarImage")
-  def findFriendsToUser(userId: UUID) : java.util.List[FavoriteData]
+  @Query("MATCH (userP:`UserProfile`)<-[:FAVORITE_USER]-(friendUp:`UserProfile`)<-[:`IN_PROFILE`]-(friendUc:`UserCredential`) WHERE userP.objectId={0} AND EXISTS(friendUp.profileLinkName) WITH userP, friendUp, friendUc OPTIONAL MATCH (friendUp)-[:`AVATAR_IMAGE`]-(friendAi:`ContentFile`) RETURN friendUp.objectId AS UserProfileObjectId, friendUc.objectId AS UserCredentialObjectId, friendUc.firstName AS FirstName, friendUc.lastName AS LastName, friendUp.profileLinkName AS ProfileLinkName, friendUp.aboutMeHeadline AS AboutMeHeadline, COLLECT(friendAi.storeId) as AvatarImage")
+  def findMyFriends(userProfileObjectId: String) : java.util.List[FavoriteData]
+
+  // Get all my favorites
+  @Query("MATCH (userP:`UserProfile`)-[:FAVORITE_USER]->(friendUp:`UserProfile`)<-[:`IN_PROFILE`]-(friendUc:`UserCredential`) WHERE userP.objectId={0} AND EXISTS(friendUp.profileLinkName) WITH userP, friendUp, friendUc OPTIONAL MATCH (friendUp)-[:`AVATAR_IMAGE`]-(friendAi:`ContentFile`) RETURN friendUp.objectId AS UserProfileObjectId, friendUc.objectId AS UserCredentialObjectId, friendUc.firstName AS FirstName, friendUc.lastName AS LastName, friendUp.profileLinkName AS ProfileLinkName, friendUp.aboutMeHeadline AS AboutMeHeadline, COLLECT(friendAi.storeId) as AvatarImage")
+  def findFriendsToUser(userProfileObjectId: String) : java.util.List[FavoriteData]
+
+  @Query("MATCH (userP:`UserProfile`)-[relFU:FAVORITE_USER]->(friendUp:`UserProfile`)<-[:`IN_PROFILE`]-(friendUc:`UserCredential`) WHERE userP.objectId={0} AND friendUc.objectId={1} RETURN Count(*)")
+  def isFavouriteToMe(userProfileObjectId: String, friendUserCredObjectId: String) : Int
+
+  @Query("MATCH (userP:`UserProfile`)-[relFU:FAVORITE_USER]->(friendUp:`UserProfile`) WHERE userP.objectId={0} AND friendUp.objectId={1} RETURN relFU")
+  def findFavRelationToMe(userProfileObjectId: String, friendUserCredObjectId: String) : TaggedFavoritesToUserProfile
 
 
   // Auto-mapped by spring

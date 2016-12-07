@@ -14,7 +14,7 @@ $(document).ready(function(){
 
 
         $("#af").click(function(){
-            var oid = $(this).data("owner-id");
+            //  var oid = $(this).data("owner-id");
             $.get("/profile/favorite/add?userCredentialObjectId=" + oid + "&tid=" + new Date().toString(),function(data,status){
                 $( "#af" ).hide();
                 $( "#rf" ).show();

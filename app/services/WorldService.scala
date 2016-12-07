@@ -27,7 +27,7 @@ class WorldService @Inject()(val template: Neo4jTemplate,
     worldRepository.findBySchemaPropertyValue("name", worldName)
   }
 
-  //@Transactional(readOnly = true)
+
   def getAllWorlds: List[World] = withTransaction(template){
     val listOfWorlds: List[World] = IteratorUtil.asCollection(worldRepository.findAll()).asScala.toList
     listOfWorlds
@@ -77,7 +77,7 @@ class WorldService @Inject()(val template: Neo4jTemplate,
       thisWorld.reachableByRocket.add(otherWorld)
   }
 
-  //@Transactional(readOnly = true)
+
   def getWorldPath(worldA: World, worldB: World): List[World] = withTransaction(template){
     val pathExp: PathExpander[_] = PathExpanders.forTypeAndDirection(RelationshipTypesScala.REACHABLE_BY_ROCKET, Direction.OUTGOING)
     val path = GraphAlgoFactory.shortestPath(pathExp, 100)

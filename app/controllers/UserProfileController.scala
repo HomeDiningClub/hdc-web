@@ -28,28 +28,31 @@ import scala.collection.mutable
 import customUtils.ViewedByMemberUtil
 import customUtils.ViewedByUnKnownUtil
 import customUtils.security.SecureSocialRuntimeEnvironment
+import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
-class UserProfileController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
-                                       val contentService: ContentService,
-                                       val ratingController: RatingController,
-                                       val likeController: LikeController,
-                                       val messagesController: MessagesController,
-                                       val favoritesController: FavoritesController,
-                                       val userProfileService: UserProfileService,
-                                       val tagWordService: TagWordService,
-                                       val countyService: CountyService,
-                                       val recipeService: RecipeService,
-                                       val eventService: EventService,
-                                       val ratingService: RatingService,
-                                       val fileService: ContentFileService,
-                                       val userCredentialService: UserCredentialService,
-                                       val environment: Environment,
-                                       val messageService: MessageService,
-                                       implicit val nodeEntityService: NodeEntityService,
-                                       val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
+class UserProfileController @Inject()(override implicit val env: SecureSocialRuntimeEnvironment,
+                                      val template: Neo4jTemplate,
+                                      val contentService: ContentService,
+                                      val ratingController: RatingController,
+                                      val likeController: LikeController,
+                                      val messagesController: MessagesController,
+                                      val favoritesController: FavoritesController,
+                                      val userProfileService: UserProfileService,
+                                      val tagWordService: TagWordService,
+                                      val countyService: CountyService,
+                                      val recipeService: RecipeService,
+                                      val blogPostsService: BlogPostsService,
+                                      val eventService: EventService,
+                                      val ratingService: RatingService,
+                                      val fileService: ContentFileService,
+                                      val userCredentialService: UserCredentialService,
+                                      val environment: Environment,
+                                      val messageService: MessageService,
+                                      implicit val nodeEntityService: NodeEntityService,
+                                      val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   // Forms
   val UserProfileValuesForms = Form(
@@ -63,7 +66,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
       "zipCode" -> text.verifying(Messages("profile.create.form.zipCode.validation.required"), f => f.trim != ""),
       "city" -> text.verifying(Messages("profile.create.form.city.validation.required"), f => f.trim != ""),
       "phoneNumber" -> text.verifying(Messages("profile.create.form.phoneNumber.validation.required"), f => f.trim != ""),
-      "personnummer" -> text.verifying(Messages("profile.personalidentitynumber.unique"), { g => isCorrectIdentificationNumber(g)} ),
+      "personnummer" -> text.verifying(Messages("profile.personalidentitynumber.unique"), { g => isCorrectIdentificationNumber(g) }),
       "acceptTerms" -> boolean.verifying(Messages("profile.approve.memberterms"), h => h),
       "mainimage" -> optional(text),
       "avatarimage" -> optional(text),
@@ -86,12 +89,12 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
   val TagsForm = Form(
     mapping(
-      "tagList" -> optional(list[TagCheckboxForm]{
+      "tagList" -> optional(list[TagCheckboxForm] {
         mapping(
           "value" -> text
         )(TagCheckboxForm.apply)(TagCheckboxForm.unapply)
       })
-    )(TagListForm.apply) (TagListForm.unapply)
+    )(TagListForm.apply)(TagListForm.unapply)
   )
 
   private def isCorrectIdentificationNumber(id: String): Boolean = {
@@ -103,10 +106,10 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
   // Method checks if user wants to be host, then atleast one payment option has to be selected
   private def hasSelectedPaymentOption(wantsToBeHost: Boolean, payCash: Boolean, paySwish: Boolean, payBankCard: Boolean, payIZettle: Boolean): Boolean = {
-    if(!wantsToBeHost){
+    if (!wantsToBeHost) {
       return true
-    }else{
-      if(payCash || payBankCard || paySwish || payIZettle){
+    } else {
+      if (payCash || payBankCard || paySwish || payIZettle) {
         return true
       }
     }
@@ -124,14 +127,14 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
       case Some(up) => {
         if (profileName == storedProfileName) {
           true
-        }else{
+        } else {
           false
         }
       }
     }
   }
 
-  private def isThisMyProfile(profile: UserProfile)(implicit request: RequestWithUser[AnyContent,UserCredential]): Boolean = {
+  private def isThisMyProfile(profile: UserProfile)(implicit request: RequestWithUser[AnyContent, UserCredential]): Boolean = {
     request.user match {
       case None =>
         false
@@ -155,7 +158,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         // emailaddress has not been changed
         if (emailAddress == storedEmailAddress) {
           true
-        }else{
+        } else {
           false
         }
       }
@@ -163,7 +166,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
   }
 
 
-  def verifyUserProfile = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def verifyUserProfile = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent, UserCredential] =>
     val curUser = request.user
 
     // Check so that all important information is filled, otherwise redirect to profile editing
@@ -184,10 +187,10 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
         val perf = customUtils.Helpers.startPerfLog()
         val profileOwner = profile.getOwner
-        var myProfile = isThisMyProfile(profile)
+        val myProfile = isThisMyProfile(profile) //TODO: Remove hardcode
 
         val dataAsync = for {
-          messages <- Future(if (myProfile) {buildMessageList(profileOwner) }else { None })
+          messages <- Future(if (myProfile) buildMessageList(profileOwner) else None)
           recipeBoxes <- Future(recipeService.getRecipeBoxes(profileOwner))
           eventBoxes <- Future(eventService.getEventBoxes(profileOwner))
           bookingsMadeByMe <- Future(if (myProfile) eventService.getBookingsMadeByMe(profileOwner, this.getBaseUrl) else None)
@@ -202,7 +205,10 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
           userRateForm <- Future(ratingController.renderUserRateForm(profileOwner, routes.UserProfileController.viewProfileByName(profile.profileLinkName).url, request.user))
           userLikeForm <- Future(likeController.renderUserLikeForm(profileOwner, request.user))
           requestForm <- Future(messagesController.renderHostForm(profileOwner, request.user))
-          favorites <- Future(favoritesController.renderFavorites(profile))
+          favorites <- Future(if (myProfile) favoritesController.renderFavorites(profile) else None)
+          visMemberCount <- Future(if (myProfile) Some(userProfileService.countViewsByMember(profile)) else None)
+          visUnknownCount <- Future(if (myProfile) Some(userProfileService.countViewsByUnknown(profile)) else None)
+          blogPostsCount <- Future(blogPostsService.countBlogPostsForUser(profile))
 
         } yield (recipeBoxes,
           eventBoxes,
@@ -219,7 +225,11 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
           userRateForm,
           userLikeForm,
           requestForm,
-          favorites)
+          favorites,
+          visMemberCount,
+          visUnknownCount,
+          blogPostsCount
+          )
 
         // Should the event be registered or not
         val doCountEvent: Boolean = true
@@ -232,7 +242,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
         val res = Await.result(dataAsync, Duration.Inf)
         customUtils.Helpers.endPerfLog("Profile:(" + profile.profileLinkName + ") - Loading time: ", perf)
 
-        Ok(views.html.profile.index(
+        val model = ProfilePageModel(
           userProfile = profile,
           recipeBoxes = res._1,
           eventBoxes = res._2,
@@ -251,8 +261,13 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
           userRateForm = res._13,
           userLikeForm = res._14,
           requestForm = res._15,
-          favorites = res._16
-        ))
+          favorites = res._16,
+          visMemberCount = res._17,
+          visUnknownCount = res._18,
+          blogPostsCount = res._19
+        )
+
+        Ok(views.html.profile.index(model))
       case None =>
         val errMess = "Cannot find user profile using name:" + profileName
         Logger.debug(errMess)
@@ -260,87 +275,66 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     }
   }
 
-  def doDebugLogViewOfUserProfile(request: RequestWithUser[AnyContent,UserCredential], profile: UserProfile) {
+  private def doDebugLogViewOfUserProfile(request: RequestWithUser[AnyContent, UserCredential], profile: UserProfile) {
 
-    if(!environment.mode.equals(Mode.Prod)) {
-      val viewer: Option[UserProfile] = request.user match {
-        case Some(user) => Some(user.profiles.asScala.head)
+    if (!environment.mode.equals(Mode.Prod)) {
+      val viewerProfile: Option[UserProfile] = request.user match {
+        case Some(user) => Some(user.getUserProfile)
         case None => None
       }
 
-      if (viewer.isEmpty) {
-        Logger.debug("Log access to userprofile : " + profile.getOwner.getFullName + "viewer: " + "Anonymouse viewer")
-      }
-      else {
-        Logger.debug("Log access to userprofile : " + profile.getOwner.getFullName + "viewer : " + viewer.get.profileLinkName)
+      if (viewerProfile.isEmpty) {
+        Logger.debug("Log access to userprofile: " + profile.getOwner.getFullName + " - Viewer: " + "Anonymous viewer")
+      } else {
+        Logger.debug("Log access to userprofile: " + profile.getOwner.getFullName + " - Viewer : " + viewerProfile.get.profileLinkName)
       }
     }
 
   }
 
   /**
-   * Log the access to a user profile member
-   * A loged on member or an unkown user accessing a profile
-   * @param request the users requesting viewing the profile
-   * @param profile the user of the profile page
-   */
-  def doLogViewOfUserProfile(request: RequestWithUser[AnyContent,UserCredential], profile: UserProfile) {
+    * Log the access to a user profile member
+    * A loged on member or an unkown user accessing a profile
+    *
+    * @param request the users requesting viewing the profile
+    * @param profile the user of the profile page
+    */
+  def doLogViewOfUserProfile(request: RequestWithUser[AnyContent, UserCredential], profile: UserProfile) {
 
     // Kontrollera att det är en inloggad användare
     if (request.user.isEmpty) {
 
       // Det är inte en inloggad användare
-
       val ipAddress = request.remoteAddress
+      val util: ViewedByUnKnownUtil = new ViewedByUnKnownUtil()
 
       // Eftersom vi inte har något användarnamn får vi hämta ip-adress
       // Kontrollera om profilen dvs. den visade sisan har något objekt för att spara
       // undan icke inloggade användare
-      if (profile.getUnKnownVisited != null && profile.getUnKnownVisited != None && profile.getUnKnownVisited.getSize() > 0) {
-
-       // println("1 ... ")
-       // println("Acess to a ready userProfile for saving UnKnownVisits ... ")
-
-        var log = profile.getUnKnownVisited
-        var util: ViewedByUnKnownUtil = new ViewedByUnKnownUtil()
-
-
-        var itr   =  profile.getUnKnownVisited.getIterator()
-
-        while(itr.hasNext) {
-
-          var s : String = itr.next()
-        //  println("v: " + s)
-        }
-
-
+      val unkVisit = userProfileService.getViewedByUnKnown(profile)
+      if (unkVisit.isDefined && unkVisit.get.getSize > 0) {
 
 
         // Number of days to store data as invidual logposts
-        var oldestDate: Date = util.xDayEarlier(1)
+        val oldestDate: Date = util.xDayEarlier(1)
 
         // Remove older recorded data and count number of accesss to the profile page
         //util.removeAllAccessOlderThen(oldestDate, log)
 
         //remove the sam ip-address if it is stored before
-        util.removeOldAccessOfSameHost(ipAddress, log)
+        util.removeOldAccessOfSameHost(ipAddress, unkVisit.get)
 
         // save access of profile to the profile users node for ...
-        userProfileService.logUnKnownProfileViewByObjectId(log, ipAddress)
+        userProfileService.logUnKnownProfileViewByObjectId(unkVisit.get, ipAddress)
       } else {
 
-       // println("2 ... ")
-
-        // Det finns inget objekt med icke inloggade användare
-        // skapa objektet
+        // Det finns inget objekt med icke inloggade användare skapa objektet
         var viewedByUnKnown = new ViewedByUnKnown()
-        var util: ViewedByUnKnownUtil = new ViewedByUnKnownUtil()
 
         // Skapa ett besök av en okänd användare
         viewedByUnKnown.viewedBy(ipAddress, util.getNowString)
         profile.setViewedByUnKnown(viewedByUnKnown)
         userProfileService.saveUserProfile(profile)
-
       }
 
     } else {
@@ -349,7 +343,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
       // fetch logged in user
       val theUser: Option[UserProfile] = request.user match {
-        case Some(user) => Some(user.profiles.asScala.head)
+        case Some(user) => Some(user.getUserProfile)
         case None => None
       }
 
@@ -359,44 +353,26 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
       }
 
       // Member access
-      if (profile.getmemberVisited() != null && profile.getmemberVisited != None && profile.getmemberVisited.getSize > 0) {
-        var log = profile.getmemberVisited()
+      val memberVis = userProfileService.getViewedByMember(profile)
+      if (memberVis.isDefined && memberVis.get.getSize > 0) {
 
-       // println("3 ...")
-
-        var itr   =  profile.getmemberVisited.getIterator()
-
-        while(itr.hasNext) {
-
-          var s : String = itr.next()
-       //   println("vx: " + s)
-        }
-
-
-
-        var util: ViewedByMemberUtil = new ViewedByMemberUtil()
-        profile.setViewedByMeber(log)
+        val util: ViewedByMemberUtil = new ViewedByMemberUtil()
+        profile.setViewedByMeber(memberVis.get)
 
         // Number of days to store data as invidual logposts
-        var oldestDate: Date = util.xDayEarlier(7)
+        val oldestDate: Date = util.xDayEarlier(7)
 
         // Remove older recorded data and count number of accesss to the profile page
         //util.removeAllAccessOlderThen(oldestDate, log)
 
         // remove the same member if it have been viewn the same profile an other date
-        util.removeOldAccessOfSameUser(profile.objectId.toString, log)
+        util.removeOldAccessOfSameUser(profile.objectId.toString, memberVis.get)
 
         // save access of profile to the profile users node for ...
-        userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
+        userProfileService.logProfileViewByObjectId(memberVis.get, vOId, profile.objectId.toString)
       } else {
-
-       // println("4 ...")
-
         // Om objektet inte finns lägger den till detta...
-        var log = new ViewedByMember()
-        var util: ViewedByMemberUtil = new ViewedByMemberUtil()
-
-
+        val log = new ViewedByMember()
         userProfileService.logProfileViewByObjectId(log, vOId, profile.objectId.toString)
         profile.setViewedByMeber(log)
         userProfileService.saveUserProfile(profile)
@@ -406,9 +382,9 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
   }
 
 
-  def viewProfileByLoggedInUser = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def viewProfileByLoggedInUser = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent, UserCredential] =>
 
-    userProfileService.findByowner(request.user) match {
+    userProfileService.findByOwner(request.user) match {
       case Some(profile) =>
         if (profile.profileLinkName.isEmpty) {
           Logger.debug("Profilelinkname is empty!")
@@ -461,11 +437,11 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
   }
 
   /** **************************************************************************************************
-   Show userProfile for edit
-   display profile data for the current user to be changed
-   my profile
+    * Show userProfile for edit
+    * display profile data for the current user to be changed
+    * my profile
     * ***************************************************************************************************/
-  def edit = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def edit = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent, UserCredential] =>
 
     val userProfile = request.user.getUserProfile
     val identificationNumber = userProfile.getOwner.personNummer
@@ -478,10 +454,10 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
     // Tags
     val sortedTagList = getSortedTagWordList
-    val userProfOldSavedTags = Option(userProfile.getTags.asScala.toList.map{ tr => tr.tagWord})
+    val userProfOldSavedTags = Option(userProfile.getTags.asScala.toList.map { tr => tr.tagWord })
 
     // County
-    val countyObjectId:String = userProfile.getLocations.asScala match {
+    val countyObjectId: String = userProfile.getLocations.asScala match {
       case Nil | null => ""
       case countyRelList => countyRelList.headOption match {
         case None => ""
@@ -557,7 +533,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
     tagList match {
       case None => None
       case Some(tags) => Some(tags.map {
-        t:TagWord =>
+        t: TagWord =>
           TagCheckboxForm(t.objectId.toString)
       })
     }
@@ -600,85 +576,51 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
   }
 
   // add favorite
-  def addFavorite(userCredentialObjectId: String) = SecuredAction() { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def addFavorite(userCredentialObjectId: String) = SecuredAction() { implicit request: SecuredRequest[AnyContent, UserCredential] =>
     val friendsUserCredential = userCredentialService.findById(UUID.fromString(userCredentialObjectId))
-    userProfileService.addFavorites(request.user.getUserProfile, friendsUserCredential.get)
+    val myUserP = userProfileService.findByOwner(request.user)
+    userProfileService.addFavorites(myUserP.get, friendsUserCredential.get)
 
     Ok("Ok")
   }
 
   // remove favorite
-  def removeFavorite(userCredentialObjectId: String) = SecuredAction() { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def removeFavorite(userCredentialObjectId: String) = SecuredAction() { implicit request: SecuredRequest[AnyContent, UserCredential] =>
     val friendsUserCredential = userCredentialService.findById(UUID.fromString(userCredentialObjectId))
-    userProfileService.removeFavorites(request.user.getUserProfile, friendsUserCredential.get)
+    val myUserP = userProfileService.findByOwner(request.user)
+    userProfileService.removeFavorites(myUserP.get, friendsUserCredential.get.getUserProfile)
 
     Ok("Ok")
   }
 
 
-  // remove favorite
-  def isFavoriteToMe(userCredentialObjectId: String) = UserAwareAction() { implicit request =>
+  def isFavouriteToMe(userCredentialObjectId: String) = UserAwareAction() { implicit request =>
 
-    var user = request.user
-    var isLoggedIn = false
-    var svar = ""
-    var errorOcurs = false
-    var execAnwer = false
+    val currentUser = request.user
+    var retValue = ""
 
-    var hasAccess = user match {
+    val hasAccess = currentUser match {
       case Some(user) => true
       case None => false
     }
 
-    var theUser: Option[models.UserProfile] = user match {
-      case Some(user) => Some(user.profiles.asScala.head)
-      case None => None
-    }
+    if(hasAccess){
 
+      val friendsUserCredential = userCredentialService.findById(UUID.fromString(userCredentialObjectId))
 
-
-    // var theUser = request.user.asInstanceOf[UserCredential].profiles.asScala.head
-
-    if (hasAccess) {
-
-      var uuid: UUID = UUID.fromString(userCredentialObjectId)
-      var friendsUserCredential = userCredentialService.findById(uuid)
-
-      var isToSerach = friendsUserCredential match {
-        case Some(friendsUserCredential) => true
-        case None => false
-        case _ => false
-      }
-
-
-
-
-      if (isToSerach) {
-
-        try {
-          execAnwer = userProfileService.isFavoritesToMe(theUser.get, friendsUserCredential.get)
-        } catch {
-          case e: Exception => execAnwer = false
-        }
-
-
-        svar = execAnwer match {
+      if (friendsUserCredential.isDefined) {
+        retValue = userProfileService.isFavouriteToMe(currentUser.get.getUserProfile, friendsUserCredential.get) match {
           case true => "YES"
           case false => "NO"
         }
       } else {
-        svar = "NO"
+        retValue = "NO"
       }
-
     } else {
-      svar = "USER_NOT_LOGGED_IN"
+      retValue = "USER_NOT_LOGGED_IN"
     }
-
-
-
-    Ok(svar)
+    Ok(retValue)
   }
-
 
 
   def showFavoritesPage = SecuredAction { implicit request =>
@@ -687,7 +629,7 @@ class UserProfileController @Inject() (override implicit val env: SecureSocialRu
 
 
   /** **************************************************************************************************
-    Save UserProfile
+    * Save UserProfile
     * **************************************************************************************************/
   def editSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 

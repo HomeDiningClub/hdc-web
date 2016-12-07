@@ -57,10 +57,10 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
     ))
   }
 
-  def browseProfiles(fTag: String, fCounty: String, fHost: Int) = UserAwareAction { implicit request =>
+  def browseProfiles(fTag: String, fCounty: String, fHost: Boolean) = UserAwareAction { implicit request =>
 
     //val browseBoxes = getBrowseBoxes(fTag, fCounty, fHost)
-    val isHost = if(fHost == 1) true else false
+    val isHost = fHost
 
     val form = SearchFilterForm.apply(
       fCounty match { case null | "" => None case item => Some(item)},
@@ -101,10 +101,10 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
   }
 
 
-  def getBrowseProfileBoxesPagedJSON(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Int, page: Int = 0) = UserAwareAction { implicit request =>
+  def getBrowseProfileBoxesPagedJSON(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, page: Int = 0) = UserAwareAction { implicit request =>
 
     // Get items
-    val isHost = if(boxFilterIsHost == 1) true else false
+    val isHost = boxFilterIsHost
     val listOfBoxes: Option[Page[UserProfile]] = getBrowseProfileBoxesPaged(boxFilterTag, boxFilterCounty, isHost, page)
 
     listOfBoxes match {
@@ -126,11 +126,11 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
   }
 
   private def getBrowseProfileBoxesPaged(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, pageNo: Int): Option[Page[UserProfile]] = {
-    userProfileService.getUserProfilesFiltered(filterTag = fetchTag(boxFilterTag), filterCounty = fetchCounty(boxFilterCounty), filterIsHost = boxFilterIsHost, Some(pageNo), 12).asInstanceOf[Option[Page[UserProfile]]]
+    userProfileService.getUserProfilesFiltered(filterTag = fetchTag(boxFilterTag), filterCounty = fetchCounty(boxFilterCounty), filterIsHost = boxFilterIsHost, Some(pageNo), 12).right.get
   }
 
   private def getBrowseProfileBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean): Option[List[UserProfile]] = {
-    userProfileService.getUserProfilesFiltered(filterTag = fetchTag(boxFilterTag), filterCounty = fetchCounty(boxFilterCounty), filterIsHost = boxFilterIsHost).asInstanceOf[Option[List[UserProfile]]]
+    userProfileService.getUserProfilesFiltered(filterTag = fetchTag(boxFilterTag), filterCounty = fetchCounty(boxFilterCounty), filterIsHost = boxFilterIsHost).left.get
   }
 
   private def getBrowseEventBoxesPaged(boxFilterTag: String, boxFilterCounty: String, pageNo: Int): Option[Page[EventData]] = {

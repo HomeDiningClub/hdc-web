@@ -16,24 +16,26 @@ import services.{NodeEntityService, UserProfileService}
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.FavoriteForm
+import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import scala.collection.mutable.ListBuffer
 
 class FavoritesController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val messagesApi: MessagesApi,
+                                     val template: Neo4jTemplate,
                                      implicit val nodeEntityService: NodeEntityService,
                                      val userProfileService: UserProfileService,
                                      val environment: Environment) extends Controller with SecureSocial with I18nSupport {
 
   // List favorites
-  def renderFavorites(userProfile: UserProfile)(implicit request: RequestHeader): Html = {
-    val listOfMyFavorites = userProfile.getFavorites.iterator()
+  def renderFavorites(userProfile: UserProfile)(implicit request: RequestHeader): Option[Html] = {
+    val listOfMyFavorites = userProfileService.getMyFavorites(userProfile)
     val listOfUsersWhoFavorMe = userProfileService.getUserWhoFavoritesUser(userProfile)
     // Return partial view
-    views.html.profile.showListOfFavorites.render(buildMyFavoritesList(listOfMyFavorites), buildFavorsMeList(listOfUsersWhoFavorMe), request2Messages)
+    Some(views.html.profile.showListOfFavorites.render(buildFavForm(listOfMyFavorites), buildFavForm(listOfUsersWhoFavorMe), request2Messages))
   }
 
-  private def buildFavorsMeList(listOfUserFavorMe: Option[List[FavoriteData]]): List[FavoriteForm] = {
+  private def buildFavForm(listOfUserFavorMe: Option[List[FavoriteData]]): List[FavoriteForm] = {
     listOfUserFavorMe match {
       case None => Nil
       case Some(list) => list.map { fav =>
@@ -54,7 +56,8 @@ class FavoritesController @Inject() (override implicit val env: SecureSocialRunt
     }
   }
 
-  private def buildMyFavoritesList(listOfFavorites: util.Iterator[TaggedFavoritesToUserProfile]): List[FavoriteForm] = {
+/*
+  private def buildMyFavoritesList(listOfFavorites: Option[List[FavoriteData]]): List[FavoriteForm] = {
     var favorites: ListBuffer[FavoriteForm] = ListBuffer[FavoriteForm]()
 
     while (listOfFavorites.hasNext) {
@@ -77,5 +80,6 @@ class FavoritesController @Inject() (override implicit val env: SecureSocialRunt
     }
     favorites.toList
   }
+  */
 
 }

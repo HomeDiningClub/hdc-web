@@ -49,9 +49,11 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
     )(SearchStartPageForm.apply)(SearchStartPageForm.unapply)
   )
 
-  def index(fTag: String, fCounty: String, fHost: Int) = UserAwareAction() { implicit request =>
+  def index(fTag: String, fCounty: String, fHost: Boolean) = UserAwareAction() { implicit request =>
 
-    val isHost = if(fHost == 1) true else false
+    //val isHost = if(fHost == 1) true else false
+    val isHost = fHost
+    val perf = customUtils.Helpers.startPerfLog()
 
     val dataAsync = for {
       profileBoxes <- Future(getProfileBoxes(fTag, fCounty, isHost, 6)) // TODO: This is slow, improve performance
@@ -70,6 +72,7 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
     )
 
     val res = Await.result(dataAsync, Duration.Inf)
+    customUtils.Helpers.endPerfLog("StartPage: - Loading time: ", perf)
 
       Ok(views.html.startpage.index(
         searchForm = searchForm.fill(form),
@@ -101,7 +104,18 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
     val fetchedTag: Option[TagWord] = verifySelectedTagWord(boxFilterTag)
     val fetchedCounty: Option[County] = verifySelectedCounty(boxFilterCounty)
 
-    val profBoxes: Option[List[ProfileBox]] = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost).asInstanceOf[Option[List[UserProfile]]] match {
+    var perf = customUtils.Helpers.startPerfLog()
+    val maxNrTemp = 70
+    val dataOpt = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost, pageNo = Some(0), nrPerPage = maxNrTemp).right.get
+    customUtils.Helpers.endPerfLog("getData: ", perf)
+
+    val data = dataOpt match {
+      case None => None
+      case Some(d) => Some(d.getContent.asScala.toList)
+    }
+
+    perf = customUtils.Helpers.startPerfLog()
+    val profBoxes: Option[List[ProfileBox]] = data match {
       case None => None
       case Some(profile) => Some(profile.filter(prof => prof.getMainImage != null).take(maxNr).map {
         userProfile: UserProfile =>
@@ -130,6 +144,7 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
           )
       })
     }
+    customUtils.Helpers.endPerfLog("building: ", perf)
     profBoxes
   }
 
