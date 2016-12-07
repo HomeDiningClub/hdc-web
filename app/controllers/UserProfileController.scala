@@ -187,7 +187,7 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
 
         val perf = customUtils.Helpers.startPerfLog()
         val profileOwner = profile.getOwner
-        val myProfile = isThisMyProfile(profile) //TODO: Remove hardcode
+        val myProfile = isThisMyProfile(profile)
 
         val dataAsync = for {
           messages <- Future(if (myProfile) buildMessageList(profileOwner) else None)
