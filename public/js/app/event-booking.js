@@ -46,7 +46,10 @@ $(document).ready(function(){
                     //$(this).prop("checked", true);
                     $datePicker.hide();
                     $datePickerResults.empty();
-                    $datePickerList.show();
+                    // Don't show list if only one date, just render the default
+                    if($datePickerList.find("button").length > 1){
+                        $datePickerList.show();
+                    }
                     setDefaultDateForList();
                 }
                 function onClickShowDatePicker() {
@@ -118,8 +121,10 @@ $(document).ready(function(){
                     // Move the switch
                     $btnShowDateList.prop("checked", true);
                     setDefaultDateForList();
-                    // Show the date-picker-list
-                    $datePickerList.show();
+                    // Don't show list if only one date, just render the default
+                    if($datePickerList.find("button").length > 1){
+                        $datePickerList.show();
+                    }
                 }
 
                 // Show the date-choice-switcher
