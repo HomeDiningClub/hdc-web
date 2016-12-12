@@ -115,9 +115,12 @@
 
     function removeDate(){
         var $parent = $(this).closest(".date-row");
+        var evtDateObjId = $(this).data("eventdateid");
+        var $deleteContainer = $("#delete-date-container");
         if($parent.find(".guestsbooked").attr("value") > 0){
             alert("@Messages("event.edit.add.date-time.remove-date.guests-booked")");
         }else{
+            $deleteContainer.append('<input type="hidden" name="eventDatesToDelete[' + $deleteContainer.children().length + ']" value="' + evtDateObjId+ '">');
             $parent.remove();
         }
     }
@@ -227,7 +230,7 @@
                                             @helper.inputHidden(eventDatesField("id"), 'class -> "eventdate-guid")
                                             @b3.hidden(eventDatesField("guestsbooked").name, eventDatesField("guestsbooked").value.getOrElse(0), 'class -> "guestsbooked")
                                             <div class="form-group">
-                                                <button class="btn btn-danger remove-button hidden" title="@Messages("event.edit.add.date-time.remove-date")"><span class="glyphicon glyphicon-remove"></span></button>
+                                                <button data-eventdateid="@eventDatesField("id").value.getOrElse("")" class="btn btn-danger remove-button @if(customUtils.Helpers.toInt(eventDatesField("guestsbooked").value) > 0) { hidden }" title="@Messages("event.edit.add.date-time.remove-date")"><span class="glyphicon glyphicon-remove"></span></button>
                                             </div>
                                         </div>
 
@@ -241,6 +244,7 @@
 
                                     }
                                 </div>
+                                <div id="delete-date-container" class="hidden"><!-- Holds dynamically added dates that needs to be removed--></div>
                             </div>
                             <div class="row">
                                 <div class="col-xs-12">

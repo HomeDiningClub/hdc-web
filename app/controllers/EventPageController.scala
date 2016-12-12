@@ -357,7 +357,8 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         alcoholServing = alcoDefault,
         mealType = mealDefault
       ),
-      userProfileOptionsForm = createMissingProfileSettingsForm(currentUserProfile)
+      userProfileOptionsForm = createMissingProfileSettingsForm(currentUserProfile),
+      eventDatesToDelete = None
     )
 
     Ok(views.html.event.addOrEdit(
@@ -410,7 +411,8 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
                   case mt => Some(mt.objectId)
                 }
               ),
-              userProfileOptionsForm = createMissingProfileSettingsForm(item.getOwnerProfile)
+              userProfileOptionsForm = createMissingProfileSettingsForm(item.getOwnerProfile),
+              eventDatesToDelete = None
             )
 
             Ok(views.html.event.addOrEdit(
@@ -708,6 +710,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
         newRec.get.setPreAmble(contentData.preAmble.getOrElse(""))
         newRec.get.setPrice(contentData.price.toLong)
         eventService.updateOrCreateEventDates(contentData, newRec.get)
+        eventService.deleteEventDates(contentData, newRec.get)
         newRec.get.contentState = ContentStateEnums.PUBLISHED.toString
 
         // Save event

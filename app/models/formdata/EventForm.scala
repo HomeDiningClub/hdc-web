@@ -1,5 +1,7 @@
 package models.formdata
 
+import java.util.UUID
+
 case class EventForm(id: Option[String],
                      name: String,
                      preAmble: Option[String],
@@ -11,5 +13,6 @@ case class EventForm(id: Option[String],
                      images: Option[String],
                      eventDates: Option[List[EventDateForm]],
                      eventOptionsForm: EventOptionsForm,
-                     userProfileOptionsForm: Option[UserProfileOptionsForm]
+                     userProfileOptionsForm: Option[UserProfileOptionsForm],
+                     eventDatesToDelete: Option[List[UUID]]
                     ) {}

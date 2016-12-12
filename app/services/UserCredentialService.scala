@@ -26,11 +26,9 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
 
   // Från databasen till SecureSocial
   // IdentityId = userId + providerId
-  //
   def userCredential2basicProfile(userCredential: UserCredential): BasicProfile = {
 
     var oAuth2InfoExpiresIn : Int = 0
-    var salt : String  = ""
 
     if(userCredential.oAuth2InfoExpiresIn.equals("")) {
       oAuth2InfoExpiresIn = 0
@@ -38,13 +36,8 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
       oAuth2InfoExpiresIn = userCredential.oAuth2InfoExpiresIn.toInt
     }
 
-    println("password: " + userCredential.password)
-    println("salt    : " + userCredential.salt)
-    println("hasher  : " + userCredential.hasher)
-
-
     val returv =
-      new securesocial.core.BasicProfile(
+      securesocial.core.BasicProfile(
         userId = userCredential.userId,
         providerId = userCredential.providerId,
         firstName=Some(userCredential.firstName),
@@ -57,12 +50,12 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
         ),
 
 
-        oAuth1Info = Some(new OAuth1Info(
+        oAuth1Info = Some(OAuth1Info(
           userCredential.oAuth1InfoToken,
           userCredential.oAuth1InfoSecret
         ))
         ,
-        oAuth2Info = Some(new OAuth2Info(
+        oAuth2Info = Some(OAuth2Info(
           userCredential.oAuth2InfoAccessToken,
           Some(userCredential.oAuth2InfoTokenType),
           Some(oAuth2InfoExpiresIn),
@@ -70,18 +63,11 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
 
         ,
         passwordInfo = Some(
-          new PasswordInfo(
+          PasswordInfo(
             userCredential.hasher,
             userCredential.password,
             Some(userCredential.salt))
         ))
-
-    //new PasswordInfo("","")
-
-
-    println("METOD: " + returv.authMethod.method)
-    println("METOD_: " + returv.authMethod.productArity)
-
 
     returv
   }

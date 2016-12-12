@@ -233,7 +233,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
           "payBankCard" -> boolean,
           "payIZettle" -> boolean,
           "wantsToBeHost" -> boolean
-        )(UserProfileOptionsForm.apply)(UserProfileOptionsForm.unapply))
+        )(UserProfileOptionsForm.apply)(UserProfileOptionsForm.unapply)),
+        "eventDatesToDelete" -> optional(list(uuid))
       )(EventForm.apply)(EventForm.unapply)
         verifying(Messages("event.edit.add.min-nr-of-guests.validation"), t => isValidMinValue(t.minNoOfGuest, t.maxNoOfGuest))
         verifying(Messages("event.edit.add.max-nr-of-guests.validation"), t => isValidMaxValue(t.minNoOfGuest, t.maxNoOfGuest))
@@ -436,7 +437,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  def updateOrCreateEventDates(contentData: EventForm, event: Event) {
+  def updateOrCreateEventDates(contentData: EventForm, event: Event) = withTransaction(template){
     if(contentData.eventDates.nonEmpty){
       for(ed <- contentData.eventDates.get){
 
@@ -461,8 +462,17 @@ class EventService @Inject()(val template: Neo4jTemplate,
         }else if(ed.id.isEmpty && contentData.id.isEmpty) {
           this.addEventDate(ed,event)
         }else{
-          Logger.debug("Cannot add eventdate on event, no matching criteria is fullfilled. (Edit on existing, Add on existing, Add on new)")
+          Logger.debug("Cannot add EventDate on event, no matching criteria is fullfilled. (Edit on existing, Add on existing, Add on new)")
         }
+      }
+    }
+  }
+
+  def deleteEventDates(contentData: EventForm, event: Event) {
+    // Delete event dates, if any
+    if(contentData.eventDatesToDelete.nonEmpty) {
+      for (ed <- contentData.eventDatesToDelete.get) {
+        this.deleteEventDateById(ed, event)
       }
     }
   }
@@ -819,14 +829,25 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
 
 
-  //region  Fetching
-  def fetchEvent(event: Event): Event = withTransaction(template){
-    template.fetch(event)
-  }
-  //endregion
-
-
   //region Saving & Deleting
+  def deleteEventDateById(objectId: UUID, event: Event): Event = withTransaction(template){
+    this.findEventDateById(objectId) match {
+      case Some(ed) =>
+        if(ed.getGuestsBooked == 0){
+          Logger.debug("Removed EventDate: " + ed.getEventDateTime + " from " + event.getName)
+          event.deleteEventDate(ed)
+          eventDateRepository.delete(ed)
+          event
+        }else{
+          Logger.debug("Cannot delete EventDate, there are already guests booked: " + ed.getGuestsBooked.toString + " (UUID:" + objectId.toString + ")")
+          event
+        }
+      case None =>
+        Logger.debug("Cannot delete EventDate, found no matching UUID:" + objectId.toString)
+        event
+    }
+  }
+
   def deleteById(objectId: UUID): Boolean = withTransaction(template){
     this.findById(objectId) match {
       case None => false

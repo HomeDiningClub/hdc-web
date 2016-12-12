@@ -918,6 +918,8 @@ admin.stat.type.recipes=Recept
 admin.stat.type.rating.recipes=Omdömmen recept
 admin.stat.type.rating.members=Omdömmen medlemmar
 
+admin.ga.username=Username:
+admin.ga.password=Password:
 
 # Admin - End
 
