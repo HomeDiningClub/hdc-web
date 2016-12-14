@@ -1151,16 +1151,16 @@ input[type="reset"]:hover
 .event-overlay {
   position: relative;
   margin-top: -255px;
-  margin-left: 20px;
   z-index: 10;
 }
 
 .price-circle {
   list-style:none;
   display:block;
-  width:100%;
-  margin:0;
+  width:auto;
+  margin:0 20px 0 0;
   padding:0;
+  float:right;
 }
 
 .price-circle > li {
@@ -3364,6 +3364,51 @@ a.morelink {
     background-image: none;
   }
 
+  // Events
+  .event-overlay {
+    margin-top:0;
+    margin-left:0;
+
+  }
+  .price-circle {
+    margin:0;
+    float:none;
+  }
+  .price-circle > li {
+    width:100%;
+    height:auto;
+    margin:0;
+  }
+  .price-circle .circle {
+    position: relative;
+    overflow:hidden;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+  }
+  .price-circle .front, .price-circle .back {
+    position: relative;
+    float:none;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    width:100%;
+    height:auto;
+    -webkit-box-shadow:none;
+    box-shadow:none;
+    padding:10px 0 40px 0;
+  }
+  .price-circle .info {
+    opacity: 1;
+    position: relative;
+    -webkit-border-radius:0;
+    border-radius: 0;
+    transform:none;
+  }
+  .price-circle .circle:hover .front,
+  .price-circle .circle:hover .back {
+    -webkit-transform:none;
+    transform: none;
+    opacity:1;
+  }
 }
 /* XX-Small devices (tablets, 480px and below) */
 @media screen and (max-width: 480px) {
