@@ -13,13 +13,11 @@ import org.springframework.data.repository.query.Param
 
 trait EventRepository extends GraphRepository[Event] {
 
-  // Auto-mapped by Spring
   //@Query("MATCH (n:`Event`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): Event
 
   @Query("MATCH (n:`Event`) RETURN COUNT(*)")
-  def getCountOfAll(): Int
-
+  def getCountOfAllEvents: Int
 
   @Query("MATCH (uc {objectId:{0}})-[:IN_PROFILE]->(up:UserProfile)-[:HOSTS_EVENTS]-(e:Event) OPTIONAL MATCH (c:`County`)<-[:`LOCATION_AT`]-(up) OPTIONAL MATCH (up)-[:`MAIN_IMAGE`]-(userImage:`ContentFile`) optional match (e)-[:IMAGES]-(eventImages:`ContentFile`) optional match (e)-[g]-(ux:UserCredential) optional match (e)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return e.name as EventName, e.preAmble as EventPreAmble, e.mainBody as EventMainBody, e.objectId as EventObjectId, COLLECT(eventImages.storeId) as EventImages, COLLECT(mainImage.storeId) as MainImage, COLLECT(userImage.storeId) as UserImage, e.price as EventPrice, up.profileLinkName as ProfileLinkName, e.eventLinkName as EventLinkName, c.name as CountyName")
   def findEvents(userObjectId: String) : util.List[EventData]

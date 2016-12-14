@@ -118,8 +118,12 @@ class EventService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  def getCountOfAll: Int = withTransaction(template) {
-    eventRepository.getCountOfAll()
+  def getCountOfAllEvents: Int = withTransaction(template) {
+    eventRepository.getCountOfAllEvents
+  }
+
+  def getCountOfAllEventBookings: Int = withTransaction(template) {
+    bookedEventDateRepository.getCountOfAllEventBookings
   }
 
   def getListOfAll: List[Event] = withTransaction(template){

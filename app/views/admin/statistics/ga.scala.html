@@ -1,7 +1,13 @@
 @()(implicit messages: Messages)
 
 <div class="col-xs-12 col-md-6">
-    <a href="https://analytics.google.com/analytics/web/" target="_blank">Google analytics</a><br>
-    <strong>@Messages("admin.ga.username")</strong> homediningclub@@gmail.com
-    <strong>@Messages("admin.ga.password")</strong> dinner****
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><a href="https://analytics.google.com/analytics/web/" target="_blank">@Messages("admin.ga.title")</a><br></div>
+            <div class="panel-body">
+
+                <strong>@Messages("admin.ga.username")</strong> homediningclub@@gmail.com<br>
+                <strong>@Messages("admin.ga.password")</strong> dinner****
+            </div>
+        </div>
 </div>

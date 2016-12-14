@@ -11,6 +11,9 @@ trait BookedEventDateRepository extends GraphRepository[BookedEventDate] {
   @Query("MATCH (a)-[booking:`BOOKED_EVENT_DATE`{objectId:{0}}]->(b) RETURN booking")
   def findByobjectId(objectId: String): BookedEventDate
 
+  @Query("MATCH (a)-[bookings:`BOOKED_EVENT_DATE`]->(b) RETURN COUNT(bookings)")
+  def getCountOfAllEventBookings: Int
+
   @Query("MATCH (a)-[bookings:`BOOKED_EVENT_DATE`]->(b) RETURN bookings")
   def findAllBookedEventDates(): util.List[BookedEventDate]
 

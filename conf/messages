@@ -918,7 +918,10 @@ admin.stat.type.members=Medlemmar
 admin.stat.type.recipes=Recept
 admin.stat.type.rating.recipes=Omdömmen recept
 admin.stat.type.rating.members=Omdömmen medlemmar
+admin.stat.type.events=Dines
+admin.stat.type.event-bookings=Bokningar dines
 
+admin.ga.title=Google analytics
 admin.ga.username=Username:
 admin.ga.password=Password:
 

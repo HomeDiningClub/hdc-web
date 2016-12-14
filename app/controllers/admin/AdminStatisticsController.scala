@@ -1,15 +1,15 @@
 package controllers.admin
 
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 import enums.{FileTypeEnums, RoleEnums}
 import models.viewmodels.StatisticsData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{RequestHeader, Controller}
+import play.api.mvc.{Controller, RequestHeader}
 import securesocial.core.SecureSocial
-import services.{RatingService, ContentFileService, UserCredentialService, RecipeService}
+import services._
 import customUtils.authorization.WithRole
 import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
@@ -17,23 +17,11 @@ import customUtils.security.SecureSocialRuntimeEnvironment
 class AdminStatisticsController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                            val recipeService: RecipeService,
                                            val ratingService: RatingService,
+                                           val eventService: EventService,
                                            val userCredentialService: UserCredentialService,
                                            val fileService: ContentFileService,
                                            val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
-  /*
-  @Autowired
-  private var recipeService: RecipeService = _
-
-  @Autowired
-  private var ratingService: RatingService = _
-
-  @Autowired
-  private var userCredentialService: UserCredentialService = _
-
-  @Autowired
-  private var fileService: ContentFileService = _
-*/
 
   def getStatBox: StatisticsData = {
 
@@ -42,7 +30,9 @@ class AdminStatisticsController @Inject() (override implicit val env: SecureSoci
       recipesTotal = recipeService.getCountOfAll,
       membersTotal = userCredentialService.getCountOfAll,
       ratingsRecipeTotal = ratingService.getCountOfAllRecipesRatings,
-      ratingsMemberTotal = ratingService.getCountOfAllMemberRatings
+      ratingsMemberTotal = ratingService.getCountOfAllMemberRatings,
+      eventsTotal = eventService.getCountOfAllEvents,
+      eventsBookingsTotal = eventService.getCountOfAllEventBookings
     )
 
     currentStats

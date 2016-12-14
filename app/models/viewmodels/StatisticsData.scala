@@ -10,5 +10,7 @@ case class StatisticsData(
                            ratingsRecipeTotal: Int = 0,
                            ratingsRecipeLastMonth: Int = 0,
                            ratingsMemberTotal: Int = 0,
-                           ratingsMembersLastMonth: Int = 0
+                           ratingsMembersLastMonth: Int = 0,
+                           eventsTotal: Int = 0,
+                           eventsBookingsTotal: Int = 0
                            )
