@@ -594,6 +594,7 @@ event.book.guest.label=Bokande medlem
 event.book.guest-phone.label=Telefon: {0}
 event.book.guest-email.label=E-post: {0}
 event.book.nr-of-guests.label=Antal gäster (platser kvar: {0}st)
+event.suggest.nr-of-guests.label=Antal gäster
 event.book.comment.label=Kommentar (valfri)
 event.book.submit=Skicka bokning
 event.book.submitting=Skickar...

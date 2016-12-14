@@ -39,7 +39,7 @@
                     </div>
                 }
 
-                @b3.select(eventDateSuggestionForm("suggest-guests"), helper.options(List.range(1, maxNrOfGuests + 1).map(_.toString)), '_label -> Messages("event.book.nr-of-guests.label"))
+                @b3.select(eventDateSuggestionForm("suggest-guests"), helper.options(List.range(1, maxNrOfGuests + 1).map(_.toString)), '_label -> Messages("event.suggest.nr-of-guests.label"))
                 @b3.textarea(eventDateSuggestionForm("suggest-comment"),
                     'value -> Messages("event.suggest.comment.text"),
                     'class -> "comment-field",
