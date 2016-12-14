@@ -9,7 +9,7 @@
         isThisMyEvent: Boolean = false,
         isUserHost: Boolean,
         memberUser: Option[UserCredential] = None,
-        eventLikeForm: play.twirl.api.Html = play.twirl.api.Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
+        eventLikeForm: Html = Html(""))(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
 
 
 @eventScripts = {
@@ -54,15 +54,13 @@
         </div>
 
         <div class="row bg-color">
-            <div class="col-xs-12 col-md-4 margin-top">
-                @views.html.event.bookingDatePicker(event, isThisMyEvent, isUserHost)
-                @views.html.event.bookingForm(eventBookingForm, event.getMaxNrOfGuests, memberUser, isThisMyEvent, isUserHost)
-                @views.html.event.suggestionButton(event, memberUser, isThisMyEvent, isUserHost)
-                @views.html.event.suggestionForm(eventDateSuggestionForm, event.getMaxNrOfGuests, memberUser, isThisMyEvent, isUserHost)
-
-                @eventLikeForm
-                @shared.fbShare(shareUrl)
-
+            <div class="col-xs-12 col-md-5 col-lg-4 event-booking-col margin-top">
+                <div class="event-booking-box">
+                    @views.html.event.bookingDatePicker(event, isThisMyEvent, isUserHost)
+                    @views.html.event.bookingForm(eventBookingForm, event.getMaxNrOfGuests, memberUser, isThisMyEvent, isUserHost)
+                    @views.html.event.suggestionButton(event, memberUser, isThisMyEvent, isUserHost)
+                    @views.html.event.suggestionForm(eventDateSuggestionForm, event.getMaxNrOfGuests, memberUser, isThisMyEvent, isUserHost)
+                </div>
                 @if(isThisMyEvent){
                     <div class="col-xs-12 text-center margin-top">
                         <a href="@controllers.routes.EventPageController.edit(event.objectId)" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> @Messages("event.button.edit")</a><br>
@@ -70,34 +68,40 @@
                 }
             </div>
 
-
-
-            <div class="col-xs-12 col-md-8 bg-color">
+            <div class="col-xs-12 col-md-7 col-lg-8 bg-color">
                 @if(!flash.isEmpty) {
                     <div class="col-xs-12 margin-top">@shared.flashmsg(flash)</div>
                     <div class="col-xs-12">@shared.listFormErrors(eventBookingForm, Some(eventDateSuggestionForm))</div>
                 }
 
-                @if(!event.getPreAmble.isEmpty || !event.getMainBody.isEmpty || !event.getName.isEmpty) {
-                    <section>
-                        <article>
-                            <h1 class="event-header">@event.getName</h1>
-                            @if(!event.getPreAmble.isEmpty) {
-                                <blockquote><p>"@event.getPreAmble"</p><p><small>@event.getOwnerProfile.getOwner.getFullName</small></p></blockquote>
-                            }
-                            @if(!event.getMainBody.isEmpty) {
-                                <div class="breadtext">@Html(event.getMainBody)</div>
-                            }
-                        </article>
-                    </section>
+                    @if(!event.getMainBody.isEmpty || !event.getName.isEmpty) {
+                        <section>
+                            <article>
 
-                    @*
-                    <article>
-                    @shared.grade(inputId = "event-grade", initialValue = recipe.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = recipe.getNrOfRatings)
-                    @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url)(request)
-                    </article>
-                    *@
-                }
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <h1 class="event-header">@event.getName</h1>
+                                        @if(!event.getPreAmble.isEmpty) {
+                                            <p class="event-header-preamble"><strong>@event.getPreAmble</strong></p>
+                                        }
+                                    </div>
+                                    <div class="col-xs-12">
+                                        @if(!event.getMainBody.isEmpty) {
+                                            <h3 class="lead text-center">@Messages("event.menu.header")</h3>
+                                            <div class="breadtext">@Html(event.getMainBody)</div>
+                                        }
+                                    </div>
+                                </div>
+                            </article>
+                        </section>
+
+                        @*
+                        <article>
+                        @shared.grade(inputId = "event-grade", initialValue = recipe.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = recipe.getNrOfRatings)
+                        @RatingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url)(request)
+                        </article>
+                        *@
+                    }
 
                 <article>
                     @views.html.event.propertiesList(eventPropertyList)
@@ -105,6 +109,14 @@
 
                 @views.html.event.eventMoreImages(event)
 
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="event-share-box">
+                            @eventLikeForm
+                            @shared.fbShare(shareUrl)
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

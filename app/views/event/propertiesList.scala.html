@@ -1,6 +1,6 @@
 @(evp: EventPropertyList)(implicit request: RequestHeader, flash: Flash = Flash.emptyCookie, messages: Messages)
 
-<h3 class="lead big-margin-top">@Messages("event.prop.header")</h3>
+<h3 class="lead text-center big-margin-top">@Messages("event.prop.header")</h3>
 <ul class="list-group">
     @if(evp.mealType.isDefined){
         <li class="list-group-item">

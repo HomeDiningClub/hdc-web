@@ -6,12 +6,12 @@
         @defining(eventDate.getEventDateTime) { theDate =>
             <li>
                 <div class="row">
-                    <div class="col-xs-12 col-sm-3">
+                    <div class="col-xs-3">
                         <div class="month">@customUtils.Helpers.formatDateGetMonthAsText(theDate, "short")</div>
                         <div class="day-of-month">@customUtils.Helpers.formatDateGetDayOfMonth(theDate)</div>
                         <div class="year">@customUtils.Helpers.formatDateGetYear(theDate)</div>
                     </div>
-                    <div class="col-xs-12 col-sm-5 spots-left">
+                    <div class="col-xs-5 spots-left">
                         <div class="row">
                             <div class="col-xs-12">
                                 <strong>@Messages("event.list.timestamp")</strong>&nbsp;@customUtils.Helpers.formatDateGetTime(theDate)<br>
@@ -19,7 +19,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-4">
+                    <div class="col-xs-4">
                         <div class="select-date-wrap pull-right">
                             <button class="btn btn-lg btn-orange select-date-button" @if(eventDate.getSpacesLeft == 0){disabled="disabled"} data-selected-time="@customUtils.Helpers.formatDate(theDate, "HH:mm")" data-selected-date="@customUtils.Helpers.formatDate(theDate, "yyyy-MM-dd")" data-selected-uuid="@eventDate.objectId">@Messages("event.button.select-date")</button>
                         </div>
