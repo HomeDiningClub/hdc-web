@@ -101,17 +101,17 @@ class LikeService @Inject()(val template: Neo4jTemplate,
 
   // Recipe
   def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Recipe): Option[UserCredentialLikeRecipe] = withTransaction(template){
-    template.fetch(currentUser.getHasLikedRecipes).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId) // TODO: Not working
+    likeRecipeRepository.findByuserWhoLikesAndUserLikes(currentUser.objectId.toString, hasLikedThis.objectId.toString).asScala.toList.headOption
   }
 
   // Event
   def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Event): Option[UserCredentialLikeEvent] = withTransaction(template){
-    template.fetch(currentUser.getHasLikedEvents).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId) // TODO: Not working
+    likeEventRepository.findByuserWhoLikesAndUserLikes(currentUser.objectId.toString, hasLikedThis.objectId.toString).asScala.toList.headOption
   }
 
   // UserCredential
   def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: UserCredential): Option[UserCredentialLikeUserCredential] = withTransaction(template){
-    template.fetch(currentUser.getHasLikedUsers).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId) // TODO: Not working
+    likeUserCredentialRepository.findByuserWhoLikesAndUserLikes(currentUser.objectId.toString, hasLikedThis.objectId.toString).asScala.toList.headOption
   }
 
 

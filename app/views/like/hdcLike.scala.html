@@ -7,7 +7,7 @@
         }
         case Some(cu) => {
             @if(likedEarlierDate.nonEmpty) {
-                <button class="btn-hdc-like btn-hdc-like-active popover-trigger pull-left" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-container="body" data-content="@Messages("like.already-liked.text")"><span class="hdc-like-icon"></span>&nbsp;@Messages("liked.text")</button>
+                <button class="btn-hdc-like btn-hdc-like-active popover-trigger pull-left" data-toggle="popover" data-trigger="focus" data-placement="top" data-container="body" data-content="@Messages("like.already-liked.text")"><span class="hdc-like-icon"></span>&nbsp;@Messages("liked.text")</button>
             }else {
                @if(userLikesForm.get.userLikesThisObjectId.nonEmpty) {
                    @helper.form(action = routes.LikeController.likeSubmit(), 'style -> "display:inline;"){
