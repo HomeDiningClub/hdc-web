@@ -1,23 +1,24 @@
 package controllers
 
 import java.util.UUID
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 import constants.FlashMsgConstants
 import enums.RoleEnums
-import models.{Event, UserCredential, Recipe}
+import models.{Event, Recipe, UserCredential}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
-import play.api.mvc.{AnyContent, RequestHeader, Controller}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.mvc.{AnyContent, Controller, RequestHeader}
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
-import services.{NodeEntityService, LikeService, RecipeService, UserCredentialService}
+import services._
 import customUtils.authorization.WithRole
+
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.LikeForm
@@ -25,20 +26,11 @@ import models.formdata.LikeForm
 class LikeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                 val userCredentialService: UserCredentialService,
                                 val recipeService: RecipeService,
+                                val eventService: EventService,
                                 val likeService: LikeService,
                                 implicit val nodeEntityService: NodeEntityService,
                                 val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
-  /*
-  @Autowired
-  private var userCredentialService : UserCredentialService = _
-
-  @Autowired
-  private var recipeService : RecipeService = _
-
-  @Autowired
-  private var likeService : LikeService = _
-*/
 
   // Rating form mapping
   val likeForm = Form(
@@ -147,6 +139,19 @@ class LikeController @Inject() (override implicit val env: SecureSocialRuntimeEn
                   request.remoteAddress)
               }
                 Redirect(routes.RecipePageController.viewRecipeByNameAndProfile(recipeToBeLiked.getOwnerProfile.profileLinkName, recipeToBeLiked.getLink))
+            }
+          case "event" =>
+            eventService.findById(UUID.fromString(formContent.userLikesThisObjectId)) match {
+              case None =>
+                BadRequest(views.html.like.likeErrorMsg.render(Messages("rating.add.error"), "error"))
+              case Some(eventToBeLiked) => {
+                likeService.likeEvent(
+                  currentUser,
+                  eventToBeLiked,
+                  formContent.likeValue,
+                  request.remoteAddress)
+              }
+                Redirect(routes.EventPageController.viewEventByNameAndProfile(eventToBeLiked.getOwnerProfile.profileLinkName, eventToBeLiked.getLink))
             }
           case _ =>
             Logger.error("Cannot accept post without proper Type")

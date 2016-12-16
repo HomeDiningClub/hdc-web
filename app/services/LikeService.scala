@@ -15,29 +15,14 @@ import traits.TransactionSupport
 
 import scala.collection.JavaConverters._
 
-//@Named
-//@Service
 class LikeService @Inject()(val template: Neo4jTemplate,
                             val userCredentialRepository: UserCredentialRepository,
                             val likeUserCredentialRepository: LikeUserCredentialRepository,
-                            val likeRecipeRepository: LikeRecipeRepository) extends TransactionSupport {
-
-/*
-  @Autowired
-  private var template: Neo4jTemplate = _
-
-  @Autowired
-  private var userCredentialRepository: UserCredentialRepository = _
-
-  @Autowired
-  private var likeUserCredentialRepository: LikeUserCredentialRepository = _
-
-  @Autowired
-  private var likeRecipeRepository: LikeRecipeRepository = _
-*/
+                            val likeRecipeRepository: LikeRecipeRepository,
+                            val likeEventRepository: LikeEventRepository
+                           ) extends TransactionSupport {
 
   // LikeUserCredential
-
   def findUserCredentialLikeUserCredentialById(objectId: java.util.UUID): UserCredentialLikeUserCredential = withTransaction(template){
     likeUserCredentialRepository.findByobjectId(objectId)
   }
@@ -105,31 +90,33 @@ class LikeService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+  def findUserCredentialLikeEventByUserWhoIsLikesAndUserLikes(user: UserCredential, event: Event): Option[List[UserCredentialLikeEvent]] = withTransaction(template){
+    likeEventRepository.findByuserWhoLikesAndUserLikes(user.objectId.toString, event.objectId.toString).iterator.asScala.toList match {
+      case Nil => None
+      case listOfItems => Some(listOfItems)
+    }
+  }
+
 
 
   // Recipe
-  // By using graphId we don't need to load all the relationships
-
   def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Recipe): Option[UserCredentialLikeRecipe] = withTransaction(template){
-    template.fetch(currentUser.getHasLikedRecipes).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
+    template.fetch(currentUser.getHasLikedRecipes).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId) // TODO: Not working
   }
 
   // Event
-
   def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: Event): Option[UserCredentialLikeEvent] = withTransaction(template){
-    template.fetch(currentUser.getHasLikedEvents).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
+    template.fetch(currentUser.getHasLikedEvents).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId) // TODO: Not working
   }
 
   // UserCredential
-
   def hasUserLikedThisBefore(currentUser: UserCredential, hasLikedThis: UserCredential): Option[UserCredentialLikeUserCredential] = withTransaction(template){
-    template.fetch(currentUser.getHasLikedUsers).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId)
+    template.fetch(currentUser.getHasLikedUsers).asScala.find(rel => rel.userLikes.graphId == hasLikedThis.graphId) // TODO: Not working
   }
 
 
 
   def likeUser(userLiking: UserCredential, userLikes: UserCredential, likeValue: Boolean, userLikeIP: String): UserCredentialLikeUserCredential = withTransaction(template){
-    //val item: UserCredentialLikeUserCredential = template.createRelationshipBetween(userLiking, userLikes, classOf[UserCredentialLikeUserCredential], RelationshipTypesScala.LIKES_USER.Constant, false)
 
     // Is there already a rating? Don't allow duplicates
     val item = this.findUserCredentialLikeUserCredentialByUserWhoIsLikesAndUserLikes(userLiking, userLikes) match {
@@ -144,7 +131,6 @@ class LikeService @Inject()(val template: Neo4jTemplate,
 
 
   def likeRecipe(userLiking: UserCredential, userLikes: Recipe, likeValue: Boolean, userLikeIP: String): UserCredentialLikeRecipe = withTransaction(template){
-    //val item: UserCredentialLikeRecipe = template.createRelationshipBetween(userLiking, userLikes, classOf[UserCredentialLikeRecipe], RelationshipTypesScala.LIKES_RECIPE.Constant, false)
 
     // Is there already a rating? Don't allow duplicates
     val item = this.findUserCredentialLikeRecipeByUserWhoIsLikesAndUserLikes(userLiking, userLikes) match {
@@ -157,6 +143,18 @@ class LikeService @Inject()(val template: Neo4jTemplate,
     this.saveRecipeLike(item)
   }
 
+  def likeEvent(userLiking: UserCredential, userLikes: Event, likeValue: Boolean, userLikeIP: String): UserCredentialLikeEvent = withTransaction(template){
+
+    // Is there already a rating? Don't allow duplicates
+    val item = this.findUserCredentialLikeEventByUserWhoIsLikesAndUserLikes(userLiking, userLikes) match {
+      case None =>
+        new UserCredentialLikeEvent
+      case Some(likes) =>
+        likes.head
+    }
+    item.like(userLiking, userLikes, likeValue, userLikeIP)
+    this.saveEventLike(item)
+  }
 
 
 
@@ -191,6 +189,11 @@ class LikeService @Inject()(val template: Neo4jTemplate,
 
   def saveRecipeLike(newItem: UserCredentialLikeRecipe): UserCredentialLikeRecipe = withTransaction(template){
     val newResult = likeRecipeRepository.save(newItem)
+    newResult
+  }
+
+  def saveEventLike(newItem: UserCredentialLikeEvent): UserCredentialLikeEvent = withTransaction(template){
+    val newResult = likeEventRepository.save(newItem)
     newResult
   }
 

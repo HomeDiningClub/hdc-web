@@ -125,24 +125,6 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
         return retString;
     }
 
-//    Messages
-    //@RelatedTo(type = RelationshipTypesJava.MESSAGE.Constant, direction = Direction.BOTH)
-    //public Set<Message> messages;
-
-/*
-    @Fetch
-    public Set<Message> getMessages() {
-        if (messages == null)
-            this.messages = new HashSet<>();
-
-        return this.messages;
-    }
-
-    public void setMessages(Set<Message> messages) {
-        this.messages = messages;
-    }
-
-*/
     // Verify the object owner
     @Transient
     public Boolean isEditableBy(UUID objectId){
@@ -181,7 +163,6 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
     }
 
     // Like
-    @Fetch
     public Set<UserCredentialLikeUserCredential> getLikes() {
         if(this.likes == null)
             this.likes = new HashSet<>();
@@ -189,7 +170,6 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
         return this.likes;
     }
 
-    @Fetch
     public Set<UserCredentialLikeUserCredential> getHasLikedUsers() {
         if(this.hasLikedUsers == null)
             this.hasLikedUsers = new HashSet<>();
@@ -197,7 +177,6 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
         return this.hasLikedUsers;
     }
 
-    @Fetch
     public Set<UserCredentialLikeRecipe> getHasLikedRecipes() {
         if(this.hasLikedRecipes == null)
             this.hasLikedRecipes = new HashSet<>();
@@ -205,7 +184,6 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
         return this.hasLikedRecipes;
     }
 
-    @Fetch
     public Set<UserCredentialLikeEvent> getHasLikedEvents() {
         if(this.hasLikedEvents == null)
             this.hasLikedEvents = new HashSet<>();
@@ -239,7 +217,6 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
         return this.ratings;
     }
 
-    @Fetch
     public Set<RatesUserCredential> getHasRatedUsers() {
         if(this.hasRatedUsers == null)
             this.hasRatedUsers = new HashSet<>();
@@ -247,7 +224,6 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
         return this.hasRatedUsers;
     }
 
-    @Fetch
     public Set<RatesRecipe> getHasRatedRecipes() {
         if(this.hasRatedRecipes == null)
             this.hasRatedRecipes = new HashSet<>();
