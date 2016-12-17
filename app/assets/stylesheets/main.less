@@ -928,15 +928,6 @@ input[type="reset"]:hover
   color: @hdc-gray;
   font-size:1.2em;
 }
-.event-share-box {
-  background-color: @hdc-light-gray;
-  border:1px solid @hdc-semi-light-gray;
-  border-radius: 5px;
-  display: block;
-  overflow:hidden;
-  padding:0 10px;
-  margin:20px 0;
-}
 .event-booking-col {
   padding-left:5px;
   padding-right:5px;
@@ -1625,10 +1616,11 @@ input[type="reset"]:hover
   color:@hdc-black;
   line-height:2em;
   padding:4px 10px 4px 10px;
-  /*padding:11px;*/
   border:1px solid @hdc-semi-light-gray;
   border-radius: 13px;
   background-color: @hdc-white;
+  margin-top:0;
+  margin-bottom:0;
 }
 .hdc-like-icon
 {
@@ -1640,7 +1632,7 @@ input[type="reset"]:hover
   background-image:url('/assets/images/icons/hdc-like-60x26.png');
   background-repeat: no-repeat;
   background-position: 0px 0px;
-  margin:0px 8px 0px 0px;
+  margin:0px 3px 0px 0px;
   padding:0px;
   float:left;
 }
@@ -1702,10 +1694,20 @@ input[type="reset"]:hover
   margin-top:20px;
 }
 
-// Facebook like
-.fb-like {
-  padding:19px 10px 5px 10px;
+// Sharing
+.share-box {
+  background-color: @hdc-light-gray;
+  border:1px solid @hdc-semi-light-gray;
+  border-radius: 5px;
+  display: block;
+  overflow:hidden;
+  padding:10px;
+  margin:20px 0;
+}
 
+// Facebook like
+.hdc-fb-like {
+  padding:9px;
 }
 
 // Favorite
@@ -1721,9 +1723,14 @@ input[type="reset"]:hover
   margin-bottom:15px;
 }
 .btn-favorite {
+  color:@hdc-black;
   line-height:2em;
-  padding:4px 5px 4px 10px;
-  border:none;
+  padding:4px 10px 4px 10px;
+  border:1px solid @hdc-semi-light-gray;
+  border-radius: 13px;
+  background-color: @hdc-white;
+  margin-top:0;
+  margin-bottom:0;
 }
 .btn-favorite-active .glyphicon {
   color:@hdc-orange;

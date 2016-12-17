@@ -1,6 +1,6 @@
 @(userProfile: UserProfile)(implicit messages: Messages)
 
 <div id="afrf-wrapper" class="btn-group-likes" data-owner-id="@userProfile.getOwner().objectId">
-  <a id="af" class="btn btn-default btn-favorite" title="@Messages("favorite.add.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.add.text")</a>
-  <a id="rf" class="btn btn-default btn-favorite btn-favorite-active" title="@Messages("favorite.remove.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.remove.text")</a>
+  <button id="af" class="btn btn-favorite" title="@Messages("favorite.add.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.add.text")</button>
+  <button id="rf" class="btn btn-favorite btn-favorite-active" title="@Messages("favorite.remove.title")"><span class="glyphicon glyphicon-paperclip"></span>&nbsp;&nbsp;@Messages("favorite.remove.text")</button>
 </div>

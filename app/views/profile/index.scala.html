@@ -102,9 +102,11 @@
                                 @*  Share / Like / Fav *@
                                 <div class="row">
                                     <div class="col-xs-12">
-                                        @views.html.profile.profileFavorite(model.userProfile)
-                                        @model.userLikeForm
-                                        @shared.fbShare(model.shareUrl)
+                                        <div class="share-box">
+                                            @views.html.profile.profileFavorite(model.userProfile)
+                                            @model.userLikeForm
+                                            @shared.fbShare(model.shareUrl)
+                                        </div>
                                     </div>
                                 </div>
 

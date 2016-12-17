@@ -80,9 +80,10 @@
                         }
 
                         <div class="col-xs-12 margin-top">
-                            @*LikeController.renderRecipeLikeForm(recipe, currentUser)*@
-                            @recipeLikeForm
-                            @shared.fbShare(url = shareUrl)
+                            <div class="share-box">
+                                @recipeLikeForm
+                                @shared.fbShare(url = shareUrl)
+                            </div>
                         </div>
                     </div>
 
