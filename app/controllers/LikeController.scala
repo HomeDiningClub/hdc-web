@@ -80,7 +80,8 @@ class LikeController @Inject() (override implicit val env: SecureSocialRuntimeEn
   }
 
   def renderUserLikeForm(userToBeLiked: UserCredential, currentUser: Option[UserCredential])(implicit request: RequestHeader): Html = {
-    currentUser match {
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = currentUser match {
       case None =>
         views.html.like.hdcLike.render(likeForm, None, userToBeLiked.getNrOfLikes, None, request2Messages)
       case Some(cu) =>
@@ -95,6 +96,8 @@ class LikeController @Inject() (override implicit val env: SecureSocialRuntimeEn
             views.html.like.hdcLike.render(likeForm, Some(relation.getLastModifiedDate), userToBeLiked.getNrOfLikes, Some(cu), request2Messages)
         }
     }
+    customUtils.Helpers.endPerfLog("rateUserLikeForm", perf)
+    r
   }
 
 

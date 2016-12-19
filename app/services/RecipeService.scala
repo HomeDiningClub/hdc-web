@@ -119,8 +119,10 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
 
 
   def getRecipeBoxes(user: UserCredential): Option[List[RecipeBox]] = withTransaction(template){
-    // Without paging
-    this.getRecipeBoxesPage(user, 0)
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = this.getRecipeBoxesPage(user, 0)
+    customUtils.Helpers.endPerfLog("recipeBox", perf)
+    r
   }
 
 

@@ -134,21 +134,27 @@ class EventService @Inject()(val template: Neo4jTemplate,
   }
 
   def getBookingsMadeToMyEvents(user: UserCredential, baseUrl: String): Option[List[EventBookingSuccess]] = {
-    this.findAllBookedDatesInAllEventsForOwner(user) match {
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = this.findAllBookedDatesInAllEventsForOwner(user) match {
       case None => None
       case Some(items) => Some(items.map { booking =>
         mapEventBookingToEventBookingSuccess(booking, baseUrl)
       })
     }
+    customUtils.Helpers.endPerfLog("bookingsToMeEvents", perf)
+    r
   }
 
   def getBookingsMadeByMe(user: UserCredential, baseUrl: String): Option[List[EventBookingSuccess]] = {
-    this.findBookedDatesByUserWhoBooked(user) match {
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = this.findBookedDatesByUserWhoBooked(user) match {
       case None => None
       case Some(items) => Some(items.map { booking =>
         mapEventBookingToEventBookingSuccess(booking, baseUrl)
       })
     }
+    customUtils.Helpers.endPerfLog("bookingsMadeByMe", perf)
+    r
   }
 
 
@@ -762,8 +768,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
   //endregion
 
   def getEventBoxes(user: UserCredential): Option[List[EventBox]] = withTransaction(template){
-    // Without paging
-    this.getEventBoxes(user, 0)
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = this.getEventBoxes(user, 0)
+    customUtils.Helpers.endPerfLog("eventBox", perf)
+    r
   }
 
   def getEventBoxes(user: UserCredential, pageNo: Integer): Option[List[EventBox]] = withTransaction(template){

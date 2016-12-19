@@ -23,5 +23,7 @@ case class ProfilePageModel(userProfile: models.UserProfile,
                             favorites: Option[Html] = None,
                             visMemberCount: Option[Int],
                             visUnknownCount: Option[Int],
-                            blogPostsCount: Int) {
+                            blogPostsCount: Int,
+                            userCredentialAverageRating: Int,
+                            userCredentialNrOfTotalRatings: Int) {
 }

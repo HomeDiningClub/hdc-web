@@ -135,24 +135,24 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
     }
 
     // Rating - average
-    public int getAverageRating() {
+/*    public int getAverageRating() {
         int sumOfRatingValues = 0, count = 0;
         for (RatesUserCredential rating : this.getRatings()) {
             sumOfRatingValues += rating.ratingValue;
             count++;
         }
         return count == 0 ? 0 : sumOfRatingValues / count;
-    }
+    }*/
 
     // Rating count
-    public int getNrOfRatings() {
+/*    public int getNrOfRatings() {
         int count = 0;
 
         if(this.getRatings() != null)
             count = this.getRatings().size();
 
         return count;
-    }
+    }*/
 
     // Getter & setters
     public void addRating(RatesUserCredential ratingToAdd) {
@@ -209,7 +209,6 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
         this.likes.add(likeToAdd);
     }
 
-    @Fetch
     public Set<RatesUserCredential> getRatings() {
         if(this.ratings == null)
             this.ratings = new HashSet<>();

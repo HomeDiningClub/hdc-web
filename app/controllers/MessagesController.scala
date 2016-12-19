@@ -219,7 +219,8 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
 
 
   def renderHostForm(hostingUser: UserCredential, currentUser: Option[UserCredential])(implicit request: RequestHeader) = {
-    currentUser match {
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = currentUser match {
       case None =>
         views.html.host.hostNotLoggedIn()
       case Some(cu) =>
@@ -238,6 +239,8 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
           views.html.host.applyHost.render(messageFormMapping.fill(host), Some(hostingUser), Some(cu), request2Messages)
         }
     }
+    customUtils.Helpers.endPerfLog("hostForm", perf)
+    r
   }
 
 

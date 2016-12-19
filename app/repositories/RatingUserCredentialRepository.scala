@@ -48,4 +48,8 @@ trait RatingUserCredentialRepository extends GraphRepository[RatesUserCredential
   @Query("MATCH ()-[r:`RATED_USER`]->() RETURN COUNT(r)")
   def getCountOfAll(): Int
 
+  @Query("MATCH (uc:`UserCredential`)<-[r:`RATED_USER`]-(:`UserCredential`) WHERE uc.objectId={0} RETURN COUNT(r)")
+  def getCountOfAllMemberRatingsForUser(userCredObjectId: String): Int
+
+
 }

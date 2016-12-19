@@ -8,11 +8,9 @@ import java.util
 
 trait UserCredentialRepository extends GraphRepository[UserCredential] {
 
-  // Auto-mapped by Spring
   @Query("MATCH (n:`UserCredential`) WHERE n.objectId={0} RETURN n")
   def findByobjectId(objectId: UUID): UserCredential
 
-  //def findByuserIdAndproviderId(userId : String, providerId: String) : UserCredential
   @Query("MATCH (n:`UserCredential`) WHERE n.userId={0} AND n.providerId={1} RETURN n")
   def findByuserIdAndProviderId(userId : String, providerId: String) : UserCredential
 
@@ -28,8 +26,8 @@ trait UserCredentialRepository extends GraphRepository[UserCredential] {
   def findByratingsUserRates(userRates: UserCredential): util.List[UserCredential]
   def findByratingsRatingValue(ratingValue: Int): util.List[UserCredential]
 
-  @Query("start up=node:UserCredential(email={0}) return up")
-  def getUserCredentials(email: String ): Array[UserCredential]
+  @Query("OPTIONAL MATCH (uc:`UserCredential`)<-[r:`RATED_USER`]-(:`UserCredential`) WHERE uc.objectId={0} WITH AVG(r.ratingValue) as AverageRating RETURN CASE WHEN AverageRating IS NULL THEN 0 ELSE AverageRating END")
+  def getAverageRatingForUser(userCredObjectId: String): Int
 
   @Query("MATCH (n:`UserCredential`) RETURN COUNT(*)")
   def getCountOfAll(): Int

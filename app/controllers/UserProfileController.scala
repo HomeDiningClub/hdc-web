@@ -209,6 +209,8 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
           visMemberCount <- Future(if (myProfile) Some(userProfileService.countViewsByMember(profile)) else None)
           visUnknownCount <- Future(if (myProfile) Some(userProfileService.countViewsByUnknown(profile)) else None)
           blogPostsCount <- Future(blogPostsService.countBlogPostsForUser(profile))
+          userCredentialAverageRating <- Future(ratingService.getAverageRatingForUser(profile.getOwner.objectId))
+          userCredentialNrOfTotalRatings <- Future(ratingService.getCountOfAllMemberRatingsForUser(profile.getOwner.objectId))
 
         } yield (recipeBoxes,
           eventBoxes,
@@ -228,16 +230,14 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
           favorites,
           visMemberCount,
           visUnknownCount,
-          blogPostsCount
+          blogPostsCount,
+          userCredentialAverageRating,
+          userCredentialNrOfTotalRatings
           )
 
         // Should the event be registered or not
-        val doCountEvent: Boolean = true
-
-        if (doCountEvent) {
-          doDebugLogViewOfUserProfile(request, profile)
-          doLogViewOfUserProfile(request, profile)
-        }
+        doDebugLogViewOfUserProfile(request, profile)
+        doLogViewOfUserProfile(request, profile)
 
         val res = Await.result(dataAsync, Duration.Inf)
         customUtils.Helpers.endPerfLog("Profile:(" + profile.profileLinkName + ") - Loading time: ", perf)
@@ -264,7 +264,9 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
           favorites = res._16,
           visMemberCount = res._17,
           visUnknownCount = res._18,
-          blogPostsCount = res._19
+          blogPostsCount = res._19,
+          userCredentialAverageRating = res._20,
+          userCredentialNrOfTotalRatings = res._21
         )
 
         Ok(views.html.profile.index(model))
@@ -401,18 +403,26 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
   }
 
   private def createShareUrl(profile: UserProfile): String = {
-    routes.UserProfileController.viewProfileByName(profile.profileLinkName).url + "?ts=" + Helpers.getDateForSharing(profile)
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = routes.UserProfileController.viewProfileByName(profile.profileLinkName).url + "?ts=" + Helpers.getDateForSharing(profile)
+    customUtils.Helpers.endPerfLog("shareUrl", perf)
+    r
   }
 
 
   private def buildMessageList(uc: UserCredential): Option[List[ReplyToGuestMessage]] = {
-    messagesController.createListOfMessages(messageService.findIncomingMessagesForUser(uc), uc)
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = messagesController.createListOfMessages(messageService.findIncomingMessagesForUser(uc), uc)
+    customUtils.Helpers.endPerfLog("messageList", perf)
+    r
   }
 
   private def buildMetaData(profile: UserProfile, request: RequestHeader): Option[MetaData] = {
+
     val domain = "//" + request.domain
 
-    Some(MetaData(
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = Some(MetaData(
       fbUrl = domain + request.path,
       fbTitle = Messages("profile.title", profile.profileLinkName),
       fbDesc = profile.aboutMe match {
@@ -434,6 +444,8 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
         }
       }
     ))
+    customUtils.Helpers.endPerfLog("metaData", perf)
+    r
   }
 
   /** **************************************************************************************************

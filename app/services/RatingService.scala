@@ -68,6 +68,9 @@ class RatingService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+  def getAverageRatingForUser(userCredentialObjectId: UUID): Int = withTransaction(template){
+    userCredentialRepository.getAverageRatingForUser(userCredentialObjectId.toString)
+  }
   
   def getCountOfAll: Int = withTransaction(template){
     getCountOfAllMemberRatings + getCountOfAllRecipesRatings
@@ -78,10 +81,15 @@ class RatingService @Inject()(val template: Neo4jTemplate,
     ratingRecipeRepository.getCountOfAll()
   }
 
-  
+
   def getCountOfAllMemberRatings: Int = withTransaction(template){
     ratingUserCredentialRepository.getCountOfAll()
   }
+
+  def getCountOfAllMemberRatingsForUser(userCredentialObjectId: UUID): Int = withTransaction(template){
+    ratingUserCredentialRepository.getCountOfAllMemberRatingsForUser(userCredentialObjectId.toString)
+  }
+
 
 
   // RatingRecipe
@@ -163,34 +171,46 @@ class RatingService @Inject()(val template: Neo4jTemplate,
 
   
   def getMyUserReviews(user: UserCredential): Option[List[ReviewBox]] = withTransaction(template){
-    this.findUserRatingByUserWhoIsRating(user) match {
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = this.findUserRatingByUserWhoIsRating(user) match {
       case None => None
       case Some(items) => buildUserReviewBoxes(items)
     }
+    customUtils.Helpers.endPerfLog("urMyReviews", perf)
+    r
   }
 
   
   def getUserReviewsAboutMe(user: UserCredential): Option[List[ReviewBox]] = withTransaction(template){
-    this.findUserRatingByWhoGotRated(user) match {
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = this.findUserRatingByWhoGotRated(user) match {
       case None => None
       case Some(items) => buildUserReviewBoxes(items)
     }
+    customUtils.Helpers.endPerfLog("urAboutMe", perf)
+    r
   }
 
   
   def getMyUserReviewsAboutFood(user: UserCredential): Option[List[ReviewBox]] = withTransaction(template){
-    this.findRecipeRatingByUserWhoIsRating(user) match {
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = this.findRecipeRatingByUserWhoIsRating(user) match {
       case None => None
       case Some(items) => buildRecipeReviewBoxes(items)
     }
+    customUtils.Helpers.endPerfLog("urAboutFood", perf)
+    r
   }
 
   
   def getUserReviewsAboutMyFood(user: UserCredential): Option[List[ReviewBox]] = withTransaction(template){
-    this.findRecipeRatingsByRecipeOwner(user) match {
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = this.findRecipeRatingsByRecipeOwner(user) match {
       case None => None
       case Some(items) => buildRecipeReviewBoxes(items)
     }
+    customUtils.Helpers.endPerfLog("urAboutMyFood", perf)
+    r
   }
 
 

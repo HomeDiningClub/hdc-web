@@ -81,7 +81,7 @@
                                         <h1 class="hidden">@model.userProfile.profileLinkName</h1>
                                         <h2>@if(model.userProfile.aboutMeHeadline.isEmpty){ @model.userProfile.profileLinkName } else { @model.userProfile.aboutMeHeadline }</h2>
 
-                                        @shared.grade(inputId = "host-grade", initialValue = model.userProfile.getOwner.getAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = model.userProfile.getOwner.getNrOfRatings)
+                                        @shared.grade(inputId = "host-grade", initialValue = model.userCredentialAverageRating, size = "xs", cssClass = "hdc-grade-pull-left pull-left", disabled = true, showCaption = false, showNrOfRatings = true, nrOfRatings = model.userCredentialNrOfTotalRatings)
                                         @if(!model.isThisMyProfile) {
                                             @model.userRateForm
                                         }

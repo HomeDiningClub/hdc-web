@@ -76,11 +76,17 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
   }
 
   def countViewsByUnknown(userP: UserProfile): Int = {
-    viewedByUnKnownRepository.countViewsByUnknown(userP.objectId.toString)
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = viewedByUnKnownRepository.countViewsByUnknown(userP.objectId.toString)
+    customUtils.Helpers.endPerfLog("countViewsByUnknown", perf)
+    r
   }
 
   def countViewsByMember(userP: UserProfile): Int = {
-    viewedByMemberRepository.countViewsByMember(userP.objectId.toString)
+    val perf = customUtils.Helpers.startPerfLog()
+    val r = viewedByMemberRepository.countViewsByMember(userP.objectId.toString)
+    customUtils.Helpers.endPerfLog("countViewsByMember", perf)
+    r
   }
 
   def saveUserProfile(userProfile: models.UserProfile): models.UserProfile = withTransaction(template) {

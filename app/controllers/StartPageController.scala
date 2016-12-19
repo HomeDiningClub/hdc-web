@@ -139,7 +139,7 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
               case null => None
               case image => Some(routes.ImageController.userThumb(image.getStoreId).url)
             },
-            userRating = userProfile.getOwner.getAverageRating,
+            userRating = ratingService.getAverageRatingForUser(userProfile.getOwner.objectId), //.getAverageRating,
             isHost = userProfile.isUserHost
           )
       })

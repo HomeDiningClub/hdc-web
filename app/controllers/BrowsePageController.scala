@@ -239,7 +239,7 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
             case null => None
             case image => Some(routes.ImageController.userThumb(image.getStoreId).url)
           },
-          userRating = userProfile.getOwner.getAverageRating,
+          userRating = ratingService.getAverageRatingForUser(userProfile.getOwner.objectId),
           isHost = userProfile.isUserHost
         )
     }
