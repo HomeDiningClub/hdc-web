@@ -2,16 +2,18 @@ package services
 
 import _root_.java.util.UUID
 import javax.inject.Inject
+
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.cache.Cache
 import play.api.Play.current
-import models.profile.{TaggedUserProfile, TagWord}
-import repositories.TagWordRepository
+import models.profile.{TagWord, TaggedUserProfile}
+import repositories.{TagWordRepository, TaggedUserProfileRepository}
 import traits.TransactionSupport
+
 import scala.collection.JavaConverters._
 import models.UserProfile
 
@@ -20,6 +22,7 @@ import scala.collection.mutable
 //@Service
 class TagWordService @Inject() (val template: Neo4jTemplate,
                                 val tagWordRepository: TagWordRepository,
+                                val taggedUserProfileRepository: TaggedUserProfileRepository,
                                 val messagesApi: MessagesApi) extends I18nSupport with TransactionSupport {
 
   val tagWordCacheKey = "tagWord."
@@ -81,8 +84,13 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
       Some(returnList)
   }
 
-  def findByProfileAndGroup(profile: UserProfile, groupName: String): Option[List[TagWord]] = withTransaction(template){
+  def findByProfileAndGroup(profile: UserProfile, groupName: String): Option[List[String]] = withTransaction(template){
     val perf = customUtils.Helpers.startPerfLog()
+    val r = taggedUserProfileRepository.findTagWordsTaggedByUserProfile(profile.objectId.toString, groupName).asScala.toList match {
+      case Nil => None
+      case items => Some(items)
+    }
+    /*
     val r = profile.getTags.asScala.filter(tag => tag.tagWord.tagGroupName.equalsIgnoreCase(groupName)).toList match {
       case null | Nil => None
       case tags => Some(tags.map {
@@ -90,6 +98,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
           tup.tagWord
       })
     }
+    */
     customUtils.Helpers.endPerfLog("findByProfileAndGroup", perf)
     r
   }

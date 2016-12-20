@@ -1,4 +1,4 @@
-@(listOfTags: Option[List[models.profile.TagWord]], userName: String)(implicit messages: Messages)
+@(listOfTags: Option[List[String]], userName: String)(implicit messages: Messages)
 
 @if(listOfTags.isDefined) {
     <div class="row">
@@ -6,7 +6,7 @@
             <div class="tag-header"><strong>@Messages("profile.tags.header", userName)</strong></div>
         </div>
         @for(tag <- listOfTags.get){
-            <div class="col-xs-6 tag"><span class="glyphicon glyphicon-tag"></span>&nbsp;@tag.tagName</div>
+            <div class="col-xs-6 tag"><span class="glyphicon glyphicon-tag"></span>&nbsp;@tag</div>
         }
     </div>
 }
