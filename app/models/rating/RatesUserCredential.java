@@ -11,18 +11,20 @@ import org.springframework.data.neo4j.annotation.StartNode;
 public class RatesUserCredential extends BaseRating {
 
     @StartNode
-    @Fetch
     public UserCredential userWhoIsRating;
 
     @EndNode
-    @Fetch
     public UserCredential userRates;
 
     public UserCredential getUserWhoIsRating() {
+        if(userWhoIsRating == null)
+            throw new NullPointerException("getUserWhoIsRating() in RatesUserCredential is null, you need to @Fetch");
         return this.userWhoIsRating;
     }
 
     public UserCredential getUserRates() {
+        if(userRates == null)
+            throw new NullPointerException("getUserRates() in RatesUserCredential is null, you need to @Fetch");
         return this.userRates;
     }
 
