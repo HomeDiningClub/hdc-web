@@ -8,14 +8,17 @@ import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
 
 @RelationshipEntity(type = "TAGGED_ON")
-public class TaggedUserProfile  extends AbstractEntity {
+public class TaggedUserProfile extends AbstractEntity {
 
-    @Fetch @StartNode   public UserProfile userProfile;
-    @Fetch @EndNode     public TagWord     tagWord;
+    @StartNode
+    public UserProfile userProfile;
+
+    @EndNode
+    public TagWord tagWord;
 
     public TaggedUserProfile(UserProfile userProfile, TagWord tagWord) {
-        this.userProfile    = userProfile;
-        this.tagWord        = tagWord;
+        this.userProfile = userProfile;
+        this.tagWord = tagWord;
     }
 
     public TaggedUserProfile() {

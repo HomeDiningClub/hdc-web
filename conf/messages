@@ -109,7 +109,7 @@ startpage.main.browse.link.text=Se fler medlemmar
 startpage.main.browse-event.link.text=Se fler Dines
 
 startpage.boxes.not-found=Kunde inte hitta något som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
-startpage.boxes.location=<em>Finns i {0}</em>
+startpage.boxes.location=<em>{0}</em>
 
 startpage.reviews.users.header=Omdömen om värdar
 startpage.reviews.recipes.header=Omdömen om recept
@@ -161,7 +161,7 @@ news.header=Nyheter
 browse.profiles.title=Bläddra medlemmar
 browse.events.title=Bläddra Dines
 browse.boxes.not-found=Kunde inte hitta något som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
-browse.boxes.location=<em>Finns i {0}</em>
+browse.boxes.location=<em>{0}</em>
 
 
 # Form used by Startpage and Browse members
