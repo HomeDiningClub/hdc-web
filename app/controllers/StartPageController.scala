@@ -109,9 +109,15 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
     val pagedUserProfiles = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost, pageNo = Some(0), nrPerPage = maxNr).right.get
     customUtils.Helpers.endPerfLog("getData: ", perf)
 
+    // Convert paged to list
     val userProfiles = pagedUserProfiles match {
       case None => None
-      case Some(d) => Some(d.getContent.asScala.toList)
+      case Some(d) =>
+        if(d.hasContent) {
+          Some(d.getContent.asScala.toList)
+        }else {
+          None
+        }
     }
 
     perf = customUtils.Helpers.startPerfLog()
