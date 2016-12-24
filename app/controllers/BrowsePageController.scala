@@ -5,7 +5,7 @@ import javax.inject.{Inject, Named}
 
 import customUtils.Helpers
 import models.event.EventData
-import models.UserProfile
+import models.{UserProfile, UserProfileData}
 import models.location.County
 import models.profile.TagWord
 import models.viewmodels.{BrowseEventBox, BrowseProfileBox}
@@ -20,6 +20,7 @@ import services._
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.SearchFilterForm
+import models.modelconstants.UserLevelScala
 import play.api.Environment
 
 class BrowsePageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
@@ -105,13 +106,13 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
 
     // Get items
     val isHost = boxFilterIsHost
-    val listOfBoxes: Option[Page[UserProfile]] = getBrowseProfileBoxesPaged(boxFilterTag, boxFilterCounty, isHost, page)
+    val listOfBoxes: Option[Page[UserProfileData]] = getBrowseProfileBoxesPaged(boxFilterTag, boxFilterCounty, isHost, page)
 
     listOfBoxes match {
       case Some(list) =>
         if (list.hasContent) {
           // First fetch the list of items
-          var returnString: String = views.html.browse.browseProfileBox.render(boxes = buildProfileBoxes(list.asScala.toList), messages = request2Messages).toString
+          var returnString: String = views.html.browse.browseProfileBox.render(boxes = userProfileService.buildProfileBoxes(Option(list.asScala.toList)), messages = request2Messages).toString
           // Attach pagination if more then one page
           if (list.getTotalPages > 1) {
             returnString += views.html.shared.pagination.render(jsMethodName = "getBoxesAsJSON", hasNext = list.hasNext, hasPrev = list.hasPrevious, currentPage = page, totalCount = list.getTotalElements, totalPages = list.getTotalPages, messages = request2Messages).toString
@@ -125,11 +126,11 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
     }
   }
 
-  private def getBrowseProfileBoxesPaged(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, pageNo: Int): Option[Page[UserProfile]] = {
+  private def getBrowseProfileBoxesPaged(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, pageNo: Int): Option[Page[UserProfileData]] = {
     userProfileService.getUserProfilesFiltered(filterTag = fetchTag(boxFilterTag), filterCounty = fetchCounty(boxFilterCounty), filterIsHost = boxFilterIsHost, Some(pageNo), 12).right.get
   }
 
-  private def getBrowseProfileBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean): Option[List[UserProfile]] = {
+  private def getBrowseProfileBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean): Option[List[UserProfileData]] = {
     userProfileService.getUserProfilesFiltered(filterTag = fetchTag(boxFilterTag), filterCounty = fetchCounty(boxFilterCounty), filterIsHost = boxFilterIsHost).left.get
   }
 
@@ -160,8 +161,6 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
   }
 
   private def buildEventBoxes(list: List[EventData]): List[BrowseEventBox] = {
-
-
 
     list.map {
       evtData: EventData =>
@@ -194,7 +193,6 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
           objectId = Some(UUID.fromString(evtData.getobjectId())),
           linkToEvent = linkToEvent,
           eventName = evtData.getName(),
-          location = location,
           mainBody = evtData.getpreAmble() match {
             case "" | null =>
               var retBody = Helpers.removeHtmlTags(evtData.getMainBody())
@@ -210,37 +208,13 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
           price = evtData.getPrice() match {
             case null => 0
             case p => p.toInt
-          }
-        )
-    }
-  }
+          },
+          location = location,
+          eventBoxCount = 0,
+          hasNext = false,
+          hasPrevious = false,
+          totalPages = 0
 
-
-  private def buildProfileBoxes(list: List[UserProfile]): List[BrowseProfileBox] = {
-    list.map {
-      userProfile: UserProfile =>
-        BrowseProfileBox(
-          objectId = Some(userProfile.objectId),
-          linkToProfile = userProfile.profileLinkName match {
-            case null => ""
-            case pfName => routes.UserProfileController.viewProfileByName(pfName).url
-          },
-          fullName = userProfile.profileLinkName,
-          location = userProfile.getLocations.asScala.headOption match {
-            case None => None
-            case Some(countyTag) => Some(countyTag.county.name)
-          },
-          mainBody = None,
-          mainImage = userProfile.getMainImage match {
-            case null => None
-            case image => Some(routes.ImageController.profileBox(image.getStoreId).url)
-          },
-          userImage = userProfile.getAvatarImage match {
-            case null => None
-            case image => Some(routes.ImageController.userThumb(image.getStoreId).url)
-          },
-          userRating = ratingService.getAverageRatingForUser(userProfile.getOwner.objectId),
-          isHost = userProfile.isUserHost
         )
     }
   }

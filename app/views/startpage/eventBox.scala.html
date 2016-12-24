@@ -1,7 +1,7 @@
-@(boxes: List[models.viewmodels.EventBox] = Nil)(implicit messages: Messages)
+@(boxes: List[models.viewmodels.BrowseEventBox] = Nil)(implicit messages: Messages)
 
 @if(boxes.nonEmpty) {
-    @for(box: models.viewmodels.EventBox <- boxes){
+    @for(box: models.viewmodels.BrowseEventBox <- boxes){
 
         <div class="col-xs-12 col-sm-6 col-md-4">
             <a href="@box.linkToEvent">
@@ -9,7 +9,7 @@
                 <div class="thumbnail panel-startpage hover-green-dropshadow" @Html(mainImage)>
                     <div class="body">
                         @shared.hostImageCircle(box.userImage.getOrElse(""),cssClassWrapper = "white-border drop-shadow")
-                        <h2>@box.name</h2>
+                        <h2>@box.eventName</h2>
                         <hr>
                         @if(box.location.nonEmpty) {
                             <p class="location">@Html(Messages("startpage.boxes.location", box.location.get))</p>

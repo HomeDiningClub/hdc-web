@@ -643,8 +643,8 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
 
   //region Mappings
-  def mapEventDataToEventBox(list: Page[EventData]): Option[List[EventBox]] = {
-    var eventList : ListBuffer[EventBox] = new ListBuffer[EventBox]
+  def mapEventDataToEventBox(list: Page[EventData]): Option[List[BrowseEventBox]] = {
+    var eventList : ListBuffer[BrowseEventBox] = new ListBuffer[BrowseEventBox]
 
     for(evtData <- list.asScala){
 
@@ -682,7 +682,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
       }
 
       // Build return-list
-      var event = EventBox(
+      var event = BrowseEventBox(
         Some(UUID.fromString(evtData.getobjectId())),
         linkToEvent,
         evtData.getName(),
@@ -700,7 +700,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
         userImage,
         evtData.getPrice() match {
           case null => 0
-          case p => p
+          case p => p.toInt
         },
         location,
         //ratingValue,
@@ -712,7 +712,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
       eventList += event
     }
 
-    val returnBoxes: List[EventBox] = eventList.toList
+    val returnBoxes: List[BrowseEventBox] = eventList.toList
 
     if(returnBoxes.isEmpty)
       None
@@ -767,17 +767,20 @@ class EventService @Inject()(val template: Neo4jTemplate,
   }
   //endregion
 
-  def getEventBoxes(user: UserCredential): Option[List[EventBox]] = withTransaction(template){
+  def getEventBoxes(user: UserCredential): Option[List[BrowseEventBox]] = withTransaction(template){
     val perf = customUtils.Helpers.startPerfLog()
     val r = this.getEventBoxes(user, 0)
     customUtils.Helpers.endPerfLog("eventBox", perf)
     r
   }
 
-  def getEventBoxes(user: UserCredential, pageNo: Integer): Option[List[EventBox]] = withTransaction(template){
+  def getEventBoxes(user: UserCredential, pageNo: Integer): Option[List[BrowseEventBox]] = withTransaction(template){
+    val perf = customUtils.Helpers.startPerfLog()
     // With paging - 0 current page, 6 number of items for each page
     val pagedListJava = eventRepository.findEvents(user.objectId.toString, new PageRequest(pageNo, 6))
-    mapEventDataToEventBox(pagedListJava)
+    val r = mapEventDataToEventBox(pagedListJava)
+    customUtils.Helpers.endPerfLog("eventBoxPaged", perf)
+    r
   }
 
   // Use .right.get to fetch Option[Page[EventData]]

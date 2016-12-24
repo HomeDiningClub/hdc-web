@@ -1,7 +1,7 @@
-@(boxes: List[models.viewmodels.BrowseProfileBox] = Nil)(implicit messages: Messages)
+@(boxes: Option[List[models.viewmodels.BrowseProfileBox]] = None)(implicit messages: Messages)
 @if(boxes.nonEmpty) {
     <div class="row">
-    @for(box: models.viewmodels.BrowseProfileBox <- boxes){
+    @for(box: models.viewmodels.BrowseProfileBox <- boxes.get){
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
             <a href="@box.linkToProfile">
                 @defining( if(box.mainImage.isDefined){ "style=\"background-image: url('" + box.mainImage.get + "');background-size:100%;\"" } else { "" } ) { mainImage: String =>

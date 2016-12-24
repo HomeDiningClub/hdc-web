@@ -1,4 +1,4 @@
-@(eventBoxes: Option[List[EventBox]], userProfile: UserProfile, isThisMyProfile: Boolean)(implicit messages: Messages)
+@(eventBoxes: Option[List[BrowseEventBox]], userProfile: UserProfile, isThisMyProfile: Boolean)(implicit messages: Messages)
 
 @if(userProfile.isUserHost) {
     <h2 class="sub-with-border"><span class="glyphicon glyphicon-calendar text-green pull-right"></span>&nbsp;@Messages("profile.tabs.event.name")</h2>

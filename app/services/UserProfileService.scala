@@ -2,6 +2,7 @@ package services
 
 import javax.inject.Inject
 
+import controllers.routes
 import models.files.ContentFile
 import models.modelconstants.UserLevelScala
 import models._
@@ -24,6 +25,7 @@ import models.profile.{FavoriteData, TagWord, TaggedFavoritesToUserProfile}
 import scala.collection.JavaConverters._
 import customUtils.ViewedByMemberUtil
 import models.formdata.UserProfileOptionsForm
+import models.viewmodels.BrowseProfileBox
 
 class UserProfileService @Inject()(val template: Neo4jTemplate,
                                    val userProfileRepository: UserProfileRepository,
@@ -127,30 +129,6 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
       case 0 => false
       case _ => true
     }
-    /*
-    var profileLink: Option[TaggedFavoritesToUserProfile] = None
-
-    if (friendsUserCredential != null) {
-      val jmfFriend = friendsUserCredential.objectId
-      val itter = template.fetch(theUser.getFavorites).iterator()
-
-      while (itter.hasNext) {
-        val tagProfile = itter.next()
-        if (tagProfile.favoritesUserProfile.getOwner.objectId.toString == jmfFriend.toString) {
-          profileLink = Some(tagProfile)
-        }
-      }
-
-    }
-
-    val isFavoriteTo = profileLink match {
-      case None => false
-      case null => false
-      case someValue => true
-    }
-
-    isFavoriteTo
-    */
   }
 
   def updateUserProfileTags(theUser: UserProfile, tagsToAdd: List[TagWord]): UserProfile = withTransaction(template) {
@@ -311,10 +289,10 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
   // Can return either:
   // Option[Page[UserProfile]]
   // Option[List[UserProfile]]
-  def getUserProfilesFiltered(filterTag: Option[TagWord], filterCounty: Option[County], filterIsHost: Boolean, pageNo: Option[Integer] = None, nrPerPage: Int = 9): Either[Option[List[UserProfile]],Option[Page[UserProfile]]] = withTransaction(template){
+  def getUserProfilesFiltered(filterTag: Option[TagWord], filterCounty: Option[County], filterIsHost: Boolean, pageNo: Option[Integer] = None, nrPerPage: Int = 9): Either[Option[List[UserProfileData]],Option[Page[UserProfileData]]] = withTransaction(template){
 
-    var returnList: List[UserProfile] = Nil
-    var returnPaged: Page[UserProfile] = null
+    var returnList: List[UserProfileData] = Nil
+    var returnPaged: Page[UserProfileData] = null
 
     (filterTag, filterCounty, filterIsHost) match {
       case (Some(tw), Some(cnt), true) =>
@@ -392,6 +370,43 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
     }
   }
 
+  def buildProfileBoxes(list: Option[List[UserProfileData]]): Option[List[BrowseProfileBox]] = {
+    list match {
+      case None => None
+      case Some(items) => Some(items.map {
+        upd: UserProfileData =>
+          BrowseProfileBox(
+            objectId = Some(upd.getUserProfileObjectId()),
+            linkToProfile = upd.getProfileLinkName() match {
+              case null => ""
+              case pfName => routes.UserProfileController.viewProfileByName(pfName).url
+            },
+            fullName = upd.getProfileLinkName(),
+            location = upd.getCounty() match {
+              case null => None
+              case countyName => Some(countyName)
+            },
+            mainBody = None,
+            mainImage = upd.getMainImage().asScala.toList match {
+              case Nil => None
+              case images => Some(routes.ImageController.profileBox(images.head).url)
+            },
+            userImage = upd.getAvatarImage().asScala.toList match {
+              case Nil => None
+              case images => Some(routes.ImageController.userThumb(images.head).url)
+            },
+            userRating = upd.getUserAverageRating(),
+            isHost = upd.getUserProfileRoles() match {
+              case null => false
+              case roles => roles.split(",").toList match {
+                case Nil => false
+                case rList => rList.contains(UserLevelScala.HOST.Constant)
+              }
+            }
+          )
+      })
+    }
+  }
 
 }
 

@@ -9,11 +9,11 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Controller
 import play.api.data._
 import play.api.data.Forms._
-import models.viewmodels.{EventBox, ProfileBox, ReviewBox}
+import models.viewmodels._
 import org.springframework.beans.factory.annotation.Autowired
 import securesocial.core.SecureSocial
 import services._
-import models.{UserCredential, UserProfile}
+import models.{UserCredential, UserProfile, UserProfileData}
 import views.html.helper.{options, select}
 import models.profile.TagWord
 import models.location.County
@@ -23,6 +23,7 @@ import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.content.ContentPage
 import models.formdata.SearchStartPageForm
+import models.modelconstants.UserLevelScala
 import play.api.Environment
 
 import scala.concurrent.duration.Duration
@@ -88,62 +89,34 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
       ))
   }
 
-  private def getEventBoxes(boxFilterTag: String, boxFilterCounty: String, maxNr: Int = 8): Option[List[EventBox]] = {
+  private def getEventBoxes(boxFilterTag: String, boxFilterCounty: String, maxNr: Int = 8): Option[List[BrowseEventBox]] = {
 
     val fetchedTag: Option[TagWord] = verifySelectedTagWord(boxFilterTag)
     val fetchedCounty: Option[County] = verifySelectedCounty(boxFilterCounty)
 
-    val eventBoxes: Option[List[EventBox]] = eventService.getEventsFiltered(fetchedTag, fetchedCounty, Some(0), maxNr).right.get match {
+    val eventBoxes: Option[List[BrowseEventBox]] = eventService.getEventsFiltered(fetchedTag, fetchedCounty, Some(0), maxNr).right.get match {
       case None => None
       case Some(events) => eventService.mapEventDataToEventBox(events)
     }
     eventBoxes
   }
 
-  private def getProfileBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, maxNr: Int = 8): Option[List[ProfileBox]] = {
+  private def getProfileBoxes(boxFilterTag: String, boxFilterCounty: String, boxFilterIsHost: Boolean, maxNr: Int = 8): Option[List[BrowseProfileBox]] = {
     val fetchedTag: Option[TagWord] = verifySelectedTagWord(boxFilterTag)
     val fetchedCounty: Option[County] = verifySelectedCounty(boxFilterCounty)
 
     var perf = customUtils.Helpers.startPerfLog()
-    val maxNrTemp = 70
-    val dataOpt = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost, pageNo = Some(0), nrPerPage = maxNrTemp).right.get
+    val pagedUserProfiles = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost, pageNo = Some(0), nrPerPage = maxNr).right.get
     customUtils.Helpers.endPerfLog("getData: ", perf)
 
-    val data = dataOpt match {
+    val userProfiles = pagedUserProfiles match {
       case None => None
       case Some(d) => Some(d.getContent.asScala.toList)
     }
 
     perf = customUtils.Helpers.startPerfLog()
-    val profBoxes: Option[List[ProfileBox]] = data match {
-      case None => None
-      case Some(profile) => Some(profile.filter(prof => prof.getMainImage != null).take(maxNr).map {
-        userProfile: UserProfile =>
-          ProfileBox(
-            objectId = Some(userProfile.objectId),
-            linkToProfile = userProfile.profileLinkName match {
-              case null => ""
-              case pfName => routes.UserProfileController.viewProfileByName(pfName).url
-            },
-            fullName = userProfile.profileLinkName,
-            location = userProfile.getLocations.asScala.headOption match {
-              case None => None
-              case Some(countyTag) => Some(countyTag.county.name)
-            },
-            mainBody = None,
-            mainImage = userProfile.getMainImage match {
-              case null => None
-              case image => Some(routes.ImageController.profileBox(image.getStoreId).url)
-            },
-            userImage = userProfile.getAvatarImage match {
-              case null => None
-              case image => Some(routes.ImageController.userThumb(image.getStoreId).url)
-            },
-            userRating = ratingService.getAverageRatingForUser(userProfile.getOwner.objectId), //.getAverageRating,
-            isHost = userProfile.isUserHost
-          )
-      })
-    }
+    val profBoxes = userProfileService.buildProfileBoxes(userProfiles)
+
     customUtils.Helpers.endPerfLog("building: ", perf)
     profBoxes
   }

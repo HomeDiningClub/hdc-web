@@ -4,7 +4,7 @@ import play.twirl.api.Html
 
 case class ProfilePageModel(userProfile: models.UserProfile,
                             recipeBoxes: Option[List[RecipeBox]] = None,
-                            eventBoxes: Option[List[EventBox]] = None,
+                            eventBoxes: Option[List[BrowseEventBox]] = None,
                             bookingsMadeByMe: Option[List[EventBookingSuccess]] = None,
                             bookingsMadeToMyEvents: Option[List[EventBookingSuccess]] = None,
                             myReviewBoxes: Option[List[ReviewBox]] = None,

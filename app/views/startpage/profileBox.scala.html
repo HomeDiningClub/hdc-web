@@ -1,7 +1,7 @@
-@(boxes: List[models.viewmodels.ProfileBox] = Nil)(implicit messages: Messages)
+@(boxes: List[models.viewmodels.BrowseProfileBox] = Nil)(implicit messages: Messages)
 
 @if(boxes.nonEmpty) {
-    @for(box: models.viewmodels.ProfileBox <- boxes){
+    @for(box: models.viewmodels.BrowseProfileBox <- boxes){
 
         <div class="col-xs-12 col-sm-6">
             <a href="@box.linkToProfile">

@@ -89,7 +89,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
   def viewEventByNameAndProfilePageJSON(profileName: String, page: Int) = UserAwareAction() { implicit request =>
 
-    val listOfEvents: Option[List[EventBox]] = userProfileService.findByprofileLinkName(profileName) match {
+    val listOfEvents: Option[List[BrowseEventBox]] = userProfileService.findByprofileLinkName(profileName) match {
       case Some(profile) => {
         eventService.getEventBoxes(profile.getOwner, page)
       }
@@ -101,31 +101,15 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       Ok("")
     }
 
-    val list: List[EventBoxJSON] = listOfEvents match {
+    val list: List[BrowseEventBox] = listOfEvents match {
       case None => Nil
-      case Some(items) => items.map {
-        e: EventBox =>
-          EventBoxJSON(
-            e.objectId.toString,
-            e.linkToEvent,
-            e.name,
-            e.preAmble.getOrElse(""),
-            e.mainImage.getOrElse(""),
-            e.price.toInt,
-            e.location.getOrElse(""),
-            //e.eventRating.toString,
-            e.eventBoxCount,
-            e.hasNext,
-            e.hasPrevious,
-            e.totalPages
-          )
-      }
+      case Some(items) => items
     }
 
     Ok(convertToJson(list))
   }
 
-  def convertToJson(jsonCase: Seq[EventBoxJSON]): JsValue = Json.toJson(jsonCase)
+  def convertToJson(jsonCase: Seq[BrowseEventBox]): JsValue = Json.toJson(jsonCase)
 
   def viewEventByNameAndProfilePage(profileName: String, eventName: String, page: Int) = UserAwareAction() { implicit request =>
 
