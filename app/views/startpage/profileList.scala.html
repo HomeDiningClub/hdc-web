@@ -2,7 +2,7 @@
 <!-- Profile boxes -->
 <div class="row">
   @if(profileBoxes.isDefined){
-    @startpage.profileBox(profileBoxes.get)
+    @browse.browseProfileBox(profileBoxes)
   }else{
     <div class="col-xs-12 text-center">@play.twirl.api.Html(Messages("startpage.boxes.not-found", routes.StartPageController.index().url))</div>
   }
