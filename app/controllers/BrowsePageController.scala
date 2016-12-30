@@ -87,7 +87,7 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
       case Some(list) =>
         if (list.hasContent) {
           // First fetch the list of items
-          var returnString: String = views.html.browse.browseEventBox.render(boxes = buildEventBoxes(list.asScala.toList), messages = request2Messages).toString
+          var returnString: String = views.html.browse.browseEventBox(boxes = buildEventBoxes(list.asScala.toList))(messages = request2Messages).toString
           // Attach pagination if more then one page
           if (list.getTotalPages > 1) {
             returnString += views.html.shared.pagination.render(jsMethodName = "getBoxesAsJSON", hasNext = list.hasNext, hasPrev = list.hasPrevious, currentPage = page, totalCount = list.getTotalElements, totalPages = list.getTotalPages, messages = request2Messages).toString
@@ -112,7 +112,7 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
       case Some(list) =>
         if (list.hasContent) {
           // First fetch the list of items
-          var returnString: String = views.html.browse.browseProfileBox.render(boxes = userProfileService.buildProfileBoxes(Option(list.asScala.toList)), messages = request2Messages).toString
+          var returnString: String = views.html.browse.browseProfileBox(boxes = userProfileService.buildProfileBoxes(Option(list.asScala.toList)))(messages = request2Messages).toString
           // Attach pagination if more then one page
           if (list.getTotalPages > 1) {
             returnString += views.html.shared.pagination.render(jsMethodName = "getBoxesAsJSON", hasNext = list.hasNext, hasPrev = list.hasPrevious, currentPage = page, totalCount = list.getTotalElements, totalPages = list.getTotalPages, messages = request2Messages).toString
