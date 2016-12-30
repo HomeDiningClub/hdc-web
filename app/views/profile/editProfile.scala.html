@@ -67,6 +67,17 @@
 
                         <div class="row"><div class="col-xs-12 col-md-push-4 col-md-6">@Html(Messages("profile.create.form.profilename.help"))<hr></div></div>
 
+                        <div class="form-group">
+                            <label class="control-label col-md-4">@Messages("profile.create.form.main-image")</label>
+                            <div class="col-md-8">
+                                @file.previewField(previewId = "inputchoosemainimage", Messages("profile.create.form.main-image-preview"), blnShowText = false, prePopulatedWith = extraValues.mainImagePrev)
+                                @file.openModalButton(btnId = "btnchoosemainimage", inputSelector = "inputchoosemainimage", selectorMaxItems = extraValues.mainImageMaxNr, btnText = Messages("profile.create.form.main-image-btn"))
+                                @helper.inputHidden(profileDataForm("mainimage"), 'id -> "inputchoosemainimage")
+                            </div>
+                        </div>
+                        <hr>
+
+
                         @defining("<a data-toggle=\"modal\" href=\"#modalAcceptTerms\">" + Messages("profile.create.accept.link.text") + "&nbsp;<span class=\"glyphicon glyphicon-new-window\"></span></a>") { linkToTerms: String =>
                             @defining(Html(Messages("profile.create.accept.help", linkToTerms))){ helpMessage: Html =>
                                 @b3.checkbox(profileDataForm("acceptTerms"),
@@ -109,15 +120,6 @@
                             '_help -> Messages("profile.create.form.aboutme.help")
                         )(widerFC, messages)
 
-                        <hr>
-                        <div class="form-group">
-                            <label class="control-label col-md-4">@Messages("profile.create.form.main-image")</label>
-                            <div class="col-md-8">
-                                @file.previewField(previewId = "inputchoosemainimage", Messages("profile.create.form.main-image-preview"), blnShowText = false, prePopulatedWith = extraValues.mainImagePrev)
-                                @file.openModalButton(btnId = "btnchoosemainimage", inputSelector = "inputchoosemainimage", selectorMaxItems = extraValues.mainImageMaxNr, btnText = Messages("profile.create.form.main-image-btn"))
-                                @helper.inputHidden(profileDataForm("mainimage"), 'id -> "inputchoosemainimage")
-                            </div>
-                        </div>
                     </div>
                 </div>
 
