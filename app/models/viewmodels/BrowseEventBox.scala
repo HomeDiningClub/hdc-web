@@ -8,12 +8,14 @@ case class BrowseEventBox(
                            linkToEvent: String,
                            eventName: String,
                            mainBody: Option[String],
+                           preAmble: Option[String],
                            mainImage: Option[String],
                            userImage: Option[String],
                            price: Int,
                            location: Option[String],
                            //    eventRating: Int,
                            eventBoxCount: Long,
+                           firstBookableDateTime: Option[String],
                            hasNext: Boolean,
                            hasPrevious: Boolean,
                            totalPages: Int
@@ -29,12 +31,14 @@ object BrowseEventBox {
         "linkToEvent" -> JsString(jsonObject.linkToEvent),
         "eventName" -> JsString(jsonObject.eventName),
         "mainBody" -> JsString(jsonObject.mainBody.getOrElse("")),
+        "preAmble" -> JsString(jsonObject.preAmble.getOrElse("")),
         "mainImage" -> JsString(jsonObject.mainImage.getOrElse("")),
         "userImage" -> JsString(jsonObject.userImage.getOrElse("")),
         "price" -> JsNumber(jsonObject.price),
         "location" -> JsString(jsonObject.location.getOrElse("")),
         //"userRating"    -> JsNumber(jsonObject.userRating)
         "eventBoxCount"      -> JsNumber(jsonObject.eventBoxCount),
+        "firstBookableDateTime" -> JsString(jsonObject.firstBookableDateTime.getOrElse("")),
         "hasNext"       -> JsBoolean(jsonObject.hasNext),
         "hasPrevious"   -> JsBoolean(jsonObject.hasPrevious),
         "totalPages"    -> JsNumber(jsonObject.totalPages)
@@ -43,7 +47,7 @@ object BrowseEventBox {
     }
 
     def reads(json: JsValue): JsResult[BrowseEventBox] = {
-      JsSuccess(BrowseEventBox(None, "", "", None, None, None, 0, None, 0, false, false, 0))
+      JsSuccess(BrowseEventBox(None, "", "", None, None, None, None, 0, None, 0, None, false, false, 0))
     }
 
   }

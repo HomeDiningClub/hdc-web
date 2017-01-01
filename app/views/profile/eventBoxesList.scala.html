@@ -1,17 +1,16 @@
-@(eventBoxes: Option[List[BrowseEventBox]], userProfile: UserProfile, isThisMyProfile: Boolean)(implicit messages: Messages)
+@(eventBoxCount: Int, userProfile: UserProfile, isThisMyProfile: Boolean)(implicit messages: Messages)
 
 @if(userProfile.isUserHost) {
     <h2 class="sub-with-border"><span class="glyphicon glyphicon-calendar text-green pull-right"></span>&nbsp;@Messages("profile.tabs.event.name")</h2>
 }
-
-@if(eventBoxes.nonEmpty) {
+@if(eventBoxCount > 0) {
     @views.html.event.eventBox(userProfile.profileLinkName, userProfile.isUserHost)
 }
 
 @if(isThisMyProfile) {
     <div class="row">
-        <div class="col-xs-12 @if(eventBoxes.isEmpty) { dashed-focused }">
-            @if(eventBoxes.isEmpty) {<strong>@Messages("profile.event.no-events")</strong> }
+        <div class="col-xs-12 @if(eventBoxCount == 0) { dashed-focused }">
+            @if(eventBoxCount == 0) {<strong>@Messages("profile.event.no-events")</strong> }
             <div class="btn-group btn-edit-group">
                 <a href="@controllers.routes.EventPageController.add" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> @Messages("profile.button.event.add")</a>
             </div>

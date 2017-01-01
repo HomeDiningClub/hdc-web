@@ -193,12 +193,13 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
           objectId = Some(UUID.fromString(evtData.getobjectId())),
           linkToEvent = linkToEvent,
           eventName = evtData.getName(),
-          mainBody = evtData.getpreAmble() match {
+          mainBody = Option(evtData.getMainBody()),
+          preAmble = evtData.getpreAmble() match {
             case "" | null =>
               var retBody = Helpers.removeHtmlTags(evtData.getMainBody())
 
-              if (retBody.length > 125)
-                retBody = retBody.substring(0, 125) + "..."
+              if (retBody.length > 80)
+                retBody = retBody.substring(0, 80) + "..."
 
               Some(retBody)
             case content => Some(content)
@@ -211,6 +212,11 @@ class BrowsePageController @Inject() (override implicit val env: SecureSocialRun
           },
           location = location,
           eventBoxCount = 0,
+          firstBookableDateTime = evtData.getEventDateTimes().asScala.toList match {
+            case Nil => None
+            case javaDates =>
+              Some(customUtils.Helpers.formatDate(javaDates.sorted.head, "YYYY-MM-DD"))
+          },
           hasNext = false,
           hasPrevious = false,
           totalPages = 0

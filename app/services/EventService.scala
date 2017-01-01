@@ -126,6 +126,10 @@ class EventService @Inject()(val template: Neo4jTemplate,
     bookedEventDateRepository.getCountOfAllEventBookings
   }
 
+  def getCountOfMyEvents(userCredential: UserCredential): Int = withTransaction(template) {
+    eventRepository.getCountOfMyEvents(userCredential.getUserProfile.objectId.toString)
+  }
+
   def getListOfAll: List[Event] = withTransaction(template){
     eventRepository.findAll.iterator.asScala.toList match {
       case null => null
@@ -686,12 +690,13 @@ class EventService @Inject()(val template: Neo4jTemplate,
         Some(UUID.fromString(evtData.getobjectId())),
         linkToEvent,
         evtData.getName(),
+        Option(evtData.getMainBody()),
         evtData.getpreAmble() match {
           case "" | null =>
             var retBody = Helpers.removeHtmlTags(evtData.getMainBody())
 
-            if (retBody.length > 125)
-              retBody = retBody.substring(0, 125) + "..."
+            if (retBody.length > 80)
+              retBody = retBody.substring(0, 80) + "..."
 
             Some(retBody)
           case content => Some(content)
@@ -705,6 +710,11 @@ class EventService @Inject()(val template: Neo4jTemplate,
         location,
         //ratingValue,
         list.getTotalElements,
+        firstBookableDateTime = evtData.getEventDateTimes().asScala.toList match {
+          case Nil => None
+          case javaDates =>
+            Some(customUtils.Helpers.formatDate(javaDates.sorted.head, "YYYY-MM-DD"))
+        },
         list.hasNext,
         list.hasPrevious,
         list.getTotalPages

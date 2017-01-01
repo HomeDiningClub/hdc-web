@@ -8,7 +8,7 @@
 }
 
 @avatarUrl = @{if(model.userProfile.getAvatarImage != null){routes.ImageController.userThumb(model.userProfile.getAvatarImage.getStoreId).url}else{""} }
-@columnLayout = @{ if(model.eventBoxes.nonEmpty || model.recipeBoxes.nonEmpty || model.reviewBoxesAboutMe.nonEmpty || model.reviewBoxesAboutMyFood.nonEmpty || model.myReviewBoxes.nonEmpty || model.myRecipeReviewBoxes.nonEmpty || model.isThisMyProfile || model.userProfile.isUserHost) { "col-xs-12 col-sm-6" }else{ "col-xs-12" }}
+@columnLayout = @{ if(model.eventBoxCount > 0 || model.recipeBoxes.nonEmpty || model.reviewBoxesAboutMe.nonEmpty || model.reviewBoxesAboutMyFood.nonEmpty || model.myReviewBoxes.nonEmpty || model.myRecipeReviewBoxes.nonEmpty || model.isThisMyProfile || model.userProfile.isUserHost) { "col-xs-12 col-sm-6" }else{ "col-xs-12" }}
 
 @main(title = Messages("profile.title", model.userProfile.profileLinkName), footerScripts = play.twirl.api.Html(pageScripts.toString), metaData = model.metaData) {
     <div class="container profile-container">
@@ -60,10 +60,10 @@
 
                             <div class="@columnLayout">
                                 @* Events *@
-                                @views.html.profile.eventBoxesList(model.eventBoxes, model.userProfile, model.isThisMyProfile)
+                                @views.html.profile.eventBoxesList(model.eventBoxCount, model.userProfile, model.isThisMyProfile)
 
                                 @* Old Request form *@
-                                @if(!model.isThisMyProfile && model.userProfile.isUserHost && model.eventBoxes.isEmpty) {
+                                @if(!model.isThisMyProfile && model.userProfile.isUserHost && model.eventBoxCount == 0) {
                                     @model.requestForm
                                 }
 

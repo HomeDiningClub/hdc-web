@@ -1057,6 +1057,85 @@ input[type="reset"]:hover
   width:800px;
 }
 
+// Event box ribbon
+.ribbon-wrapper {
+  position: relative;
+}
+.ribbon-wrapper.date-snippet-browse-event-box {
+  position: absolute;
+  left:0;
+  top:5%;
+  z-index: 10;
+}
+.ribbon-wrapper.date-snippet-event-box {
+  position: absolute;
+  left:0;
+  top:8%;
+  z-index: 10;
+}
+.ribbon-front {
+  background: @hdc-dark-green;
+  background: -moz-linear-gradient(left, @hdc-dark-green 0%, @hdc-dark-light-green 17%, @hdc-green 100%);
+  background: -webkit-gradient(left top, right top, color-stop(0%, @hdc-dark-green), color-stop(17%, @hdc-dark-light-green), color-stop(100%, @hdc-green));
+  background: -webkit-linear-gradient(left, @hdc-dark-green 0%, @hdc-dark-light-green 17%, @hdc-green 100%);
+  background: -o-linear-gradient(left, @hdc-dark-green 0%, @hdc-dark-light-green 17%, @hdc-green 100%);
+  background: -ms-linear-gradient(left, @hdc-dark-green 0%, @hdc-dark-light-green 17%, @hdc-green 100%);
+  background: linear-gradient(to right, @hdc-dark-green 0%, @hdc-dark-light-green 17%, @hdc-green 100%);
+  //background-color: #3F3FA2;
+  height: auto;
+  width: auto;
+  position: relative;
+  left:-5px;
+  z-index: 2;
+  line-height: 1.6em;
+  font-size: 1.0em;
+  padding-left: 10px;
+  padding-right: 8px;
+  -moz-box-shadow: 1px 1px 5px rgba(0,0,0,0.55);
+  -khtml-box-shadow: 1px 1px 5px rgba(0,0,0,0.55);
+  -webkit-box-shadow: 1px 1px 5px rgba(0,0,0,0.55);
+  -o-box-shadow: 1px 1px 5px rgba(0,0,0,0.55);
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.55);
+  border-top-left-radius: 2px;
+}
+.ribbon-text {
+  color:@hdc-white;
+  font-weight: bold;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+.ribbon-wrapper.date-snippet-browse-event-box .ribbon-front {
+  font-size: 0.9em;
+}
+
+.ribbon-edge-topleft,
+.ribbon-edge-bottomleft{
+  position: absolute;
+  z-index: 1;
+  border-style:solid;
+  height:0px;
+  width:0px;
+}
+
+.ribbon-edge-bottomleft {
+  top: 20px;
+}
+
+.ribbon-edge-topleft,
+.ribbon-edge-bottomleft {
+  left: -5px;
+  border-color: transparent @hdc-dark-green transparent transparent;
+}
+
+.ribbon-edge-topleft {
+  top: 0px;
+  border-width: 0px 5px 0 0;
+}
+.ribbon-edge-bottomleft {
+  border-width: 0 5px 5px 0;
+}
+
+
+
 // EventBox
 .col-event-boxes {
   border:1px solid #eee;

@@ -192,7 +192,7 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
         val dataAsync = for {
           messages <- Future(if (myProfile) buildMessageList(profileOwner) else None)
           recipeBoxes <- Future(recipeService.getRecipeBoxes(profileOwner))
-          eventBoxes <- Future(eventService.getEventBoxes(profileOwner))
+          eventBoxCount <- Future(eventService.getCountOfMyEvents(profileOwner))
           bookingsMadeByMe <- Future(if (myProfile) eventService.getBookingsMadeByMe(profileOwner, this.getBaseUrl) else None)
           bookingsMadeToMyEvents <- Future(if (myProfile) eventService.getBookingsMadeToMyEvents(profileOwner, this.getBaseUrl) else None)
           myReviewBoxes <- Future(if (myProfile) ratingService.getMyUserReviews(profileOwner) else None)
@@ -213,7 +213,7 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
           userCredentialNrOfTotalRatings <- Future(ratingService.getCountOfAllMemberRatingsForUser(profile.getOwner.objectId))
 
         } yield (recipeBoxes,
-          eventBoxes,
+          eventBoxCount,
           bookingsMadeByMe,
           bookingsMadeToMyEvents,
           myReviewBoxes,
@@ -245,7 +245,7 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
         val model = ProfilePageModel(
           userProfile = profile,
           recipeBoxes = res._1,
-          eventBoxes = res._2,
+          eventBoxCount = res._2,
           bookingsMadeByMe = res._3,
           bookingsMadeToMyEvents = res._4,
           myReviewBoxes = res._5,

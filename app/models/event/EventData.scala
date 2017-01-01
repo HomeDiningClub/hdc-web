@@ -41,5 +41,9 @@ trait EventData {
 
   @ResultColumn("UserImage")
   def getUserImage() : util.List[String]
+
+  @ResultColumn("EventDateTimes")
+  def getEventDateTimes(): util.List[java.util.Date]
+
 }
 

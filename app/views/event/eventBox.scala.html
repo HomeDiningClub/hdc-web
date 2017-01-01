@@ -22,6 +22,9 @@ $(document).ready(function(){
 
         l = l + "<div class='col-xs-12 col-sm-6 no-gutter'>";
         l = l + "<div class='full-width-image-wrapper'><img class='full-width-image' src='" + value.mainImage + "' class='img-responsive'></div>";
+        if(value.firstBookableDateTime.length > 0){
+            l = l + "<div class='ribbon-wrapper date-snippet-event-box'><div class='ribbon-front'><span class='ribbon-text'>" + value.firstBookableDateTime + "</span></div><div class='ribbon-edge-topleft'></div><div class='ribbon-edge-bottomleft'></div></div>"
+        }
         l = l + "<div class='price-wrapper'>";
         l = l + "<div class='currency'>" + '@Messages("event.price.currency")' + "</div>";
         l = l + "<div class='price'>" + value.price + "<span class='price-end'>" + '@Messages("event.price.currency.end")' + "</span></div>";
@@ -30,8 +33,8 @@ $(document).ready(function(){
         l = l + "</div>";
 
         l = l + "<div class='col-xs-12 col-sm-6 info-wrapper'>";
-        l = l + "<h2>" + value.name + "</h2>";
-        l = l + "<div class='location'>" + value.location + "</div>";
+        l = l + "<h2>" + value.eventName + "</h2>";
+        l = l + "<div class='location'><em>" + value.location + "</em></div>";
         l = l + "<div class='preamble'>" + value.preAmble + "</div>";
         @if(isUserHost){
             l = l + "<button class='btn btn-lg btn-orange btn-booking'>" + '@Messages("event.button.select")' + "&nbsp;<span class='glyphicon glyphicon-ok'></span></button>";
