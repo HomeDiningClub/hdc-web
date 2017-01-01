@@ -29,13 +29,10 @@ class FavoritesController @Inject() (override implicit val env: SecureSocialRunt
 
   // List favorites
   def renderFavorites(userProfile: UserProfile)(implicit request: RequestHeader): Option[Html] = {
-    val perf = customUtils.Helpers.startPerfLog()
     val listOfMyFavorites = userProfileService.getMyFavorites(userProfile)
     val listOfUsersWhoFavorMe = userProfileService.getUserWhoFavoritesUser(userProfile)
     // Return partial view
-    val r =  Some(views.html.profile.showListOfFavorites.render(buildFavForm(listOfMyFavorites), buildFavForm(listOfUsersWhoFavorMe), request2Messages))
-    customUtils.Helpers.endPerfLog("renderFavo", perf)
-    r
+    Some(views.html.profile.showListOfFavorites.render(buildFavForm(listOfMyFavorites), buildFavForm(listOfUsersWhoFavorMe), request2Messages))
   }
 
   private def buildFavForm(listOfUserFavorMe: Option[List[FavoriteData]]): List[FavoriteForm] = {

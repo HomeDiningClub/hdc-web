@@ -81,8 +81,7 @@ class RatingController @Inject() (override implicit val env: SecureSocialRuntime
 
 
   def renderUserRateForm(userToBeRated: UserCredential, ratingReferrer: String = "/", currentUser: Option[UserCredential])(implicit request: RequestHeader) = {
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = currentUser match {
+    currentUser match {
       case None =>
         views.html.rating.rateNotLoggedIn()
       case Some(cu) =>
@@ -107,8 +106,6 @@ class RatingController @Inject() (override implicit val env: SecureSocialRuntime
           views.html.rating.rateUserCred.render(ratingForm.fill(formValues), Some(userToBeRated), ratedBeforeDate, Some(cu), request2Messages)
         }
     }
-    customUtils.Helpers.endPerfLog("rateUserForm", perf)
-    r
   }
 
   def rateSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>

@@ -138,27 +138,21 @@ class EventService @Inject()(val template: Neo4jTemplate,
   }
 
   def getBookingsMadeToMyEvents(user: UserCredential, baseUrl: String): Option[List[EventBookingSuccess]] = {
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = this.findAllBookedDatesInAllEventsForOwner(user) match {
+    this.findAllBookedDatesInAllEventsForOwner(user) match {
       case None => None
       case Some(items) => Some(items.map { booking =>
         mapEventBookingToEventBookingSuccess(booking, baseUrl)
       })
     }
-    customUtils.Helpers.endPerfLog("bookingsToMeEvents", perf)
-    r
   }
 
   def getBookingsMadeByMe(user: UserCredential, baseUrl: String): Option[List[EventBookingSuccess]] = {
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = this.findBookedDatesByUserWhoBooked(user) match {
+    this.findBookedDatesByUserWhoBooked(user) match {
       case None => None
       case Some(items) => Some(items.map { booking =>
         mapEventBookingToEventBookingSuccess(booking, baseUrl)
       })
     }
-    customUtils.Helpers.endPerfLog("bookingsMadeByMe", perf)
-    r
   }
 
 
@@ -778,19 +772,13 @@ class EventService @Inject()(val template: Neo4jTemplate,
   //endregion
 
   def getEventBoxes(user: UserCredential): Option[List[BrowseEventBox]] = withTransaction(template){
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = this.getEventBoxes(user, 0)
-    customUtils.Helpers.endPerfLog("eventBox", perf)
-    r
+    this.getEventBoxes(user, 0)
   }
 
   def getEventBoxes(user: UserCredential, pageNo: Integer): Option[List[BrowseEventBox]] = withTransaction(template){
-    val perf = customUtils.Helpers.startPerfLog()
     // With paging - 0 current page, 6 number of items for each page
     val pagedListJava = eventRepository.findEvents(user.objectId.toString, new PageRequest(pageNo, 6))
-    val r = mapEventDataToEventBox(pagedListJava)
-    customUtils.Helpers.endPerfLog("eventBoxPaged", perf)
-    r
+    mapEventDataToEventBox(pagedListJava)
   }
 
   // Use .right.get to fetch Option[Page[EventData]]

@@ -85,22 +85,10 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
   }
 
   def findByProfileAndGroup(profile: UserProfile, groupName: String): Option[List[String]] = withTransaction(template){
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = taggedUserProfileRepository.findTagWordsTaggedByUserProfile(profile.objectId.toString, groupName).asScala.toList match {
+    taggedUserProfileRepository.findTagWordsTaggedByUserProfile(profile.objectId.toString, groupName).asScala.toList match {
       case Nil => None
       case items => Some(items)
     }
-    /*
-    val r = profile.getTags.asScala.filter(tag => tag.tagWord.tagGroupName.equalsIgnoreCase(groupName)).toList match {
-      case null | Nil => None
-      case tags => Some(tags.map {
-        tup: TaggedUserProfile =>
-          tup.tagWord
-      })
-    }
-    */
-    customUtils.Helpers.endPerfLog("findByProfileAndGroup", perf)
-    r
   }
 
 

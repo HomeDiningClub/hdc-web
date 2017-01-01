@@ -403,26 +403,19 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
   }
 
   private def createShareUrl(profile: UserProfile): String = {
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = routes.UserProfileController.viewProfileByName(profile.profileLinkName).url + "?ts=" + Helpers.getDateForSharing(profile)
-    customUtils.Helpers.endPerfLog("shareUrl", perf)
-    r
+    routes.UserProfileController.viewProfileByName(profile.profileLinkName).url + "?ts=" + Helpers.getDateForSharing(profile)
   }
 
 
   private def buildMessageList(uc: UserCredential): Option[List[ReplyToGuestMessage]] = {
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = messagesController.createListOfMessages(messageService.findIncomingMessagesForUser(uc), uc)
-    customUtils.Helpers.endPerfLog("messageList", perf)
-    r
+    messagesController.createListOfMessages(messageService.findIncomingMessagesForUser(uc), uc)
   }
 
   private def buildMetaData(profile: UserProfile, request: RequestHeader): Option[MetaData] = {
 
     val domain = "//" + request.domain
 
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = Some(MetaData(
+    Some(MetaData(
       fbUrl = domain + request.path,
       fbTitle = Messages("profile.title", profile.profileLinkName),
       fbDesc = profile.aboutMe match {
@@ -444,8 +437,6 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
         }
       }
     ))
-    customUtils.Helpers.endPerfLog("metaData", perf)
-    r
   }
 
   /** **************************************************************************************************

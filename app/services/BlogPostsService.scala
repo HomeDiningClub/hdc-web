@@ -54,10 +54,7 @@ class BlogPostsService @Inject() (val template: Neo4jTemplate,
 
 
   def countBlogPostsForUser(userP: UserProfile): Int = withTransaction(template){
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = blogPostsRepository.countBlogPostsForUser(userP.objectId.toString)
-    customUtils.Helpers.endPerfLog("countBlogPosts", perf)
-    r
+    blogPostsRepository.countBlogPostsForUser(userP.objectId.toString)
   }
 
   def stringToDate(dateString : String) : org.joda.time.DateTime = {

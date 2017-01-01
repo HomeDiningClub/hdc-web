@@ -171,46 +171,34 @@ class RatingService @Inject()(val template: Neo4jTemplate,
 
   
   def getMyUserReviews(user: UserCredential): Option[List[ReviewBox]] = withTransaction(template){
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = this.findUserRatingByUserWhoIsRating(user) match {
+    this.findUserRatingByUserWhoIsRating(user) match {
       case None => None
       case Some(items) => buildUserReviewBoxes(items)
     }
-    customUtils.Helpers.endPerfLog("urMyReviews", perf)
-    r
   }
 
   
   def getUserReviewsAboutMe(user: UserCredential): Option[List[ReviewBox]] = withTransaction(template){
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = this.findUserRatingByWhoGotRated(user) match {
+    this.findUserRatingByWhoGotRated(user) match {
       case None => None
       case Some(items) => buildUserReviewBoxes(items)
     }
-    customUtils.Helpers.endPerfLog("urAboutMe", perf)
-    r
   }
 
   
   def getMyUserReviewsAboutFood(user: UserCredential): Option[List[ReviewBox]] = withTransaction(template){
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = this.findRecipeRatingByUserWhoIsRating(user) match {
+    this.findRecipeRatingByUserWhoIsRating(user) match {
       case None => None
       case Some(items) => buildRecipeReviewBoxes(items)
     }
-    customUtils.Helpers.endPerfLog("urAboutFood", perf)
-    r
   }
 
   
   def getUserReviewsAboutMyFood(user: UserCredential): Option[List[ReviewBox]] = withTransaction(template){
-    val perf = customUtils.Helpers.startPerfLog()
-    val r = this.findRecipeRatingsByRecipeOwner(user) match {
+    this.findRecipeRatingsByRecipeOwner(user) match {
       case None => None
       case Some(items) => buildRecipeReviewBoxes(items)
     }
-    customUtils.Helpers.endPerfLog("urAboutMyFood", perf)
-    r
   }
 
 
