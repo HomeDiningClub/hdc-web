@@ -707,7 +707,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
         firstBookableDateTime = evtData.getEventDateTimes().asScala.toList match {
           case Nil => None
           case javaDates =>
-            Some(customUtils.Helpers.formatDate(javaDates.sorted.head, "YYYY-MM-DD"))
+            Some(customUtils.Helpers.formatDate(javaDates.sorted.head, "YYYY-MM-dd"))
         },
         list.hasNext,
         list.hasPrevious,
