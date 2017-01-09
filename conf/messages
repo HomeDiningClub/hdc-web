@@ -25,8 +25,8 @@ header.main-menu.link.instagram.text=Instagram
 header.main-menu.link.instagram.title=Bli hungrig över våra bilder på Instagram
 header.main-menu.link.members-browse.text=Medlemmar
 header.main-menu.link.members-browse.title=Sök bland våra Medlemmar
-header.main-menu.link.events-browse.text=Dines
-header.main-menu.link.events-browse.title=Sök bland våra Dines
+header.main-menu.link.events-browse.text=HomeDines
+header.main-menu.link.events-browse.title=Sök bland våra HomeDines
 
 header.link.host-profile-header={0}
 header.link.host-profile=Gå till min sida
@@ -92,6 +92,11 @@ reviewbox.rated.object.text=Betygsätter:
 person.formular=Personliga inställningar (svenska)
 person.lista=Lista personer (svenska)
 
+# Mail layout
+mail.main.title=Homediningclub
+mail.main.logo=Gå till Homediningclub
+mail.main.footer=Detta mail har du fått för att du är medlem, eller försöker bli medlem på Homediningclub. <br>Rapportera missbruk via <a href="mailto:info@homediningclub.se">info@homediningclub.se</a>
+
 # Startpage
 startpage.title=Sveriges första riktiga klubb för alla riktigt matintresserade!
 startpage.main-aside.header=Home dining club
@@ -106,7 +111,7 @@ startpage.main.cta.text=Bli medlem idag!
 startpage.main.cta.link.text=Registrera dig
 
 startpage.main.browse.link.text=Se fler medlemmar
-startpage.main.browse-event.link.text=Se fler Dines
+startpage.main.browse-event.link.text=Se fler HomeDines
 
 startpage.boxes.not-found=Kunde inte hitta något som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
 startpage.boxes.location=<em>{0}</em>
@@ -146,7 +151,7 @@ startpage.wizard.tab.step5.header=Steg 5
 
 # Lists startpage
 profile.profile-list.header=Medlemmar
-event.event-list.header=Dines
+event.event-list.header=HomeDines
 
 # Wizard startpage
 wizard.pager.first=Första
@@ -159,7 +164,7 @@ news.header=Nyheter
 
 # Browse members page
 browse.profiles.title=Bläddra medlemmar
-browse.events.title=Bläddra Dines
+browse.events.title=Bläddra HomeDines
 browse.boxes.not-found=Kunde inte hitta något som matchade din filtrering, <a href="{0}">testa att nollställa dina filter.</a>
 browse.boxes.location=<em>{0}</em>
 
@@ -244,8 +249,8 @@ favorite.profile.others-favorites.header=Vilka har mig som favorit?
 # Profile
 profile.title={0} - Profil
 profile.button.recipe.add=Lägg till recept
-profile.button.event.add=Lägg till Dine
-profile.event.no-events=Du har inga Dines, lägg till så att dina gäster kan boka dig!
+profile.button.event.add=Lägg till HomeDine
+profile.event.no-events=Du har inga HomeDines, lägg till så att dina gäster kan boka dig!
 profile.tags.header={0} är intresserad av
 
 profile.reviews.reviews.aboutme.header=Omdömen om mig:
@@ -342,7 +347,7 @@ profile.create.form.personnummer.extra-info.body=Ditt personnummer behöver vi s
 
 profile.create.form.host-label=Värdskap
 profile.create.form.host-text=Jag vill vara värd
-profile.create.form.host-help-text=<strong>Observera</strong><br>Om du vill att gäster skall kunna boka dina Dines, måste du välja att vara värd.
+profile.create.form.host-help-text=<strong>Observera</strong><br>Om du vill att gäster skall kunna boka dina HomeDines, måste du välja att vara värd.
 profile.create.form.host.childfriendly=Barnvänligt
 profile.create.form.host.handicapfriendly=Handikappvänligt
 profile.create.form.host.pets=Finns husdjur?
@@ -379,12 +384,12 @@ profile.tabs.food.name=Recept
 profile.tabs.food.title=Recept
 profile.tabs.blog.name=Blogg
 profile.tabs.blog.title=Blogg
-profile.tabs.event.name=Dines
-profile.tabs.event.title=Dines
+profile.tabs.event.name=HomeDines
+profile.tabs.event.title=HomeDines
 profile.tabs.ratings.name=Omdömen
 profile.tabs.ratings.title=Omdömen
-profile.tabs.bookings.title=Bokade Dines
-profile.tabs.bookings.name=Bokade Dines
+profile.tabs.bookings.title=Bokade HomeDines
+profile.tabs.bookings.name=Bokade HomeDines
 profile.tabs.inbox.name=Inbox
 profile.tabs.inbox.title=Inbox
 profile.tabs.favourites.name=Favoriter
@@ -395,11 +400,11 @@ profile.tabs.edit-profile.name=Redigera
 profile.tabs.edit-profile.title=Redigera dina profilinställningar
 profile.button.blog.add=Skapa nytt inlägg
 
-profile.bookings.no-entries=Du har inga bokade Dines.
+profile.bookings.no-entries=Du har inga bokade HomeDines.
 profile.bookings.bookings-to-my-events.header=Gästers bokningar
-profile.bookings.bookings-to-my-events.sub-header=Bokningar genomförda av gäster till mina Dines
+profile.bookings.bookings-to-my-events.sub-header=Bokningar genomförda av gäster till mina HomeDines
 profile.bookings.bookings-made-by-me.header=Mina bokningar
-profile.bookings.bookings-made-by-me.sub-header=Bokningar genomförda av mig till andras Dines
+profile.bookings.bookings-made-by-me.sub-header=Bokningar genomförda av mig till andras HomeDines
 profile.blog.no-entries={0} har inte adderat några inlägg i sin blogg än.
 profile.blog.tab.body.non-admin=Här kommer alla värdar att kunna skriva och blogga om sin mat och sina intressen.
 profile.firstname.label=Namn:
@@ -413,7 +418,7 @@ profile.groupsize.max=Maximalt antal gäster
 profile.form.unacceptedcontent=Din profil behöver kompletteras med några värden:
 profile.payment.label=Betalning:
 profile.options.moved-info.header=Vart är resten av mina uppgifter?
-profile.options.moved-info=Dina profiluppgifter har tagits bort och flyttats till <strong>Dines</strong>.
+profile.options.moved-info=Dina profiluppgifter har tagits bort och flyttats till <strong>HomeDines</strong>.
 profile.options.childFfriendly.label=Barnvänligt
 profile.options.handicapFriendly.label=Handikappvänligt
 profile.options.havePets.label=Husdjur finns?
@@ -465,15 +470,15 @@ recipe.edit.delete.abort=Avbryt
 
 recipe.button.edit=Redigera recept
 
-# Event / Dine
-event.title={0} - Dine
-event.create.title=Lägg till / Redigera Dine
-event.edit.index.header=Dine
-event.edit.add.header=Lägg till / Redigera Dine
+# Event / HomeDine
+event.title={0} - HomeDine
+event.create.title=Lägg till / Redigera HomeDine
+event.edit.index.header=HomeDine
+event.edit.add.header=Lägg till / Redigera HomeDine
 event.menu.header=Meny / information
 event.edit.add.name=Namn
 event.edit.add.name.validation=(Min 6, max 60 tecken)
-event.edit.add.name.help-text=<em><strong>Ett namn på din Dine, som beskriver din Dine t.ex.:</strong><br>Sommarfest: Svenska härligheter<br>Fransk middag<br>Brunch med skaldjurstvist<br></em>
+event.edit.add.name.help-text=<em><strong>Ett namn på din HomeDine, som beskriver din HomeDine t.ex.:</strong><br>Sommarfest: Svenska härligheter<br>Fransk middag<br>Brunch med skaldjurstvist<br></em>
 event.edit.add.price=Pris i kronor (SEK)(per person)
 event.edit.add.price.validation=(Min 0:-, max 9999:-)
 event.edit.add.price.help-text=<em><strong>Priser</strong><br>Vad blir kostnaden i SEK per kuvert/person?<br></em>
@@ -481,13 +486,13 @@ event.edit.add.min-nr-of-guests.label=Min. antal gäster
 event.edit.add.min-nr-of-guests.validation="Min. antal gäster" måste vara mindre eller lika med "Max antal gäster"
 event.edit.add.max-nr-of-guests.label=Max antal gäster
 event.edit.add.max-nr-of-guests.validation="Max antal gäster" måste vara större eller lika med "Min. antal gäster"
-event.edit.add.nr-of-guests.help-text=<em><strong>Antal gäster</strong><br>Välj hur stor din Dine kan bli<br></em>
+event.edit.add.nr-of-guests.help-text=<em><strong>Antal gäster</strong><br>Välj hur stor din HomeDine kan bli<br></em>
 event.edit.add.body=Meny / Huvudsaklig text
 event.edit.add.body.validation=Din huvudsakliga text bör vara tillräckligt lång så att dina besökare förstår vad de beställer.
 event.edit.add.body.help-text=Här beskriver du vad som ingår i ditt event, om det t.ex. är en vinprovning så kan du visa vilka viner som serveras, eller om det är en middag, vad som serveras till förrätt, huvudrätt och efterrätt.
 event.edit.add.preamble=Citat (valfritt)
 event.edit.add.preamble.validation=(Max 150 tecken)
-event.edit.add.preamble.help-text=<em><strong>Ett kort citat för att sälja in din Dine:</strong><br>"Gott helt enkelt, italiensk pasta när den är som bäst."<br></em>
+event.edit.add.preamble.help-text=<em><strong>Ett kort citat för att sälja in din HomeDine:</strong><br>"Gott helt enkelt, italiensk pasta när den är som bäst."<br></em>
 event.edit.add.child-friendly=Barnvänligt
 event.edit.add.handicap-friendly=Handikappsvänligt
 event.edit.add.have-pets=Värden har husdjur
@@ -507,12 +512,12 @@ event.edit.add.comment.validation.required=Kommentar måste vara ifylld
 event.edit.add.date-time.add-date=Lägg till ytterligare datum
 event.edit.add.date-time.remove-date=Ta bort
 event.edit.add.date-time.remove-date.guests-booked=Du kan inte ta bort en tid där gäster redan har bokat
-event.edit.add.date-time.header.date=Välj tidpunkt för din Dine
+event.edit.add.date-time.header.date=Välj tidpunkt för din HomeDine
 event.edit.add.date-time.header.booked-guests=Du har redan bokade gäster på denna tid
 event.edit.add.date-time.booked-guests-label=(gäster bokade: {0})
 event.edit.add.date-time.booked-guests-info=När du har redan har bokade gäster kan du inte ta bort eller ändra din tid.
 
-event.edit.add.main-image=Huvudsaklig bild för din Dine
+event.edit.add.main-image=Huvudsaklig bild för din HomeDine
 event.edit.add.main-image-preview=Förhandsgranskning
 event.edit.add.main-image-btn=Välj bild
 
@@ -520,14 +525,14 @@ event.edit.add.images=Fler bilder (max {0} st)
 event.edit.add.images-preview=Förhandsgranskning
 event.edit.add.images-btn=Välj fler bilder
 
-event.edit.add.profile-options.header=Gemensama profilinställingar för alla dina dines
+event.edit.add.profile-options.header=Gemensama profilinställingar för alla dina HomeDines
 
 event.edit.prev=Föregående
 event.edit.next=Nästa
 
 event.add.success=Sparat: {0}
 event.add.error=Formuläret innehåller något fel, vad god korrigera innan vi kan spara.
-event.delete.success=Dine borttagen
+event.delete.success=HomeDine borttagen
 event.delete.error=Kunde inte ta bort händelse
 event.edit.save=Spara
 event.edit.abort=Avbryt
@@ -537,7 +542,7 @@ event.edit.delete.title=Varning
 event.edit.delete.confirm=Du kan inte ångra denna åtgärd, är du säker att du vill ta bort?
 event.edit.delete.ok=Ta bort!
 event.edit.delete.abort=Avbryt
-event.button.edit=Redigera Dine
+event.button.edit=Redigera HomeDine
 event.more-images.header=Bilder
 
 event.button.select=Boka
@@ -556,7 +561,7 @@ event.price.back.list.text-04=Boka och njut!
 event.list.timestamp=Klockan:
 event.list.spaces-left=Platser:
 event.list.spaces-booked-out-of-spaces-left={0} av {1}
-event.choose-date.header=Boka dine
+event.choose-date.header=Boka HomeDine
 event.choose-date.sub-header=Välj ett datum
 event.choose-date.picker.date=Kalender
 event.choose-date.picker.list=Lista
@@ -566,7 +571,7 @@ event.choose-date.no-results=Värden har inte valt några fasta datum, föreslå
 event.button.suggest-date=Föreslå ett datum
 event.button.suggest-date-no-other-options=Föreslå ett datum
 
-event.prop.header=Detaljer om denna Dine
+event.prop.header=Detaljer om denna HomeDine
 event.prop.body=Uppgifterna kan komma att ändras, dessa gäller vid bokning.
 event.prop.address=Värdens adress
 event.prop.county=Plats
@@ -586,7 +591,7 @@ event.prop.phone=Värdens telefonnumer
 event.prop.comment=Kommentar ifrån gästen
 
 event.book.heading=Slutför bokning
-event.book.booking-my-own-event=Du kan inte boka din egen Dine
+event.book.booking-my-own-event=Du kan inte boka din egen HomeDine
 event.book.chosen.date=Valt datum
 event.book.chosen.time=Klockan
 event.book.chosen.total-cost=Totalkostnad
@@ -602,19 +607,19 @@ event.book.add.error=Någonting gick fel prova att ladda om sidan och boka igen.
 event.book.add.failure.missing-params=Kunde inte slutföra bokningen, inte alla värden är ifyllda: {0}
 event.book.success.header=Din bokning är slutförd!
 event.book.success.body=En påminnelse är skickad till din e-post: <strong>{0}</strong>
-event.book.success.event-name=Dine
+event.book.success.event-name=HomeDine
 event.book.success.meal-type=Måltidstyp
 event.book.success.payment-info=Betalas hos värden via ett av tillgängliga betalningssätt
 event.book.success.print=Skriv ut
 event.book.success.back=Tillbaka
-event.book.add.already-booked=Du är redan bokad på denna Dine, om du vill ändra din bokning, kontakta värden genom att skicka meddelande till värden via din inbox.
-event.book.add.user-booking-his-own-event=Du kan inte boka din egen Dine
+event.book.add.already-booked=Du är redan bokad på denna HomeDine, om du vill ändra din bokning, kontakta värden genom att skicka meddelande till värden via din inbox.
+event.book.add.user-booking-his-own-event=Du kan inte boka din egen HomeDine
 event.book.add.too-many-bookings=Kan inte slutföra bokningen, för många gäster på detta datum.
 event.book.success.to-guest.email.subject=Bokning genomförd: {0}
 event.book.success.to-guest.email.body.part01=Din bokning är slutförd, betalning genomförs hos värden. Värden har fått dina kontaktuppgifter och tar kontakt vid eventuella ändringar. Om du behöver kontakta värden eller har frågor har också ett meddelande skickat till din HDC inbox, där du kan kontakta värden enkelt.
 event.book.success.to-guest.email.body.part02=Vi på Home dining club hoppas att er kväll blir lyckad!
-event.book.success.to-host.email.subject=Du har fått en bokning! Dine: {0}
-event.book.success.to-host.email.body.part01=En gäst har precis bokat en av dina Dines. Se detaljer om bokningen på din profilsida under fliken {0}. <br>Ett meddelande finns också i din {1}, om du behöver kontakta din gäst.
+event.book.success.to-host.email.subject=Du har fått en bokning! HomeDine: {0}
+event.book.success.to-host.email.body.part01=En gäst har precis bokat en av dina HomeDines. Se detaljer om bokningen på din profilsida under fliken {0}. <br>Ett meddelande finns också i din {1}, om du behöver kontakta din gäst.
 event.book.success.to-host.email.body.link.bookings=bokningar
 event.book.success.to-host.email.body.link.inbox=inbox
 event.book.success.to-host.email.body.part02=Vi på Home dining club hoppas att er kväll blir lyckad!
@@ -644,7 +649,7 @@ event.suggest.success.header=Skickat till värden!
 event.suggest.success.sub-header=Vad händer nu?
 event.suggest.success.body=Förfrågan har skickats till värden som skapar en plats åt dig, eller kontaktar dig med ett alternativt datum, när datumet är tillgänglig går enkelt in och slutför din bokning som vanligt.
 event.suggest.success.body-extra-info-for-inbox=Du kan kontakta värden direkt med fler frågor genom att svara på detta meddelande.
-event.suggest.success.event-name=Dine
+event.suggest.success.event-name=HomeDine
 event.suggest.success.chosen.date=Föreslaget datum
 event.suggest.success.chosen.time=Föreslagen tid
 event.suggest.guest.label=Föreslag ifrån medlem
@@ -655,11 +660,11 @@ event.suggest.success.comment=Gästens kommentar
 event.suggest.success.print=Skriv ut förslag
 event.suggest.success.back=Tillbaka
 event.suggest.email.subject=Du har ett förslag till bokning!
-event.suggest.email.body.part01=En gäst på HDC har föreslagit ett datum för din Dine: {0}
+event.suggest.email.body.part01=En gäst på HDC har föreslagit ett datum för din HomeDine: {0}
 event.suggest.email.body.part02=För att svara på förfrågan, logga in och svara via din {0}, skapa ett passande datum för dina gäster och informera dem om att de kan boka denna tid.
 event.suggest.email.body.part02.link=Inkorg
 event.suggest.inbox.body.part01=Föreslag på datum: {0}
-event.suggest.inbox.body.part02=Skapa ett passande datum för dina gäster på din Dine och informera dem om att de kan boka denna tid.
+event.suggest.inbox.body.part02=Skapa ett passande datum för dina gäster på din HomeDine och informera dem om att de kan boka denna tid.
 
 
 
@@ -919,8 +924,8 @@ admin.stat.type.members=Medlemmar
 admin.stat.type.recipes=Recept
 admin.stat.type.rating.recipes=Omdömmen recept
 admin.stat.type.rating.members=Omdömmen medlemmar
-admin.stat.type.events=Dines
-admin.stat.type.event-bookings=Bokningar dines
+admin.stat.type.events=HomeDines
+admin.stat.type.event-bookings=Bokningar HomeDines
 
 admin.ga.title=Google analytics
 admin.ga.username=Username:
@@ -1089,7 +1094,7 @@ mails.forms.send-request.message=Meddelande
 mails.hosting.mail.title=Förfrågan
 mails.hosting.mail.link-text=klicka för att läsa ditt meddelande
 mails.hosting.form.title=Förfrågan till
-mails.hosting.form.text=Här skickar du en förfrågan att komma till en värd och avnjuta en trevlig dine, det är viktigt att du anger dina kontaktuppgifter korrekt. Värden kan sedan svara på din förfrågan för att verfiera din förfrågan.
+mails.hosting.form.text=Här skickar du en förfrågan att komma till en värd och avnjuta en trevlig HomeDine, det är viktigt att du anger dina kontaktuppgifter korrekt. Värden kan sedan svara på din förfrågan för att verfiera din förfrågan.
 mails.hosting.send.request=Skicka förfrågan
 mails.hosting.request.reply=Svara
 mails.hosting.request.read=Läs
