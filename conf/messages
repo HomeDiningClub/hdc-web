@@ -25,7 +25,7 @@ header.main-menu.link.instagram.text=Instagram
 header.main-menu.link.instagram.title=Bli hungrig över våra bilder på Instagram
 header.main-menu.link.members-browse.text=Medlemmar
 header.main-menu.link.members-browse.title=Sök bland våra Medlemmar
-header.main-menu.link.events-browse.text=HomeDines
+header.main-menu.link.events-browse.text=HomeDines att boka
 header.main-menu.link.events-browse.title=Sök bland våra HomeDines
 
 header.link.host-profile-header={0}
@@ -151,7 +151,7 @@ startpage.wizard.tab.step5.header=Steg 5
 
 # Lists startpage
 profile.profile-list.header=Medlemmar
-event.event-list.header=HomeDines
+event.event-list.header=HomeDines att boka
 
 # Wizard startpage
 wizard.pager.first=Första
@@ -533,7 +533,7 @@ event.edit.next=Nästa
 event.add.success=Sparat: {0}
 event.add.error=Formuläret innehåller något fel, vad god korrigera innan vi kan spara.
 event.delete.success=HomeDine borttagen
-event.delete.error=Kunde inte ta bort händelse
+event.delete.error=Kunde inte ta bort HomeDine
 event.edit.save=Spara
 event.edit.abort=Avbryt
 event.edit.saving=Sparar...
@@ -745,7 +745,7 @@ admin.info=Information!
 admin.menu.title=HDC - Admin
 admin.menu.pages=Sidor
 admin.menu.recipe=Recept
-admin.menu.event=Händelser
+admin.menu.event=HomeDines
 admin.menu.users=Användare
 admin.menu.files=Filer
 admin.menu.county=Län
@@ -865,7 +865,7 @@ admin.tagword.list.name=Namn
 admin.tagword.list.groupname=Tagg-grupp
 admin.tagword.list.action=Funktioner
 
-admin.event.index.header=Händelser
+admin.event.index.header=HomeDines
 admin.event.add.header=Lägg till / Redigera
 admin.event.add.name=Namn
 admin.event.add.route=Sökväg
@@ -875,7 +875,7 @@ admin.event.add.main-image=Huvudbild
 admin.event.add.images=Bilder
 admin.event.add.body=Huvudtext
 admin.event.add.name.validation=(Tvingande, max längd 255)
-admin.event.list.header=Lista av händelser
+admin.event.list.header=Lista av HomeDines
 admin.event.list.name=Namn
 admin.event.list.owner=Ägare
 admin.event.list.route=Sökväg
