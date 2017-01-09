@@ -461,7 +461,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
       contentData => {
         eventService.findById(contentData.suggestEventId) match {
           case Some(event) => {
-            val successValues = eventService.addSuggestionAndSendEmail(currentUser, event, contentData.date, contentData.time, contentData.guests, contentData.comment, getBaseUrl)
+            val successValues = eventService.addSuggestionAndSendEmail(currentUser, event, contentData.date, contentData.time, contentData.guests, contentData.comment, getBaseUrl)(request)
             val successMessage = Messages("event.suggest.add.success")
             Logger.debug(successMessage)
             Ok(views.html.event.suggestionSuccess(event,successValues))

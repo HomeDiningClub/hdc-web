@@ -1,0 +1,11 @@
+@(title: String, baseUrl: String, successValues: EventDateSuggestionSuccess)(implicit request: RequestHeader, messages: Messages)
+
+@pathToProfile = @{baseUrl+routes.UserProfileController.viewProfileByName(successValues.host.getUserProfile.profileLinkName).url}
+@linkToInbox = {<a href="@pathToProfile#inbox-tab">@Messages("event.suggest.email.body.part02.link")</a>}
+
+@mails.mainMail(title = title) {
+    <h1>@title</h1>
+    @Messages("event.suggest.email.body.part01", successValues.eventName)
+    @views.html.event.suggestionSuccessDetails(successValues)
+    @Html(Messages("event.suggest.email.body.part02", linkToInbox))
+}

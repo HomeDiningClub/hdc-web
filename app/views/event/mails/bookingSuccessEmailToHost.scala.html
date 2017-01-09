@@ -1,0 +1,14 @@
+@(title: String, baseUrl: String, successValues: EventBookingSuccess)(implicit request: RequestHeader, messages: Messages)
+
+@pathToHostProfile = @{baseUrl+successValues.hostLink}
+@linkToBookings = {<a href="@pathToHostProfile#bookings-tab">@Messages("event.book.success.to-host.email.body.link.bookings")</a>}
+@linkToInbox = {<a href="@pathToHostProfile#inbox-tab">@Messages("event.book.success.to-host.email.body.link.inbox")</a>}
+
+@mails.mainMail(title = title) {
+    <h1>@title</h1>
+    @Html(Messages("event.book.success.to-host.email.body.part01", linkToBookings, linkToInbox))
+    <br><br>
+    @views.html.event.bookingSuccessDetails(successValues)
+    <br><br>
+    @Messages("event.book.success.to-host.email.body.part02")
+}

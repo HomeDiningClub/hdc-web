@@ -1,0 +1,48 @@
+@(title: String)(content: Html)(implicit messages: Messages, request: RequestHeader)
+@domainSchema = @{if(request.secure){"https://"}else{"http://"}}
+
+<!DOCTYPE html>
+<html lang="@Messages("main.language")">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>@title - @Messages("mail.main.title")</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            @@media screen and (max-width: 768px) {
+                .content-table { border-collapse:collapse;overflow:hidden;}
+                .mail-col-1 { width:100% !important;padding-left:0px !important;padding-right:0px !important;display:block;clear:both;position:relative;}
+                .mail-col-2 { text-align:center !important;max-width:none !important;width:100% !important;display:block;clear:both;position:relative;}
+                .logo { border:0px !important;max-width:60px !important;}
+            }
+        </style>
+    </head>
+    <body style="background-color:#efefef;padding:20px;">
+
+        <table border="0" width="100%" height="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="border-radius:10px;border:20px solid #c2dbd7;">
+            <tr>
+                <td align="center" valign="top" bgcolor="#f0f0f0" style="background:#ffffff;font-size:14px;">
+                    <table class="content-table" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="width:100%;font-family:helvetica,arial,verdana,sans-serif;">
+                        <tr>
+                            <td class="mail-col-1" width="75%" valign="top" style="width:75%;vertical-align:top;text-align:left;padding-top:20px;padding-bottom:20px;padding-left:20px;padding-right:10px;">
+                                <div style="margin-right:10px;margin-left:20px;">@content</div>
+                            </td>
+                            <td class="mail-col-2" width="25%" valign="top" style="width:25%;vertical-align:top;text-align:right;max-width:300px;">
+                            @defining(domainSchema + request.host){ domainHost =>
+                                @defining(domainHost+"/assets/images/mail/logo.jpg") { image =>
+                                    <a href="@domainHost"><img class="logo" border="0" style="border-left:1px solid #ddd;margin-top:10px;max-width:170px;width:100%;background-color:#fff;" src="@image" alt="@Messages("mail.main.logo")"></a>
+                                }
+                            }
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <br>
+        <div style="display:block;position:relative;font-size:11px;font-family:helvetica,arial,verdana,sans-serif;text-align:center">
+                @Html(Messages("mail.main.footer"))
+        </div>
+    </body>
+</html>

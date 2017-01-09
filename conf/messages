@@ -326,7 +326,7 @@ profile.create.form.lastName.validation.required=Förnamn måste anges
 
 ## email-address
 profile.create.form.emailAddress=E-post
-profile.create.form.emailAddress.help=(Obligatoriskt, vid byte av e-postadress blir du utloggad)
+profile.create.form.emailAddress.help=(Obligatoriskt)
 profile.create.form.emailAddress.uniq=E-post är inte korrekt angivet
 profile.create.form.emailAddress.validation.required=E-post måste anges och vara i korrekt format
 

@@ -1,39 +1,34 @@
 package services
 
-import javax.inject.{Named, Inject}
-import models.viewmodels.{EmailAndName}
-import org.springframework.stereotype.Service
-import play.api.Logger
-import play.api.i18n.{MessagesApi, I18nSupport, Messages}
-import play.api.libs.mailer.MailerClient
+import javax.inject.{Inject}
+
+import models.viewmodels.EmailAndName
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.mailer._
 
-//@Named
-//@Service
+
 class MailService @Inject() (mailer: MailerClient,
                              val messagesApi: MessagesApi) extends I18nSupport {
 
   def createMail(subject: String, message: String, recipients: List[EmailAndName], bcc: Option[List[EmailAndName]], from: EmailAndName, replyTo: EmailAndName): Email = {
-
-    val email = Email(
+    Email(
       subject = subject,
       from = buildNameAndEmailString(from).toString,
       to = buildRecipientsList(recipients),
       replyTo = Some(buildNameAndEmailString(replyTo).toString),
-      bodyHtml = Some("<html>" + message + "</html>"),
+      bodyHtml = createMailBody(message),
+      //charset = Some("ISO-8859-1"), // Could be used: "ISO-8859-1" or "UTF-8"
+      //attachments = if(sendWithWrappingLayout) Seq(AttachmentFile("logo.jpg", new File("public\\images\\mail\\logo.jpg"), contentId = Some("logocid"))) else Seq.empty,
       bcc = bcc match {
         case Some(items) =>
           buildRecipientsList(items)
         case None => Seq.empty
       }
     )
-    email
   }
 
+
   def createAndSendMailNoReply(subject: String, message: String, recipient: EmailAndName, from: EmailAndName): Email = {
-
-
-
     val email = createMail(
       subject = subject,
       recipients = List(recipient),
@@ -71,6 +66,12 @@ class MailService @Inject() (mailer: MailerClient,
   private def buildNameAndEmailString(emailObject: EmailAndName): String = {
     val returnStr: String = emailObject.name + "<" + emailObject.email + ">"
     returnStr
+  }
+
+  private def createMailBody(message: String): Some[String] = {
+    Some(
+        "<html>" + message + "</html>"
+    )
   }
 
 }

@@ -1,0 +1,9 @@
+@(title: String, baseUrl: String, successValues: EventDateSuggestionSuccess)(implicit request: RequestHeader, messages: Messages)
+
+@mails.mainMail(title = title) {
+    <h1>@title</h1>
+    @Messages("event.suggest.success.header") - @Messages("event.suggest.success.sub-header")
+    <br><br>
+    @Messages("event.suggest.success.body")
+    @views.html.event.suggestionSuccessDetails(successValues)
+}

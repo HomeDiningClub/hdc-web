@@ -376,7 +376,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
 
 
-  def addSuggestionAndSendEmail(userSendingSuggestion: UserCredential, event: Event, suggDate: LocalDate, suggTime: LocalTime, nrOfGuestsToBeBooked: Integer, comment: Option[String], baseUrl: String): EventDateSuggestionSuccess = withTransaction(template){
+  def addSuggestionAndSendEmail(userSendingSuggestion: UserCredential, event: Event, suggDate: LocalDate, suggTime: LocalTime, nrOfGuestsToBeBooked: Integer, comment: Option[String], baseUrl: String)(implicit request: RequestHeader): EventDateSuggestionSuccess = withTransaction(template){
     //val selectedDate = Helpers.buildDateFromDateAndTime(suggDate, suggTime)
     val guestUserProfileLinkName = userSendingSuggestion.getUserProfile.profileLinkName
 
@@ -419,7 +419,7 @@ class EventService @Inject()(val template: Neo4jTemplate,
     newBooking
   }
 
-  def addBookingAndSendEmail(currentUser: UserCredential, event: Event, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String], baseUrl: String): EventBookingSuccess = {
+  def addBookingAndSendEmail(currentUser: UserCredential, event: Event, eventDate: EventDate, nrOfGuestsToBeBooked: Integer, comment: Option[String], baseUrl: String)(implicit requestHeader: RequestHeader): EventBookingSuccess = {
     // Add the booking
     val newBooking = this.addBooking(currentUser = currentUser, eventDate = eventDate, nrOfGuestsToBeBooked = nrOfGuestsToBeBooked, comment = comment)
 
@@ -570,15 +570,14 @@ class EventService @Inject()(val template: Neo4jTemplate,
       })
   }
 
-  private def sendBookingSuccessEmailToGuest(successValues: EventBookingSuccess): Email = {
+  private def sendBookingSuccessEmailToGuest(successValues: EventBookingSuccess)(implicit requestHeader: RequestHeader): Email = {
 
     // To guest
-    val body = Html(Messages("event.book.success.to-guest.email.body.part01") +
-      views.html.event.bookingSuccessDetails(successValues) +
-      Messages("event.book.success.to-guest.email.body.part02")).toString()
+    val subject = Messages("event.book.success.to-guest.email.subject", successValues.eventName)
+    val body = views.html.event.mails.bookingSuccessEmailToGuest(subject, successValues).toString()
 
     mailService.createAndSendMailNoReply(
-      subject =  Messages("event.book.success.to-guest.email.subject", successValues.eventName),
+      subject = subject,
       message = body,
       recipient = EmailAndName(successValues.guestEmail,successValues.guestEmail),
       from = mailService.getDefaultAnonSender
@@ -586,54 +585,45 @@ class EventService @Inject()(val template: Neo4jTemplate,
 
   }
 
-  private def sendBookingSuccessEmailToHost(successValues: EventBookingSuccess, baseUrl: String): Email = {
+  private def sendBookingSuccessEmailToHost(successValues: EventBookingSuccess, baseUrl: String)(implicit requestHeader: RequestHeader): Email = {
 
     // To Host
-    val pathToHostProfile = baseUrl + successValues.hostLink
-    val linkToBookings = "<a href='" + pathToHostProfile + "#bookings-tab'>" + Messages("event.book.success.to-host.email.body.link.bookings") + "</a>"
-    val linkToInbox = "<a href='" + pathToHostProfile + "#inbox-tab'>" + Messages("event.book.success.to-host.email.body.link.inbox") + "</a>"
-    val msgBody = Html(Messages("event.book.success.to-host.email.body.part01", linkToBookings, linkToInbox)
-      + "<br><br>" +
-      views.html.event.bookingSuccessDetails(successValues).toString()
-      + "<br><br>" + Messages("event.book.success.to-host.email.body.part02")).toString
+    val subject = Messages("event.book.success.to-host.email.subject", successValues.eventName)
+    val body = views.html.event.mails.bookingSuccessEmailToHost(subject, baseUrl, successValues).toString()
 
     mailService.createAndSendMailNoReply(
-      subject =  Messages("event.book.success.to-host.email.subject", successValues.eventName),
-      message = msgBody,
+      subject = subject,
+      message = body,
       recipient = EmailAndName(successValues.hostEmail,successValues.hostEmail),
       from = mailService.getDefaultAnonSender
     )
 
   }
 
-  private def sendSuggestionSuccessEmailToHost(successValues: EventDateSuggestionSuccess, baseUrl: String): Email = {
+  private def sendSuggestionSuccessEmailToHost(successValues: EventDateSuggestionSuccess, baseUrl: String)(implicit requestHeader: RequestHeader): Email = {
 
     // To host
-    val path = routes.UserProfileController.viewProfileByName(successValues.host.getUserProfile.profileLinkName).url
-    val msgBody = Messages("event.suggest.email.body.part01", successValues.eventName) +
-      views.html.event.suggestionSuccessDetails(successValues).toString() +
-      Messages("event.suggest.email.body.part02", "<a href='" + (baseUrl + path) + "#inbox-tab'>" + Messages("event.suggest.email.body.part02.link") + "</a>")
+    val subject = Messages("event.suggest.email.subject")
+    val body = views.html.event.mails.suggestionEmailToHost(subject, baseUrl, successValues).toString()
 
     mailService.createAndSendMailNoReply(
-      subject =  Messages("event.suggest.email.subject"),
-      message = msgBody,
+      subject = subject,
+      message = body,
       recipient = EmailAndName(successValues.hostEmail,successValues.hostEmail),
       from = mailService.getDefaultAnonSender
     )
   }
 
-  private def sendSuggestionSuccessEmailToGuest(successValues: EventDateSuggestionSuccess, baseUrl: String): Email = {
+  private def sendSuggestionSuccessEmailToGuest(successValues: EventDateSuggestionSuccess, baseUrl: String)(implicit requestHeader: RequestHeader): Email = {
 
     // To Guest
-    val path = routes.UserProfileController.viewProfileByName(successValues.host.getUserProfile.profileLinkName).url
-    val msgBody = Messages("event.suggest.success.header") + " - " + Messages("event.suggest.success.sub-header") + "<br><br>"
-        Messages("event.suggest.success.body") +
-        views.html.event.suggestionSuccessDetails(successValues).toString()
+    val subject = Messages("event.suggest.add.success")
+    val body = views.html.event.mails.suggestionEmailToGuest(subject, baseUrl, successValues).toString()
 
     mailService.createAndSendMailNoReply(
-      subject =  Messages("event.suggest.add.success"),
-      message = msgBody,
-      recipient = EmailAndName(successValues.guestEmail,successValues.hostEmail),
+      subject = subject,
+      message = body,
+      recipient = EmailAndName(successValues.guestEmail,successValues.guestEmail),
       from = mailService.getDefaultAnonSender
     )
   }

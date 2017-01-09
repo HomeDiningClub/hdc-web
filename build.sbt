@@ -59,7 +59,7 @@ libraryDependencies ++= Seq(
   //"ws.securesocial" %% "securesocial" % "3.0-M4" withSources(),
   // SecureSocial
   "ws.securesocial" %% "securesocial" % "master-SNAPSHOT" withSources(),
-  "com.typesafe.play" %% "play-mailer" % "3.0.1" withSources(),
+  "com.typesafe.play" %% "play-mailer" % "4.0.0" withSources(),
   "net.codingwell" %% "scala-guice" % "4.0.0" withSources(),
   // For imagesRezise components
   "commons-io" % "commons-io" % "2.4" withSources(),

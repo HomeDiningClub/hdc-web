@@ -1,8 +1,10 @@
 @(token: String)(implicit request: RequestHeader, messages: Messages, env: securesocial.core.RuntimeEnvironment)
-<html>
-    <body>
-        <p>@Messages("mails.sendSignUpEmail.body.part1")</p>
-        @mailLink = { <a href="@env.routes.signUpUrl(token)">@Messages("mails.sendSignUpEmail.body.linkToRegistration")</a> }
-        <p>@Html(Messages("mails.sendSignUpEmail.body.part2", mailLink))</p>
-    </body>
-</html>
+
+@mailLink = {
+    <a href="@env.routes.signUpUrl(token)">@Messages("mails.sendSignUpEmail.body.linkToRegistration")</a>
+}
+
+@mails.mainMail(title = Messages("mails.sendSignUpEmail.subject")) {
+    <p>@Messages("mails.sendSignUpEmail.body.part1")</p>
+    <p>@Html(Messages("mails.sendSignUpEmail.body.part2", mailLink))</p>
+}

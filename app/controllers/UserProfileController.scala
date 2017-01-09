@@ -51,7 +51,6 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
                                       val userCredentialService: UserCredentialService,
                                       val environment: Environment,
                                       val messageService: MessageService,
-                                      implicit val nodeEntityService: NodeEntityService,
                                       val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   // Forms
@@ -807,7 +806,7 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
   }
 
   private def getBaseUrl()(implicit request: RequestHeader): String = {
-    routes.StartPageController.index().absoluteURL(secure = false).dropRight(1)
+    routes.StartPageController.index().absoluteURL(secure = request.secure).dropRight(1)
   }
 
 }
