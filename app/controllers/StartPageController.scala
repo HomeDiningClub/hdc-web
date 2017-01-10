@@ -105,9 +105,7 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
     val fetchedTag: Option[TagWord] = verifySelectedTagWord(boxFilterTag)
     val fetchedCounty: Option[County] = verifySelectedCounty(boxFilterCounty)
 
-    var perf = customUtils.Helpers.startPerfLog()
     val pagedUserProfiles = userProfileService.getUserProfilesFiltered(filterTag = fetchedTag, filterCounty = fetchedCounty, filterIsHost = boxFilterIsHost, pageNo = Some(0), nrPerPage = maxNr).right.get
-    customUtils.Helpers.endPerfLog("getData: ", perf)
 
     // Convert paged to list
     val userProfiles = pagedUserProfiles match {
@@ -120,10 +118,7 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
         }
     }
 
-    perf = customUtils.Helpers.startPerfLog()
     val profBoxes = userProfileService.buildProfileBoxes(userProfiles)
-
-    customUtils.Helpers.endPerfLog("building: ", perf)
     profBoxes
   }
 

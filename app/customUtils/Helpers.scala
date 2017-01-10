@@ -23,35 +23,10 @@ import org.springframework.stereotype.{Controller => SpringController}
 import scala.language.postfixOps
 import scala.util.matching.Regex
 
-//@Named
 object Helpers {
 
-  /*
-  @Inject implicit var env: SecureSocialRuntimeEnvironment = null
-*/
-  /*
-  def getUserFromRequest(req: RequestHeader): Option[UserCredential] = {
-    implicit val request: RequestHeader = req
-    implicit def executionContext: ExecutionContext = env.executionContext
-
-    val futureUser = securesocial.core.SecureSocial.currentUser
-
-    Await.result(futureUser, 500 millis) match {
-      case Some(user:UserCredential) => Some(user)
-      case None => None
-    }
-  }
-*/
-
-/*  def currentUser = Action.async { implicit request =>
-    SecureSocial.currentUser[DemoUser].map { maybeUser =>
-      val userId = maybeUser.map(_.main.userId).getOrElse("unknown")
-      Ok(s"Your id is $userId")
-    }
-  }*/
-
   def startPerfLog(): Long = {
-    Logger.info("Starting perflog...")
+    //Logger.info("Starting perflog...")
     System.currentTimeMillis
   }
 
@@ -78,15 +53,6 @@ object Helpers {
   def isUserAdmin(checkUser: UserCredential): Boolean = {
     IsAuthorizedChecks.ValidateWithRole(checkUser, RoleEnums.ADMIN)
   }
-
-  /*
-  def isUserAdmin(request: RequestHeader): Boolean = {
-    Helpers.getUserFromRequest(request) match {
-      case Some(user) => isUserAdmin(user)
-      case None => false
-    }
-  }
-  */
 
   def isValidUuid(uuid: String): Boolean = {
     if(uuid.matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")){
@@ -144,7 +110,7 @@ object Helpers {
     date.toString("YYYY-MM-dd - HH:mm")
   }
 
-  def formatDate(date: java.util.Date, format: String) = {
+  def formatDate(date: java.util.Date, format: String):String = {
     new SimpleDateFormat(format).format(date)
   }
 
@@ -217,7 +183,7 @@ object Helpers {
     DateTime.now().toDate
   }
 
-  def titleCase(s: String) = {
+  def titleCase(s: String):String = {
     if (s != null && s.length > 0) {
       s.head.toUpper + s.tail.toLowerCase
     }else{
