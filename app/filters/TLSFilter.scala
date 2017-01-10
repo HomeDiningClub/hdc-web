@@ -1,34 +1,31 @@
 package filters
 
-
+import javax.inject.Inject
 import play.api.mvc.Result
-
 import scala.concurrent._
 import ExecutionContext.Implicits.global
-
 import play.api.mvc.Filter
-
-import play.api._
 import play.api.mvc._
-import play.filters.headers.SecurityHeadersFilter
-
 import scala.concurrent.Future
-
 import play.api.http._
 
-//import meta._
-//import Assets._
+class TLSFilter @Inject()(implicit app: play.api.Application) extends Filter {
 
-class TLSFilter extends Filter {
   def apply(nextFilter: RequestHeader => Future[Result])
            (requestHeader: RequestHeader): Future[Result] = {
-    if(!requestHeader.secure)
-      Future.successful(Results.MovedPermanently("https://" + requestHeader.host + requestHeader.uri))
-    else
-      nextFilter(requestHeader).map(_.withHeaders("Strict-Transport-Security" -> "max-age=31536000; includeSubDomains"))
+
+    if(app.mode == play.api.Mode.Prod){
+      if (!requestHeader.secure)
+        Future.successful(Results.MovedPermanently("https://" + requestHeader.host + requestHeader.uri))
+      else
+        nextFilter(requestHeader).map(_.withHeaders("Strict-Transport-Security" -> "max-age=31536000; includeSubDomains"))
+    }else{
+      nextFilter(requestHeader)
+    }
   }
+
 }
 
-class MyFilters extends HttpFilters {
+class MyFilters @Inject()(implicit app: play.api.Application) extends HttpFilters {
   val filters = Seq(new TLSFilter)
 }
