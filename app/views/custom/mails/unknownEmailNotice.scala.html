@@ -1,11 +1,12 @@
 @()(implicit request: RequestHeader, messages: Messages)
-
+@title = @{Messages("mails.unknownEmail.subject")}
 @mailLink = {
     <a href="mailto:@Messages("mails.unknownEmail.body.maillink")">@Messages("mails.unknownEmail.body.mailtitle")</a>
 }
 
-@mails.mainMail(title = Messages("mails.unknownEmail.subject")) {
+@mails.mainMail(title = title) {
+    <h1>@title</h1>
     <p>@Messages("mails.unknownEmail.body.part1")</p>
     <p>@Messages("mails.unknownEmail.body.part2")</p>
-   <p>@play.twirl.api.Html(Messages("mails.unknownEmail.body.part3", mailLink))</p>
+    <p>@Html(Messages("mails.unknownEmail.body.part3", mailLink))</p>
 }

@@ -8,7 +8,7 @@
     <h1>@title</h1>
     @Html(Messages("event.book.success.to-host.email.body.part01", linkToBookings, linkToInbox))
     <br><br>
-    @views.html.event.bookingSuccessDetails(successValues)
+    @views.html.event.bookingSuccessDetails(successValues, renderForEmail = true)
     <br><br>
     @Messages("event.book.success.to-host.email.body.part02")
 }

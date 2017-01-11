@@ -1,10 +1,10 @@
 @(user: securesocial.core.BasicProfile)(implicit request: RequestHeader, messages: Messages, env: securesocial.core.RuntimeEnvironment)
-
+@title = @{Messages("mails.sendAlreadyRegisteredEmail.subject")}
 @mailLink = {
     <a href="@env.routes.startResetPasswordUrl">@Messages("mails.sendAlreadyRegisteredEmail.body.linkToResetPassword")</a>
 }
-
-@mails.mainMail(title = Messages("mails.sendAlreadyRegisteredEmail.subject")) {
+@mails.mainMail(title = title) {
+    <h1>@title</h1>
     <p>@Messages("mails.sendAlreadyRegisteredEmail.body.part1", user.firstName.getOrElse(user.email.get))</p>
     <p>@Html(Messages("mails.sendAlreadyRegisteredEmail.body.part2", mailLink))</p>
 }

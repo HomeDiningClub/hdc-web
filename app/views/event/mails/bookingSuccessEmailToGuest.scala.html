@@ -3,6 +3,6 @@
 @mails.mainMail(title = title) {
     <h1>@title</h1>
     @Messages("event.book.success.to-guest.email.body.part01")
-    @views.html.event.bookingSuccessDetails(successValues)
+    @views.html.event.bookingSuccessDetails(successValues, renderForEmail = true)
     @Messages("event.book.success.to-guest.email.body.part02")
 }

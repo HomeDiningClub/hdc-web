@@ -1,26 +1,29 @@
-@(eventDateSuggestionSuccess: EventDateSuggestionSuccess)(implicit messages: Messages)
+@(eventDateSuggestionSuccess: EventDateSuggestionSuccess, renderForEmail: Boolean = false)(implicit messages: Messages)
+@ulStyle = @{if(renderForEmail){"list-style:none;20px 20px 10px 20px;border:1px solid #e0e0e0;background-color:#fafafa"}else{""}}
+@liStyle = @{if(renderForEmail){"margin:0 0 10px 0;"}else{""}}
+@rowStyle = @{if(renderForEmail){"width:100%;clear:both"}else{""}}
 
-<ul class="list-group big-margin-top">
-    <li class="list-group-item">
-        <div class="row">
+<ul class="list-group big-margin-top" style="@ulStyle">
+    <li class="list-group-item" style="@liStyle">
+        <div class="row" style="@rowStyle">
             <div class="col-md-3"><strong>@Messages("event.suggest.success.event-name")</strong></div>
             <div class="col-md-9"><strong><a href="@eventDateSuggestionSuccess.eventLink">@eventDateSuggestionSuccess.eventName</a></strong></div>
         </div>
     </li>
-    <li class="list-group-item">
-        <div class="row">
+    <li class="list-group-item" style="@liStyle">
+        <div class="row" style="@rowStyle">
             <div class="col-md-3"><span class="glyphicon glyphicon-calendar"></span> @Messages("event.suggest.success.chosen.date")</div>
             <div class="col-md-9">@eventDateSuggestionSuccess.date</div>
         </div>
     </li>
-    <li class="list-group-item">
-        <div class="row">
+    <li class="list-group-item" style="@liStyle">
+        <div class="row" style="@rowStyle">
             <div class="col-md-3"><span class="glyphicon glyphicon-time"></span> @Messages("event.suggest.success.chosen.time")</div>
             <div class="col-md-9">@eventDateSuggestionSuccess.time</div>
         </div>
     </li>
-    <li class="list-group-item">
-        <div class="row">
+    <li class="list-group-item" style="@liStyle">
+        <div class="row" style="@rowStyle">
             <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.suggest.guest.label")</div>
             <div class="col-md-9">
                 <strong>@eventDateSuggestionSuccess.guestFullName</strong><br>
@@ -30,15 +33,15 @@
             </div>
         </div>
     </li>
-    <li class="list-group-item">
-        <div class="row">
+    <li class="list-group-item" style="@liStyle">
+        <div class="row" style="@rowStyle">
             <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.suggest.success.nr-of-guests")</div>
             <div class="col-md-9">@eventDateSuggestionSuccess.nrOfGuests.toString</div>
         </div>
     </li>
     @if(eventDateSuggestionSuccess.guestComment.isDefined) {
-        <li class="list-group-item">
-            <div class="row">
+        <li class="list-group-item" style="@liStyle">
+            <div class="row" style="@rowStyle">
                 <div class="col-md-3"><span class="glyphicon glyphicon-comment"></span> @Messages("event.suggest.success.comment")</div>
                 <div class="col-md-9">@eventDateSuggestionSuccess.guestComment.get</div>
             </div>

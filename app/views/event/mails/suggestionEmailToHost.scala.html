@@ -6,6 +6,6 @@
 @mails.mainMail(title = title) {
     <h1>@title</h1>
     @Messages("event.suggest.email.body.part01", successValues.eventName)
-    @views.html.event.suggestionSuccessDetails(successValues)
+    @views.html.event.suggestionSuccessDetails(successValues, renderForEmail = true)
     @Html(Messages("event.suggest.email.body.part02", linkToInbox))
 }

@@ -1036,7 +1036,7 @@ securesocial.passwordChange.changeButton=Ändra
 securesocial.passwordChange.invalidPassword=Ogiltigt lösenord
 securesocial.passwordChange.ok=Ditt lösenord har ändrats
 securesocial.passwordChange.okButton=Ok
-securesocial.passwordChange.currentPassword.help=*(epost)
+securesocial.passwordChange.currentPassword.help=*(Din E-post)
 
 # Not authorized page
 securesocial.notAuthorized.title=Behörighet saknas
