@@ -20,44 +20,44 @@
     }
     <li class="list-group-item" style="@liStyle">
         <div class="row" style="@rowStyle">
-            <div class="col-md-3"><span class="glyphicon glyphicon-calendar"></span> @Messages("event.book.chosen.date")</div>
+            <div class="col-md-3"><span class="glyphicon glyphicon-calendar"></span> @Messages("event.book.success.chosen.date")</div>
             <div class="col-md-9">@eventBookingSuccess.date</div>
         </div>
     </li>
     <li class="list-group-item" style="@liStyle">
         <div class="row" style="@rowStyle">
-            <div class="col-md-3"><span class="glyphicon glyphicon-time"></span> @Messages("event.book.chosen.time")</div>
+            <div class="col-md-3"><span class="glyphicon glyphicon-time"></span> @Messages("event.book.success.chosen.time")</div>
             <div class="col-md-9">@eventBookingSuccess.time</div>
         </div>
     </li>
     <li class="list-group-item" style="@liStyle">
         <div class="row" style="@rowStyle">
-            <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.book.guest.label")</div>
+            <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.book.success.guest.label")</div>
             <div class="col-md-9">
                 <strong>@eventBookingSuccess.guestFullName</strong><br>
                 <a href="@eventBookingSuccess.guestProfileLink">@eventBookingSuccess.guestProfileName</a><br>
-                @Messages("event.book.guest-email.label", eventBookingSuccess.guestEmail)<br>
-                @if(eventBookingSuccess.guestPhone.isDefined) { @Messages("event.book.guest-phone.label", eventBookingSuccess.guestPhone.get)<br> }
+                @Messages("event.book.success.guest-email.label", eventBookingSuccess.guestEmail)<br>
+                @if(eventBookingSuccess.guestPhone.isDefined) { @Messages("event.book.success.guest-phone.label", eventBookingSuccess.guestPhone.get)<br> }
             </div>
         </div>
     </li>
     <li class="list-group-item" style="@liStyle">
         <div class="row" style="@rowStyle">
-            <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.book.nr-of-guests.label")</div>
+            <div class="col-md-3"><span class="glyphicon glyphicon-user"></span> @Messages("event.book.success.nr-of-guests.label")</div>
             <div class="col-md-9">@eventBookingSuccess.nrOfGuests.toString</div>
         </div>
     </li>
     @if(eventBookingSuccess.phoneNumberToHost.isDefined){
         <li class="list-group-item" style="@liStyle">
             <div class="row" style="@rowStyle">
-                <div class="col-md-3"><span class="glyphicon glyphicon-earphone"></span> @Messages("event.prop.phone")</div>
+                <div class="col-md-3"><span class="glyphicon glyphicon-earphone"></span> @Messages("event.book.success.host-phone")</div>
                 <div class="col-md-9">@eventBookingSuccess.phoneNumberToHost.get</div>
             </div>
         </li>
     }
     <li class="list-group-item" style="@liStyle">
         <div class="row" style="@rowStyle">
-            <div class="col-md-3"><span class="glyphicon glyphicon-map-marker"></span> @Messages("event.prop.address")</div>
+            <div class="col-md-3"><span class="glyphicon glyphicon-map-marker"></span> @Messages("event.book.success.host-address")</div>
             <div class="col-md-9">
                 @eventBookingSuccess.locationAddress<br>
                 @eventBookingSuccess.locationZipCode<br>
@@ -68,14 +68,14 @@
     @if(eventBookingSuccess.guestComment.isDefined){
         <li class="list-group-item" style="@liStyle">
             <div class="row" style="@rowStyle">
-                <div class="col-md-3"><span class="glyphicon glyphicon-comment"></span> @Messages("event.prop.comment")</div>
+                <div class="col-md-3"><span class="glyphicon glyphicon-comment"></span> @Messages("event.book.success.guest-comment")</div>
                 <div class="col-md-9">@eventBookingSuccess.guestComment.get</div>
             </div>
         </li>
     }
     <li class="list-group-item" style="@liStyle">
         <div class="row" style="@rowStyle">
-            <div class="col-md-3"><strong>@Messages("event.book.chosen.total-cost")</strong></div>
+            <div class="col-md-3"><strong>@Messages("event.book.success.chosen.total-cost")</strong></div>
             <div class="col-md-9">
                 <strong>@Messages("event.price.currency") @eventBookingSuccess.totalCost @Messages("event.price.currency.end")</strong><br>
                 <em>@Messages("event.book.success.payment-info")</em>
