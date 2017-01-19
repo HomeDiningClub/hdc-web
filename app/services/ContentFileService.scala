@@ -244,7 +244,7 @@ class ContentFileService @Inject() (val template: Neo4jTemplate,
 
     // Is user logged in and can be found?
     if(userObjectId != null) {
-      user = userCredentialRepository.findByobjectId(userObjectId)
+      user = userCredentialRepository.findByobjectId(userObjectId.toString)
     }
 
     if(user == null) {

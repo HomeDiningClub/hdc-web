@@ -635,8 +635,18 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
     * **************************************************************************************************/
   def editSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-    var userCredential = request.user
-    var userProfile = userCredential.getUserProfile
+    var userCredential: UserCredential = null
+    var userProfile: UserProfile = null
+
+    val userCredentialOpt: Option[UserCredential] = userCredentialService.findById(request.user.objectId)
+
+    if(userCredentialOpt.isDefined) {
+      userCredential = userCredentialOpt.get
+    }else{
+      InternalServerError("Cannot find userCredential for userCredential.objectId: " + userCredential.objectId)
+    }
+
+    userProfile = userCredential.getUserProfile
 
     var allTagsSelectedInForm: Option[List[TagCheckboxForm]] = None
     var countyId: String = ""

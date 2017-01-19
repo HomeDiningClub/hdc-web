@@ -101,20 +101,20 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
         Ok(views.html.admin.event.index())
       case Some(item) =>
         val form = EventForm.apply(
-          Some(item.objectId.toString),
-          item.getName,
-          item.getPreAmble match{case null|"" => None case _ => Some(item.getPreAmble)},
-          Some(item.getMainBody),
+          id = Some(item.objectId.toString),
+          name = item.getName,
+          preAmble = item.getPreAmble match{case null|"" => None case _ => Some(item.getPreAmble)},
+          mainBody = Some(item.getMainBody),
           mainImage = item.getMainImage match {
             case null => None
-            case mi => Some(mi.objectId.toString)
+            case mainImg => Some(mainImg.objectId.toString)
           },
           price = item.getPrice match {
             case null => 0
             case p => p.intValue()
           },
           images = eventService.convertToCommaSepStringOfObjectIds(eventService.getSortedEventImages(item)),
-          eventDates = eventService.convertToEventFormDates(eventService.getSortedEventDates(item)),
+          eventDates = eventService.convertToEventFormDates(eventService.filterEventDatesValidForEditing(eventService.getSortedEventDates(item))),
           minNoOfGuest = item.getMinNrOfGuests,
           maxNoOfGuest = item.getMaxNrOfGuests,
           eventOptionsForm = EventOptionsForm(
@@ -138,7 +138,9 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
         // Get any images and sort them
         val sortedImages = eventService.getSortedEventImages(item)
 
-        Ok(views.html.admin.event.add(contentForm.fill(form),editingItem, sortedImages))
+        Ok(views.html.admin.event.add(contentForm.fill(form),
+          editingItem,
+          sortedImages))
     }
   }
 

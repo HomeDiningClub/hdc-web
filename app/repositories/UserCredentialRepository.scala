@@ -9,7 +9,7 @@ import java.util
 trait UserCredentialRepository extends GraphRepository[UserCredential] {
 
   @Query("MATCH (n:`UserCredential`) WHERE n.objectId={0} RETURN n")
-  def findByobjectId(objectId: UUID): UserCredential
+  def findByobjectId(objectId: String): UserCredential
 
   @Query("MATCH (n:`UserCredential`) WHERE n.userId={0} AND n.providerId={1} RETURN n")
   def findByuserIdAndProviderId(userId : String, providerId: String) : UserCredential

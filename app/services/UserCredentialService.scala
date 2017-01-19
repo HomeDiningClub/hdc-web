@@ -120,7 +120,7 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
 
 
   def findById(objectId: UUID): Option[UserCredential] = withTransaction(template){
-    userCredentialRepository.findByobjectId(objectId) match {
+    userCredentialRepository.findByobjectId(objectId.toString) match {
       case null => None
       case item => Some(item)
     }
