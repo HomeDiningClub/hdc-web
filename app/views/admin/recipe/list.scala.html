@@ -20,7 +20,11 @@
             <tbody>
             @for(recipe <- recipeList) {
                 <tr>
-                    <td>@recipe.getOwnerProfile.getOwner.getFullName</td>
+                    <td>
+                    @if(recipe.getOwnerProfile != null) {
+                        @recipe.getOwnerProfile.getOwner.getFullName
+                    }
+                    </td>
                     <td>@recipe.getName</td>
                     <td><small>@recipe.getLink</small></td>
                     <td>

@@ -100,7 +100,7 @@ class SuggestController @Inject() (override implicit val env: SecureSocialRuntim
 
         val from = EmailAndName(
           name = currentUser.firstName + " " + currentUser.lastName,
-          email = currentUser.email.getOrElse("")
+          email = currentUser.emailAddress
         )
 
         val recipient = EmailAndName(

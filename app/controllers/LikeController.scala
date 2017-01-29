@@ -99,7 +99,7 @@ class LikeController @Inject() (override implicit val env: SecureSocialRuntimeEn
 
 
   def likeSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
-    val currentUser = request.user
+    val currentUser = userCredentialService.findById(request.user.objectId).get
 
     likeForm.bindFromRequest.fold(
       errors => {

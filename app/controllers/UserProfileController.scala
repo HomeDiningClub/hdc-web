@@ -445,7 +445,7 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
     * ***************************************************************************************************/
   def edit = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent, UserCredential] =>
 
-    val userProfile = request.user.getUserProfile
+    val userProfile = userProfileService.findByOwner(request.user).get
     val identificationNumber = userProfile.getOwner.personNummer
 
     // Get HOST or not
@@ -611,7 +611,7 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
       val friendsUserCredential = userCredentialService.findById(UUID.fromString(userCredentialObjectId))
 
       if (friendsUserCredential.isDefined) {
-        retValue = userProfileService.isFavouriteToMe(currentUser.get.getUserProfile, friendsUserCredential.get) match {
+        retValue = userProfileService.isFavouriteToMe(userProfileService.findByOwner(currentUser.get).get, friendsUserCredential.get) match {
           case true => "YES"
           case false => "NO"
         }

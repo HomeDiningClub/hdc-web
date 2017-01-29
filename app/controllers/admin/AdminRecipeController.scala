@@ -1,23 +1,24 @@
 package controllers.admin
 
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc._
-
-import models.{UserCredential, Recipe}
+import models.{Recipe, UserCredential}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
-import services.{UserProfileService, ContentFileService, RecipeService}
+import services.{ContentFileService, RecipeService, UserCredentialService, UserProfileService}
 import play.api.libs.Files.TemporaryFile
-import enums.{ContentStateEnums, RoleEnums, FileTypeEnums}
+import enums.{ContentStateEnums, FileTypeEnums, RoleEnums}
 import java.util.UUID
+
 import customUtils.authorization.WithRole
+
 import scala.Some
 import customUtils.Helpers
 import play.api.Logger
@@ -27,19 +28,10 @@ import models.formdata.RecipeForm
 class AdminRecipeController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                        val recipeService: RecipeService,
                                        val userProfileService: UserProfileService,
+                                       val userCredentialService: UserCredentialService,
                                        val fileService: ContentFileService,
                                        val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
-  /*
-  @Autowired
-  private var recipeService: RecipeService = _
-
-  @Autowired
-  private var userProfileService: UserProfileService = _
-
-  @Autowired
-  private var fileService: ContentFileService = _
-*/
 
   // Edit - Listing
   def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
@@ -71,7 +63,7 @@ class AdminRecipeController @Inject() (override implicit val env: SecureSocialRu
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
 
-    var currentUser = request.user
+    var currentUser = userCredentialService.findById(request.user.objectId).get
 
     contentForm.bindFromRequest.fold(
       errors => {

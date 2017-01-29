@@ -11,7 +11,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import constants.FlashMsgConstants
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
-import services.{BlogPostsService, ContentFileService, NodeEntityService, UserProfileService}
+import services._
 import enums.{ContentStateEnums, FileTypeEnums, RoleEnums}
 import java.util.UUID
 
@@ -31,20 +31,10 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
                                          val blogPostsService: BlogPostsService,
                                          val userProfileService: UserProfileService,
                                          val fileService: ContentFileService,
+                                         val userCredentialService: UserCredentialService,
                                          implicit val nodeEntityService: NodeEntityService,
                                          val messagesApi: MessagesApi,
                                          val environment: Environment) extends Controller with SecureSocial with I18nSupport {
-
-  /*
-  @Autowired
-  private var blogPostsService: BlogPostsService = _
-
-  @Autowired
-  private var userProfileService: UserProfileService = _
-
-  @Autowired
-  private var fileService: ContentFileService = _
-*/
 
   val recForm = Form(
     mapping(
@@ -68,7 +58,7 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-    val currentUser: UserCredential = request.user
+    val currentUser: UserCredential = userCredentialService.findById(request.user.objectId).get
 
     // Only HOSTS are allowed to create blog items
     if(!currentUser.profiles.iterator().next().isUserHost)

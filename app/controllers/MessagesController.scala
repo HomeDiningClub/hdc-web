@@ -149,7 +149,7 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
 */
   def replyToGuest = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
-    val currentUser = request.user
+    val currentUser = userCredentialService.findById(request.user.objectId).get
 
     messageFormMapping.bindFromRequest.fold(
       errors => {
@@ -242,11 +242,11 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
 
 
   def applyToHost = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
-    val currentUser = request.user
+    val currentUser = userCredentialService.findById(request.user.objectId).get
 
     messageFormMapping.bindFromRequest.fold(
       errors => {
-        BadRequest(views.html.host.applyHost(errors, Option(currentUser), Some(request.user)))
+        BadRequest(views.html.host.applyHost(errors, Option(currentUser), Some(currentUser)))
       },
       content => {
 

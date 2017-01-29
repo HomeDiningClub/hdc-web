@@ -49,7 +49,7 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
 
-    var currentUser = request.user
+    var currentUser = userProfileService.findByOwner(request.user).get.getOwner
 
     contentForm.bindFromRequest.fold(
       errors => {

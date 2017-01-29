@@ -109,7 +109,7 @@ class RatingController @Inject() (override implicit val env: SecureSocialRuntime
   }
 
   def rateSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
-    val currentUser = request.user
+    val currentUser = userCredentialService.findById(request.user.objectId).get
 
     ratingForm.bindFromRequest.fold(
       errors => {

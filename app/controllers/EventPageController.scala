@@ -35,6 +35,7 @@ import models.formdata._
 
 class EventPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                      val likeController: LikeController,
+                                     val userCredentialService: UserCredentialService,
                                      val eventService: EventService,
                                      val mealTypeService: MealTypeService,
                                      val alcoholServingService: AlcoholServingService,
@@ -308,7 +309,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
 
   def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
-    val currentUserProfile = request.user.getUserProfile
+    val currentUserProfile = userProfileService.findByOwner(request.user).get
 
     val mealSeq = mealTypeService.getMealTypesAsSeq
     val mealDefault =  mealSeq match {
@@ -418,7 +419,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
 
   def addDateSuggestionSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
-    val currentUser = request.user
+    val currentUser = userCredentialService.findById(request.user.objectId).get
 
     evtDateSuggestionForm.bindFromRequest.fold(
       errors => {
@@ -478,7 +479,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
   def addBookingSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-    val currentUser = request.user
+    val currentUser = userCredentialService.findById(request.user.objectId).get
 
     evtBookingForm.bindFromRequest.fold(
       errors => {
@@ -587,7 +588,7 @@ class EventPageController @Inject() (override implicit val env: SecureSocialRunt
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-    val currentUser = request.user
+    val currentUser = userCredentialService.findById(request.user.objectId).get
 
     evtForm.bindFromRequest.fold(
       errors => {

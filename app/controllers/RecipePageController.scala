@@ -15,7 +15,7 @@ import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.{RequestWithUser, SecuredRequest}
-import services.{ContentFileService, NodeEntityService, RecipeService, UserProfileService}
+import services._
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
 
@@ -37,6 +37,7 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
                                       val ratingController: RatingController,
                                       val likeController: LikeController,
                                       val recipeService: RecipeService,
+                                      val userCredentialService: UserCredentialService,
                                       val userProfileService: UserProfileService,
                                       val fileService: ContentFileService,
                                       implicit val nodeEntityService: NodeEntityService,
@@ -76,32 +77,6 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
         BadRequest(errMess)
     }
   }
-
-  /* Cannot find any refs to this code
-  def viewRecipeByNameAndProfilePage(profileName: String, recipeName: String, page: Int) = UserAwareAction() { implicit request =>
-
-    // Try getting the recipe from name, if failure show 404
-    recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
-      case Some(recipe) =>
-        Ok(views.html.recipe.recipe(
-          recipe = recipe,
-          recipeMainImage = getMainImage(recipe),
-          recipeImages = getImages(recipe),
-          metaData = buildMetaData(recipe, request),
-          recipeBoxes = recipeService.getRecipeBoxes(recipe.getOwnerProfile.getOwner),
-          shareUrl = createShareUrl(recipe),
-          currentUser = request.user,
-          isThisMyRecipe = isThisMyRecipe(recipe),
-          recipeRateForm = ratingController.renderRecipeRateForm(recipe, routes.RecipePageController.viewRecipeByNameAndProfile(recipe.getOwnerProfile.getOwner.firstName, recipe.getLink).url, request.user),
-          recipeLikeForm = likeController.renderRecipeLikeForm(recipe, request.user)
-        ))
-      case None =>
-        val errMess = "Cannot find recipe using name:" + recipeName + " and profileName:" + profileName
-        Logger.debug(errMess)
-        BadRequest(errMess)
-    }
-  }
- */
 
   private def getImages(recipe: Recipe): Option[List[ContentFile]] = {
     recipe.getRecipeImages.asScala match {
@@ -304,7 +279,7 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
 
   def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
-    val currentUser = request.user
+    val currentUser = userCredentialService.findById(request.user.objectId).get
 
     recForm.bindFromRequest.fold(
       errors => {
