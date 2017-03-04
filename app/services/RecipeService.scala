@@ -115,7 +115,7 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
     }
   }
 
-  def parseDouble(s: String) = try { Some(s.toDouble) } catch { case _ : Throwable => None }
+  def parseDouble(s: String): Option[Double] = try { Some(s.toDouble) } catch { case _ : Throwable => None }
 
 
   def getRecipeBoxes(user: UserCredential): Option[List[RecipeBox]] = withTransaction(template){

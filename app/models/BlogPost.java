@@ -31,10 +31,7 @@ public class BlogPost extends ContentBase implements IEditable {
     // Verify the object owner
     @Transient
     public Boolean isEditableBy(UUID objectId){
-        if(objectId != null && objectId.equals(this.getOwnerProfile().getOwner().objectId))
-            return true;
-        else
-            return false;
+        return objectId != null && objectId.equals(this.getOwnerProfile().getOwner().objectId);
     }
 
     @Fetch

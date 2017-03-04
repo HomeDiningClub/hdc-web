@@ -7,12 +7,12 @@ import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import models.UserCredential
 import customUtils.Helpers
 import securesocial.core.SecureSocial.RequestWithUser
-import services.{ ContentService}
+import services.ContentService
 import play.api.mvc.Controller
 import models.viewmodels.MenuItem
 import models.content.ContentPage
 import customUtils.security.SecureSocialRuntimeEnvironment
-import securesocial.core.{SecureSocial}
+import securesocial.core.SecureSocial
 
 
 class HeaderController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
@@ -20,7 +20,7 @@ class HeaderController @Inject() (override implicit val env: SecureSocialRuntime
                                   val contentService: ContentService,
                                   val cache: CacheApi) extends Controller with SecureSocial with I18nSupport {
 
-  def mainMenu = UserAwareAction() { implicit request =>
+  def mainMenu: Action[AnyContent] = UserAwareAction() { implicit request =>
 
     val retMenuItemsList: List[MenuItem] = cache.getOrElse[List[MenuItem]]("main.menu") {
 
@@ -93,7 +93,7 @@ class HeaderController @Inject() (override implicit val env: SecureSocialRuntime
     Ok(views.html.header.mainmenu.render(Some(retMenuItemsList), request2Messages))
   }
 
-  def quickLinks = UserAwareAction() { implicit request =>
+  def quickLinks: Action[AnyContent] = UserAwareAction() { implicit request =>
     Ok(views.html.header.quicklinks.render(getQuickLinkTitle(request.user), getUserAvatarImage(request.user), getQuickLinkList(request.user),request2Messages))
   }
 

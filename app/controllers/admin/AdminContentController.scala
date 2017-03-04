@@ -32,7 +32,7 @@ class AdminContentController @Inject() (override implicit val env: SecureSocialR
 */
 
   // Edit - Listing
-  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def listAll: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val listOfPage: Option[List[ContentPage]] = contentService.getListOfAll
     Ok(views.html.admin.content.list(listOfPage))
   }
@@ -53,17 +53,17 @@ class AdminContentController @Inject() (override implicit val env: SecureSocialR
     )(AddContentForm.apply)(AddContentForm.unapply)
   )
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
+  def editIndex(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
     Ok(views.html.admin.content.index())
   }
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
+  def add(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
     // Default values for new item
     val defaultContent = AddContentForm(None,None,"","",None,None,None,ContentStateEnums.UNPUBLISHED.toString,None,visibleInMenus = false)
     Ok(views.html.admin.content.add(contentForm.fill(defaultContent), contentService.getPagesAsDropDown(), contentService.getContentStatesAsDropDown, contentService.getCategoriesAsDropDown))
   }
 
-  def addSubmit() = SecuredAction(WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def addSubmit(): Action[AnyContent] = SecuredAction(WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     contentForm.bindFromRequest.fold(
       errors => {
@@ -173,7 +173,7 @@ class AdminContentController @Inject() (override implicit val env: SecureSocialR
 
 
   // Edit - Edit content
-  def edit(objectId: java.util.UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
+  def edit(objectId: java.util.UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
     contentService.findContentById(objectId) match {
       case None =>
         Ok(views.html.admin.content.index())
@@ -204,7 +204,7 @@ class AdminContentController @Inject() (override implicit val env: SecureSocialR
   }
 
   // Edit - Delete content
-  def delete(objectId: java.util.UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
+  def delete(objectId: java.util.UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: RequestHeader =>
     val result: Boolean = contentService.deleteContentPageById(objectId)
 
     result match {

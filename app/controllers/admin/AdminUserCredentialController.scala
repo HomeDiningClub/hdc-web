@@ -1,10 +1,9 @@
 package controllers.admin
 
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.mvc.Controller
-
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.data.Form
 import play.api.data.Forms._
 import constants.FlashMsgConstants
@@ -14,8 +13,9 @@ import services.UserCredentialService
 import customUtils.authorization.WithRole
 import enums.RoleEnums
 import models.UserCredential
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import java.util.UUID
+
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.UserCredentialForm
 
@@ -28,7 +28,7 @@ class AdminUserCredentialController @Inject() (override implicit val env: Secure
 */
 
   // Edit - Listing
-  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def listAll: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val list: Option[List[UserCredential]] = userCredentialService.getListOfAll
     Ok(views.html.admin.usercredential.list(list))
   }
@@ -43,7 +43,7 @@ class AdminUserCredentialController @Inject() (override implicit val env: Secure
     )(UserCredentialForm.apply)(UserCredentialForm.unapply)
   )
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.admin.usercredential.index())
   }
 
@@ -51,11 +51,11 @@ class AdminUserCredentialController @Inject() (override implicit val env: Secure
 //    Ok(views.html.admin.usercredential.add(userCredForm))
 //  }
 
-  def addUserToRole() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def addUserToRole(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Redirect(controllers.admin.routes.AdminUserRoleController.addUserToRole())
   }
 
-  def editSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editSubmit(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
 
     userCredForm.bindFromRequest.fold(
       errors => {
@@ -81,7 +81,7 @@ class AdminUserCredentialController @Inject() (override implicit val env: Secure
 
 
   // Edit
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def edit(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val item = userCredentialService.findById(objectId).get
 
     item match {
@@ -100,7 +100,7 @@ class AdminUserCredentialController @Inject() (override implicit val env: Secure
   }
 
   // Edit - Delete content
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def delete(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val result: Boolean = userCredentialService.deleteById(objectId)
 
     result match {

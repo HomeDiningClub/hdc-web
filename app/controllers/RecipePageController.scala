@@ -32,6 +32,7 @@ import customUtils.security.SecureSocialRuntimeEnvironment
 
 import scala.collection.JavaConverters._
 import models.formdata.RecipeForm
+import play.api.libs.Files.TemporaryFile
 
 class RecipePageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                       val ratingController: RatingController,
@@ -54,7 +55,7 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
   private var fileService: ContentFileService = _
 */
 
-  def viewRecipeByNameAndProfile(profileName: String, recipeName: String) = UserAwareAction() { implicit request =>
+  def viewRecipeByNameAndProfile(profileName: String, recipeName: String): Action[AnyContent] = UserAwareAction() { implicit request =>
 
     // Try getting the recipe from name, if failure show 404
     recipeService.findByownerProfileProfileLinkNameAndRecipeLinkName(profileName,recipeName) match {
@@ -92,7 +93,7 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
     }
   }
 
-  def viewRecipeByNameAndProfilePageJSON(profileName: String, page: Int) = UserAwareAction() { implicit request =>
+  def viewRecipeByNameAndProfilePageJSON(profileName: String, page: Int): Action[AnyContent] = UserAwareAction() { implicit request =>
 
     var list: ListBuffer[RecipeBoxJSON] = new ListBuffer[RecipeBoxJSON]
     var t: Option[List[RecipeBox]] = None
@@ -115,9 +116,8 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
     try {
       // loop ....
       t match {
-        case Some(t) => {
-          for (e: RecipeBox <- t) {
-            //val link: String = controllers.routes.RecipePageController.viewRecipeByNameAndProfile(profileName, e.linkToRecipe).url
+        case Some(bp) => {
+          for (e: RecipeBox <- bp) {
             list += RecipeBoxJSON(e.objectId.toString, e.linkToRecipe, e.name, e.preAmble.getOrElse(""), e.mainImage.getOrElse(""), e.recipeRating.toString, e.recipeBoxCount, e.hasNext, e.hasPrevious, e.totalPages)
           }
         }
@@ -137,7 +137,7 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
 
   def convertRecipesToJson(jsonCase: Seq[RecipeBoxJSON]): JsValue = Json.toJson(jsonCase)
 
-  def viewRecipeByName(recipeName: String) = UserAwareAction() { implicit request =>
+  def viewRecipeByName(recipeName: String): Action[AnyContent] = UserAwareAction() { implicit request =>
 
     // Try getting the recipe from name, if failure show 404
     recipeService.findByrecipeLinkName(recipeName) match {
@@ -243,11 +243,11 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
   }
 
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def add(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.recipe.addOrEdit(recipeForm = recForm, extraValues = setExtraValues(None)))
   }
 
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def edit(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val editingRecipe = recipeService.findById(objectId)
 
     editingRecipe match {
@@ -264,7 +264,7 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
           mainBody = Some(item.getMainBody),
           mainImage = item.getMainImage match {
             case null => None
-            case item => Some(item.objectId.toString)
+            case image => Some(image.objectId.toString)
           },
           images = recipeService.convertToCommaSepStringOfObjectIds(recipeService.getSortedRecipeImages(item))
         )
@@ -277,7 +277,7 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
   }
 
 
-  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
+  def addSubmit(): Action[MultipartFormData[TemporaryFile]] = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
     val currentUser = userCredentialService.findById(request.user.objectId).get
 
@@ -417,7 +417,7 @@ class RecipePageController @Inject() (override implicit val env: SecureSocialRun
   }
 
   // Delete
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def delete(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val recipe: Option[Recipe] = recipeService.findById(objectId)
 
     if(recipe.isEmpty){

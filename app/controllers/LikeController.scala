@@ -12,7 +12,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{AnyContent, Controller, RequestHeader}
+import play.api.mvc.{Action, AnyContent, Controller, RequestHeader}
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
@@ -98,7 +98,7 @@ class LikeController @Inject() (override implicit val env: SecureSocialRuntimeEn
   }
 
 
-  def likeSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def likeSubmit: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val currentUser = userCredentialService.findById(request.user.objectId).get
 
     likeForm.bindFromRequest.fold(

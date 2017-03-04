@@ -23,7 +23,7 @@ class AdminAlcoholServingController @Inject() (override implicit val env: Secure
                                          val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
 
   // Edit - Listing
-  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def listAll: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.event.alcoholServing.list(alcoholServingService.listAll()))
   }
 
@@ -36,15 +36,15 @@ class AdminAlcoholServingController @Inject() (override implicit val env: Secure
     )(EventPropertyForm.apply)(EventPropertyForm.unapply)
   )
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def editIndex(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.event.alcoholServing.index())
   }
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def add(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.event.alcoholServing.add(alcoForm.fill(EventPropertyForm.apply(None,"",0))))
   }
 
-  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def addSubmit(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     alcoForm.bindFromRequest.fold(
       errors => {
@@ -76,7 +76,7 @@ class AdminAlcoholServingController @Inject() (override implicit val env: Secure
 
 
   // Edit - Edit content
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def edit(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     alcoholServingService.findById(objectId) match {
       case None =>
         Ok(views.html.admin.event.alcoholServing.index())
@@ -91,7 +91,7 @@ class AdminAlcoholServingController @Inject() (override implicit val env: Secure
   }
 
   // Edit - Delete content
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def delete(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val result: Boolean = alcoholServingService.deleteById(objectId)
 
     result match {

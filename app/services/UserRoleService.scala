@@ -97,7 +97,7 @@ class UserRoleService @Inject() (val template: Neo4jTemplate,
   def save(newContent: UserRole): UserRole = {
     // Don't add if already exists, just return the existing instance
     val role = findByName(newContent.name) match {
-      case Some(role) => role
+      case Some(r) => r
       case None => userRoleRepository.save(newContent)
     }
     role

@@ -1,27 +1,30 @@
 package controllers.admin
 
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.mvc._
-
 import models.{Event, UserCredential}
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import constants.FlashMsgConstants
 import org.springframework.beans.factory.annotation.Autowired
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
-import services.{EventService, UserProfileService, ContentFileService}
+import services.{ContentFileService, EventService, UserProfileService}
 import enums.{ContentStateEnums, RoleEnums}
 import java.util.UUID
+
 import customUtils.authorization.WithRole
+
 import scala.Some
 import customUtils.Helpers
 import play.api.Logger
 import models.event.EventDate
 import org.joda.time.DateTime
 import customUtils.security.SecureSocialRuntimeEnvironment
-import models.formdata.{EventOptionsForm, EventForm}
+import models.formdata.{EventForm, EventOptionsForm}
+import play.api.data.Form
+import play.api.libs.Files.TemporaryFile
 
 class AdminEventController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                       val eventService: EventService,
@@ -31,23 +34,23 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
 
 
   // Edit - Listing
-  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def listAll: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val listOfPage: List[Event] = eventService.getListOfAll
     Ok(views.html.admin.event.list(listOfPage))
   }
 
   // Edit - Add Content
-  def contentForm = eventService.eventFormMapping
+  def contentForm: Form[EventForm] = eventService.eventFormMapping
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def editIndex(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.event.index())
   }
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def add(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.event.add(contentForm))
   }
 
-  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
+  def addSubmit(): Action[MultipartFormData[TemporaryFile]] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
 
     var currentUser = userProfileService.findByOwner(request.user).get.getOwner
 
@@ -94,7 +97,7 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
   }
 
   // Edit - Edit content
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def edit(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val editingItem = eventService.findById(objectId)
     editingItem match {
       case None =>
@@ -145,7 +148,7 @@ class AdminEventController @Inject() (override implicit val env: SecureSocialRun
   }
 
   // Edit - Delete content
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def delete(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     var result: Boolean = eventService.deleteById(objectId)
 
     result match {

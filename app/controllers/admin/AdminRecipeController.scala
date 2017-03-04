@@ -34,7 +34,7 @@ class AdminRecipeController @Inject() (override implicit val env: SecureSocialRu
 
 
   // Edit - Listing
-  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def listAll: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val listOfPage: List[Recipe] = recipeService.getListOfAll
     Ok(views.html.admin.recipe.list(listOfPage))
   }
@@ -53,15 +53,15 @@ class AdminRecipeController @Inject() (override implicit val env: SecureSocialRu
 
 
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def editIndex(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.admin.recipe.index())
   }
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def add(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     Ok(views.html.admin.recipe.add(contentForm))
   }
 
-  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
+  def addSubmit(): Action[MultipartFormData[TemporaryFile]] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
 
     var currentUser = userCredentialService.findById(request.user.objectId).get
 
@@ -107,7 +107,7 @@ class AdminRecipeController @Inject() (override implicit val env: SecureSocialRu
 
 
   // Edit - Edit content
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def edit(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val editingRecipe = recipeService.findById(objectId)
     editingRecipe match {
       case None =>
@@ -120,7 +120,7 @@ class AdminRecipeController @Inject() (override implicit val env: SecureSocialRu
           Some(item.getMainBody),
           mainImage = item.getMainImage match {
             case null => None
-            case item => Some(item.objectId.toString)
+            case image => Some(image.objectId.toString)
           },
           images = recipeService.convertToCommaSepStringOfObjectIds(recipeService.getSortedRecipeImages(item))
         )
@@ -133,7 +133,7 @@ class AdminRecipeController @Inject() (override implicit val env: SecureSocialRu
   }
 
   // Edit - Delete content
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def delete(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val result: Boolean = recipeService.deleteById(objectId)
 
     result match {

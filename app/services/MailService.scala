@@ -1,6 +1,6 @@
 package services
 
-import javax.inject.{Inject}
+import javax.inject.Inject
 
 import models.viewmodels.EmailAndName
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}

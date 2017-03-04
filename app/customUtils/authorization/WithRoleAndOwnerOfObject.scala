@@ -15,7 +15,7 @@ case class WithRoleAndOwnerOfObject (role: RoleEnums, objectIdToControl: UUID)(i
 
   //@Inject private lazy val nodeEntityService: NodeEntityService = null
 
-  def isAuthorized(user: UserCredential, request: RequestHeader) = {
+  def isAuthorized(user: UserCredential, request: RequestHeader): Boolean = {
 
     user match {
       case userCred: UserCredential =>

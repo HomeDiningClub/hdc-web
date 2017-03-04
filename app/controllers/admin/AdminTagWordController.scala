@@ -1,20 +1,20 @@
 package controllers.admin
 
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 import org.springframework.stereotype.{Controller => SpringController}
-import play.api.mvc.{AnyContent, Controller}
-
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.data.Form
 import play.api.data.Forms._
 import org.springframework.beans.factory.annotation.Autowired
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.TagWordService
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import constants.FlashMsgConstants
 import models.profile.TagWord
 import java.util.UUID
+
 import customUtils.authorization.WithRole
 import enums.RoleEnums
 import models.UserCredential
@@ -31,7 +31,7 @@ class AdminTagWordController @Inject() (override implicit val env: SecureSocialR
 */
 
   // Edit - Listing
-  def listAll = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def listAll: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val list: Option[List[TagWord]] = tagWordService.listAll()
     Ok(views.html.admin.tagword.list(list))
   }
@@ -45,15 +45,15 @@ class AdminTagWordController @Inject() (override implicit val env: SecureSocialR
     )(TagWordForm.apply)(TagWordForm.unapply)
   )
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def editIndex(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.tagword.index())
   }
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def add(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.tagword.add(tagwordForm))
   }
 
-  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def addSubmit(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     tagwordForm.bindFromRequest.fold(
       errors => {
@@ -85,7 +85,7 @@ class AdminTagWordController @Inject() (override implicit val env: SecureSocialR
 
 
   // Edit - Edit content
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def edit(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val optionItem = tagWordService.findById(objectId)
 
     optionItem match {
@@ -103,7 +103,7 @@ class AdminTagWordController @Inject() (override implicit val env: SecureSocialR
   }
 
   // Edit - Delete content
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def delete(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val result: Boolean = tagWordService.deleteById(objectId)
 
     result match {

@@ -6,7 +6,7 @@ import models.event.EventData
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Controller
+import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.data._
 import play.api.data.Forms._
 import models.viewmodels._
@@ -50,7 +50,7 @@ class StartPageController @Inject() (override implicit val env: SecureSocialRunt
     )(SearchStartPageForm.apply)(SearchStartPageForm.unapply)
   )
 
-  def index(fTag: String, fCounty: String, fHost: Boolean) = UserAwareAction() { implicit request =>
+  def index(fTag: String, fCounty: String, fHost: Boolean): Action[AnyContent] = UserAwareAction() { implicit request =>
 
     //val isHost = if(fHost == 1) true else false
     val isHost = fHost

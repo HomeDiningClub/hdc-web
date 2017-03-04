@@ -26,6 +26,7 @@ import javax.inject.Inject
 import scala.collection.mutable.ListBuffer
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.BlogPostsForm
+import play.api.libs.Files.TemporaryFile
 
 class BlogPostsPageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                          val blogPostsService: BlogPostsService,
@@ -47,16 +48,16 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
 
 
   // Change to parameter
-  def viewBlogPosts() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
+  def viewBlogPosts(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
     Ok(views.html.blog.blogBox("freddy"))
   }
 
 
-  def add() = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
+  def add(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request =>
     Ok(views.html.blog.addOrEdit(blogPostForm = recForm, extraValues = setExtraValues(None)))
   }
 
-  def addSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
+  def addSubmit(): Action[MultipartFormData[TemporaryFile]] = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
     val currentUser: UserCredential = userCredentialService.findById(request.user.objectId).get
 
@@ -222,11 +223,8 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
     try {
       // Loop ....
       t match {
-        case Some(t) => {
-          for (e: BlogPostItem <- t) {
-            //Logger.info("ObjectId" + e.blogPostObjectId.toString)
-            //Logger.info("Title : " + e.title)
-            //Logger.info("text : " + e.text)
+        case Some(bp) => {
+          for (e: BlogPostItem <- bp) {
             count = count + 1
           }
         }
@@ -261,8 +259,8 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
     try {
       // loop ....
       t match {
-        case Some(t) => {
-          for (e: BlogPostItem <- t) {
+        case Some(bp) => {
+          for (e: BlogPostItem <- bp) {
             val cd : String = Helpers.formatDateForDisplay(e.dateCreated)
             val md : String = Helpers.formatDateForDisplay(e.dateChanged)
             list += BlogPostBoxJSON(e.blogPostObjectId.toString, e.title, e.text, cd, md, e.mainImage.getOrElse(""), e.hasNext, e.hasPrevious, e.totalPages) // ? antal sidor
@@ -297,7 +295,7 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
     ))
   }
 
-  def edit(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def edit(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val editingRecipe = blogPostsService.findById(objectId)
 
     editingRecipe match {
@@ -361,7 +359,7 @@ class BlogPostsPageController @Inject() (override implicit val env: SecureSocial
 
 
   // Delete
-  def delete(objectId: UUID) = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: RequestHeader =>
+  def delete(objectId: UUID): Action[AnyContent] = SecuredAction(authorize = WithRoleAndOwnerOfObject(RoleEnums.USER,objectId)) { implicit request: RequestHeader =>
     val blogPost: Option[BlogPost] = blogPostsService.findById(objectId)
 
     if(blogPost.isEmpty){

@@ -36,11 +36,11 @@ class AdminFileController @Inject() (override implicit val env: SecureSocialRunt
   private var fileService: ContentFileService = _
 */
 
-  def editIndex = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def editIndex: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.file.index(listOfImages = getAllImagesListAsHtml))
   }
 
-  def add = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
+  def add: Action[MultipartFormData[TemporaryFile]] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN))(parse.multipartFormData) { implicit request =>
 
       request.body.file("file").map {
         file =>
@@ -63,7 +63,7 @@ class AdminFileController @Inject() (override implicit val env: SecureSocialRunt
     views.html.admin.file.imagelist.render(fileService.getAllImages, request2Messages)
   }
 
-  def deleteImage(id: UUID) = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
+  def deleteImage(id: UUID): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request =>
     val result = contentFileService.deleteFile(id)
     if(result)
       Redirect(controllers.admin.routes.AdminFileController.editIndex()).flashing(FlashMsgConstants.Success -> "File deleted")

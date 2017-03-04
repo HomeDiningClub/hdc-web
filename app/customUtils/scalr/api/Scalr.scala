@@ -13,7 +13,7 @@ import customUtils.res.api.Res
 
 class Scalr @Inject()(implicit val conf: Configuration, implicit val application: Application, implicit val environment: play.api.Environment) {
 
-  lazy val configuration = conf.getConfig("scalr").getOrElse(Configuration.empty)
+  lazy val configuration: Configuration = conf.getConfig("scalr").getOrElse(Configuration.empty)
 
   /**
    * Creates and caches image in local cache directory
@@ -27,7 +27,7 @@ class Scalr @Inject()(implicit val conf: Configuration, implicit val application
    */
   def get(path: String, file: String, width: Int, height: Int, mode: Resizer.Mode = Resizer.Mode.AUTOMATIC, method: Resizer.Method = Resizer.Method.ULTRA_QUALITY): Option[File] = {
 
-    val resourceName = Option(path + "/" + file).map(name => if (name.startsWith("/")) name else ("/" + name)).get
+    val resourceName = Option(path + "/" + file).map(name => if (name.startsWith("/")) name else "/" + name).get
     val resourceFile = environment.getFile(resourceName)
 
     if (resourceFile.isDirectory) {

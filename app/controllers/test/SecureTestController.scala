@@ -6,8 +6,9 @@ import customUtils.security.SecureSocialRuntimeEnvironment
 import models.UserCredential
 import org.joda.time.DateTime
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, AnyContent, Controller}
 import securesocial.core.SecureSocial
+
 import scala.collection.JavaConverters._
 
 class SecureTestController @Inject() (implicit val env: SecureSocialRuntimeEnvironment,
@@ -34,18 +35,18 @@ class SecureTestController @Inject() (implicit val env: SecureSocialRuntimeEnvir
   // SecuredAction
   // UserAwareAction
   // Action
-  def testAction2(callingString: String) = UserAwareAction() { implicit request =>
+  def testAction2(callingString: String): Action[AnyContent] = UserAwareAction() { implicit request =>
 
     val user: Option[UserCredential] = request.user
     var response = ""
 
     val hasAccess = user match {
-      case Some(user) => true
+      case Some(u) => true
       case None => false
     }
 
     val loggedIdUserProfile: Option[models.UserProfile] = user match {
-      case Some(user) => Some(user.profiles.asScala.head)
+      case Some(u) => Some(u.profiles.asScala.head)
       case None => None
     }
 

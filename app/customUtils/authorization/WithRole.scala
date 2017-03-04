@@ -7,7 +7,7 @@ import play.api.mvc.RequestHeader
 
 case class WithRole(role: RoleEnums) extends Authorization[UserCredential] {
 
-  def isAuthorized(user: UserCredential, request: RequestHeader) = {
+  def isAuthorized(user: UserCredential, request: RequestHeader): Boolean = {
     IsAuthorizedChecks.ValidateWithRole(user, role)
   }
 }

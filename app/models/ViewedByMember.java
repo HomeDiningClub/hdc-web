@@ -72,21 +72,16 @@ public class ViewedByMember extends AuditEntity implements IEditable {
 
     @Transient
     public Boolean isEditableBy(UUID objectId){
-        if(objectId != null)
-            return true;
-        else
-            return false;
+        return objectId != null;
     }
 
     // data format utils
 
 
     public String createLogPost(String name, String date) {
-        StringBuilder txt = new StringBuilder();
-        txt.append(name);
-        txt.append(",");
-        txt.append(date);
-        return txt.toString();
+        return name +
+                "," +
+                date;
     }
 
     public String getNamne(String str) {

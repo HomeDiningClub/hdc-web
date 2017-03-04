@@ -1,9 +1,7 @@
 package repositories
 
 import java.util
-import java.util.UUID
-
-import models.event.{AlcoholServing}
+import models.event.AlcoholServing
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.GraphRepository
 

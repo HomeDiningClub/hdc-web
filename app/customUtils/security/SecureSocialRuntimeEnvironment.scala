@@ -12,11 +12,13 @@ import scala.collection.immutable.ListMap
 import securesocial.controllers.{MailTemplates, ViewTemplates}
 import plugin.{SecureSocialMailTemplates, SecureSocialViewTemplates}
 
+import scala.concurrent.ExecutionContext
+
 class SecureSocialRuntimeEnvironment @Inject() (override val configuration: Configuration, override val messagesApi: MessagesApi) extends RuntimeEnvironment.Default {
 
   type U = UserCredential
 
-  override implicit val executionContext = play.api.libs.concurrent.Execution.defaultContext
+  override implicit val executionContext: ExecutionContext = play.api.libs.concurrent.Execution.defaultContext
   override lazy val viewTemplates: ViewTemplates = new SecureSocialViewTemplates()(this)
   override lazy val mailTemplates: MailTemplates = new SecureSocialMailTemplates()(this)
   override lazy val userService: UserCredentialServicePlugin = new UserCredentialServicePlugin

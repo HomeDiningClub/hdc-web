@@ -19,7 +19,7 @@ object Binders {
 
   implicit def LocalDateQueryBinder = new QueryStringBindable[LocalDate] {
 
-    def bind(key: String, params: Map[String, Seq[String]]) = {
+    def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, LocalDate] with Product with Serializable] = {
       params.get(key).flatMap(_.headOption).map { value =>
         try {
           val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -30,14 +30,14 @@ object Binders {
       }
     }
 
-    def unbind(key: String, value: LocalDate) = {
+    def unbind(key: String, value: LocalDate): String = {
       key + "=" + URLEncoder.encode(value.toString, "utf-8")
     }
   }
 
   implicit def LocalDateTimeQueryBinder = new QueryStringBindable[LocalDateTime] {
 
-    def bind(key: String, params: Map[String, Seq[String]]) = {
+    def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, LocalDateTime] with Product with Serializable] = {
       params.get(key).flatMap(_.headOption).map { value =>
         try {
           val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
@@ -48,7 +48,7 @@ object Binders {
       }
     }
 
-    def unbind(key: String, value: LocalDateTime) = {
+    def unbind(key: String, value: LocalDateTime): String = {
       key + "=" + URLEncoder.encode(value.toString, "utf-8")
     }
   }

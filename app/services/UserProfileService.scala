@@ -45,14 +45,14 @@ class UserProfileService @Inject()(val template: Neo4jTemplate,
 
 
   // logged in user accessing profile page
-  def logProfileViewByObjectId(viewdByMember: ViewedByMember, viewerObjectId: String, pageOwnerObjectId: String) = withTransaction(template) {
+  def logProfileViewByObjectId(viewdByMember: ViewedByMember, viewerObjectId: String, pageOwnerObjectId: String): ViewedByMember = withTransaction(template) {
     val util = new ViewedByMemberUtil()
     viewdByMember.viewedBy(viewerObjectId, util.getNowString) //@todo
     saveMemberAccess(viewdByMember)
   }
 
   // UnKnow user access not logged in user
-  def logUnKnownProfileViewByObjectId(viewedByUnKnown: ViewedByUnKnown, ipAddress: String) = withTransaction(template) {
+  def logUnKnownProfileViewByObjectId(viewedByUnKnown: ViewedByUnKnown, ipAddress: String): ViewedByUnKnown = withTransaction(template) {
     var util = new ViewedByMemberUtil()
     viewedByUnKnown.viewedBy(ipAddress, util.getNowString)
     saveUnKnownAccess(viewedByUnKnown)

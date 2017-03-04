@@ -1,10 +1,10 @@
 package controllers.admin
 
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{AnyContent, RequestHeader, Controller}
+import play.api.mvc.{Action, AnyContent, Controller, RequestHeader}
 import customUtils.authorization.WithRole
 import enums.RoleEnums
 import models.UserCredential
@@ -17,7 +17,7 @@ class AdminController @Inject() (override implicit val env: SecureSocialRuntimeE
                                  val messagesApi: MessagesApi,
                                  val adminStatisticsController: AdminStatisticsController) extends Controller with SecureSocial with I18nSupport {
 
-  def index = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def index: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.index(Some(adminStatisticsController.getStatBox)))
   }
 

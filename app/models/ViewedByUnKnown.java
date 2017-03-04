@@ -75,10 +75,7 @@ public class ViewedByUnKnown extends AuditEntity implements IEditable {
 
     @Transient
     public Boolean isEditableBy(UUID objectId) {
-        if (objectId != null)
-            return true;
-        else
-            return false;
+        return objectId != null;
     }
 
 
@@ -86,11 +83,9 @@ public class ViewedByUnKnown extends AuditEntity implements IEditable {
 
 
     public String createLogPost(String name, String date) {
-        StringBuilder txt = new StringBuilder();
-        txt.append(name);
-        txt.append(",");
-        txt.append(date);
-        return txt.toString();
+        return name +
+                "," +
+                date;
     }
 
 

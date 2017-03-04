@@ -128,10 +128,7 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
     // Verify the object owner
     @Transient
     public Boolean isEditableBy(UUID objectId){
-        if(objectId != null && this.objectId != null && objectId.equals(this.objectId))
-            return true;
-        else
-            return false;
+        return objectId != null && this.objectId != null && objectId.equals(this.objectId);
     }
 
     // Rating - average
@@ -354,9 +351,9 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
         securesocial.core.OAuth2Info oAuth2Info = new securesocial.core.OAuth2Info
                 (
                         oAuth2InfoAccessToken,
-                        Scala.Option(oAuth2InfoTokenType.toString()),
+                        Scala.Option(oAuth2InfoTokenType),
                         Scala.Option((Object)oAuth2InfoExpiresIn),
-                        Scala.Option(oAuth2InfoRefreshToken.toString())
+                        Scala.Option(oAuth2InfoRefreshToken)
                 );
 
         return Scala.Option(oAuth2Info);

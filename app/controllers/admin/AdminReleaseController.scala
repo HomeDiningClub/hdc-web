@@ -36,7 +36,7 @@ class AdminReleaseController @Inject() (override implicit val env: SecureSocialR
   private var userCredentialService: UserCredentialService = _
 */
 
-  def editIndex() = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def editIndex(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     Ok(views.html.admin.release.index())
   }
 

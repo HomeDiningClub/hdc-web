@@ -94,7 +94,7 @@ class ScalrResAssets @Inject()(implicit val conf: Configuration, implicit val ap
    * @param source play-res source
    * @return A resized image
    */
-  def crop(fileuid: String, width: Int, height: Int = 0, source: String = "default") = at(fileuid, width, height, mode = "crop", source)
+  def crop(fileuid: String, width: Int, height: Int = 0, source: String = "default"): Action[AnyContent] = at(fileuid, width, height, mode = "crop", source)
 
   // Last modified
   private val lastModifieds = new java.util.concurrent.ConcurrentHashMap[String, String]().asScala

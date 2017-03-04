@@ -1,6 +1,6 @@
 package controllers
 
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
 import constants.FlashMsgConstants
 import enums.RoleEnums
@@ -9,13 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.{Controller => SpringController}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
-import play.api.mvc.{AnyContent, Flash, RequestHeader, Controller}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.mvc._
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
 import services.{ContentService, MailService}
 import customUtils.authorization.WithRole
+
 import scala.collection.JavaConverters._
 import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
@@ -58,7 +59,7 @@ class SuggestController @Inject() (override implicit val env: SecureSocialRuntim
 
   }
 
-  def suggestFeatures = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def suggestFeatures: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val currentUser = request.user
 
     var subject: String = ""

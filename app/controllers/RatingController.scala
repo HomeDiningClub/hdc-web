@@ -1,7 +1,8 @@
 package controllers
 
 import java.util.UUID
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
+
 import constants.FlashMsgConstants
 import enums.RoleEnums
 import models.{Recipe, UserCredential}
@@ -10,13 +11,14 @@ import org.springframework.stereotype.{Controller => SpringController}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
-import play.api.mvc.{AnyContent, RequestHeader, Controller}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Controller, RequestHeader}
 import play.twirl.api.Html
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
-import services.{NodeEntityService, RecipeService, RatingService, UserCredentialService}
+import services.{NodeEntityService, RatingService, RecipeService, UserCredentialService}
 import customUtils.authorization.WithRole
+
 import scala.collection.JavaConverters._
 import customUtils.security.SecureSocialRuntimeEnvironment
 import models.formdata.RatingForm
@@ -80,7 +82,7 @@ class RatingController @Inject() (override implicit val env: SecureSocialRuntime
   }
 
 
-  def renderUserRateForm(userToBeRated: UserCredential, ratingReferrer: String = "/", currentUser: Option[UserCredential])(implicit request: RequestHeader) = {
+  def renderUserRateForm(userToBeRated: UserCredential, ratingReferrer: String = "/", currentUser: Option[UserCredential])(implicit request: RequestHeader): Html = {
     currentUser match {
       case None =>
         views.html.rating.rateNotLoggedIn()
@@ -108,7 +110,7 @@ class RatingController @Inject() (override implicit val env: SecureSocialRuntime
     }
   }
 
-  def rateSubmit = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def rateSubmit: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val currentUser = userCredentialService.findById(request.user.objectId).get
 
     ratingForm.bindFromRequest.fold(

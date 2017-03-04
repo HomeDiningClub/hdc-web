@@ -18,7 +18,7 @@ import scala.collection.mutable.ListBuffer
 class PerformanceTestController @Inject() (implicit val env: SecureSocialRuntimeEnvironment,
                                            val messagesApi: MessagesApi,
                                            val environment: Environment) extends Controller with SecureSocial with I18nSupport{
-  def asyncAction = Action.async { request =>
+  def asyncAction: Action[AnyContent] = Action.async { request =>
     val futureJsUserArray = WS.url("http://www.json-generator.com/api/json/get/cfLxEnRoAy?indent=2").get()
     futureJsUserArray.map{jsResponse => Ok(jsResponse.body).as("application/json")}
   }

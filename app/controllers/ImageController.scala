@@ -19,6 +19,7 @@ import customUtils.authorization.WithRole
 import customUtils.scalr.api.Resizer
 import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
+import play.api.libs.Files.TemporaryFile
 import play.api.{Application, Configuration}
 
 class ImageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
@@ -29,11 +30,11 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
                                  implicit val application: Application,
                                  implicit val environment: play.api.Environment) extends Controller with SecureSocial with I18nSupport {
 
-  implicit val imageWrites = Json.writes[ImageData]
+  implicit val imageWrites: OWrites[ImageData] = Json.writes[ImageData]
   private val faultyImageRequestAction: Action[AnyContent] = Action(Ok(""))
 
   // Returns JSON
-  def listImages(selected: String = "") = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def listImages(selected: String = ""): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     // Remove empty entry if string is empty
     val splitSelected = selected.split(',').toBuffer
@@ -55,7 +56,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
   }
 
   // Returns JSON
-  def previewImages(selected: String = "") = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def previewImages(selected: String = ""): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.USER)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     // Remove empty entry if string is empty
     val splitSelected = selected.split(',').toBuffer
@@ -84,7 +85,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
   }
 
 
-  def uploadImageSubmit() = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
+  def uploadImageSubmit(): Action[MultipartFormData[TemporaryFile]] = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.multipartFormData) { implicit request =>
 
     request.body.file("files").map {
       file =>
@@ -144,7 +145,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
     }
   }
 
-  def crop(fileUid: String, width: Int, height: Int) = {
+  def crop(fileUid: String, width: Int, height: Int): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -154,7 +155,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
   }
 
   // Image chooser
-  def imgChooserThumb(fileUid: String) = {
+  def imgChooserThumb(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -164,7 +165,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
   }
 
   // User avatar
-  def userMini(fileUid: String) = {
+  def userMini(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -172,7 +173,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
         new customUtils.scalr.ScalrResAssets().at(id, 30, 30, mode = Resizer.Mode.CROP.toString)
     }
   }
-  def userThumb(fileUid: String) = {
+  def userThumb(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -182,7 +183,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
   }
 
   // UserProfile
-  def profileThumb(fileUid: String) = {
+  def profileThumb(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -190,7 +191,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
         new customUtils.scalr.ScalrResAssets().at(id, 150, 100, mode = Resizer.Mode.CROP.toString)
     }
   }
-  def profileBox(fileUid: String) = {
+  def profileBox(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -198,7 +199,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
         new customUtils.scalr.ScalrResAssets().at(id, 263, 160, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
-  def profileNormal(fileUid: String) = {
+  def profileNormal(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -206,7 +207,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
         new customUtils.scalr.ScalrResAssets().at(id, 1170, 445, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
-  def profileBig(fileUid: String) = {
+  def profileBig(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -216,7 +217,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
   }
 
   // Blog
-  def blogNormal(fileUid: String) = {
+  def blogNormal(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -227,7 +228,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
 
 
   // Recipe
-  def recipeThumb(fileUid: String) = {
+  def recipeThumb(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -235,7 +236,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
         new customUtils.scalr.ScalrResAssets().at(id, 150, 100, mode = Resizer.Mode.CROP.toString)
     }
   }
-  def recipeBox(fileUid: String) = {
+  def recipeBox(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -243,7 +244,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
         new customUtils.scalr.ScalrResAssets().at(id, 275, 160, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
-  def recipeNormal(fileUid: String) = {
+  def recipeNormal(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -253,7 +254,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
   }
 
   // Event
-  def eventThumb(fileUid: String) = {
+  def eventThumb(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -261,7 +262,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
         new customUtils.scalr.ScalrResAssets().at(id, 300, 0, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
-  def eventImageGallery(fileUid: String) = {
+  def eventImageGallery(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -269,7 +270,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
         new customUtils.scalr.ScalrResAssets().at(id, 1024, 0, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
-  def eventBox(fileUid: String) = {
+  def eventBox(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction
@@ -277,7 +278,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
         new customUtils.scalr.ScalrResAssets().at(id, 400, 0, mode = Resizer.Mode.FIT_TO_WIDTH.toString)
     }
   }
-  def eventNormal(fileUid: String) = {
+  def eventNormal(fileUid: String): Action[AnyContent] = {
     fileUid match {
       case "null" =>
         faultyImageRequestAction

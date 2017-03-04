@@ -3,12 +3,11 @@ package plugin
 import javax.inject.Inject
 
 import customUtils.security.SecureSocialRuntimeEnvironment
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi, Lang}
-import play.api.mvc.{Controller, RequestHeader}
+import play.api.i18n.Lang
+import play.api.mvc.RequestHeader
 import play.twirl.api.{Html, Txt}
-import securesocial.controllers.{MailTemplates, ViewTemplates}
-import securesocial.core.{BasicProfile, SecureSocial}
+import securesocial.controllers.MailTemplates
+import securesocial.core.BasicProfile
 
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._

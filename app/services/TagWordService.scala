@@ -5,12 +5,9 @@ import javax.inject.Inject
 
 import org.neo4j.helpers.collection.IteratorUtil
 import org.springframework.data.neo4j.support.Neo4jTemplate
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.cache.Cache
-import play.api.Play.current
-import models.profile.{TagWord, TaggedUserProfile}
+import play.api.cache.CacheApi
+import models.profile.TagWord
 import repositories.{TagWordRepository, TaggedUserProfileRepository}
 import traits.TransactionSupport
 
@@ -19,14 +16,13 @@ import models.UserProfile
 
 import scala.collection.mutable
 
-//@Service
 class TagWordService @Inject() (val template: Neo4jTemplate,
                                 val tagWordRepository: TagWordRepository,
                                 val taggedUserProfileRepository: TaggedUserProfileRepository,
-                                val messagesApi: MessagesApi) extends I18nSupport with TransactionSupport {
+                                val messagesApi: MessagesApi,
+                                implicit val cache: CacheApi) extends I18nSupport with TransactionSupport {
 
   val tagWordCacheKey = "tagWord."
-
 
   def createTag(name: String, idName: String, order: String = "", tagGroupName : String = "" ): TagWord = withTransaction(template){
     var newTag: TagWord = new TagWord
@@ -68,7 +64,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
 
   def listByGroupOption(groupName: String): Option[List[TagWord]] = withTransaction(template){
 
-    val returnList: List[TagWord] = Cache.getOrElse[List[TagWord]](tagWordCacheKey + groupName){
+    val returnList: List[TagWord] = cache.getOrElse[List[TagWord]](tagWordCacheKey + groupName){
       tagWordRepository.findByTagGroupName(groupName).asScala.toList match {
         case null | Nil  => Nil
         case tags => {
@@ -114,21 +110,8 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
     foodTags
   }
 
-
-  //  @Transactional(readOnly = true)
-//  def listByGroup(groupName: String): Option[List[TagWord]] = {
-//   listAll() match {
-//     case null => None
-//     case tags: List[TagWord] => Some(tags.filter(t: TagWord => t.tagGroupName.equalsIgnoreCase(groupName)))
-//    }
-//  }
-
-
   def listByGroup2(groupName: String): List[TagWord] = withTransaction(template){
-
     tagWordRepository.findAllBySchemaPropertyValue("searchGroup", groupName).asScala.toList
-    // template.lookup("search","tagGroupName:profile").asScala.toList
-    //tagWordRepository.findByGruoupName("profile").toList
   }
 
 
@@ -158,11 +141,11 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
     result
   }
 
-  def addToCache(key: String, objToCache: Any) = {
-    Cache.set(key, objToCache)
+  def addToCache(key: String, objToCache: Any): Unit = {
+    cache.set(key, objToCache)
   }
 
-  def removeFromCache(item: TagWord) = {
-    Cache.remove(tagWordCacheKey + item.tagGroupName)
+  def removeFromCache(item: TagWord): Unit = {
+    cache.remove(tagWordCacheKey + item.tagGroupName)
   }
 }

@@ -1,36 +1,24 @@
 package services
 
-import javax.inject.{Named, Inject}
+import javax.inject.Inject
 
-import customUtils.security.SecureSocialRuntimeEnvironment
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
-import org.springframework.stereotype.Service
-import play.api.i18n.{MessagesApi, I18nSupport, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import traits.TransactionSupport
+
 import scala.collection.JavaConverters._
-import scala.List
-import org.springframework.transaction.annotation.{EnableTransactionManagement, Transactional}
 import repositories._
 import models.location.County
 import java.util.UUID
-import play.api.Play.current
 
 import scala.collection.mutable
-import play.api.cache.Cache
+import play.api.cache.CacheApi
 
-//@Service
 class CountyService @Inject() (val template: Neo4jTemplate,
                                val countyRepository: CountyRepository,
-                               val messagesApi: MessagesApi) extends I18nSupport with TransactionSupport {
+                               val messagesApi: MessagesApi,
+                               implicit val cache: CacheApi) extends I18nSupport with TransactionSupport {
 
-  /*
-  @Autowired
-  private var template: Neo4jTemplate = _
-
-  @Autowired
-  private var countyRepository: CountyRepository = _
-*/
 
   val cacheListKey = "county.list"
 
@@ -61,7 +49,7 @@ class CountyService @Inject() (val template: Neo4jTemplate,
 
   def getListOfAll: Option[List[County]] = withTransaction(template){
 
-    val returnList: List[County] = Cache.getOrElse[List[County]](cacheListKey){
+    val returnList: List[County] = cache.getOrElse[List[County]](cacheListKey){
      countyRepository.findAll().asScala.toList match {
         case null | Nil  => Nil
         case items => {
@@ -81,14 +69,14 @@ class CountyService @Inject() (val template: Neo4jTemplate,
 
   def getCounties: Option[Seq[(String,String)]] = withTransaction(template){
     val counties: Option[Seq[(String,String)]] = this.getListOfAll match {
-      case Some(counties) =>
+      case Some(c) =>
         var bufferList : mutable.Buffer[(String,String)] = mutable.Buffer[(String,String)]()
 
         // Prepend the first selection
         bufferList += (("", Messages("filterform.counties")))
 
         // Map and add the rest
-        counties.sortBy(tw => tw.name).toBuffer.map {
+        c.sortBy(tw => tw.name).toBuffer.map {
           item: County =>
             bufferList += ((item.objectId.toString, item.name))
         }
@@ -116,7 +104,7 @@ class CountyService @Inject() (val template: Neo4jTemplate,
 
   def deleteAll(): Boolean = withTransaction(template){
     removeFromCache(cacheListKey)
-    countyRepository.deleteAll
+    countyRepository.deleteAll()
     true
   }
 
@@ -126,11 +114,11 @@ class CountyService @Inject() (val template: Neo4jTemplate,
     countyRepository.save(newItem)
   }
 
-  def addToCache(key: String, objToCache: Any) = {
-    Cache.set(key, objToCache)
+  def addToCache(key: String, objToCache: Any): Unit = {
+    cache.set(key, objToCache)
   }
 
-  def removeFromCache(cacheIdent: String) = {
-    Cache.remove(cacheIdent)
+  def removeFromCache(cacheIdent: String): Unit = {
+    cache.remove(cacheIdent)
   }
 }

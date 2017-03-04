@@ -62,17 +62,17 @@ class WorldService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  def deleteWorld(worldToDelete: World) = withTransaction(template){
+  def deleteWorld(worldToDelete: World): Unit = withTransaction(template){
     worldRepository.delete(worldToDelete)
   }
 
 
-  def deleteAllWorlds() = withTransaction(template) {
+  def deleteAllWorlds(): Unit = withTransaction(template) {
     worldRepository.deleteAll()
   }
 
 
-  def addRocketRouteTo(thisWorld: World, otherWorld: World) = withTransaction(template){
+  def addRocketRouteTo(thisWorld: World, otherWorld: World): AnyVal = withTransaction(template){
     if(otherWorld != null && thisWorld != null)
       thisWorld.reachableByRocket.add(otherWorld)
   }

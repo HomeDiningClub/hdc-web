@@ -16,7 +16,7 @@ object Formats extends play.data.format.Formats {
     import org.joda.time.LocalTime
     override val format = Some(("format.date", Seq(pattern)))
 
-    def bind(key: String, data: Map[String, String]) = {
+    def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] = {
       stringFormat.bind(key, data).right.flatMap { s =>
         scala.util.control.Exception.allCatch[LocalTime]
           .either(LocalTime.parse(s, org.joda.time.format.DateTimeFormat.forPattern(pattern)))
@@ -41,9 +41,9 @@ object Formats extends play.data.format.Formats {
    * @param formatter a date pattern as specified in `java.time.format.DateTimeFormatter`.
    */
   def localDateTimeFormat(formatter: DateTimeFormatter): Formatter[LocalDateTime] = new Formatter[LocalDateTime] {
-    def jodaLocalDateParse(data: String) = LocalDateTime.parse(data, formatter)
+    def jodaLocalDateParse(data: String): LocalDateTime = LocalDateTime.parse(data, formatter)
     override val format = Some(("format.date", Seq(formatter.toString)))
-    def bind(key: String, data: Map[String, String]) = parsing(jodaLocalDateParse, "error.date", Nil)(key, data)
+    def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDateTime] = parsing(jodaLocalDateParse, "error.date", Nil)(key, data)
     def unbind(key: String, value: LocalDateTime) = Map(key -> value.format(formatter))
   }
 
@@ -62,9 +62,9 @@ object Formats extends play.data.format.Formats {
    * @param formatter a date pattern as specified in `java.time.format.DateTimeFormatter`.
    */
   def localDateFormat(formatter: DateTimeFormatter): Formatter[LocalDate] = new Formatter[LocalDate] {
-    def jodaLocalDateParse(data: String) = LocalDate.parse(data, formatter)
+    def jodaLocalDateParse(data: String): LocalDate = LocalDate.parse(data, formatter)
     override val format = Some(("format.date", Seq(formatter.toString)))
-    def bind(key: String, data: Map[String, String]) = parsing(jodaLocalDateParse, "error.date", Nil)(key, data)
+    def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = parsing(jodaLocalDateParse, "error.date", Nil)(key, data)
     def unbind(key: String, value: LocalDate) = Map(key -> value.format(formatter))
   }
 
@@ -81,9 +81,9 @@ object Formats extends play.data.format.Formats {
    * @param formatter a time pattern as specified in `java.time.format.LocalTime`.
    */
   def localTimeFormat(formatter: DateTimeFormatter): Formatter[LocalTime] = new Formatter[LocalTime] {
-    def localTimeParse(data: String) = LocalTime.parse(data, formatter)
+    def localTimeParse(data: String): LocalTime = LocalTime.parse(data, formatter)
     override val format = Some(("format.time", Seq(formatter.toString)))
-    def bind(key: String, data: Map[String, String]) = parsing(localTimeParse, "error.time", Nil)(key, data)
+    def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalTime] = parsing(localTimeParse, "error.time", Nil)(key, data)
     def unbind(key: String, value: LocalTime) = Map(key -> value.format(formatter))
   }
 

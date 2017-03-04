@@ -5,7 +5,7 @@ import javax.inject._
 import play.api.{Environment, Logger}
 import play.api.http.HttpErrorHandler
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.RequestHeader
+import play.api.mvc.{RequestHeader, Result}
 
 import scala.concurrent.Future
 import play.api.mvc.Results._
@@ -19,7 +19,7 @@ class ErrorProdController @Inject()(val messagesApi: MessagesApi,
 
 
   // 4xx
-  def onClientError(request: RequestHeader, statusCode: Int, message: String) = {
+  def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     implicit val req = request
 
     Logger.info(s"Returning $statusCode for: ${request.uri}")
@@ -34,7 +34,7 @@ class ErrorProdController @Inject()(val messagesApi: MessagesApi,
   }
 
   // 5xx
-  def onServerError(request: RequestHeader, exception: Throwable) = {
+  def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
     implicit val req = request
     var currentEx = exception
     Future.successful(InternalServerError(views.html.error.error(ex = currentEx, isAdmin = false)(req, request2Messages)))

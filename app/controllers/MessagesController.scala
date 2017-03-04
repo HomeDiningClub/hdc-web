@@ -147,7 +147,7 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
     }
   }
 */
-  def replyToGuest = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def replyToGuest: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
 
     val currentUser = userCredentialService.findById(request.user.objectId).get
 
@@ -218,7 +218,7 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
   }
 
 
-  def renderHostForm(hostingUser: UserCredential, currentUser: Option[UserCredential])(implicit request: RequestHeader) = {
+  def renderHostForm(hostingUser: UserCredential, currentUser: Option[UserCredential])(implicit request: RequestHeader): Html = {
     currentUser match {
       case None =>
         views.html.host.hostNotLoggedIn()
@@ -241,7 +241,7 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
   }
 
 
-  def applyToHost = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def applyToHost: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.USER))(parse.anyContent) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     val currentUser = userCredentialService.findById(request.user.objectId).get
 
     messageFormMapping.bindFromRequest.fold(

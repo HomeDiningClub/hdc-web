@@ -1,15 +1,12 @@
 package controllers.test
 
-import javax.inject.{Named, Inject}
-
-import org.springframework.beans.factory.annotation.Autowired
+import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
-import services.{WorldService}
+import services.WorldService
 import models.{UserCredential, World}
-import org.springframework.stereotype.{Controller => SpringController}
 import customUtils.authorization.WithRole
 import enums.RoleEnums
 import customUtils.security.SecureSocialRuntimeEnvironment
@@ -17,12 +14,8 @@ import customUtils.security.SecureSocialRuntimeEnvironment
 class WorldController @Inject() (implicit val env: SecureSocialRuntimeEnvironment,
                                  val worldService: WorldService,
                                  val messagesApi: MessagesApi) extends Controller with SecureSocial with I18nSupport {
-/*
-  @Autowired
-  var worldService: WorldService = _
-*/
 
-  def index = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def index: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     if (worldService.getNumberOfWorlds > 0) {
       worldService.deleteAllWorlds()
     }
@@ -32,7 +25,7 @@ class WorldController @Inject() (implicit val env: SecureSocialRuntimeEnvironmen
     val allWorlds: List[World] = worldService.getAllWorlds
     var pathFromFirstToLast: List[World] = Nil
 
-    if (!allWorlds.isEmpty) {
+    if (allWorlds.nonEmpty) {
       val first: World = allWorlds.head
       val last: World = allWorlds.last
       pathFromFirstToLast = worldService.getWorldPath(first, last)

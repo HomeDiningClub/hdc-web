@@ -143,10 +143,7 @@ public class UserProfile extends AuditEntity implements IEditable {
     }
 
     public boolean isUserHost() {
-        if (role != null && ( role.contains(UserLevelJava.GUEST.Constant) && role.contains(UserLevelJava.HOST.Constant) ) )
-            return  true;
-        else
-            return false;
+        return role != null && (role.contains(UserLevelJava.GUEST.Constant) && role.contains(UserLevelJava.HOST.Constant));
     }
 
     public String roleChecked(String r) {
@@ -158,10 +155,7 @@ public class UserProfile extends AuditEntity implements IEditable {
     }
 
     public boolean hasPaymentOptionSelected() {
-        if (payBankCard || payCash || payIZettle || paySwish)
-            return true;
-        else
-            return false;
+        return payBankCard || payCash || payIZettle || paySwish;
     }
 
     @Fetch
@@ -356,10 +350,7 @@ public class UserProfile extends AuditEntity implements IEditable {
 
     @Transient
     public Boolean isEditableBy(UUID objectId){
-        if(objectId != null && objectId.equals(this.getOwner().objectId))
-            return true;
-        else
-            return false;
+        return objectId != null && objectId.equals(this.getOwner().objectId);
     }
 
     @Fetch

@@ -95,7 +95,7 @@ class ScalrAssets @Inject()(implicit val conf: Configuration, implicit val appli
    * @param height Height of resized image
    * @return A resized image
    */
-  def crop(path: String, file: String, width: Int, height: Int = 0) = at(path, file, width, height, "crop")
+  def crop(path: String, file: String, width: Int, height: Int = 0): Action[AnyContent] = at(path, file, width, height, "crop")
 
   // Last modified
   private val lastModifieds = new java.util.concurrent.ConcurrentHashMap[String, String]().asScala

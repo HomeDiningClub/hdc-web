@@ -65,7 +65,7 @@ object BackupRobot {
 
   def freeSpace(folder: String, megaByte : Integer) : Boolean = {
 
-    val toMegaByte : Long =  (1024 * 1024)
+    val toMegaByte : Long =  1024 * 1024
 
     // todo use paramter value
     var dir : File  = new File(folder)

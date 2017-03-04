@@ -6,7 +6,7 @@ import scala.collection.JavaConverters._
 
 object IsAuthorizedChecks {
 
-  def ValidateWithRole(user: UserCredential, role: RoleEnums) = {
+  def ValidateWithRole(user: UserCredential, role: RoleEnums): Boolean = {
     val retValue = user match {
       case user: UserCredential =>
         val isInRole = user.roles.iterator.asScala.find((r: UserRole) => r.name.equalsIgnoreCase(role.toString)) match {

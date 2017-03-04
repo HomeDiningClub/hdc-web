@@ -82,10 +82,10 @@ class ResAssets @Inject()(implicit val conf: Configuration, implicit val applica
   }
 
   // Last modified
-  private val lastModifieds = (new java.util.concurrent.ConcurrentHashMap[String, String]()).asScala
+  private val lastModifieds = new java.util.concurrent.ConcurrentHashMap[String, String]().asScala
 
   private def lastModifiedFor(file: File): Option[String] = {
-    lastModifieds.get(file.getName).filter(_ => Play.mode == Mode.Prod).orElse {
+    lastModifieds.get(file.getName).filter(_ => environment.mode == Mode.Prod).orElse {
       val lastModified = df.print({
         new java.util.Date(file.lastModified).getTime
       })
@@ -95,10 +95,10 @@ class ResAssets @Inject()(implicit val conf: Configuration, implicit val applica
   }
 
   // Etags
-  private val etags = (new java.util.concurrent.ConcurrentHashMap[String, String]()).asScala
+  private val etags = new java.util.concurrent.ConcurrentHashMap[String, String]().asScala
 
   private def etagFor(file: File): Option[String] = {
-    etags.get(file.getName).filter(_ => Play.mode == Mode.Prod).orElse {
+    etags.get(file.getName).filter(_ => environment.mode == Mode.Prod).orElse {
       val maybeEtag = lastModifiedFor(file).map(_ + " -> " + file.getName).map("\"" + Codecs.sha1(_) + "\"")
       maybeEtag.foreach(etags.put(file.getName, _))
       maybeEtag

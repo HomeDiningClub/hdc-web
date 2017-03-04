@@ -33,7 +33,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
   }
 
   private var tokens = Map[String, MailToken]()
-  var users = Map[String, UserCredential]()
+  var users: Map[String, UserCredential] = Map[String, UserCredential]()
   var isUserCacheON : Boolean = false /// @todo
   //implicit val implicitEnv = env
 
@@ -276,18 +276,18 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
     if(isUserCacheON){
       val u = findUserCache(userId, providerId)
 
-      if(u != null && u != None && u.get != null && u.get != None) {
+      if(u != null && u.isDefined && u.get != null) {
         return u.get
       }
     }
 
     val user = userCredentialService.userCredentialRepository.findByuserIdAndProviderId(mUserId,providerId)
 
-    if(user != null && user != None && isUserCacheON) {
+    if(user != null && isUserCacheON) {
       addUserCache(user)
     }
 
-    return user
+    user
   }
 
   // Fetch user by emailAddress and providerId
@@ -340,7 +340,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
     var modUserCredential: UserCredential = findByUserIdAndProviderId(userCredential.userId, userCredential.providerId)
 
     var userExits : Boolean = false
-    if(modUserCredential == null || modUserCredential == None) {
+    if(modUserCredential == null) {
       userExits = false
     } else {
       userExits = true

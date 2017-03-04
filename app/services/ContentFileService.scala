@@ -31,7 +31,7 @@ class ContentFileService @Inject() (val template: Neo4jTemplate,
                                     implicit val application: Application,
                                     implicit val environment: play.api.Environment) extends TransactionSupport {
 
-  def localWorkingDir = {
+  def localWorkingDir: String = {
     var wrkDir = application.configuration.getString("hdc.wrkDir").getOrElse("/hdc-files/wrk-dir/")
 
     if (!wrkDir.endsWith("/")){
@@ -40,7 +40,7 @@ class ContentFileService @Inject() (val template: Neo4jTemplate,
     wrkDir
   }
 
-  def temporaryFileName = {
+  def temporaryFileName: String = {
     UUID.randomUUID.toString
   }
 

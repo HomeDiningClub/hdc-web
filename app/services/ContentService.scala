@@ -245,7 +245,7 @@ class ContentService @Inject()(val template: Neo4jTemplate,
   }
 
 
-  def deleteAllContentPages() = withTransaction(template){
+  def deleteAllContentPages(): Unit = withTransaction(template){
     contentPageRepository.deleteAll()
   }
 
