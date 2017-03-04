@@ -88,9 +88,6 @@ reviewbox.date.rated.text={0} om {1}:
 reviewbox.show-hide-more-text=Visa mer / mindre
 reviewbox.rated.object.text=Betygsätter:
 
-# Content
-person.formular=Personliga inställningar (svenska)
-person.lista=Lista personer (svenska)
 
 # Mail layout
 mail.main.title=Homediningclub
@@ -343,7 +340,7 @@ profile.create.form.phoneNumber.validation.required=Telefonnummer måste anges
 profile.create.form.personnummer=Personnummer (aldrig synligt)
 profile.create.form.personnummer.help=(Obligatoriskt, format: ÅÅÅÅMMDDNNNN)
 profile.create.form.personnummer.extra-info.header=Varför måste jag ange mitt personnummer?
-profile.create.form.personnummer.extra-info.body=Ditt personnummer behöver vi som en trygghet för värdar och gäster om det skulle uppstå eventuella klagomål. Ditt personnummer används aldrig vid bokningar, eller är aldrig synligt på webbsidan för någon annan än admministratörer hos Home Dining Club.
+profile.create.form.personnummer.extra-info.body=Ditt personnummer behöver vi som en trygghet för värdar och gäster om det skulle uppstå eventuella klagomål. Ditt personnummer används aldrig vid bokningar, eller är aldrig synligt på webbsidan för någon annan än administratörer hos Home Dining Club.
 
 profile.create.form.host-label=Värdskap
 profile.create.form.host-text=Jag vill vara värd

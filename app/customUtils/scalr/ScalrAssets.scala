@@ -4,14 +4,14 @@ import api.Resizer
 import play.api._
 import play.api.mvc._
 import play.api.libs._
-import org.joda.time.format.{DateTimeFormatter, DateTimeFormat}
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.joda.time.DateTimeZone
+
 import collection.JavaConverters._
 import java.io.File
+import javax.inject.Inject
 
-import play.api.Play.current
-
-object ScalrAssets extends Controller {
+class ScalrAssets @Inject()(implicit val conf: Configuration, implicit val application: Application, implicit val environment: play.api.Environment) extends Controller {
 
   private val timeZoneCode = "GMT"
 
@@ -52,7 +52,8 @@ object ScalrAssets extends Controller {
       }
     }
 
-    api.Scalr.get(path, file, width, height, modeEnum, Resizer.Method.ULTRA_QUALITY).map { resizedImage =>
+    val scalrObj = new api.Scalr()
+    scalrObj.get(path, file, width, height, modeEnum, Resizer.Method.ULTRA_QUALITY).map { resizedImage =>
       request.headers.get(IF_NONE_MATCH).flatMap {
         ifNoneMatch => etagFor(resizedImage).filter(_ == ifNoneMatch)
       }.map(_ => NotModified).getOrElse {
@@ -97,10 +98,10 @@ object ScalrAssets extends Controller {
   def crop(path: String, file: String, width: Int, height: Int = 0) = at(path, file, width, height, "crop")
 
   // Last modified
-  private val lastModifieds = (new java.util.concurrent.ConcurrentHashMap[String, String]()).asScala
+  private val lastModifieds = new java.util.concurrent.ConcurrentHashMap[String, String]().asScala
 
   private def lastModifiedFor(file: File): Option[String] = {
-    lastModifieds.get(file.getName).filter(_ => Play.isProd).orElse {
+    lastModifieds.get(file.getName).filter(_ => environment.mode == Mode.Prod).orElse {
       val lastModified = df.print({
         new java.util.Date(file.lastModified).getTime
       })
@@ -110,10 +111,10 @@ object ScalrAssets extends Controller {
   }
 
   // Etags
-  private val etags = (new java.util.concurrent.ConcurrentHashMap[String, String]()).asScala
+  private val etags = new java.util.concurrent.ConcurrentHashMap[String, String]().asScala
 
   private def etagFor(file: File): Option[String] = {
-    etags.get(file.getName).filter(_ => Play.isProd).orElse {
+    etags.get(file.getName).filter(_ => environment.mode == Mode.Prod).orElse {
       val maybeEtag = lastModifiedFor(file).map(_ + " -> " + file.getName).map("\"" + Codecs.sha1(_) + "\"")
       maybeEtag.foreach(etags.put(file.getName, _))
       maybeEtag
