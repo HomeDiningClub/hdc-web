@@ -1,18 +1,19 @@
 package customUtils.scalr.api
 
 import play.api._
-import java.io.{FileInputStream, OutputStream, File}
+import java.io.{File, FileInputStream, OutputStream}
+
 import org.apache.commons.io.FilenameUtils
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
+import javax.inject.Inject
+
 import util.Random
 import customUtils.res.api.Res
 
-import play.api.Play.current
+class Scalr @Inject()(implicit val conf: Configuration, implicit val application: Application, implicit val environment: play.api.Environment) {
 
-object Scalr {
-
-  lazy val configuration = Play.configuration.getConfig("scalr").getOrElse(Configuration.empty)
+  lazy val configuration = conf.getConfig("scalr").getOrElse(Configuration.empty)
 
   /**
    * Creates and caches image in local cache directory
@@ -27,13 +28,13 @@ object Scalr {
   def get(path: String, file: String, width: Int, height: Int, mode: Resizer.Mode = Resizer.Mode.AUTOMATIC, method: Resizer.Method = Resizer.Method.ULTRA_QUALITY): Option[File] = {
 
     val resourceName = Option(path + "/" + file).map(name => if (name.startsWith("/")) name else ("/" + name)).get
-    val resourceFile = Play.getFile(resourceName)
+    val resourceFile = environment.getFile(resourceName)
 
     if (resourceFile.isDirectory) {
       None
     } else {
       val cachePath = configuration.getString("cachedir").getOrElse("tmp/scalrcache")
-      val cachedImage = Res.fileWithMeta(
+      val cachedImage = new Res().fileWithMeta(
         filePath = FilenameUtils.concat(cachePath, file),
         meta = Seq(width.toString, height.toString, mode.toString)
       )
@@ -42,12 +43,12 @@ object Scalr {
         Some(cachedImage)
       }.getOrElse {
         val resizedImage = resize(resourceFile, width, height, mode, method)
-        val resizedFilePath = Res.saveWithMeta(
+        val resizedFilePath = new Res().saveWithMeta(
           resizedImage,
           filePath = FilenameUtils.concat(cachePath, file),
           meta = Seq(width.toString, height.toString, mode.toString)
         )
-        Play.getExistingFile(resizedFilePath)
+        environment.getExistingFile(resizedFilePath)
       }
     }
   }
@@ -64,11 +65,12 @@ object Scalr {
    */
   def getRes(fileuid: String, source: String = "default", width: Int, height: Int, mode: Resizer.Mode = Resizer.Mode.AUTOMATIC, method: Resizer.Method = Resizer.Method.ULTRA_QUALITY): Option[File] = {
 
-    Res.get(fileuid, source).flatMap { res =>
+    val ResObj = new Res()
+    ResObj.get(fileuid, source).flatMap { res =>
 
       val cacheSource = configuration.getString("cache").getOrElse("scalrcache")
 
-      val cachedImage = Res.get(
+      val cachedImage = ResObj.get(
         fileuid = res.getName,
         meta = Seq(width.toString, height.toString, mode.toString),
         source = cacheSource
@@ -78,13 +80,13 @@ object Scalr {
         Some(cachedImage)
       }.getOrElse {
         val resizedImage = resize(res, width, height, mode, method)
-        val fileUID = Res.put(
+        val fileUID = ResObj.put(
           resizedImage,
           cacheSource,
           filename = Some(res.getName),
           meta = Seq(width.toString, height.toString, mode.toString)
         )
-        Res.get(fileUID, cacheSource)
+        ResObj.get(fileUID, cacheSource)
       }
     }
   }

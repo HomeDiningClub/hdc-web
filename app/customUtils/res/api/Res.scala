@@ -2,20 +2,19 @@ package customUtils.res.api
 
 import play.api._
 import libs.{Files, MimeTypes}
-import java.io.{FileInputStream, File}
-import org.apache.commons.io.{FilenameUtils, FileUtils}
+import java.io.{File, FileInputStream}
+import javax.inject.Inject
+import org.apache.commons.io.{FileUtils, FilenameUtils}
 import org.apache.commons.codec.digest.DigestUtils
 
-import play.api.Play.current
+class Res @Inject()(implicit val conf: Configuration, implicit val application: Application, implicit val environment: play.api.Environment) {
 
-object Res {
+  lazy val resConf: Configuration = conf.getConfig("res").getOrElse(Configuration.empty)
 
-  lazy val configuration = Play.configuration.getConfig("res").getOrElse(Configuration.empty)
-
-  lazy val sources: Map[String, File] = configuration.subKeys.map {
+  lazy val sources: Map[String, File] = resConf.subKeys.map {
     sourceKey =>
-      val path = configuration.getString(sourceKey).getOrElse(throw configuration.reportError("res." + sourceKey, "Missing res path[" + sourceKey + "]"))
-      val file = new File(FilenameUtils.concat(Play.current.path.getAbsolutePath, path))
+      val path = resConf.getString(sourceKey).getOrElse(throw resConf.reportError("res." + sourceKey, "Missing res path[" + sourceKey + "]"))
+      val file = new File(FilenameUtils.concat(application.path.getAbsolutePath, path))
       if (file.isDirectory && !file.exists()) {
         FileUtils.forceMkdir(file)
       }
@@ -93,7 +92,7 @@ object Res {
    * @return The unique file name with the metadata appended
    */
   @throws(classOf[IllegalArgumentException])
-  def put(filePart: play.mvc.Http.MultipartFormData.FilePart, source: String, meta: Seq[String]): String = {
+  def put(filePart: play.mvc.Http.MultipartFormData.FilePart[File], source: String, meta: Seq[String]): String = {
     val extensionOptions = List(
       Option(FilenameUtils.getExtension(filePart.getFilename)),
       getExtensionFromMimeType(Option(filePart.getContentType))
@@ -140,7 +139,8 @@ object Res {
     val path = FilenameUtils.getPath(filePath)
     val name = FilenameUtils.getBaseName(filePath)
     val ext = FilenameUtils.getExtension(filePath)
-    Play.getExistingFile(path + name + meta.mkString(if (meta.nonEmpty) { "_" } else "", "_", ".") + ext)
+    environment.getExistingFile(path + name + meta.mkString(if (meta.nonEmpty) { "_" } else "", "_", ".") + ext)
+    //Play.getExistingFile(path + name + meta.mkString(if (meta.nonEmpty) { "_" } else "", "_", ".") + ext)
   }
 
   /**
@@ -156,13 +156,13 @@ object Res {
     val name = FilenameUtils.getBaseName(filePath)
     val ext = FilenameUtils.getExtension(filePath)
 
-    val base = Play.getFile(path)
+    val base = environment.getFile(path)
     if (!base.exists()) {
       base.mkdirs()
     }
 
     val targetPath = path + name + meta.mkString(if (meta.nonEmpty) { "_" } else "", "_", ".") + ext
-    val target = Play.getFile(targetPath)
+    val target = environment.getFile(targetPath)
     if (target.exists()) {
       FileUtils.copyFile(file, target)
     } else {

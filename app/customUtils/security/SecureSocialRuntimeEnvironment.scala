@@ -1,13 +1,18 @@
 package customUtils.security
 
+import javax.inject.Inject
+
 import securesocial.core.RuntimeEnvironment
 import models.UserCredential
+import play.api.Configuration
+import play.api.i18n.MessagesApi
 import services.{LoginEventListener, UserCredentialServicePlugin}
+
 import scala.collection.immutable.ListMap
 import securesocial.controllers.{MailTemplates, ViewTemplates}
 import plugin.{SecureSocialMailTemplates, SecureSocialViewTemplates}
 
-class SecureSocialRuntimeEnvironment extends RuntimeEnvironment.Default {
+class SecureSocialRuntimeEnvironment @Inject() (override val configuration: Configuration, override val messagesApi: MessagesApi) extends RuntimeEnvironment.Default {
 
   type U = UserCredential
 
@@ -16,6 +21,7 @@ class SecureSocialRuntimeEnvironment extends RuntimeEnvironment.Default {
   override lazy val mailTemplates: MailTemplates = new SecureSocialMailTemplates()(this)
   override lazy val userService: UserCredentialServicePlugin = new UserCredentialServicePlugin
   override lazy val eventListeners = List(new LoginEventListener())
+  //override lazy val routes = new CustomRoutesService()
   override lazy val providers = ListMap(
     /*
     include(new FacebookProvider(routes, cacheService, oauth2ClientFor(FacebookProvider.Facebook))),

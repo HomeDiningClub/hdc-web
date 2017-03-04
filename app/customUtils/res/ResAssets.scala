@@ -3,14 +3,15 @@ package customUtils.res
 import play.api._
 import play.api.mvc._
 import play.api.libs._
-import org.joda.time.format.{DateTimeFormatter, DateTimeFormat}
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.joda.time.DateTimeZone
+
 import collection.JavaConverters._
 import java.io.File
+import javax.inject.Inject
 
-import play.api.Play.current
 
-object ResAssets extends Controller {
+class ResAssets @Inject()(implicit val conf: Configuration, implicit val application: Application, implicit val environment: play.api.Environment) extends Controller {
 
   private val timeZoneCode = "GMT"
 
@@ -40,7 +41,9 @@ object ResAssets extends Controller {
       }
     }
 
-    api.Res.get(file, source).map { file =>
+    val res = new api.Res()
+
+    res.get(file, source).map { file =>
       request.headers.get(IF_NONE_MATCH).flatMap {
         ifNoneMatch =>
           etagFor(file).filter(_ == ifNoneMatch)

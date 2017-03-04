@@ -1,7 +1,8 @@
 package controllers
 
 import _root_.java.util.UUID
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
+
 import enums.{FileTypeEnums, RoleEnums}
 import models.viewmodels.ImageData
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -12,24 +13,23 @@ import org.springframework.stereotype.{Controller => SpringController}
 import org.springframework.beans.factory.annotation.Autowired
 import securesocial.core.SecureSocial
 import securesocial.core.SecureSocial.SecuredRequest
-import services.{NodeEntityService, ContentFileService}
+import services.{ContentFileService, NodeEntityService}
 import customUtils.Helpers
 import customUtils.authorization.WithRole
 import customUtils.scalr.api.Resizer
 import models.UserCredential
 import customUtils.security.SecureSocialRuntimeEnvironment
+import play.api.{Application, Configuration}
 
 class ImageController @Inject() (override implicit val env: SecureSocialRuntimeEnvironment,
                                  val messagesApi: MessagesApi,
                                  implicit val nodeEntityService: NodeEntityService,
-                                 val contentFileService: ContentFileService) extends Controller with SecureSocial with I18nSupport {
-/*
-  @Autowired
-  private var contentFileService: ContentFileService = _
-*/
+                                 val contentFileService: ContentFileService,
+                                 implicit val conf: Configuration,
+                                 implicit val application: Application,
+                                 implicit val environment: play.api.Environment) extends Controller with SecureSocial with I18nSupport {
 
   implicit val imageWrites = Json.writes[ImageData]
-
   private val faultyImageRequestAction: Action[AnyContent] = Action(Ok(""))
 
   // Returns JSON
@@ -131,7 +131,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        customUtils.res.ResAssets.at(id)
+        new customUtils.res.ResAssets().at(id)
     }
   }
 
@@ -221,7 +221,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
       case "null" =>
         faultyImageRequestAction
       case id: String =>
-        customUtils.res.ResAssets.at(id)
+        new customUtils.res.ResAssets().at(id)
     }
   }
 

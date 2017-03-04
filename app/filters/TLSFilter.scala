@@ -1,20 +1,22 @@
 package filters
 
 import javax.inject.Inject
+
+import akka.stream.Materializer
 import play.api.mvc.Result
+
 import scala.concurrent._
-import ExecutionContext.Implicits.global
 import play.api.mvc.Filter
 import play.api.mvc._
+
 import scala.concurrent.Future
 import play.api.http._
 
-class TLSFilter @Inject()(implicit app: play.api.Application) extends Filter {
+class TLSFilter @Inject()(implicit val mat: Materializer, implicit val ec: ExecutionContext, implicit val env: play.api.Environment) extends Filter {
 
   def apply(nextFilter: RequestHeader => Future[Result])
            (requestHeader: RequestHeader): Future[Result] = {
-
-    if(app.mode == play.api.Mode.Prod){
+    if(env.mode == play.api.Mode.Prod){
       if (!requestHeader.secure)
         Future.successful(Results.MovedPermanently("https://" + requestHeader.host + requestHeader.uri))
       else
@@ -26,6 +28,6 @@ class TLSFilter @Inject()(implicit app: play.api.Application) extends Filter {
 
 }
 
-class MyFilters @Inject()(implicit app: play.api.Application) extends HttpFilters {
-  val filters = Seq(new TLSFilter)
+class MyFilters @Inject()(implicit val mat: Materializer, implicit val ec: ExecutionContext, implicit val env: play.api.Environment) extends HttpFilters {
+  val filters = Seq(new TLSFilter())
 }

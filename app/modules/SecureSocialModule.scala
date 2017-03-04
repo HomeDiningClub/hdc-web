@@ -1,14 +1,15 @@
 package modules
 
-import com.google.inject.{AbstractModule, TypeLiteral}
 import customUtils.security.SecureSocialRuntimeEnvironment
-import net.codingwell.scalaguice.ScalaModule
+import play.api.{ Configuration, Environment }
+import play.api.inject.{ Binding, Module }
 import securesocial.core.RuntimeEnvironment
 
-class SecureSocialModule extends AbstractModule with ScalaModule {
-  override def configure() {
-    val environment: SecureSocialRuntimeEnvironment = new SecureSocialRuntimeEnvironment()
-    bind(new TypeLiteral[RuntimeEnvironment] {}).toInstance(environment)
+class SecureSocialModule extends Module {
+  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
+    Seq(
+      bind[RuntimeEnvironment].to[SecureSocialRuntimeEnvironment]
+    )
   }
 }
 

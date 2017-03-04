@@ -1,6 +1,6 @@
 package services
 
-import javax.inject.{Named,Inject}
+import javax.inject.{Inject, Named}
 
 import org.apache.commons.codec.digest.DigestUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,35 +9,30 @@ import repositories._
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import models.files._
-import play.api.Logger
-import play.api.Play
-import play.api.Play.current
+import play.api.{Application, Configuration, Logger, Play}
 import java.util.{Locale, UUID}
+
 import org.neo4j.helpers.collection.IteratorUtil
 import traits.TransactionSupport
+
 import scala.collection.JavaConverters._
 import play.api.libs.MimeTypes
-import java.io.{IOException, FileInputStream, File}
+import java.io.{File, FileInputStream, IOException}
+
 import models.UserCredential
 import enums.FileTypeEnums
 import FileTypeEnums.FileTypeEnums
 
-//@Named
-//@Service
+
 class ContentFileService @Inject() (val template: Neo4jTemplate,
                                     val contentFileRepository: ContentFileRepository,
-                                    val userCredentialRepository: UserCredentialRepository) extends TransactionSupport {
-
-  /*
-  @Autowired
-  private var contentFileRepository: ContentFileRepository = _
-
-  @Autowired
-  private var userCredentialRepository: UserCredentialRepository = _
-*/
+                                    val userCredentialRepository: UserCredentialRepository,
+                                    implicit val conf: Configuration,
+                                    implicit val application: Application,
+                                    implicit val environment: play.api.Environment) extends TransactionSupport {
 
   def localWorkingDir = {
-    var wrkDir = Play.application.configuration.getString("hdc.wrkDir").getOrElse("/hdc-files/wrk-dir/")
+    var wrkDir = application.configuration.getString("hdc.wrkDir").getOrElse("/hdc-files/wrk-dir/")
 
     if (!wrkDir.endsWith("/")){
       wrkDir += "/"
@@ -324,9 +319,9 @@ class ContentFileService @Inject() (val template: Neo4jTemplate,
 
   // Resource
   private def storeToRes(fileToStore: File, metaData: Seq[String], fileExtension: String): Option[String] = {
-  //private def storeToRes(fileToStore: File, fileNameToStore: String, fileExtension: String): Option[String] = {
+  val res = new customUtils.res.api.Res()
     try {
-      customUtils.res.api.Res.put(fileToStore, meta = metaData, extension = Some(fileExtension)) match {
+      res.put(fileToStore, meta = metaData, extension = Some(fileExtension)) match {
       //utils.res.api.Res.put(fileToStore, filename = Some(fileNameToStore), extension = Some(fileExtension)) match {
         case id: String =>
           Some(id)
@@ -408,7 +403,7 @@ class ContentFileService @Inject() (val template: Neo4jTemplate,
     // Delete from DB, then delete from Store - returns true or false
     deleteFileFromDB(fileToDelete.get) match {
       case true =>
-        customUtils.res.api.Res.delete(fileToDelete.get.getStoreId)
+        new customUtils.res.api.Res().delete(fileToDelete.get.getStoreId)
       case false =>
         false
     }
