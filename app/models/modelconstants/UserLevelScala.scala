@@ -1,8 +1,5 @@
 package models.modelconstants
 
-/**
- * Created by Tommy on 09/10/2014.
- */
 object UserLevelScala {
 
   object HOST {

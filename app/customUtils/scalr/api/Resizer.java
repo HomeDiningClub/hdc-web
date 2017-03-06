@@ -363,7 +363,7 @@ public class Resizer {
      * @author Riyad Kalla (software@thebuzzmedia.com)
      * @since 1.1
      */
-    public static enum Method {
+    public enum Method {
         /**
          * Used to indicate that the scaling implementation should decide which
          * method to use in order to get the best looking scaled image in the
@@ -416,7 +416,7 @@ public class Resizer {
          * jagged with some of the other {@link Method}s (even
          * {@link Method#QUALITY}).
          */
-        ULTRA_QUALITY;
+        ULTRA_QUALITY
     }
 
     /**
@@ -426,7 +426,7 @@ public class Resizer {
      * @author Riyad Kalla (software@thebuzzmedia.com)
      * @since 3.1
      */
-    public static enum Mode {
+    public enum Mode {
         /**
          * Used to indicate that the scaling implementation should calculate
          * dimensions for the resultant image by looking at the image's
@@ -466,7 +466,7 @@ public class Resizer {
          * dimensions for the resultant image that best-fit within the given
          * height and width, and then crop it to fit within the bounding box.
          */
-        CROP;
+        CROP
     }
 
     /**
@@ -476,7 +476,7 @@ public class Resizer {
      * @author Riyad Kalla (software@thebuzzmedia.com)
      * @since 3.2
      */
-    public static enum Rotation {
+    public enum Rotation {
         /**
          * 90-degree, clockwise rotation (to the right). This is equivalent to a
          * quarter-turn of the image to the right; moving the picture on to its
@@ -518,7 +518,7 @@ public class Resizer {
          * but the top and bottom sides flip. This is different than a standard
          * rotation where the left and right would also have been flipped.
          */
-        FLIP_VERT;
+        FLIP_VERT
     }
 
     /**
