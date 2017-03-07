@@ -243,7 +243,7 @@ public class Event extends ContentBase implements IEditable {
             }
 
             // Remove all
-            Iterator<ContentFile> iteration = (Iterator<ContentFile>) arr.iterator();
+            Iterator<ContentFile> iteration = arr.iterator();
             while (iteration.hasNext()) {
                 deleteEventImage(iteration.next());
             }
@@ -405,7 +405,7 @@ public class Event extends ContentBase implements IEditable {
             }
 
             // Remove all
-            Iterator<EventDate> iteration = (Iterator<EventDate>) arr.iterator();
+            Iterator<EventDate> iteration = arr.iterator();
             while (iteration.hasNext()) {
                 deleteEventDate(iteration.next());
             }

@@ -127,7 +127,7 @@ public class Recipe extends ContentBase implements IEditable {
             }
 
             // Remove all
-            Iterator<ContentFile> iteration = (Iterator<ContentFile>) arr.iterator();
+            Iterator<ContentFile> iteration = arr.iterator();
             while (iteration.hasNext()) {
                 deleteRecipeImage(iteration.next());
             }

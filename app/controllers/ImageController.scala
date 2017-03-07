@@ -44,11 +44,15 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
     val splitSelectedArray = splitSelected.toArray
 
     val images = contentFileService.getImagesForUser(request.user.objectId).map(
-      s => new ImageData(
+      s => ImageData(
         Some(s.objectId.toString),
         s.name,
         routes.ImageController.imgChooserThumb(s.getStoreId).url,
-        if(splitSelectedArray.isEmpty){ false }else{ splitSelected.exists(item => UUID.fromString(item) == s.objectId) }
+        if (splitSelectedArray.isEmpty) {
+          false
+        } else {
+          splitSelected.exists(item => UUID.fromString(item) == s.objectId)
+        }
       )
     )
     Ok(Json.toJson(images.map(s => Json.toJson(s))))
@@ -74,7 +78,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
     }
 
     val images = contentFileService.getByListOfobjectIds(listSelected).map(
-      s => new ImageData(
+      s => ImageData(
         Some(s.objectId.toString),
         s.name,
         routes.ImageController.imgChooserThumb(s.getStoreId).url,
@@ -97,7 +101,7 @@ class ImageController @Inject() (override implicit val env: SecureSocialRuntimeE
 
         contentFileService.uploadFile(newFile, fileName, contentType, request.user.objectId, FileTypeEnums.IMAGE) match {
           case Some(uploadedImage) => {
-            val image: ImageData = new ImageData(Some(uploadedImage.objectId.toString), uploadedImage.name, routes.ImageController.imgChooserThumb(uploadedImage.getStoreId).url, false, "delete")
+            val image: ImageData = ImageData(Some(uploadedImage.objectId.toString), uploadedImage.name, routes.ImageController.imgChooserThumb(uploadedImage.getStoreId).url, false, "delete")
             val returnJSon = Json.obj("files" -> Json.arr(Json.toJson(image)))
 
             /* Manual JSON, works great, but using objects instead

@@ -352,7 +352,7 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
                 (
                         oAuth2InfoAccessToken,
                         Scala.Option(oAuth2InfoTokenType),
-                        Scala.Option((Object)oAuth2InfoExpiresIn),
+                        Scala.Option(oAuth2InfoExpiresIn),
                         Scala.Option(oAuth2InfoRefreshToken)
                 );
 

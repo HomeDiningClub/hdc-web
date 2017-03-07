@@ -341,7 +341,7 @@ public class UserProfile extends AuditEntity implements IEditable {
             }
 
             // remove all tags
-            Iterator<TaggedUserProfile> itter2 = (Iterator<TaggedUserProfile>) arr.iterator();
+            Iterator<TaggedUserProfile> itter2 = arr.iterator();
             while (itter2.hasNext()) {
                 userProfileTag.remove(itter2.next());
             }

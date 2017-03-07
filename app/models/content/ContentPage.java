@@ -67,7 +67,7 @@ public class ContentPage extends ContentBase {
             }
 
             // Remove all
-            Iterator<RelatedPage> itter2 = (Iterator<RelatedPage>) arr.iterator();
+            Iterator<RelatedPage> itter2 = arr.iterator();
             while (itter2.hasNext()) {
                 this.relatedPages.remove(itter2.next());
             }

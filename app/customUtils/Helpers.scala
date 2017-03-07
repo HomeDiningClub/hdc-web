@@ -37,7 +37,7 @@ object Helpers {
   }
 
   def isUserAdmin(checkUser: UserCredential, req: RequestHeader): Boolean = {
-      new WithRole(RoleEnums.ADMIN).isAuthorized(checkUser, req) match {
+      WithRole(RoleEnums.ADMIN).isAuthorized(checkUser, req) match {
         case true => true
         case false => false
       }

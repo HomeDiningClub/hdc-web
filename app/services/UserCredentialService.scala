@@ -76,8 +76,8 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
 
     var userCredential : UserCredential = new UserCredential()
 
-    val oauth2:   OAuth2Info    = socialUser.oAuth2Info.getOrElse(new OAuth2Info(""))
-    var pinfo:    PasswordInfo  = socialUser.passwordInfo.getOrElse( new PasswordInfo("","",Some("")) )
+    val oauth2:   OAuth2Info    = socialUser.oAuth2Info.getOrElse(OAuth2Info(""))
+    var pinfo:    PasswordInfo  = socialUser.passwordInfo.getOrElse( PasswordInfo("", "", Some("")) )
 
     userCredential.providerId         = socialUser.providerId   // name
     userCredential.userId             = socialUser.userId       // userid
@@ -99,8 +99,8 @@ class UserCredentialService @Inject()(val template: Neo4jTemplate,
     userCredential.salt    = pinfo.salt.getOrElse("")
 
     // oAuth1
-    userCredential.oAuth1InfoToken  = socialUser.oAuth1Info.getOrElse(new OAuth1Info("","")).token
-    userCredential.oAuth1InfoSecret = socialUser.oAuth1Info.getOrElse(new OAuth1Info("","")).secret
+    userCredential.oAuth1InfoToken  = socialUser.oAuth1Info.getOrElse(OAuth1Info("", "")).token
+    userCredential.oAuth1InfoSecret = socialUser.oAuth1Info.getOrElse(OAuth1Info("", "")).secret
 
     // oAuth2
     userCredential.oAuth2InfoAccessToken    = oauth2.accessToken
