@@ -292,7 +292,7 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
     }
 
     @Deprecated
-    /**
+    /*
      * @deprecated
      * Don't use .firstName(), use .firstName instead
      */
@@ -302,7 +302,7 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
     }
 
     @Deprecated
-    /**
+    /*
      * @deprecated
      * Don't use .lastName(), use .lastName instead
      */
@@ -312,7 +312,7 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
     }
 
     @Deprecated
-    /**
+    /*
      * @deprecated
      * Don't use .fullName(), use .fullName instead
      */
@@ -322,7 +322,7 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
     }
 
     @Deprecated
-    /**
+    /*
      * @deprecated
      * Don't use .email(), use .emailAddress instead
      */

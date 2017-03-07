@@ -731,8 +731,6 @@ image-chooser.preview-images-nr-of-items={0}/{1}
 
 image-chooser.tabs.image-grid.name=Bilder
 image-chooser.tabs.image-grid.title=Bilder
-image-chooser.tabs.video-grid.name=Video (kommer)
-image-chooser.tabs.video-grid.title=Video (kommer snart för guldmedlemmar)
 image-chooser.tabs.upload.title=Ladda upp
 image-chooser.tabs.upload.name=Ladda upp
 

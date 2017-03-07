@@ -1,7 +1,6 @@
 package models.message;
 
 import models.base.AuditEntity;
-import models.modelconstants.RelationshipTypesJava;
 
 import java.util.Date;
 

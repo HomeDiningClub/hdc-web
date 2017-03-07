@@ -1,10 +1,8 @@
 package customUtils.scalr.api;
 
-/**
+/*
  * Fork of imgscalr from buzz media
- */
 
-/**
  * Copyright 2011 The Buzz Media, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -349,7 +347,7 @@ public class Resizer {
     public static final ColorConvertOp OP_GRAYSCALE = new ColorConvertOp(
             ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
 
-    /**
+    /*
      * Static initializer used to prepare some of the variables used by this
      * class.
      */
