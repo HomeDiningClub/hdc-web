@@ -17,7 +17,7 @@
                 @for(mItem <- asideMenu.get){
 
                     <li class="list-group-item@if(!mItem.cssClass.isEmpty){ @mItem.cssClass }@if(mItem.selected){ list-group-item-selected }">
-                        <a href="@mItem.url" @if(!mItem.alt.isEmpty){ alt="@mItem.alt" } @if(!mItem.title.isEmpty){ title="@mItem.title" }>@mItem.name</a>
+                        <a href="@mItem.url" @if(!mItem.title.isEmpty){ title="@mItem.title" }>@mItem.name</a>
                     </li>
                 }
                 </ul>

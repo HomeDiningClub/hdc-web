@@ -4,8 +4,9 @@
     <button type="button" class="btn btn-warning" id="@btnId">@btnT</button>
 }
 
+@defining(if(inputSelector.isEmpty){ "''" }else{ inputSelector } ) { inpSel: String =>
 <script>
-var btn = document.getElementById('@btnId');
-btn.onclick = function(){ openFileModal(@editMode, @if(inputSelector.isEmpty){""}else{document.getElementById('@inputSelector')}, @selectorMaxItems); }
+        var btn = document.getElementById('@btnId');
+        btn.onclick = function(){ openFileModal(@editMode,@Html(inpSel),@selectorMaxItems); };
 </script>
-
+}
