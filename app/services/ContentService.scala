@@ -163,7 +163,7 @@ class ContentService @Inject()(val template: Neo4jTemplate,
           item: ContentPage =>
             bufferList += ((item.objectId.toString, item.name))
         }
-        Some(bufferList.toSeq)
+        Some(bufferList)
       case None =>
         None
     }
@@ -230,7 +230,7 @@ class ContentService @Inject()(val template: Neo4jTemplate,
 
 
   def removeAllRelatedPages(contentPage: ContentPage): Boolean = withTransaction(template){
-    contentPage.removeAllRelatedPages
+    contentPage.removeAllRelatedPages()
     true
   }
 

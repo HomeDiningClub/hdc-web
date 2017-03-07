@@ -81,7 +81,7 @@ class CountyService @Inject() (val template: Neo4jTemplate,
             bufferList += ((item.objectId.toString, item.name))
         }
 
-        Some(bufferList.toSeq)
+        Some(bufferList)
       case None =>
         None
     }

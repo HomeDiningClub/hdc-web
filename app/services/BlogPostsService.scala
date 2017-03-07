@@ -72,13 +72,13 @@ class BlogPostsService @Inject() (val template: Neo4jTemplate,
     var count : Int = 0
     var blogPostList : ListBuffer[BlogPostItem] = new ListBuffer[BlogPostItem]
 
-    while(iterator.hasNext()) {
+    while(iterator.hasNext) {
       count = count + 1
       val obj = iterator.next()
 
       // Image
       var mainImage: Option[String] = None
-      if(obj.getMainImage().iterator().hasNext()){
+      if(obj.getMainImage().iterator().hasNext){
         mainImage = Some(routes.ImageController.blogNormal(obj.getMainImage().iterator().next()).url)
       }
 

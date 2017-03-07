@@ -49,7 +49,7 @@ class SpringNeo4jBaseConfig extends Neo4jConfiguration {
   def auditingEventListener(): AuditingEventListener = {
     new AuditingEventListener(new ObjectFactory[IsNewAwareAuditingHandler]() {
 
-      override def getObject(): IsNewAwareAuditingHandler = {
+      override def getObject: IsNewAwareAuditingHandler = {
         new IsNewAwareAuditingHandler(neo4jMappingContext())
       }
     })

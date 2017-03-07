@@ -125,7 +125,7 @@ class AdminUserRoleController @Inject() (override implicit val env: SecureSocial
           item: UserRole =>
             bufferList += ((item.objectId.toString, item.name))
         }
-        Some(bufferList.toSeq)
+        Some(bufferList)
       case None =>
         None
     }
@@ -142,7 +142,7 @@ class AdminUserRoleController @Inject() (override implicit val env: SecureSocial
           item: UserCredential =>
             bufferList += ((item.objectId.toString, item.fullName + " - (" + item.emailAddress + " , " + item.providerId + ")"))
         }
-        Some(bufferList.toSeq)
+        Some(bufferList)
       case None =>
         None
     }

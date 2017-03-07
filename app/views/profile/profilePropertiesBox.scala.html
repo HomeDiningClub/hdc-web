@@ -5,7 +5,7 @@
         @shared.tagList(tagList, userProfile.getOwner.firstName)
     <br><strong>@Messages("profile.firstname.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.getOwner.firstName)</span>
     <br><strong>@Messages("profile.city.label")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.city)</span>
-    <br>@if(userProfile.getLocations.iterator().hasNext()) {
+    <br>@if(userProfile.getLocations.iterator().hasNext) {
         <strong>@Messages("profile.county.text")</strong> <span class="sentence-case">@customUtils.Helpers.titleCase(userProfile.getLocations.iterator().next().county.name)</span>
     }
     <br><strong>@Messages("profile.payment.label")</strong>

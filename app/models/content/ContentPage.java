@@ -74,9 +74,9 @@ public class ContentPage extends ContentBase {
         }
     }
 
-    public void removeRelatedPage(ContentPage contentPage) {
+    public void removeRelatedPage(RelatedPage relatedPage) {
         if(this.relatedPages != null)
-            this.relatedPages.remove(contentPage);
+            this.relatedPages.remove(relatedPage);
     }
 
 

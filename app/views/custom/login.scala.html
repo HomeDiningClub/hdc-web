@@ -34,12 +34,12 @@
                 @defining( env.providers.values.filter( _.id != UsernamePassword) ) { externalProviders: Iterable[securesocial.core.IdentityProvider] =>
 
                         @env.providers.get(UsernamePassword).map { up =>
-                            @defining(if( externalProviders.size > 0 ) { Messages("securesocial.login.useEmailAndPassword") }else{ Messages("securesocial.login.useEmailAndPasswordOnly") }) { providerHeader: String =>
+                            @defining(if( externalProviders.nonEmpty ) { Messages("securesocial.login.useEmailAndPassword") }else{ Messages("securesocial.login.useEmailAndPasswordOnly") }) { providerHeader: String =>
                                @custom.provider("userpass", Some(loginForm), Some(providerHeader))
                             }
                         }
 
-                        @if(externalProviders.size > 0 ) {
+                        @if(externalProviders.nonEmpty ) {
                             <h3>@Messages("securesocial.login.instructions")</h3>
                             <p class="provider-icons margin-top">
                             @for(p <- externalProviders) {

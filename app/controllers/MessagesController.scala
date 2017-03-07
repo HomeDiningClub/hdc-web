@@ -229,7 +229,7 @@ class MessagesController @Inject() (override implicit val env: SecureSocialRunti
           views.html.host.hostErrorMsg.render(Messages("You can´t apply to yourself"), "info", request2Messages)
         }else{
 
-          val today = Calendar.getInstance().getTime()
+          val today = Calendar.getInstance().getTime
           val format = new SimpleDateFormat("HH:mm")
           val currentTime = format.parse(format.format(new Date()))
 

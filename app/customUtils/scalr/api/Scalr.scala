@@ -140,7 +140,7 @@ class Scalr @Inject()(implicit val conf: Configuration, implicit val application
     val is = new FileInputStream(file)
     val firstBytes = new Array[Byte](2)
     is.read(firstBytes)
-    is.close
+    is.close()
     // A JPEG file always start with bytes FF D8
     if (firstBytes(0) == 0xFF.asInstanceOf[Byte] && firstBytes(1) == 0xD8.asInstanceOf[Byte])
       "jpg"

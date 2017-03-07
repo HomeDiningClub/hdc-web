@@ -30,9 +30,9 @@ class MealTypeService @Inject() (val template: Neo4jTemplate,
     this.listAll() match {
       case None => None
       case Some(list) =>
-        Some(list.map {as =>
-          (as.objectId.toString,as.name)
-        }.toSeq)
+        Some(list.map { as =>
+          (as.objectId.toString, as.name)
+        })
     }
   }
 

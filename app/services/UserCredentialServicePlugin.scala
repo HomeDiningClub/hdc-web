@@ -163,8 +163,6 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
 
   /** *
     * Store Identity in the database
-    * @param user
-    * @return
     */
   def save(user: BasicProfile, mode: securesocial.core.services.SaveMode ): Future[UserCredential] = {
     // We don't support linked logins at this time, please extend this method to look thru all current UserCredentials link to other BasicProfiles-passwordInfo
@@ -209,8 +207,6 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
 
   /**
    * Checks if Identity exist meaning UserId and ProviderId
-   * @param userId
-   * @param providerId
    * @return id in Neo4j database and if the user exits true else false
    */
 
@@ -302,7 +298,7 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
 
   // List alla users
   @Transactional(readOnly = true)
-  def getUsers() :  List[UserCredential] =  {
+  def getUsers:  List[UserCredential] =  {
     IteratorUtil.asCollection(userCredentialService.userCredentialRepository.findAll()).asScala.toList
    }
 
@@ -316,7 +312,6 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
    *  userid and provider id when update the existing one othervice create
    *  a new user.
    *
-   * @param userCredential
    * @return modified userCredential
    */
   @Transactional(readOnly = false)
@@ -495,7 +490,6 @@ class UserCredentialServicePlugin extends UserService[UserCredential] {
    * Store a UserCredential
    * if id not assigned to a value insert create a new node
    * else update a node
-   * @param userCredential
    * @return
    */
   @Transactional(readOnly = false)

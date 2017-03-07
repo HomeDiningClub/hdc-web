@@ -89,7 +89,7 @@ object BackupRobot {
     var freeSpace: Long = dir.getFreeSpace / toMegaByte
     var usableSpace: Long = dir.getUsableSpace / toMegaByte
 
-    val today = Calendar.getInstance().getTime()
+    val today = Calendar.getInstance().getTime
     val dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSS")
     val nowString = dateFormat.format(today)
     println(nowString)

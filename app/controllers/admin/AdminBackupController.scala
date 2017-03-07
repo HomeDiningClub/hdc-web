@@ -23,7 +23,7 @@ class AdminBackupController @Inject() (override implicit val env: SecureSocialRu
     Ok(views.html.admin.backup.index())
   }
 
-  def doBackup: Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
+  def doBackup(): Action[AnyContent] = SecuredAction(authorize = WithRole(RoleEnums.ADMIN)) { implicit request: SecuredRequest[AnyContent,UserCredential] =>
     customUtils.backup.BackupData.makeFullBackup(configuration)
     Ok("Done!")
   }

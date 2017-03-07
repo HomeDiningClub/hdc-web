@@ -17,8 +17,6 @@ class SecureSocialViewTemplates @Inject() (implicit val env: SecureSocialRuntime
 
   /**
    * Returns the html for the login page
-   * @param request
-   * @return
    */
   override def getLoginPage(form: Form[(String, String)], msg: Option[String] = None)(implicit request: RequestHeader, lang: Lang): Html =
   {
@@ -27,9 +25,6 @@ class SecureSocialViewTemplates @Inject() (implicit val env: SecureSocialRuntime
 
   /**
    * Returns the html for the signup page
-   *
-   * @param request
-   * @return
    */
   override def getSignUpPage(form: Form[securesocial.controllers.RegistrationInfo], token: String)(implicit request: RequestHeader, lang: Lang): Html = {
     views.html.custom.Registration.signUp(form, token)
@@ -37,9 +32,6 @@ class SecureSocialViewTemplates @Inject() (implicit val env: SecureSocialRuntime
 
   /**
    * Returns the html for the start signup page
-   *
-   * @param request
-   * @return
    */
   override def getStartSignUpPage(form: Form[String])(implicit request: RequestHeader, lang: Lang): Html = {
     views.html.custom.Registration.startSignUp(form)
@@ -47,9 +39,6 @@ class SecureSocialViewTemplates @Inject() (implicit val env: SecureSocialRuntime
 
   /**
    * Returns the html for the reset password page
-   *
-   * @param request
-   * @return
    */
   override def getStartResetPasswordPage(form: Form[String])(implicit request: RequestHeader, lang: Lang): Html = {
     views.html.custom.Registration.startResetPassword(form)
@@ -57,9 +46,6 @@ class SecureSocialViewTemplates @Inject() (implicit val env: SecureSocialRuntime
 
   /**
    * Returns the html for the start reset page
-   *
-   * @param request
-   * @return
    */
   override def getResetPasswordPage(form: Form[(String, String)], token: String)(implicit request: RequestHeader, lang: Lang): Html = {
     views.html.custom.Registration.resetPasswordPage(form, token)
@@ -67,10 +53,6 @@ class SecureSocialViewTemplates @Inject() (implicit val env: SecureSocialRuntime
 
   /**
    * Returns the html for the change password page
-   *
-   * @param request
-   * @param form
-   * @return
    */
   override def getPasswordChangePage(form: Form[securesocial.controllers.ChangeInfo])(implicit request: RequestHeader, lang: Lang): Html = {
     views.html.custom.passwordChange(form)

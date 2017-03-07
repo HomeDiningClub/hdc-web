@@ -1,6 +1,6 @@
 @(asideHeader: String = "", asideMenu: Option[List[models.viewmodels.MenuItem]] = None)(implicit messages: Messages)
 
-@if(!asideMenu.isEmpty) {
+@if(asideMenu.isDefined) {
     <div class="col-xs-12 col-md-3 pull-left content-side-menu">
         <aside>
             <div class="panel panel-aside">

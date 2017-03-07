@@ -130,7 +130,7 @@ class HeaderController @Inject() (override implicit val env: SecureSocialRuntime
           menu.append((Messages("header.link.admin"), Messages("header.link.admin"), controllers.admin.routes.AdminController.index().url, "", "", "<span class=\"glyphicon glyphicon-cog\"></span>&nbsp;"))
 
         menu.append((Messages("header.link.logout"), Messages("header.link.logout"), "/auth/logout", "", "", "<span class=\"glyphicon glyphicon-log-out\"></span>&nbsp;"))
-        menu.toSeq
+        menu
       }
       case None => {
         Seq[(String,String,String,String,String,String)](

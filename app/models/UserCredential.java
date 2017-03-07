@@ -361,10 +361,7 @@ public class UserCredential extends AuditEntity implements securesocial.core.Gen
 
     @Override
     public Option<securesocial.core.PasswordInfo> passwordInfo() {
-
-       securesocial.core.PasswordInfo passwordInfo = null;
-       passwordInfo = new securesocial.core.PasswordInfo(this.hasher, this.password, Scala.Option(this.salt));
-
+        securesocial.core.PasswordInfo passwordInfo = new securesocial.core.PasswordInfo(this.hasher, this.password, Scala.Option(this.salt));
         return Scala.Option(passwordInfo);
     }
 

@@ -19,7 +19,7 @@ object BackupJob {
 
         Logger.info("Backup started ... ")
         customUtils.backup.BackupData.makeFullBackup(configuration)
-        val today = Calendar.getInstance().getTime()
+        val today = Calendar.getInstance().getTime
 
         val dateFormat = new SimpleDateFormat("HH:mm:ss.SS")
         Logger.info("Backup done : " + dateFormat.format(today))

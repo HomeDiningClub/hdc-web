@@ -299,7 +299,7 @@ class ContentFileService @Inject() (val template: Neo4jTemplate,
         metaData.append("admin")
       }
 
-      return storeToRes(file, metaData.toSeq, fetchExtension(cleanedFileName)) match {
+      return storeToRes(file, metaData, fetchExtension(cleanedFileName)) match {
       //storeToRes(file,storageFileName,fetchExtension(cleanedFileName)) match {
         case Some(storeId) =>
 
@@ -372,7 +372,7 @@ class ContentFileService @Inject() (val template: Neo4jTemplate,
 
     val fis = new FileInputStream(file)
     retString += DigestUtils.sha1Hex(fis)
-    fis.close
+    fis.close()
 
     retString
   }

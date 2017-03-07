@@ -102,7 +102,7 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
             bufferList += ((tag.objectId.toString, tag.tagName))
         }
 
-        Some(bufferList.toSeq)
+        Some(bufferList)
       case None =>
         None
     }

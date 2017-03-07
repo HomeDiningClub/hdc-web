@@ -132,7 +132,7 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
     val iterator = list.iterator()
     var recipeList : ListBuffer[RecipeBox] = new ListBuffer[RecipeBox]
 
-    while(iterator.hasNext()) {
+    while(iterator.hasNext) {
 
       val obj = iterator.next()
 
@@ -146,25 +146,25 @@ class RecipeService @Inject()(val template: Neo4jTemplate,
       val ratingValue : Int = v.toDouble.round.toInt
 
       // Link
-      val linkToRecipe = (obj.getprofileLinkName, obj.getLinkName) match {
+      val linkToRecipe = (obj.getprofileLinkName(), obj.getLinkName()) match {
         case (null|null) | ("","") => "#"
         case (profLink,recLink) => routes.RecipePageController.viewRecipeByNameAndProfile(profLink, recLink).url
       }
 
       // Image
       var mainImage = Some("/assets/images/profile/recipe-box-default-bw.png")
-      if(obj.getMainImage().iterator().hasNext()){
+      if(obj.getMainImage().iterator().hasNext){
         mainImage = Some(routes.ImageController.recipeBox(obj.getMainImage().iterator().next()).url)
       }
 
       // Build return-list
       var recipe = RecipeBox(
-        Some(UUID.fromString(obj.getobjectId)),
+        Some(UUID.fromString(obj.getobjectId())),
         linkToRecipe,
-        obj.getName,
-        obj.getpreAmble match {
+        obj.getName(),
+        obj.getpreAmble() match {
         case "" | null =>
-          var retBody = Helpers.removeHtmlTags(obj.getMainBody)
+          var retBody = Helpers.removeHtmlTags(obj.getMainBody())
 
           if (retBody.length > 125)
             retBody = retBody.substring(0, 125) + "..."

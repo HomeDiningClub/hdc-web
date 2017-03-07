@@ -87,7 +87,7 @@ class AdminContentController @Inject() (override implicit val env: SecureSocialR
         }
 
         // If this occurs, user has sent an invalid UUID to edit and save
-        if(newContent == None){
+        if(newContent.isEmpty){
           val errorMessage = Messages("admin.error") + " - " + Messages("admin.add.error")
           BadRequest(views.html.admin.content.add(contentForm, contentService.getPagesAsDropDown(), contentService.getContentStatesAsDropDown, contentService.getCategoriesAsDropDown)).flashing(FlashMsgConstants.Error -> errorMessage)
 

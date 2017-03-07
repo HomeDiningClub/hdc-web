@@ -15,8 +15,8 @@ notfound.linkhome=startsidan
 # Header
 header.main-menu.link.startpage.text=Hem
 header.main-menu.link.startpage.title=Hem
-header.main-menu.link.newsletter.text=Nyhetsbrev
-header.main-menu.link.newsletter.title=Nyhetsbrev
+#header.main-menu.link.newsletter.text=Nyhetsbrev
+#header.main-menu.link.newsletter.title=Nyhetsbrev
 header.main-menu.link.fb.href=https://www.facebook.com/homediningclub
 header.main-menu.link.fb.text=Facebook
 header.main-menu.link.fb.title=Gilla oss på Facebook!
@@ -37,13 +37,8 @@ header.link.become-member=Bli medlem
 header.link.login=Logga in
 header.link.admin=Admin-mode
 header.link.logout=Logga ut
-header.login-form.email=E-post
-header.login-form.password=Lösenord
-header.login-form.forgot-password=Har du glömt ditt lösenord?
-header.login-form.submit=Logga in
 header.logo.alt=Home dining club logotyp
 header.mobile-menu.title=Visa meny
-header.ribbon.text=BETA 1.2
 
 # Footer
 footer.text=Home Dining Club AB

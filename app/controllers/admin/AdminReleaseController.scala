@@ -44,7 +44,7 @@ class AdminReleaseController @Inject() (override implicit val env: SecureSocialR
   def createDefaultData = UserAwareAction { implicit request =>
 
     // Clear all tags
-    tagWordService.deleteAll
+    tagWordService.deleteAll()
 
     // Create default Tags
     val groupName = "profile"
@@ -70,7 +70,7 @@ class AdminReleaseController @Inject() (override implicit val env: SecureSocialR
     tagWordService.createTag("Bakverk", "Bakverk", "quality[19]", groupName)
 
     // Clear all countys
-    countyService.deleteAll
+    countyService.deleteAll()
 
     // Create county's
     countyService.createCounty("Blekinge", 1, true)
@@ -95,7 +95,7 @@ class AdminReleaseController @Inject() (override implicit val env: SecureSocialR
     countyService.createCounty("Östergötland", 20, true)
 
     // Clear all roles
-    userRoleService.deleteAll
+    userRoleService.deleteAll()
 
     userRoleService.createRole(RoleEnums.ADMIN)
     userRoleService.createRole(RoleEnums.POWERUSER)
@@ -105,7 +105,7 @@ class AdminReleaseController @Inject() (override implicit val env: SecureSocialR
     Ok("Default data created/recreated")
   }
 
-  def addAdmin = UserAwareAction { implicit request =>
+  def addAdmin() = UserAwareAction { implicit request =>
 
     // Add running user to admin group
     request.user match {
