@@ -80,8 +80,15 @@ class TagWordService @Inject() (val template: Neo4jTemplate,
       Some(returnList)
   }
 
-  def findByProfileAndGroup(profile: UserProfile, groupName: String): Option[List[String]] = withTransaction(template){
-    taggedUserProfileRepository.findTagWordsTaggedByUserProfile(profile.objectId.toString, groupName).asScala.toList match {
+  def findByProfileAndGroupReturnName(profile: UserProfile, groupName: String): Option[List[String]] = withTransaction(template){
+    taggedUserProfileRepository.findTagWordsTaggedByUserProfileReturnName(profile.objectId.toString, groupName).asScala.toList match {
+      case Nil => None
+      case items => Some(items)
+    }
+  }
+
+  def findByProfileAndGroupReturnTagWord(profile: UserProfile, groupName: String): Option[List[TagWord]] = withTransaction(template){
+    taggedUserProfileRepository.findTagWordsTaggedByUserProfileReturnTagWord(profile.objectId.toString, groupName).asScala.toList match {
       case Nil => None
       case items => Some(items)
     }

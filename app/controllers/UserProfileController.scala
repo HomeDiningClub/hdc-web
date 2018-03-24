@@ -198,7 +198,7 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
           myRecipeReviewBoxes <- Future(if (myProfile) ratingService.getMyUserReviewsAboutFood(profileOwner) else None)
           reviewBoxesAboutMyFood <- Future(ratingService.getUserReviewsAboutMyFood(profileOwner))
           reviewBoxesAboutMe <- Future(ratingService.getUserReviewsAboutMe(profileOwner))
-          tags <- Future(tagWordService.findByProfileAndGroup(profile, "profile"))
+          tags <- Future(tagWordService.findByProfileAndGroupReturnName(profile, "profile"))
           metaData <- Future(buildMetaData(profile, request))
           shareUrl <- Future(createShareUrl(profile))
           userRateForm <- Future(ratingController.renderUserRateForm(profileOwner, routes.UserProfileController.viewProfileByName(profile.profileLinkName).url, request.user))
@@ -456,7 +456,7 @@ class UserProfileController @Inject()(override implicit val env: SecureSocialRun
 
     // Tags
     val sortedTagList = getSortedTagWordList
-    val userProfOldSavedTags = Option(userProfile.getTags.asScala.toList.map { tr => tr.tagWord })
+    val userProfOldSavedTags = tagWordService.findByProfileAndGroupReturnTagWord(userProfile,"profile")
 
     // County
     val countyObjectId: String = userProfile.getLocations.asScala match {
