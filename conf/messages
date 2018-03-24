@@ -905,7 +905,8 @@ admin.alcohol-serving.list.action=Funktioner
 
 
 admin.release.index.header=Release och batchjobb
-admin.release.actions.releaserun=Kör release rutin
+admin.release.index.text=OBS! Ta en databasbackup innan du gör något här, ett knapptryck kan förstöra och ta bort massor med funktionalitet.
+admin.release.actions.releaserun=Skapa om Roller, Taggar och Län
 admin.release.actions.deleteall=Ta bort allt i hela databasen
 
 admin.file.title=Filhantering
