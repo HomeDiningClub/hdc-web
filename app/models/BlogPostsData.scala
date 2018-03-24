@@ -3,7 +3,7 @@ package models
 import java.util
 import org.springframework.data.neo4j.annotation._
 
-
+@QueryResult
   trait BlogPostsData {
 
     @ResultColumn("b.title")

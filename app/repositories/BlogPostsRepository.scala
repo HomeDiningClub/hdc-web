@@ -23,6 +23,7 @@ trait BlogPostsRepository extends GraphRepository[BlogPost]
   @Query("match (b:BlogPost)-[:HAS_BLOGPOSTS]-(p:UserProfile {objectId:{0}}) return b.title, b.text, b.objectId, b.lastModifiedDate, b.createdDate, b.contentState")
   def findAllUsersBlogPost(userObjectId: String) : util.List[BlogPostsData]
 
+  //@Query("match (b:BlogPost)-[:HAS_BLOGPOSTS]-(p:UserProfile {objectId:{0}}) optional match (b)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return b.title, b.text, b.objectId, b.lastModifiedDate, b.createdDate, b.contentState, COLLECT(mainImage.storeId) as MainImage order by b.createdDate desc")
   @Query("match (b:BlogPost)-[:HAS_BLOGPOSTS]-(p:UserProfile {objectId:{0}}) optional match (b)-[:`MAIN_IMAGE`]-(mainImage:`ContentFile`) return b.title, b.text, b.objectId, b.lastModifiedDate, b.createdDate, b.contentState, COLLECT(mainImage.storeId) as MainImage order by b.createdDate desc")
   def findAllUsersBlogPostsOnPage(userObjectId: String, pageable: Pageable) : Page[BlogPostsData]
 
