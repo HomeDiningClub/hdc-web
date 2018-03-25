@@ -16,6 +16,7 @@ import plugin._
 
 import scala.concurrent.ExecutionContext
 
+@javax.inject.Singleton
 class SecureSocialRuntimeEnvironment @Inject() (override val configuration: Configuration, val httpConfiguration: HttpConfiguration, override val messagesApi: MessagesApi) extends RuntimeEnvironment.Default {
 
   type U = UserCredential
