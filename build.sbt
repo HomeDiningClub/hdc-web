@@ -41,11 +41,18 @@ libraryDependencies ++= Seq(
   //  ExclusionRule(organization = "com.typesafe.play")),
   // Spring data
   "com.sun.jersey" % "jersey-core" % "1.19" withSources(),
-  "org.springframework" % "spring-context" % "4.1.9.RELEASE" withSources(),
+  "org.springframework" % "spring-context" % "5.0.3.RELEASE" withSources(),
+  "org.springframework" % "spring-aop" % "5.0.3.RELEASE" withSources(),
+  "org.springframework" % "spring-beans" % "5.0.3.RELEASE" withSources(),
+  "org.springframework" % "spring-core" % "5.0.3.RELEASE" withSources(),
+  "org.springframework" % "spring-expression" % "5.0.3.RELEASE" withSources(),
+  "org.springframework" % "spring-jcl" % "5.0.3.RELEASE" withSources(),
+  "org.springframework" % "spring-tx" % "5.0.3.RELEASE" withSources(),
+  "org.springframework" % "spring-aspects" % "5.0.3.RELEASE" withSources(),
   "org.springframework.data" % "spring-data-neo4j" % "3.4.2.RELEASE" excludeAll(ExclusionRule(organization = "org.neo4j", name="neo4j"), ExclusionRule(organization = "org.springframework", name = "spring-context")) withSources(),
   "org.springframework.data" % "spring-data-neo4j-rest" % "3.4.2.RELEASE" excludeAll(ExclusionRule(organization = "org.neo4j", name="neo4j"), ExclusionRule(organization = "org.springframework", name = "spring-context")) withSources(),
   // Spring guice
-  "org.springframework.guice" % "spring-guice" % "1.0.0.BUILD-SNAPSHOT" withSources(),
+  "org.springframework.guice" % "spring-guice" % "1.1.2.RELEASE" withSources(),
   // Neo4j
   "org.neo4j" % "neo4j" % "2.3.1" withSources(),
   "org.neo4j" % "neo4j-backup" % "2.3.1" withSources(),
@@ -58,7 +65,7 @@ libraryDependencies ++= Seq(
   //"org.neo4j" % "neo4j-backup" % "2.3.0-M02",
   //"ws.securesocial" %% "securesocial" % "3.0-M4" withSources(),
   // SecureSocial
-  "ws.securesocial" %% "securesocial" % "master-SNAPSHOT" withSources(),
+  "ws.securesocial" %% "securesocial" % "3.0-M7" withSources(),
   "com.typesafe.play" %% "play-mailer" % "4.0.0" withSources(),
   "net.codingwell" %% "scala-guice" % "4.0.0" withSources(),
   // For imagesRezise components
